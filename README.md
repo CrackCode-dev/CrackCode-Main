@@ -38,5 +38,52 @@ http://localhost:4000/api/auth/logout
 }
 
 
-###
+###send-verify-otp
+http://localhost:4000/api/auth/send-verify-otp
+
+#output
+{
+    "success": true,
+    "message": "Verification OTP sent on Email."
+}
+
+
+###verify-account
+http://localhost:4000/api/auth/verify-account
+
+{
+    "otp": "375168"
+}
+
+#output
+{
+    "success": true,
+    "message": "Email verified successfully."
+}
+
+
+###is-auth
+http://localhost:4000/api/auth/is-auth
+
+#output
+{
+    "success": true
+}
+
+
+###send-reset-otp
+http://localhost:4000/api/auth/send-reset-otp
+
+{
+    "email": "shenoriperera87@gmail.com"
+}
+
+#output
+{
+    "success": true,
+    "message": "OTP sent to your email"
+}
+
+
+
 
