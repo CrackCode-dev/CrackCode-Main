@@ -39,7 +39,7 @@ export const AppContextProvider = (props) => {
         }
     }
 
-    // Run this whenever the app loads
+    // Run whenever the app loads
     useEffect(() => {
         getAuthState();
     }, [])

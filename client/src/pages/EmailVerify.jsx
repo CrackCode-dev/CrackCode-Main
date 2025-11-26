@@ -63,7 +63,7 @@ function EmailVerify() {
   },[isLoggedIn, userData])
 
   return (
-    // ... (Keep your existing JSX Return code exactly as is) ...
+   
     <div className='flex felx-col items-center justify-center min-h-screen bg-[#050505]'>
       <Navbar/>
 

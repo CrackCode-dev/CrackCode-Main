@@ -28,14 +28,13 @@ function Login() {
                 if (data.success) {
                     setIsLoggedIn(true)
                     getUserData()
-                    // --- NEW CODE STARTS HERE ---
-                    // 2. Immediately send the OTP
+                    
                     try {
                         const otpResponse = await axios.post(backendUrl + '/api/auth/send-verify-otp');
                         
                         if (otpResponse.data.success) {
                             toast.success("Account created! OTP sent to email.");
-                            // 3. Redirect to the Email Verify page instead of Home
+                           
                             navigate('/email-verify');
                         } else {
                             toast.error(otpResponse.data.message);
@@ -45,7 +44,7 @@ function Login() {
                         toast.error("Failed to send OTP: " + error.message);
                         navigate('/');
                     }
-                    // --- NEW CODE ENDS HERE ---
+                    
                     
                 } else {
                     toast.error(data.message)
@@ -66,8 +65,7 @@ function Login() {
     }
 
     return (
-        // ... Keep your existing JSX Return code exactly as it is ...
-        // Just ensure the form calls onSubmitHandler
+        
         <div className='flex felx-col items-center justify-center min-h-screen bg-[#050505]'>
             <div onClick={() => navigate('/')} className="w-full absolute top-0 cursor-pointer">
                 <Navbar />
