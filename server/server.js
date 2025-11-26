@@ -15,7 +15,7 @@ connectDB();
 app.use(express.json());
 app.use(cookieParser());
 
-const allowedOrigins = ['http://localhost:5173']; // Add your frontend port here
+const allowedOrigins = ['http://localhost:5173']; //frontend origin
 
 app.use(cors({
     origin: allowedOrigins,
