@@ -7,6 +7,7 @@ import hand_wave from './hand_wave.png'
 import header_img from './header_img.png'
 import crackcode_light_logo from './crackcode_light_logo.png'
 import crackcode_dark_logo from './crackcode_dark_logo.png'
+import right_arrow from './right-arrow.png'
 
 export const assets = {
     arrow_icon,
@@ -17,5 +18,6 @@ export const assets = {
     hand_wave,
     header_img,
     crackcode_light_logo, 
-    crackcode_dark_logo
+    crackcode_dark_logo,
+    right_arrow,
 }
