@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 import { useEffect, useRef, useState } from "react"
 import { Button } from "./ui/button.jsx"
 import DotBackground from "./ui/dot-background.jsx"
@@ -43,6 +36,7 @@ export default function PreviewSection() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-4xl mx-auto text-center mb-16 fade-in-section opacity-0 transition-all duration-1000 translate-y-10">
+          {/* Header Tag */}
           <div className="inline-block px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-full text-cyan-500 text-sm font-medium mb-6">
             Inside The Platform
           </div>
@@ -56,10 +50,10 @@ export default function PreviewSection() {
 
         {/* The IDE Mockup */}
         <div className="max-w-7xl mx-auto fade-in-section opacity-0 transition-all duration-1000 translate-y-10 delay-200">
-          <div className="rounded-xl border border-border bg-card/95 backdrop-blur shadow-2xl overflow-hidden ring-1 ring-cyan-500/20 grid lg:grid-cols-2 min-h-[600px]">
+          <div className="rounded-xl border border-border bg-card/95 backdrop-blur shadow-2xl overflow-hidden ring-1 ring-cyan-500/20 grid lg:grid-cols-2 min-h-[600px] overflow-hidden">
             
             {/* LEFT PANEL: Problem Statement */}
-            <div className="border-r border-border bg-slate-950/30 flex flex-col">
+            <div className="relative border-r border-border bg-slate-950/30 flex flex-col">
               <div className="p-6 border-b border-border">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="bg-yellow-500/10 text-yellow-500 text-xs font-bold px-2 py-1 rounded border border-yellow-500/20">CASE #089</span>
@@ -88,7 +82,7 @@ export default function PreviewSection() {
                 </div>
 
                 {/* Collapsible Hints */}
-                <div className="border border-border rounded-lg bg-slate-900/50 overflow-hidden">
+                <div className="relative border border-border rounded-lg bg-slate-900/50">
                   <button 
                     onClick={() => setIsHintOpen(!isHintOpen)}
                     className="w-full flex items-center justify-between p-3 hover:bg-slate-800/50 transition-colors"
@@ -101,13 +95,31 @@ export default function PreviewSection() {
                   </button>
                   
                   {isHintOpen && (
-                    <div className="p-3 pt-0 border-t border-border bg-cyan-950/10">
+                    <div className="absolute left-0 top-full w-full z-20 bg-cyan-950/95 backdrop-blur border-t border-border p-3 shadow-lg">
                       <p className="text-xs text-cyan-200/80 leading-relaxed p-2">
                         {/* GENERAL CLUE / HINT */}
                         Detective, remember that street addresses (array indices) always start at 0. To search every house without trespassing into the void, ensure your patrol stops <em>before</em> the counter equals the total number of houses.
                       </p>
                     </div>
                   )}
+                </div>
+                
+                {/* Example */}
+                <div className="border border-border rounded-lg bg-slate-900/50 overflow-hidden p-4">
+                  Example: <br />
+                  <div className="text-sm text-gray-400">
+                    Input
+                  </div>
+                  <div className="text-sm bg-gray-500 w-auto p-2">
+                    houses = ["Empty", "Empty", Loot, "Empty"]
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    Output
+                  </div>
+                  <div className="text-sm bg-gray-500 w-auto p-2">
+                    Congratulations Detective! You have found the loot at the House #3. 
+                  </div>
+                  
                 </div>
               </div>
             </div>
