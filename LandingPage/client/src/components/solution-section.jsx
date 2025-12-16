@@ -1,5 +1,3 @@
-
-
 import { useEffect, useRef } from "react"
 import { Card } from "./ui/card.jsx"
 import DotBackground from "./ui/dot-background.jsx"
@@ -76,9 +74,12 @@ export default function SolutionSection() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center mb-16 fade-in-section opacity-0 transition-all duration-1000 translate-y-10">
+          
+          {/* Header Tag */}
           <div className="inline-block px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-emerald-500 text-sm font-medium mb-6">
             Our Solution
           </div>
+
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-balance">
             Learning That Feels Like <span className="text-emerald-500">Playing</span>
           </h2>
