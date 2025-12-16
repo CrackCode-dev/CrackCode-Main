@@ -1,7 +1,3 @@
-
-
-
-
 import React, { useState } from "react"
 import { Button } from "./ui/button.jsx"
 import { Input } from "./ui/input.jsx"
@@ -18,36 +14,20 @@ export default function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [status, setStatus] = useState(null) // null | 'success' | 'error'
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     setIsSubmitting(true)
     setStatus(null)
 
-    try {
-      const response = await fetch('http://localhost:3001/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setStatus('success')
-        setFormData({ email: "", message: "" })
-        // Reset success message after 3 seconds
-        setTimeout(() => setStatus(null), 3000)
-      } else {
-        setStatus('error')
-      }
-    } catch (error) {
-      console.error("Error submitting form:", error)
-      setStatus('error')
-    } finally {
+    // Simulate a network delay (frontend only)
+    setTimeout(() => {
       setIsSubmitting(false)
-    }
+      setStatus('success')
+      setFormData({ email: "", message: "" })
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => setStatus(null), 3000)
+    }, 1500)
   }
 
   return (
@@ -148,7 +128,7 @@ export default function ContactSection() {
         <div className="container mx-auto px-4 py-12">
           <div className="flex flex-col md:flex-row justify-between items-center gap-8">
             
-            {/* 1. Logo - Click to scroll to top */}
+            {/* 1. Logo */}
             <a href="#home" className="block group transition-transform hover:scale-105 cursor-pointer">
                <img 
                  src={logo} 
@@ -164,7 +144,6 @@ export default function ContactSection() {
 
             {/* 3. Social Media & Legal Links */}
             <div className="flex flex-col md:flex-row items-center gap-6">
-               {/* Social Icons with sample links */}
                <div className="flex gap-4">
                   <a 
                     href="https://www.linkedin.com/in/crack-code-619461396" 
@@ -186,10 +165,8 @@ export default function ContactSection() {
                   </a>
                </div>
 
-               {/* Divider (visible on desktop) */}
                <div className="hidden md:block h-5 w-px bg-border"></div>
 
-               {/* Legal Links */}
               <div className="flex gap-6">
                 <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors text-sm">Privacy</a>
                 <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors text-sm">Terms</a>
