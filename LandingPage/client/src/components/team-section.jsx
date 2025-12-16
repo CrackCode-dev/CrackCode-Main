@@ -26,9 +26,9 @@ export default function TeamSection() {
     { name: "Vidun Shanuka", role: "Full stack / ML Developer" },
     { name: "Nadeesha Hasaranga", role: "Full Stack Developer" },
     { name: "Chris Corteling", role: "Back End / ML Developer" },
-    { name: "Sasni", role: "Back End Developer" },
-    { name: "Shenori", role: "BACK End Developer" },
-    { name: "Ama", role: "Front End Developer" },
+    { name: "Sasni Lasadi", role: "Back End Developer" },
+    { name: "Shenori Perera", role: "BacK End Developer" },
+    { name: "Ama Dombawela", role: "Front End Developer" },
   ]
 
   return (
