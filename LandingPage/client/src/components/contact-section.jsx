@@ -146,7 +146,7 @@ export default function ContactSection() {
             <div className="flex flex-col md:flex-row items-center gap-6">
                <div className="flex gap-4">
                   <a 
-                    href="https://www.linkedin.com/" 
+                    href="https://www.linkedin.com/in/crack-code-619461396" 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="text-muted-foreground hover:text-orange-500 transition-colors p-2 hover:bg-orange-500/10 rounded-full"
@@ -155,7 +155,7 @@ export default function ContactSection() {
                     <Linkedin className="h-5 w-5" />
                   </a>
                   <a 
-                    href="https://www.instagram.com/" 
+                    href="https://www.instagram.com/crackcodelk" 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="text-muted-foreground hover:text-orange-500 transition-colors p-2 hover:bg-orange-500/10 rounded-full"
