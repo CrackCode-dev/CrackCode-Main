@@ -77,13 +77,13 @@ export default function ProblemSection() {
               className="fade-in-section"
               style={{ transitionDelay: `${index * 100}ms` }}
             >
-              <div className="group relative p-8 bg-card border border-border rounded-xl hover:border-destructive/50 transition-all duration-300 hover:shadow-lg hover:shadow-destructive/10 h-full">
+              <div className="group relative p-8 bg-card border border-border rounded-xl hover:border-destructive/100 transition-all duration-300 hover:shadow-lg hover:shadow-destructive/10 h-full">
                 <div className="mb-4">
                   <problem.icon className="h-12 w-12 text-destructive" />
                 </div>
-                <h3 className="text-2xl font-bold mb-3 text-card-foreground">{problem.title}</h3>
+                <h3 className="text-2xl font-bold mb-3 text-card-foreground group-hover:text-red-500 transition-colors">{problem.title}</h3>
                 <p className="text-muted-foreground leading-relaxed">{problem.description}</p>
-                <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-destructive/5 to-transparent opacity-0 group-hover:bg-destructive/10 opacity-100 transition-opacity duration-300 rounded-xl pointer-events-none" />
               </div>
             </div>
           ))}
