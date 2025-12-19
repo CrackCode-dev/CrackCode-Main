@@ -5,9 +5,12 @@ import mail_icon from './mail_icon.svg'
 import person_icon from './person_icon.svg'
 import hand_wave from './hand_wave.png'
 import header_img from './header_img.png'
-import crackcode_light_logo from './crackcode_light_logo.png'
-import crackcode_dark_logo from './crackcode_dark_logo.png'
 import right_arrow from './right-arrow.png'
+import BgVideo from './BgVideo.mp4'
+import script from './script.png'
+import dashboard from './dashboard.png'
+import rocket from './rocket.png'
+import crackcode_logo from './CrackCode_logo.png'
 
 export const assets = {
     arrow_icon,
@@ -17,7 +20,10 @@ export const assets = {
     person_icon,
     hand_wave,
     header_img,
-    crackcode_light_logo, 
-    crackcode_dark_logo,
     right_arrow,
+    BgVideo,
+    script, 
+    dashboard, 
+    rocket,
+    crackcode_logo,
 }

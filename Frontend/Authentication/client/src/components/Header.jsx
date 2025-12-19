@@ -5,9 +5,12 @@ import { useNavigate } from 'react-router-dom'
 function Header() {
   const navigate = useNavigate()
   return (
-    <div className='relative w-full h-full'>
+    <div className='relative w-full'>
+        {/* Section 1 */}
+        <div className='relative flex flex-col items-center justify-center text-center bg-none h-[800px] pt-32'>
+          
+          {/* <video src={assets.BgVideo} autoPlay loop muted playsInline className='absolute top-0 left-0 w-full h-full object-cover -z-10' /> */}
 
-        <div className='relative top-0 left-0 flex flex-col items-center text-center mt-50'>
           <h1 className='flex items-center gap-2 text-8xl sm:text-8xl text-white font-semibold mb-10'>
             Solve Mysteries <br /> Through Code</h1>
 
@@ -28,6 +31,35 @@ function Header() {
               transition-all text-white font-medium text-2xl'>Learn More</button>
             </div>
         </div>
+
+        {/* Section 2 */}
+        <div className='relative flex flex-col items-center justify-center text-center bg-none h-[800px] mt-20'>
+          <div className='flex flex-row items-center justify-center gap-10'>
+            
+            {/* Info Card 1 */}
+            <div className='bg-[#44404080] border-[#444040] rounded-2xl mt-10 px-5 py-8 text-left'>
+              <img src={assets.script} alt="" className='w-15 mb-5'/>
+              <h1 className='text-white text-2xl font-bold mb-5'>Narrative Driven</h1>
+              <p className='text-[#FFFFFF80] font-light'>Every challenge is wrapped <br /> in an engaging detective <br /> story that makes learning <br /> fun. </p>
+            </div>
+
+            {/* Info Card 2 */}
+            <div className='bg-[#44404080] border-[#444040] rounded-2xl mt-10 px-5 py-8 text-left'>
+              <img src={assets.script} alt="" className='w-15 mb-5'/>
+              <h1 className='text-white text-2xl font-bold mb-5'>Narrative Driven</h1>
+              <p className='text-[#FFFFFF80] font-light'>Every challenge is wrapped <br /> in an engaging detective <br /> story that makes learning <br /> fun. </p>
+            </div>
+
+            {/* Info Card 3 */}
+            <div className='bg-[#44404080] border-[#444040] rounded-2xl mt-10 px-5 py-8 text-left'>
+              <img src={assets.script} alt="" className='w-15 mb-5'/>
+              <h1 className='text-white text-2xl font-bold mb-5'>Narrative Driven</h1>
+              <p className='text-[#FFFFFF80] font-light'>Every challenge is wrapped <br /> in an engaging detective <br /> story that makes learning <br /> fun. </p>
+            </div> 
+
+          </div>
+        </div>
+
     </div>
   )
 }

@@ -37,8 +37,8 @@ function Navbar() {
     }
 
   return (
-    <div className='w-full flex justify-between items-center p-4 sm:p-6 sm:px-24 absolute top-0'>
-      <img src={assets.crackcode_dark_logo} alt="" className='w-28 sm:w-32'/>
+    <div className='w-full flex justify-between items-center p-4 sm:p-6 fixed top-0 left-0 z-50 bg-transparent'>
+      <img src={assets.crackcode_logo} alt="" className='w-28 sm:w-32'/>
       {userData ? 
       <div className='w-8 h-8 flex justify-center items-center rounded-full bg-black text-white relative group'>
         {userData.name[0].toUpperCase()}
@@ -49,12 +49,7 @@ function Navbar() {
               <li onClick={logout} className='py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10'>Logout</li>
             </ul>
         </div>
-      </div> : 
-      <button onClick={()=>navigate('/login')} 
-      className='flex items-center gap-2 border border-gray-500 rounded-full px-6 py-2 text-gray-800 hover:bg-gray-100 transition-all'>
-        Login <img src={assets.arrow_icon} alt="" />
-      </button>}
-      
+      </div> : null}      
     </div>
   )
 }
