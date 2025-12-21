@@ -1,0 +1,93 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 265 1% 12%;
+    --foreground: 265 1% 98%;
+    --card: 265 1.5% 15%;
+    --card-foreground: 265 1% 98%;
+    --popover: 265 1.5% 15%;
+    --popover-foreground: 265 1% 98%;
+    --primary: 265 25% 65%;
+    --primary-foreground: 265 1% 98%;
+    --secondary: 180 20% 75%;
+    --secondary-foreground: 265 1% 12%;
+    --muted: 265 1.5% 22%;
+    --muted-foreground: 265 1% 65%;
+    --accent: 265 25% 65%;
+    --accent-foreground: 265 1% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 265 1% 98%;
+    --border: 265 2% 25%;
+    --input: 265 2% 25%;
+    --ring: 265 25% 65%;
+    --radius: 0.75rem;
+  }
+  
+  .dark {
+    --background: 265 1% 12%;
+    --foreground: 265 1% 98%;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+
+.cursor-glow {
+  position: fixed;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, hsla(265, 25%, 65%, 0.2) 0%, hsla(265, 25%, 65%, 0.1) 40%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 9998;
+  transition: opacity 0.2s ease;
+  border-radius: 50%;
+}
+
+/* Animation Utility Classes */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  will-change: opacity, transform;
+}
+
+.animate-in {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+
+
+
+
