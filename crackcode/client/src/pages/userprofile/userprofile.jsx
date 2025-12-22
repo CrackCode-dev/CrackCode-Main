@@ -1,26 +1,27 @@
-import React,{useState} from 'react'
+import { useState } from 'react'
 import './userprofile.css'
 
 
 
 const UserProfile = () => {
-    const[userStatus] = useState({
-        name :"Detective John Doe",
-        level : 12 ,
-        casesSolved : 24,
-        totalPoints :3240 ,
-        winStreaks:7,
-        avatar : ""  
-    });
+  const [userStatus] = useState({
+    name: "Detective John Doe",
+    level: 12,
+    casesSolved: 24,
+    totalPoints: 3240,
+    winStreaks: 7,
+    rank: "#147",
+    avatar: ""
+  });
 
-    const difficultyDistribution = [
-        {level: "Easy", count:12, color:'bg-green-500'},
-        {level: "Medium", count:8, color:'bg-yellow-500'},
-        {level: "Hard", count:4, color:'bg-red-500'}
-    ];
+  const difficultyDistribution = [
+    { level: "Easy", count: 12, color: 'bg-green-500' },
+    { level: "Medium", count: 8, color: 'bg-yellow-500' },
+    { level: "Hard", count: 4, color: 'bg-red-500' }
+  ];
 
-    const learningDistribution = [
-        { topic: 'Data Structures', percentage: 75 },
+  const learningDistribution = [
+    { topic: 'Data Structures', percentage: 75 },
     { topic: 'Algorithms', percentage: 60 },
     { topic: 'Web Development', percentage: 45 }
   ];
@@ -35,19 +36,19 @@ const UserProfile = () => {
     { icon: '🎯', title: 'Focused', description: 'Finished Goals' },
     { icon: '✅', title: 'Elite', description: 'Top 100 rank' }
   ];
-   
+
   return (
     <div className="min-h-screen bg-black text-white p-8">
       {/* Profile Header */}
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-r from-green-900/30 to-green-800/20 border border-green-700/50 rounded-2xl p-8 mb-8">
+      <div className="profile-wrapper">
+        <div className="bg-linear-to-r from-green-900/30 to-green-800/20 border border-green-700/50 rounded-2xl p-8 mb-8">
           <div className="flex items-center gap-6 mb-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-4xl">
+            <div className="w-20 h-20 bg-linear-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-4xl">
               {userStatus.avatar}
             </div>
             <div>
               <h1 className="text-3xl font-bold text-white">{userStatus.name}</h1>
-              <p className="text-gray-400">
+              <p className="text-gray-400 text-left">
                 Level {userStatus.level} | Rank <span className="text-green-400">{userStatus.rank}</span>
               </p>
             </div>
@@ -73,14 +74,15 @@ const UserProfile = () => {
                 <span>🔥</span>
                 <span>Win Streak</span>
               </div>
-              <div className="text-3xl font-bold text-green-400">{userStatus.winStreak}</div>
+              <div className="text-3xl font-bold text-green-400">{userStatus.winStreaks}</div>
             </div>
           </div>
         </div>
 
         {/* Statistics Section */}
-        <h2 className="text-2xl font-bold mb-6">Statistics</h2>
+        <h2 className="text-2xl text-left font-bold mb-6">Statistics</h2>
         <div className="grid grid-cols-2 gap-6 mb-8">
+
           {/* Difficulty Distribution */}
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <h3 className="text-lg font-semibold mb-4">Difficulty Distribution</h3>
@@ -92,7 +94,7 @@ const UserProfile = () => {
                     <span className="text-white font-semibold">{item.count}</span>
                   </div>
                   <div className="w-full bg-zinc-800 rounded-full h-2">
-                    <div 
+                    <div
                       className={`${item.color} h-2 rounded-full transition-all duration-500`}
                       style={{ width: `${(item.count / 24) * 100}%` }}
                     ></div>
@@ -106,6 +108,7 @@ const UserProfile = () => {
           <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
             <h3 className="text-lg font-semibold mb-4">Learning Distribution</h3>
             <div className="space-y-4">
+
               {learningDistribution.map((item, index) => (
                 <div key={index}>
                   <div className="flex justify-between text-sm mb-2">
@@ -113,7 +116,7 @@ const UserProfile = () => {
                     <span className="text-white font-semibold">{item.percentage}%</span>
                   </div>
                   <div className="w-full bg-zinc-800 rounded-full h-2">
-                    <div 
+                    <div
                       className="bg-green-500 h-2 rounded-full transition-all duration-500"
                       style={{ width: `${item.percentage}%` }}
                     ></div>
@@ -125,10 +128,10 @@ const UserProfile = () => {
         </div>
 
         {/* Achievements Section */}
-        <h2 className="text-2xl font-bold mb-6">Achievements</h2>
+        <h2 className="text-2xl text-left font-bold mb-6">Achievements</h2>
         <div className="grid grid-cols-4 gap-4 mb-8">
           {achievements.map((achievement, index) => (
-            <div 
+            <div
               key={index}
               className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 text-center hover:border-green-600 transition-all cursor-pointer"
             >
@@ -140,7 +143,7 @@ const UserProfile = () => {
         </div>
 
         {/* Account Settings Section */}
-        <h2 className="text-2xl font-bold mb-6">Account Settings</h2>
+        <h2 className="text-2xl text-left font-bold mb-6">Account Settings</h2>
         <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6 mb-8">
           <div className="space-y-4">
             {['Edit', 'Change', 'Configure'].map((action, index) => (
@@ -149,7 +152,8 @@ const UserProfile = () => {
                   <div className="font-medium">Email Address</div>
                   <div className="text-sm text-gray-400">john@crackcode.com</div>
                 </div>
-                <button className="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-sm font-medium transition-colors">
+                <button 
+                className="px-4 py-2 bg-black text-white border border-white hover:bg-zinc-700 rounded-lg text-sm font-medium transition-colors">
                   {action}
                 </button>
               </div>
@@ -158,15 +162,20 @@ const UserProfile = () => {
         </div>
 
         {/* Danger Zone Section */}
-        <h2 className="text-2xl font-bold mb-6">Danger Zone</h2>
+        <h2 className="text-2xl text-left font-bold mb-6">Danger Zone</h2>
         <div className="bg-red-950/30 border border-red-900/50 rounded-xl p-6">
-          <h3 className="text-xl font-bold mb-2">Terminate Account</h3>
-          <p className="text-gray-400 mb-4">
+          <h3 className="text-xl text-left font-bold mb-2">Terminate Account</h3>
+          <p className="text-gray-400 mb-4 text-left">
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
-          <button className="px-6 py-2 bg-red-600 hover:bg-red-700 rounded-lg font-medium transition-colors">
-            Delete Account
-          </button>
+          <div className='flex justify-start'>
+            <button
+              className="px-6 py-2 text-red-600 border border-red-600 hover:text-white rounded-lg font-medium transition-colors"
+              style={{ backgroundColor: '#000000' }}
+            >
+              Delete Account
+            </button>
+          </div>
         </div>
       </div>
     </div>
