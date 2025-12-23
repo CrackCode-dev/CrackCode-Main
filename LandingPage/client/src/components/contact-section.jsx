@@ -212,7 +212,7 @@ export default function ContactSection() {
               />
             </a>
 
-            {/* Nav Links */}
+            {/* Nav Links
             <div className="flex flex-wrap justify-center gap-6 text-sm">
               {["Home", "Problem", "Solution", "Preview", "Team"].map((item) => (
                 <a 
@@ -223,22 +223,21 @@ export default function ContactSection() {
                   {item}
                 </a>
               ))}
-            </div>
+            </div> */}
+
+            {/* Copyright */}
+          <div className="p-5 text-sm text-muted-foreground">
+            <p>© 2025 CrackCode. All rights reserved.</p>
+          </div>
 
             {/* Legal Links */}
-            <div className="flex items-center gap-6 text-sm">
-              <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">Privacy</a>
-              <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">Terms</a>
+            <div className="flex items-center gap-10 text-sm font-medium">
+              <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">Privacy Policy</a>
+              <a href="#" className="text-muted-foreground hover:text-orange-500 transition-colors">Terms & Conditions</a>
             </div>
           </div>
 
-          {/* Copyright */}
-          <div className="mt-8 pt-6 border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-            <p>© 2025 CrackCode. All rights reserved.</p>
-            <p className="flex items-center gap-1.5">
-              Built with <Heart className="w-4 h-4 text-red-500 fill-red-500" /> for learners everywhere
-            </p>
-          </div>
+          
         </div>
       </footer>
     </section>
