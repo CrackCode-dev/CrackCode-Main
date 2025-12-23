@@ -164,8 +164,8 @@ export default function ContactSection() {
                 </a>
                 
                 <a 
-                  href="https://github.com/crackcode" 
-                  target="_blank" 
+                  href="#" 
+                  // target="_blank" 
                   rel="noopener noreferrer" 
                   className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl hover:bg-slate-500/10 border border-transparent hover:border-slate-500/30 transition-all duration-300 group"
                 >
@@ -180,7 +180,7 @@ export default function ContactSection() {
                 </a>
 
                 <a 
-                  href="mailto:hello@crackcode.lk" 
+                  href="mailto:info.crackcode@gmail.com" 
                   className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl hover:bg-orange-500/10 border border-transparent hover:border-orange-500/30 transition-all duration-300 group"
                 >
                   <div className="p-2.5 bg-orange-500/10 rounded-lg group-hover:bg-orange-500/20 transition-colors">
@@ -188,7 +188,7 @@ export default function ContactSection() {
                   </div>
                   <div className="flex-1">
                     <div className="font-medium text-foreground text-sm">Email Us</div>
-                    <div className="text-xs text-muted-foreground">hello@crackcode.lk</div>
+                    <div className="text-xs text-muted-foreground">info.crackcode@gmail.com</div>
                   </div>
                   <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-orange-500 transition-colors" />
                 </a>
