@@ -226,7 +226,7 @@ export default function ContactSection() {
             </div> */}
 
             {/* Copyright */}
-          <div className="p-4 text-sm text-muted-foreground">
+          <div className="p-5 text-sm text-muted-foreground">
             <p>© 2025 CrackCode. All rights reserved.</p>
           </div>
 
