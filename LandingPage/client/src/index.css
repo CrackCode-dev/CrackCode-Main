@@ -375,7 +375,7 @@
 }
 
 .custom-cursor.hovering .corner {
-  border-color: #1e40af;
+  border-color: #ffc800;
 }
 
 /* Make outer lines move inward toward center smoothly */
@@ -396,12 +396,12 @@
 }
 
 .custom-cursor.hovering .cursor-line {
-  background: #1e40af;
+  background: #ffc800;
 }
 
 /* Make center dot larger and more prominent smoothly */
 .custom-cursor.hovering .cursor-center {
-  background: #1e40af;
+  background: #ffc800;
   transform: translate(-50%, -50%) scale(1.5);
 }
 

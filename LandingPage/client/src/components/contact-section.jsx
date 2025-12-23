@@ -164,8 +164,8 @@ export default function ContactSection() {
                 </a>
                 
                 <a 
-                  href="https://github.com/crackcode" 
-                  target="_blank" 
+                  href="#" 
+                  // target="_blank" 
                   rel="noopener noreferrer" 
                   className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl hover:bg-slate-500/10 border border-transparent hover:border-slate-500/30 transition-all duration-300 group"
                 >
