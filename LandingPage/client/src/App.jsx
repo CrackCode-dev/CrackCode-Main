@@ -2,23 +2,41 @@ import React, { useEffect } from "react"
 import HeroSection from "./components/hero-section.jsx"
 import ProblemSection from "./components/problem-section.jsx"
 import SolutionSection from "./components/solution-section.jsx"
-import PreviewSection from "./components/preview-section.jsx" // <--- Import here
+import HowItWorksSection from "./components/how-it-works-section.jsx"
+import PreviewSection from "./components/preview-section.jsx"
 import TeamSection from "./components/team-section.jsx"
 import ContactSection from "./components/contact-section.jsx"
 
 export default function App() {
   useEffect(() => {
-    // Cursor glow effect
+    // Enhanced cursor glow effect
     const cursorGlow = document.createElement("div")
     cursorGlow.className = "cursor-glow"
     document.body.appendChild(cursorGlow)
 
+    let mouseX = 0
+    let mouseY = 0
+    let currentX = 0
+    let currentY = 0
+
     const moveCursor = (e) => {
-      cursorGlow.style.left = e.clientX + "px"
-      cursorGlow.style.top = e.clientY + "px"
+      mouseX = e.clientX
+      mouseY = e.clientY
+    }
+
+    // Smooth cursor animation
+    const animateCursor = () => {
+      const dx = mouseX - currentX
+      const dy = mouseY - currentY
+      currentX += dx * 0.1
+      currentY += dy * 0.1
+      cursorGlow.style.left = currentX + "px"
+      cursorGlow.style.top = currentY + "px"
+      requestAnimationFrame(animateCursor)
     }
 
     window.addEventListener("mousemove", moveCursor)
+    animateCursor()
 
     return () => {
       window.removeEventListener("mousemove", moveCursor)
@@ -33,7 +51,8 @@ export default function App() {
       <HeroSection />
       <ProblemSection />
       <SolutionSection />
-      <PreviewSection /> {/* <--- Add Component here */}
+      <HowItWorksSection />
+      <PreviewSection />
       <TeamSection />
       <ContactSection />
     </main>
