@@ -80,10 +80,11 @@ export default function HeroSection() {
 
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-balance leading-[1.1] tracking-tight animate-fade-in-up delay-100">
             Learn Coding Through
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 animate-gradient"> Epic Stories</span>
+            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 
+            animate-gradient"> Epic Stories</span>
           </h1>
           
-          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground text-balance max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-200">
+          <p className="text-xl sm:text-xl md:text-xl text-muted-foreground text-balance max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-200">
             Master programming by solving detective cases, catching serial killers, and exploring immersive narratives. CrackCode makes learning <span className="text-orange-400 font-medium">addictive</span>.
           </p>
 
@@ -93,7 +94,7 @@ export default function HeroSection() {
               <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all duration-300">
                 <BookOpen className="w-8 h-8 text-orange-500 animate-float" />
               </div>
-              <span className="text-sm text-muted-foreground">Story-Driven</span>
+              <span className="text-sm text-muted-foreground font-bold">Story-Driven</span>
             </div>
             <div className="flex flex-col items-center gap-3 group">
               <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all duration-300">
@@ -115,7 +116,7 @@ export default function HeroSection() {
             
             <Button 
               size="lg" 
-              className="bg-orange-600 hover:bg-orange-700 text-white px-12 py-7 text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-[0_0_40px_-10px_rgba(249,115,22,0.5)] hover:shadow-[0_0_60px_-10px_rgba(249,115,22,0.7)]"
+              className="bg-orange-600 hover:bg-orange-700 text-white px-12 py-7 text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-[0_0_40px_-10px_rgba(249,115,22,0.5)]"
             >
               Start Your Journey
             </Button>
