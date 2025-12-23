@@ -62,11 +62,46 @@ export default function HowItWorksSection() {
   ]
 
   const colorMap = {
-    orange: { bg: "bg-orange-500/10", border: "border-orange-500/30", text: "text-orange-500", glow: "shadow-orange-500/20" },
-    cyan: { bg: "bg-cyan-500/10", border: "border-cyan-500/30", text: "text-cyan-500", glow: "shadow-cyan-500/20" },
-    emerald: { bg: "bg-emerald-500/10", border: "border-emerald-500/30", text: "text-emerald-500", glow: "shadow-emerald-500/20" },
-    purple: { bg: "bg-purple-500/10", border: "border-purple-500/30", text: "text-purple-500", glow: "shadow-purple-500/20" },
-    pink: { bg: "bg-pink-500/10", border: "border-pink-500/30", text: "text-pink-500", glow: "shadow-pink-500/20" }
+    orange: { 
+      bg: "bg-orange-500/10", 
+      border: "border-orange-500/30", 
+      borderHover: "group-hover:border-orange-500/60",
+      text: "text-orange-500", 
+      textHover: "group-hover:text-orange-400",
+      glow: "group-hover:shadow-orange-500/20" 
+    },
+    cyan: { 
+      bg: "bg-cyan-500/10", 
+      border: "border-cyan-500/30", 
+      borderHover: "group-hover:border-cyan-500/60",
+      text: "text-cyan-500", 
+      textHover: "group-hover:text-cyan-400",
+      glow: "group-hover:shadow-cyan-500/20" 
+    },
+    emerald: { 
+      bg: "bg-emerald-500/10", 
+      border: "border-emerald-500/30", 
+      borderHover: "group-hover:border-emerald-500/60",
+      text: "text-emerald-500", 
+      textHover: "group-hover:text-emerald-400",
+      glow: "group-hover:shadow-emerald-500/20" 
+    },
+    purple: { 
+      bg: "bg-purple-500/10", 
+      border: "border-purple-500/30", 
+      borderHover: "group-hover:border-purple-500/60",
+      text: "text-purple-500", 
+      textHover: "group-hover:text-purple-400",
+      glow: "group-hover:shadow-purple-500/20" 
+    },
+    pink: { 
+      bg: "bg-pink-500/10", 
+      border: "border-pink-500/30", 
+      borderHover: "group-hover:border-pink-500/60",
+      text: "text-pink-500", 
+      textHover: "group-hover:text-pink-400",
+      glow: "group-hover:shadow-pink-500/20" 
+    }
   }
 
   return (
@@ -114,15 +149,16 @@ export default function HowItWorksSection() {
                     isEven ? 'md:flex-row' : 'md:flex-row-reverse'
                   }`}>
                     {/* Content Card */}
-                    <div className={`flex-1 ${isEven ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12'}`}>
-                      <div className={`inline-block p-6 md:p-8 bg-card border ${colors.border} rounded-2xl hover:shadow-xl ${colors.glow} transition-all duration-500 group`}>
+                    <div className={`flex-1 ${isEven ? 'md:text-right md:pr-12' : 'md:text-left md:pl-12 '}`}>
+                      <div className={`inline-block p-6 md:p-8 bg-card border ${colors.border} ${colors.borderHover} rounded-2xl hover:shadow-xl ${colors.glow} transition-all duration-500 
+                      group hover:-translate-y-3 hover:shadow-2xl hover:shadow-${step.color}-500/20 hover:bg-white/[0.02] hover:bg-[color]/20`}>
                         <div className={`flex items-center gap-4 mb-4 ${isEven ? 'md:flex-row-reverse' : ''}`}>
                           <div className={`p-3 ${colors.bg} rounded-xl group-hover:scale-110 transition-transform duration-300`}>
-                            <step.icon className={`h-6 w-6 ${colors.text}`} />
+                            <step.icon className={`h-6 w-6 ${colors.text} ${colors.textHover}`} />
                           </div>
-                          <span className={`text-4xl font-bold ${colors.text} opacity-50`}>{step.step}</span>
+                          <span className={`text-4xl font-bold ${colors.text} ${colors.textHover} opacity-50 group-hover:opacity-100 transition-all duration-300`}>{step.step}</span>
                         </div>
-                        <h3 className="text-xl md:text-2xl font-bold mb-3 text-card-foreground">{step.title}</h3>
+                        <h3 className={`text-xl md:text-2xl font-bold ${colors.textHover} mb-3 transition-all duration-300`}>{step.title}</h3>
                         <p className="text-muted-foreground leading-relaxed">{step.description}</p>
                       </div>
                     </div>
