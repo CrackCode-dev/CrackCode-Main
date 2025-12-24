@@ -1,10 +1,14 @@
 import React from 'react'
+import Header from '../../components/common/Header'
 import Title from '../../components/landing/Title'
 
 function Landing() {
 
   return (
-    <Title />
+    <>
+      <Header variant="landing" />
+      <Title />
+    </>
   )
 }
 

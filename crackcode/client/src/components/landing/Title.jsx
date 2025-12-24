@@ -20,11 +20,11 @@ function Title() {
                 </p>
 
                 <div className='flex justify-center gap-4 mt-10'>
-                    <Button variant="primary" size="lg" icon={ChevronRight} iconPosition="right" onClick={() => navigate('/home')}>
+                    <Button variant="primary" size="lg" icon={ChevronRight} iconPosition="right">
                         Get Started
                     </Button>
 
-                    <Button variant="outline" size="lg">
+                    <Button variant="outline" size="lg" onClick={() => navigate('/home')}>
                         Learn More
                     </Button>
                 </div>
