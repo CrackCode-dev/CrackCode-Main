@@ -1,6 +1,10 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import Button from '../common/Button'
+import { ChevronRight } from 'lucide-react'
 
 function Title() {
+    const navigate = useNavigate()
   return (
     <div className='relative flex items-center justify-center'>
 
@@ -14,10 +18,22 @@ function Title() {
                 Join the detective force and solve real-world coding challenges wrapped in thrilling mystery narratives. 
                 Every case brings you close to <span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600'>mastery</span>.
                 </p>
+
+                <div className='flex justify-center gap-4 mt-10'>
+                    <Button variant="primary" size="lg" icon={ChevronRight} iconPosition="right" onClick={() => navigate('/home')}>
+                        Get Started
+                    </Button>
+
+                    <Button variant="outline" size="lg">
+                        Learn More
+                    </Button>
+                </div>
             </div>
         </section>
 
-        
+        <section id=''>
+
+        </section>
 
     </div>
   )
