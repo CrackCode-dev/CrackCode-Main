@@ -1,4 +1,4 @@
 # Ignore the entire client and server directories
-client/
-server/
+#client/
+#server/
 
