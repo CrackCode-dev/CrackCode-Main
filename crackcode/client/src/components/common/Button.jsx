@@ -21,7 +21,6 @@ const Button = ({
     const variants = {
         primary: 'bg-orange-600 hover:bg-orange-700 hover:shadow-orange-500/30 text-white focus:ring-orange-500',
         outline: 'bg-transparent border-2 border-orange-600 text-orange-600 hover:border-orange-500 hover:text-orange-500 hover:bg-orange-500/10 focus:ring-orange-500',
-        //Add on different styles later
     };
 
     //Size Styles
@@ -41,14 +40,14 @@ const Button = ({
   return (
     <button 
       type={type}
-      className={buttonClasses} 
+      className={`${buttonClasses} group`} 
       onClick={onClick} 
       disabled={disabled}
       {...props}
     >
       {Icon && iconPosition === 'left' && <Icon className='mr-2 w-5 h-5' />}
       {children}
-      {Icon && iconPosition === 'right' && <Icon className='ml-2 w-5 h-5' />}
+      {Icon && iconPosition === 'right' && <Icon className='ml-2 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1' />}
     </button>
   )
 }
