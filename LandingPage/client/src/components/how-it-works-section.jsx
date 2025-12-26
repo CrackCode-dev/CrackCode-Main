@@ -68,7 +68,8 @@ export default function HowItWorksSection() {
       borderHover: "group-hover:border-orange-500/60",
       text: "text-orange-500", 
       textHover: "group-hover:text-orange-400",
-      glow: "group-hover:shadow-orange-500/20" 
+      glow: "group-hover:shadow-orange-500/20", 
+      dot: "bg-orange-500"
     },
     cyan: { 
       bg: "bg-cyan-500/10", 
@@ -76,7 +77,8 @@ export default function HowItWorksSection() {
       borderHover: "group-hover:border-cyan-500/60",
       text: "text-cyan-500", 
       textHover: "group-hover:text-cyan-400",
-      glow: "group-hover:shadow-cyan-500/20" 
+      glow: "group-hover:shadow-cyan-500/20",
+      dot: "bg-cyan-500" 
     },
     emerald: { 
       bg: "bg-emerald-500/10", 
@@ -84,7 +86,8 @@ export default function HowItWorksSection() {
       borderHover: "group-hover:border-emerald-500/60",
       text: "text-emerald-500", 
       textHover: "group-hover:text-emerald-400",
-      glow: "group-hover:shadow-emerald-500/20" 
+      glow: "group-hover:shadow-emerald-500/20", 
+      dot: "bg-emerald-500"
     },
     purple: { 
       bg: "bg-purple-500/10", 
@@ -92,7 +95,8 @@ export default function HowItWorksSection() {
       borderHover: "group-hover:border-purple-500/60",
       text: "text-purple-500", 
       textHover: "group-hover:text-purple-400",
-      glow: "group-hover:shadow-purple-500/20" 
+      glow: "group-hover:shadow-purple-500/20",
+      dot: "bg-purple-500" 
     },
     pink: { 
       bg: "bg-pink-500/10", 
@@ -100,7 +104,8 @@ export default function HowItWorksSection() {
       borderHover: "group-hover:border-pink-500/60",
       text: "text-pink-500", 
       textHover: "group-hover:text-pink-400",
-      glow: "group-hover:shadow-pink-500/20" 
+      glow: "group-hover:shadow-pink-500/20",
+      dot: "bg-pink-500" 
     }
   }
 
@@ -166,7 +171,7 @@ export default function HowItWorksSection() {
                     {/* Center Dot */}
                     <div className="hidden md:flex items-center justify-center w-4 h-4 relative z-10">
                       <div className={`w-4 h-4 rounded-full ${colors.bg} border-2 ${colors.border}`}>
-                        <div className={`w-2 h-2 rounded-full ${colors.text.replace('text', 'bg')} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`} />
+                        <div className={`w-2 h-2 rounded-full ${colors.dot} absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`} />
                       </div>
                     </div>
 
