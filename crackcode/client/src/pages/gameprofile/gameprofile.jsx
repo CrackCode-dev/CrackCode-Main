@@ -1,4 +1,8 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
+import Header from '../../components/common/Header'
+import Footer from '../../components/common/Footer'
+import logo from '../../assets/logo.png'
+import userIcon from '../../assets/userprofileicon.png'
 
 
 const GameProfile = () => {
@@ -28,7 +32,7 @@ const GameProfile = () => {
 
             {/*CrackCode logo*/}
             <div className="absolute top-4 left-4">
-                <img src="/src/assets/logo.png" alt="logo" className="w-40 h-16" />
+                <img src={logo} alt="logo" className="w-40 h-16" />
             </div>
             {/* Main Content */}
             <div className="max-w-3xl w-full space-y-12">
@@ -78,7 +82,7 @@ const GameProfile = () => {
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none ">
-                            <img src="/src/assets/userprofileicon.png" alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                            <img src= {userIcon} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
                         </div>
                         <input
                             type="text"
