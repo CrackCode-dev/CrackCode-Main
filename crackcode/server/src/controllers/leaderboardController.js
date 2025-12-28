@@ -49,19 +49,3 @@ exports.getMyRank = async (req, res) => {
         res.status(500).json({ message: "Error fetching user rank" });
     }
 };
-
-
-
-exports.getTopPlayers = async (req, res) => {
-    try {
-        // Fetch top 10 from Redis in descending order with scores
-        // ZREVRANGE gives you the highest scores first
-        const topTen = await redisClient.zRangeWithScores('global_leaderboard', 0, 9, {
-            REV: true
-        });
-
-        res.status(200).json(topTen);
-    } catch (error) {
-        res.status(500).json({ message: "Failed to fetch leaderboard" });
-    }
-};
