@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,59 +34,565 @@
   * {
     @apply border-border outline-ring/50;
   }
+  
   body {
     @apply bg-background text-foreground;
   }
+  
   html {
     scroll-behavior: smooth;
   }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--background));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground));
+  }
 }
 
-/* Animations */
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+/* Float Animation */
 @keyframes float {
   0%, 100% { transform: translateY(0px); }
   50% { transform: translateY(-20px); }
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.5; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
 }
 
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
+/* Pulse Glow Animation */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
 }
 
+/* Gradient Animation */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Shimmer Animation */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Spin Slow */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* ============================================
+   CURSOR GLOW
+   ============================================ */
+
 .cursor-glow {
   position: fixed;
-  width: 120px;
-  height: 120px;
-  background: radial-gradient(circle, hsla(265, 25%, 65%, 0.2) 0%, hsla(265, 25%, 65%, 0.1) 40%, transparent 70%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(
+    circle, 
+    hsla(24, 95%, 53%, 0.15) 0%, 
+    hsla(24, 95%, 53%, 0.08) 30%, 
+    transparent 70%
+  );
   pointer-events: none;
   transform: translate(-50%, -50%);
   z-index: 9998;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.3s ease;
   border-radius: 50%;
+  filter: blur(10px);
 }
 
-/* Animation Utility Classes */
+/* ============================================
+   FADE IN ANIMATIONS
+   ============================================ */
+
 .fade-in-section {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1s ease-out, transform 1s ease-out;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
   will-change: opacity, transform;
 }
 
 .animate-in {
   opacity: 1 !important;
-  transform: translateY(0) !important;
+  transform: translateY(0) translateX(0) !important;
 }
 
+/* ============================================
+   CUSTOM CROSSHAIR CURSOR STYLES
+   ============================================ */
 
+/* Hide default cursor globally */
+* {
+  cursor: none !important;
+}
 
+/* Custom Crosshair Cursor */
+.custom-cursor {
+  position: fixed;
+  width: 30px;
+  height: 30px;
+  pointer-events: none;
+  z-index: 10000;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+}
 
+.custom-cursor.hidden {
+  opacity: 0;
+}
 
+/* Outer Square Container */
+.cursor-square {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Square pulse animation for movement - two-step natural motion */
+.cursor-square.moving {
+  animation: squarePulse 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes squarePulse {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.25);
+  }
+  60% {
+    transform: scale(0.85);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Corner Brackets */
+.corner {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border: 2px solid #50c878;
+  transition: border-color 0.4s ease, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Top-left corner */
+.corner.tl {
+  top: 0;
+  left: 0;
+  border-right: none;
+  border-bottom: none;
+  transform-origin: top left;
+}
+
+/* Top-right corner */
+.corner.tr {
+  top: 0;
+  right: 0;
+  border-left: none;
+  border-bottom: none;
+  transform-origin: top right;
+}
+
+/* Bottom-left corner */
+.corner.bl {
+  bottom: 0;
+  left: 0;
+  border-right: none;
+  border-top: none;
+  transform-origin: bottom left;
+}
+
+/* Bottom-right corner */
+.corner.br {
+  bottom: 0;
+  right: 0;
+  border-left: none;
+  border-top: none;
+  transform-origin: bottom right;
+}
+
+/* ============================================
+   TARGET LOCK ANIMATION - OUTER CORNERS
+   ============================================ */
+
+/* Lock corners container */
+.lock-corners {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Lock corners - larger brackets outside main corners */
+.lock-corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #50c878;
+  opacity: 0;
+}
+
+/* Top-left lock corner */
+.lock-corner.tl {
+  top: -8px;
+  left: -8px;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Top-right lock corner */
+.lock-corner.tr {
+  top: -8px;
+  right: -8px;
+  border-left: none;
+  border-bottom: none;
+}
+
+/* Bottom-left lock corner */
+.lock-corner.bl {
+  bottom: -8px;
+  left: -8px;
+  border-right: none;
+  border-top: none;
+}
+
+/* Bottom-right lock corner */
+.lock-corner.br {
+  bottom: -8px;
+  right: -8px;
+  border-left: none;
+  border-top: none;
+}
+
+/* Target lock animation - triggered on click */
+.lock-corners.locking .lock-corner {
+  animation: targetLock 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes targetLock {
+  0% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+  30% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/* Hovering variation - navy blue color for lock corners */
+.custom-cursor.hovering .lock-corner {
+  border-color: #1e40af;
+}
+
+/* Center Dot */
+.cursor-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: #50c878;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: background-color 0.4s ease, 
+              transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Crosshair Lines Container */
+.cursor-lines {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Individual Lines */
+.cursor-line {
+  position: absolute;
+  background: #50c878;
+  transition: background-color 0.4s ease, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Top Line */
+.cursor-line.top {
+  top: -8px;
+  left: 50%;
+  width: 2px;
+  height: 8px;
+  transform: translateX(-50%);
+  transform-origin: bottom center;
+}
+
+/* Right Line */
+.cursor-line.right {
+  top: 50%;
+  right: -8px;
+  width: 8px;
+  height: 2px;
+  transform: translateY(-50%);
+  transform-origin: left center;
+}
+
+/* Bottom Line */
+.cursor-line.bottom {
+  bottom: -8px;
+  left: 50%;
+  width: 2px;
+  height: 8px;
+  transform: translateX(-50%);
+  transform-origin: top center;
+}
+
+/* Left Line */
+.cursor-line.left {
+  top: 50%;
+  left: -8px;
+  width: 8px;
+  height: 2px;
+  transform: translateY(-50%);
+  transform-origin: right center;
+}
+
+/* Clockwise rotation - KEPT ORIGINAL SPEED */
+.cursor-lines.rotating-cw {
+  animation: rotateLinesCW 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes rotateLinesCW {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(90deg);
+  }
+}
+
+/* Counter-clockwise rotation - KEPT ORIGINAL SPEED */
+.cursor-lines.rotating-ccw {
+  animation: rotateLinesCCW 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes rotateLinesCCW {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-90deg);
+  }
+}
+
+/* Scale effect on click */
+.cursor-square.clicking {
+  transform: scale(0.75);
+  transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Hover effect for interactive elements - SMOOTH CONVERGING CROSSHAIR */
+.custom-cursor.hovering .cursor-square {
+  transform: scale(0.65);
+}
+
+.custom-cursor.hovering .corner {
+  border-color: #ffc800;
+}
+
+/* Make outer lines move inward toward center smoothly */
+.custom-cursor.hovering .cursor-line.top {
+  transform: translateX(-50%) translateY(3px);
+}
+
+.custom-cursor.hovering .cursor-line.right {
+  transform: translateY(-50%) translateX(-3px);
+}
+
+.custom-cursor.hovering .cursor-line.bottom {
+  transform: translateX(-50%) translateY(-3px);
+}
+
+.custom-cursor.hovering .cursor-line.left {
+  transform: translateY(-50%) translateX(3px);
+}
+
+.custom-cursor.hovering .cursor-line {
+  background: #ffc800;
+}
+
+/* Make center dot larger and more prominent smoothly */
+.custom-cursor.hovering .cursor-center {
+  background: #ffc800;
+  transform: translate(-50%, -50%) scale(1.5);
+
+  /*
+   UTILITY CLASSES
+   ============================================ */
+
+/* Glass Effect */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Text Balance */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Hide Scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Thin Scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thumb-slate-700::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 2px;
+}
+
+/* ============================================
+   BUTTON ENHANCEMENTS
+   ============================================ */
+
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.btn-glow:hover::before {
+  left: 100%;
+}
+
+/* ============================================
+   CARD HOVER EFFECTS
+   ============================================ */
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.3);
+}
+
+/* ============================================
+   CODE BLOCK STYLING
+   ============================================ */
+
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+/* ============================================
+   SELECTION STYLING
+   ============================================ */
+
+::selection {
+  background: hsla(24, 95%, 53%, 0.3);
+  color: inherit;
+}
+
+/* ============================================
+   RESPONSIVE FIXES
+   ============================================ */
+
+@media (max-width: 768px) {
+  .cursor-glow {
+    display: none;
+  }
+}
+
+/* ============================================
+   LOADING STATES
+   ============================================ */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 25%,
+    hsl(var(--muted-foreground) / 0.3) 50%,
+    hsl(var(--muted)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}}
