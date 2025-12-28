@@ -1,0 +1,16 @@
+import React from 'react'
+import Navlinks from './Navlinks'
+
+function Navbar() {
+  return (
+    <div className='gap-10 hidden md:flex justify-center items-center'>
+      <Navlinks linkURL="/learn" linkText="Learn" />
+      <Navlinks linkURL="/caselog" linkText="Case Log" />
+      <Navlinks linkURL="/career-maps" linkText="Career Maps" />
+      <Navlinks linkURL="/leaderboard" linkText="Leaderboard" />
+      <Navlinks linkURL="/store" linkText="Store" />
+    </div>
+  )
+}
+
+export default Navbar

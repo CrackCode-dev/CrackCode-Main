@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import './gameprofile.css'
 
 
 const GameProfile = () => {
