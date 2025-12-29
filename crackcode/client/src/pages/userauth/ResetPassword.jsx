@@ -5,6 +5,7 @@ import { Mail, RectangleEllipsis } from 'lucide-react'
 import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import Footer from '../../components/common/Footer'
 
 function ResetPassword() {
   const { backendUrl } = useContext(AppContent)
@@ -141,7 +142,7 @@ function ResetPassword() {
           <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
         </form>
       }
-
+      <Footer />
     </div>
   )
 }

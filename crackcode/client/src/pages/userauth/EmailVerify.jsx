@@ -4,6 +4,7 @@ import axios from 'axios';
 import Button from '../../components/common/Button';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../../components/common/Footer'
 
 function EmailVerify() {
 
@@ -93,6 +94,7 @@ function EmailVerify() {
 
         <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
       </form>
+      <Footer/>
     </div>
   )
 }
