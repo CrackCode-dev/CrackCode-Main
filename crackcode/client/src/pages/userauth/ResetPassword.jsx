@@ -1,9 +1,8 @@
 
 import React, { useContext, useState } from 'react'
-import Navbar from '../components/Navbar'
 import { useNavigate } from 'react-router-dom'
-import { assets } from '../assets/assets'
-import { AppContent } from '../context/AppContext'
+
+import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
@@ -82,7 +81,7 @@ function ResetPassword() {
   return (
     <div className='flex felx-col items-center justify-center min-h-screen bg-[#050505]'>
       <div onClick={() => navigate('/')} className="w-full absolute top-0 cursor-pointer">
-        <Navbar />
+    
       </div>
 
       {/* 1. Enter Email Form */}
@@ -91,7 +90,7 @@ function ResetPassword() {
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>Reset Password</h1>
           <p className='text-center mb-6 text-[#018801]'>Enter your registered email address.</p>
           <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
-            <img className='w-3 h-3 ' src={assets.mail_icon} alt="" />
+            
             <input className='bg-transparent outline-none text-white' type="email" placeholder='Email id' value={email}
               onChange={e => setEmail(e.target.value)} required />
           </div>
@@ -125,7 +124,7 @@ function ResetPassword() {
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>New Password</h1>
           <p className='text-center mb-6 text-[#018801]'>Enter the new password below.</p>
           <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
-            <img className='w-3 h-3 ' src={assets.lock_icon} alt="" />
+            
             <input className='bg-transparent outline-none text-white' type="password" placeholder='Password' value={newPassword}
               onChange={e => setNewPassword(e.target.value)} required />
           </div>
