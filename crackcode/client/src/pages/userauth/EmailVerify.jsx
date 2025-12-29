@@ -1,7 +1,5 @@
-
 import React, { useContext, useEffect } from 'react'
-import Navbar from '../components/Navbar'
-import { AppContent } from '../context/AppContext';
+import { AppContent } from '../../context/userauth/authenticationContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -60,12 +58,12 @@ function EmailVerify() {
     if(isLoggedIn && userData && userData.isAccountVerified){
         navigate('/')
     }
-  },[isLoggedIn, userData])
+  },[isLoggedIn, userData,navigate])
 
   return (
    
-    <div className='flex felx-col items-center justify-center min-h-screen bg-[#050505]'>
-      <Navbar/>
+    <div className='flex flex-col items-center justify-center min-h-screen bg-[#050505]'>
+      
 
       <form onSubmit={onSubmitHandler} className='bg-[#121212] p-8 rounded-lg shadow-lg w-96 text-sm'>
         <h1 className='text-white text-2xl font-semibold text-center mb-4'>Email Verify OTP</h1>
