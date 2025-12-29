@@ -1,6 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { AppContent } from '../../context/userauth/authenticationContext';
 import axios from 'axios';
+import Button from '../../components/common/Button';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
@@ -67,7 +68,7 @@ function EmailVerify() {
 
       <form onSubmit={onSubmitHandler} className='bg-[#121212] p-8 rounded-lg shadow-lg w-96 text-sm'>
         <h1 className='text-white text-2xl font-semibold text-center mb-4'>Email Verify OTP</h1>
-        <p className='text-center mb-6 text-[#018801]'>Enter this 6-digit code sent to your email id.</p>
+        <p className='text-center mb-6 text-orange-400'>Enter this 6-digit code sent to your email id.</p>
 
         <div className='flex justify-between mb-8' onPaste={handlePaste}>
           {Array(6).fill(0).map((_, index) => (
@@ -80,7 +81,7 @@ function EmailVerify() {
           ))}
         </div>
 
-        <button className='w-full py-3 bg-[#018801] hover:bg-[#018801a3] rounded-full text-white font-medium'>Verify Email</button>
+        <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
       </form>
     </div>
   )
