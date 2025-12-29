@@ -134,7 +134,7 @@ function ResetPassword() {
         <form onSubmit={onSubmitNewPassword} className='bg-[#121212] z-20 p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>New Password</h1>
           <p className='text-center mb-6 text-orange-400'>Enter the new password below.</p>
-          <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
+          <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600'>
             <RectangleEllipsis className='w-4 h-4 text-gray-400' />
             <input className='bg-transparent outline-none text-white' type="password" placeholder='Password' value={newPassword}
               onChange={e => setNewPassword(e.target.value)} required />
