@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import Button from '../../components/common/Button'
 import { useNavigate } from 'react-router-dom'
-import {Mail,RectangleEllipsis} from 'lucide-react'
+import { Mail, RectangleEllipsis } from 'lucide-react'
 import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 function ResetPassword() {
   const { backendUrl } = useContext(AppContent)
   axios.defaults.withCredentials = true
-  
+
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [newPassword, setNewPassword] = useState('')
@@ -80,17 +80,27 @@ function ResetPassword() {
 
   return (
     <div className='flex felx-col items-center justify-center min-h-screen bg-[#050505]'>
+
+
+      {/*Background video*/}
+      <video autoPlay loop muted playsInline className='absolute inset-0 w-full h-full object-cover z-0'>
+        <source src="/auth-bg.mp4" type="video/mp4" />
+      </video>
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/60 z-10"></div>
+
       <div onClick={() => navigate('/')} className="w-full absolute top-0 cursor-pointer">
-    
+
       </div>
 
       {/* 1. Enter Email Form */}
       {!isEmailSent &&
-        <form onSubmit={onSubmitEmail} className='bg-[#121212] p-8 rounded-lg shadow-lg w-96 text-sm'>
+        <form onSubmit={onSubmitEmail} className='bg-[#121212] z-20 p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>Reset Password</h1>
           <p className='text-center mb-6 text-orange-400'>Enter your registered email address.</p>
           <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
-            <Mail className='w-5 h-5 text-gray-400'/>
+            <Mail className='w-5 h-5 text-gray-400' />
             <input className='bg-transparent outline-none text-white ' type="email" placeholder='Email id' value={email}
               onChange={e => setEmail(e.target.value)} required />
           </div>
@@ -100,7 +110,7 @@ function ResetPassword() {
 
       {/* 2. Enter OTP Form */}
       {!isOtpSubmitted && isEmailSent &&
-        <form onSubmit={onSubmitOTP} className='bg-[#121212] p-8 rounded-lg shadow-lg w-96 text-sm'>
+        <form onSubmit={onSubmitOTP} className='bg-[#121212] z-20 p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>Reset Password OTP</h1>
           <p className='text-center mb-6 text-orange-400'>Enter this 6-digit code sent to your email id.</p>
 
@@ -120,11 +130,11 @@ function ResetPassword() {
 
       {/* 3. Enter New Password Form */}
       {isOtpSubmitted && isEmailSent &&
-        <form onSubmit={onSubmitNewPassword} className='bg-[#121212] p-8 rounded-lg shadow-lg w-96 text-sm'>
+        <form onSubmit={onSubmitNewPassword} className='bg-[#121212] z-20 p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>New Password</h1>
           <p className='text-center mb-6 text-orange-400'>Enter the new password below.</p>
           <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
-            <RectangleEllipsis className='w-4 h-4 text-gray-400'/>
+            <RectangleEllipsis className='w-4 h-4 text-gray-400' />
             <input className='bg-transparent outline-none text-white' type="password" placeholder='Password' value={newPassword}
               onChange={e => setNewPassword(e.target.value)} required />
           </div>
