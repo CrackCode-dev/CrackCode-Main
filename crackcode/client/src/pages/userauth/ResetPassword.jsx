@@ -1,7 +1,7 @@
-
 import React, { useContext, useState } from 'react'
+import Button from '../../components/common/Button'
 import { useNavigate } from 'react-router-dom'
-
+import {Mail} from 'lucide-react'
 import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -88,13 +88,13 @@ function ResetPassword() {
       {!isEmailSent &&
         <form onSubmit={onSubmitEmail} className='bg-[#121212] p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>Reset Password</h1>
-          <p className='text-center mb-6 text-[#018801]'>Enter your registered email address.</p>
+          <p className='text-center mb-6 text-orange-400'>Enter your registered email address.</p>
           <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
-            
-            <input className='bg-transparent outline-none text-white' type="email" placeholder='Email id' value={email}
+            <Mail className='w-5 h-5 text-white'/>
+            <input className='bg-transparent outline-none text-white placeholder-white' type="email" placeholder='Email id' value={email}
               onChange={e => setEmail(e.target.value)} required />
           </div>
-          <button className='w-full py-2.5 bg-[#018801] hover:bg-[#018801a3] rounded-full text-white font-medium'>Submit</button>
+          <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
         </form>
       }
 
@@ -102,7 +102,7 @@ function ResetPassword() {
       {!isOtpSubmitted && isEmailSent &&
         <form onSubmit={onSubmitOTP} className='bg-[#121212] p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>Reset Password OTP</h1>
-          <p className='text-center mb-6 text-[#018801]'>Enter this 6-digit code sent to your email id.</p>
+          <p className='text-center mb-6 text-orange-400'>Enter this 6-digit code sent to your email id.</p>
 
           <div className='flex justify-between mb-8 gap-1.5' onPaste={handlePaste}>
             {Array(6).fill(0).map((_, index) => (
@@ -114,7 +114,7 @@ function ResetPassword() {
               />
             ))}
           </div>
-          <button className='w-full py-2.5 bg-[#018801] hover:bg-[#018801a3] rounded-full text-white font-medium'>Submit</button>
+          <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
         </form>
       }
 
@@ -122,13 +122,13 @@ function ResetPassword() {
       {isOtpSubmitted && isEmailSent &&
         <form onSubmit={onSubmitNewPassword} className='bg-[#121212] p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>New Password</h1>
-          <p className='text-center mb-6 text-[#018801]'>Enter the new password below.</p>
+          <p className='text-center mb-6 text-orange-400'>Enter the new password below.</p>
           <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
-            
+            <Mail className='w-4 h-4 text-white'/>
             <input className='bg-transparent outline-none text-white' type="password" placeholder='Password' value={newPassword}
               onChange={e => setNewPassword(e.target.value)} required />
           </div>
-          <button className='w-full py-2.5 bg-[#018801] hover:bg-[#018801a3] rounded-full text-white font-medium'>Submit</button>
+          <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
         </form>
       }
 

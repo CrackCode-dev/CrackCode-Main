@@ -1,6 +1,4 @@
-
 import React, { useContext, useState } from 'react'
-
 import { useNavigate } from 'react-router-dom'
 import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
@@ -99,7 +97,7 @@ function Login() {
                             className='bg-transparent outline-none text-white' type="password" placeholder='Password' required />
                     </div>
 
-                    <p onClick={() => navigate('/reset-password')} className='mb-4 text-[#018801] cursor-pointer'>Forgot Password</p>
+                    <p onClick={() => navigate('/resetpassword')} className='mb-4 text-[#018801] cursor-pointer'>Forgot Password</p>
 
                     <button className='w-full py-2.5 rounded-full bg-[#018801] hover:bg-[#018801a3]
             text-white font-medium'>{state}</button>
