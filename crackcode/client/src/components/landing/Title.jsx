@@ -20,7 +20,7 @@ function Title() {
                 </p>
 
                 <div className='flex justify-center gap-4 mt-10'>
-                    <Button variant="primary" size="lg" icon={ChevronRight} iconPosition="right">
+                    <Button variant="primary" size="lg" icon={ChevronRight} iconPosition="right" onClick={() => navigate('/login')}>
                         Get Started
                     </Button>
 
