@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import Button from '../../components/common/Button'
 import { useNavigate } from 'react-router-dom'
-import {Mail} from 'lucide-react'
+import {Mail,RectangleEllipsis} from 'lucide-react'
 import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -90,8 +90,8 @@ function ResetPassword() {
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>Reset Password</h1>
           <p className='text-center mb-6 text-orange-400'>Enter your registered email address.</p>
           <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
-            <Mail className='w-5 h-5 text-white'/>
-            <input className='bg-transparent outline-none text-white placeholder-white' type="email" placeholder='Email id' value={email}
+            <Mail className='w-5 h-5 text-gray-400'/>
+            <input className='bg-transparent outline-none text-white ' type="email" placeholder='Email id' value={email}
               onChange={e => setEmail(e.target.value)} required />
           </div>
           <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
@@ -124,7 +124,7 @@ function ResetPassword() {
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>New Password</h1>
           <p className='text-center mb-6 text-orange-400'>Enter the new password below.</p>
           <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
-            <Mail className='w-4 h-4 text-white'/>
+            <RectangleEllipsis className='w-4 h-4 text-gray-400'/>
             <input className='bg-transparent outline-none text-white' type="password" placeholder='Password' value={newPassword}
               onChange={e => setNewPassword(e.target.value)} required />
           </div>
