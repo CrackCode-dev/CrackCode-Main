@@ -5,6 +5,7 @@ import Button from '../../components/common/Button'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { UserRound, Mail, LockKeyhole } from 'lucide-react'
+import Footer from '../../components/common/Footer'
 
 
 function Login() {
@@ -67,6 +68,7 @@ function Login() {
     return (
 
         <div className='flex flex-col items-center justify-center min-h-screen overflow-hidden'>
+           
 
             {/*Background video*/}
             <video autoPlay loop muted playsInline className='absolute inset-0 w-full h-full object-cover z-0'>
@@ -125,9 +127,11 @@ function Login() {
                             <span onClick={() => setState('Sign Up')} className='text-orange-400  cursor-pointer underline'>Sign Up</span>
                         </p>
                     )}
-
+            
             </div>
+            <Footer />
         </div>
+        
     )
 }
 
