@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import Header from '../../components/common/Header'
-import Footer from '../../components/common/Footer'
-import logo from '../../assets/logo.png'
-import userIcon from '../../assets/userprofileicon.png'
+import Button from '../../components/common/Button'
+import logo from '../../assets/logo/crackcode_logo.png'
+import { CircleUserIcon,Upload} from 'lucide-react'
+
 
 
 const GameProfile = () => {
@@ -21,8 +21,13 @@ const GameProfile = () => {
     ];
 
     const handleProceed = () => {
-        if (!selectedAvatar && !username.trim()) {
-            alert('Please select an avatar and enter a username');
+        if (!selectedAvatar) {
+            alert('Please select an avatar ');
+            return;
+        }
+        if (!username.trim()){
+            alert('Please enter a username');
+            return;
         }
     };
 
@@ -55,7 +60,7 @@ const GameProfile = () => {
                             className={`w-24 h-24 rounded-full bg-gray-900
                 transition-all duration-300 hover:scale-110
                 ${selectedAvatar === avatar.id
-                                    ? 'ring-4 ring-green-500 scale-110'
+                                    ? 'ring-4 ring-orange-400 scale-110'
                                     : 'ring-2 ring-gray-700'
                                 }`}
                         >
@@ -69,7 +74,7 @@ const GameProfile = () => {
               transition-all duration-300 hover:scale-110 hover:bg-gray-700
               ring-2 ring-gray-700"
                     >
-
+                         <Upload className='w-5 h-5 text-gray-400' />
                         <span className="text-xs text-gray-400 mt-1">Upload</span>
                     </button>
                 </div>
@@ -82,30 +87,21 @@ const GameProfile = () => {
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none ">
-                            <img src= {userIcon} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
+                             <CircleUserIcon className='w-7 h-7 text-gray-400' />
                         </div>
                         <input
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter an username"
-                            className="w-full pl-20 pr-6 py-4 bg-gray-800 rounded-full
-                                        text-white placeholder-gray-500
-                                        focus:outline-none focus:ring-2 focus:ring-green-500
-                                        transition-all"
-                        />
+                            className="w-full pl-15 pr-6 py-4 bg-gray-800 rounded-full
+                                        text-white
+                                        focus:outline-none focus:ring-2 focus:ring-orange-400
+                                        transition-all" placeholder="Enter an username" required/>
+
                     </div>
 
                     {/* Proceed Button */}
-                    <button
-                        onClick={handleProceed}
-                        className="w-full py-4 bg-green-600 hover:bg-green-700
-                                text-white font-semibold rounded-full
-                                transition-all duration-300 hover:scale-105
-                                active:scale-95"
-                    >
-                        Proceed
-                    </button>
+                    <Button variant='primary' size='lg' fullWidth type='submit' className='!rounded-full h-auto py-2' onClick={handleProceed}  >Proceed</Button>
                 </div>
             </div>
         </div>
