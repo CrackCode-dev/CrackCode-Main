@@ -65,7 +65,7 @@ function EmailVerify() {
   return (
 
     <div className='flex flex-col items-center justify-center min-h-screen bg-[#050505]'>
-
+      <Header/>
 
       {/*Background video*/}
       <video autoPlay loop muted playsInline className='absolute inset-0 w-full h-full object-cover z-0'>
