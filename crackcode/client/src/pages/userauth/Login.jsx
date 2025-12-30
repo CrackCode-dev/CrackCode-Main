@@ -72,14 +72,14 @@ function Login() {
 
             {/*Background video*/}
             <video autoPlay loop muted playsInline className='absolute inset-0 w-full h-full object-cover z-0'>
-                <source src="/auth-bg.mp4" type="video/mp4" />
+                <source src='/auth-bg.mp4' type='video/mp4' />
             </video>
 
             {/* Dark overlay */}
-            <div className="absolute inset-0 bg-black/60 z-10"></div>
+            <div className='absolute inset-0 bg-black/60 z-10'></div>
 
             
-            <div onClick={() => navigate('/')} className="w-full absolute top-0 cursor-pointer">
+            <div onClick={() => navigate('/')} className='w-full absolute top-0 cursor-pointer'>
 
             </div>
 
@@ -89,7 +89,7 @@ function Login() {
 
                 <form onSubmit={onSubmitHandler}>
                     {state === 'Sign Up' && (
-                        <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600 focus-within:ring-1 focus-within:ring-white transition-all duration-300 ease-in-out">
+                        <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600 focus-within:ring-1 focus-within:ring-white transition-all duration-300 ease-in-out'>
                             <UserRound className='w-5 h-5 text-gray-400' />
                             <input onChange={e => setName(e.target.value)}
                                 value={name}
@@ -97,7 +97,7 @@ function Login() {
                         </div>
                     )}
 
-                    <div className="mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600 focus-within:ring-1 focus-within:ring-white transition-all duration-300 ease-in-out">
+                    <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600 focus-within:ring-1 focus-within:ring-white transition-all duration-300 ease-in-out'>
                         <Mail className='w-5 h-5 text-gray-400' />
                         <input
                             onChange={e => setEmail(e.target.value)}
@@ -114,7 +114,7 @@ function Login() {
 
                     <p onClick={() => navigate('/resetpassword')} className='mb-4 text-orange-400 cursor-pointer'>Forgot Password</p>
 
-                    <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >{state}</Button>
+                    <Button variant='primary' size='md' fullWidth type='submit' className='!rounded-full h-auto py-2'  >{state}</Button>
                 </form>
 
                 {state === 'Sign Up' ? (
