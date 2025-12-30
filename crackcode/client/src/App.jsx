@@ -19,9 +19,9 @@ function App() {
         <Route path='/home' element={<Home />} />
         <Route path='/login' element={<Login />} />
         <Route path='/email-verify' element={<EmailVerify />} />
-        <Route path='/resetpassword' element={<ResetPassword />} />
-        <Route path='/gameprofile' element={<GameProfile />} />
-        <Route path='/userprofile' element={<UserProfile />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path='/game-profile' element={<GameProfile />} />
+        <Route path='/user-profile' element={<UserProfile />} />
       </Routes>
     </div>
   )
