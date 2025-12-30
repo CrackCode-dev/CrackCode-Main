@@ -89,22 +89,22 @@ function Login() {
 
                 <form onSubmit={onSubmitHandler}>
                     {state === 'Sign Up' && (
-                        <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600'>
+                        <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-700'>
                             <UserRound className='w-5 h-5 text-gray-400' />
                             <input onChange={e => setName(e.target.value)}
                                 value={name}
-                                className='bg-transparent outline-none text-white' type="text" placeholder='Full Name' required />
+                                className='bg-transparent outline-none text-white w-full' type="text" placeholder='Full Name' required />
                         </div>
                     )}
 
-                    <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600'>
+                    <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-700'>
                         <Mail className='w-5 h-5 text-gray-400' />
                         <input
                             onChange={e => setEmail(e.target.value)}
-                            value={email} className='bg-transparent outline-none text-white' type="email" placeholder='Email id' required />
+                            value={email} className='bg-transparent outline-none text-white w-full' type="email" placeholder='Email id' required />
                     </div>
 
-                    <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600'>
+                    <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-700'>
                         <LockKeyhole className='w-5 h-5 text-gray-400' />
                         <input
                             onChange={e => setPassword(e.target.value)}

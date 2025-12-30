@@ -100,7 +100,7 @@ function ResetPassword() {
         <form onSubmit={onSubmitEmail} className='bg-[#121212] z-20 p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>Reset Password</h1>
           <p className='text-center mb-6 text-orange-400'>Enter your registered email address.</p>
-          <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-500'>
+          <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-700'>
             <Mail className='w-5 h-5 text-gray-400' />
             <input className='bg-transparent outline-none text-white ' type="email" placeholder='Email id' value={email}
               onChange={e => setEmail(e.target.value)} required />
@@ -118,7 +118,7 @@ function ResetPassword() {
           <div className='flex justify-between mb-8 gap-1.5' onPaste={handlePaste}>
             {Array(6).fill(0).map((_, index) => (
               <input type="text" maxLength='1' key={index} required
-                className='w-12 h-12 bg-gray-500 text-white text-center text-xl rounded-md'
+                className='w-12 h-12 bg-gray-700 text-white text-center text-xl rounded-md'
                 ref={e => inputRefs.current[index] = e}
                 onInput={(e) => handleInput(e, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
@@ -134,7 +134,7 @@ function ResetPassword() {
         <form onSubmit={onSubmitNewPassword} className='bg-[#121212] z-20 p-8 rounded-lg shadow-lg w-96 text-sm'>
           <h1 className='text-white text-2xl font-semibold text-center mb-4'>New Password</h1>
           <p className='text-center mb-6 text-orange-400'>Enter the new password below.</p>
-          <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-600'>
+          <div className='mb-4 flex items-center gap-3 w-full px-5 py-2.5 rounded-full bg-gray-700'>
             <RectangleEllipsis className='w-4 h-4 text-gray-400' />
             <input className='bg-transparent outline-none text-white' type="password" placeholder='Password' value={newPassword}
               onChange={e => setNewPassword(e.target.value)} required />
