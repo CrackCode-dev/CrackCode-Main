@@ -1,9 +1,9 @@
 import React, { useContext, useEffect } from 'react'
-import { AppContent } from '../../context/userauth/authenticationContext';
-import axios from 'axios';
-import Button from '../../components/common/Button';
-import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { AppContent } from '../../context/userauth/authenticationContext'
+import axios from 'axios'
+import Button from '../../components/common/Button'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router-dom'
 import Footer from '../../components/common/Footer'
 
 function EmailVerify() {
@@ -65,15 +65,15 @@ function EmailVerify() {
   return (
 
     <div className='flex flex-col items-center justify-center min-h-screen bg-[#050505]'>
-
+  
 
       {/*Background video*/}
       <video autoPlay loop muted playsInline className='absolute inset-0 w-full h-full object-cover z-0'>
-        <source src="/auth-bg.mp4" type="video/mp4" />
+        <source src='/auth-bg.mp4' type='video/mp4' />
       </video>
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black/60 z-10"></div>
+      <div className='absolute inset-0 bg-black/60 z-10'></div>
 
 
 
@@ -83,8 +83,8 @@ function EmailVerify() {
 
         <div className='flex justify-between mb-8' onPaste={handlePaste}>
           {Array(6).fill(0).map((_, index) => (
-            <input type="text" maxLength='1' key={index} required
-              className='w-12 h-12 bg-gray-600 text-white text-center text-xl rounded-md'
+            <input type='text' maxLength='1' key={index} required
+              className='w-12 h-12 bg-gray-700 text-white text-center text-xl rounded-md'
               ref={e => inputRefs.current[index] = e}
               onInput={(e) => handleInput(e, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
@@ -92,7 +92,7 @@ function EmailVerify() {
           ))}
         </div>
 
-        <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
+        <Button variant='primary' size='md' fullWidth type='submit' className='!rounded-full h-auto py-2'  >Submit</Button>
       </form>
       <Footer/>
     </div>
