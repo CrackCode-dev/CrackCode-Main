@@ -109,7 +109,7 @@ function Login() {
                         <input
                             onChange={e => setPassword(e.target.value)}
                             value={password}
-                            className='bg-transparent outline-none text-white' type="password" placeholder='Password' required />
+                            className='bg-transparent outline-none text-white w-full 'type="password" placeholder='Password' required />
                     </div>
 
                     <p onClick={() => navigate('/resetpassword')} className='mb-4 text-orange-400 cursor-pointer'>Forgot Password</p>
