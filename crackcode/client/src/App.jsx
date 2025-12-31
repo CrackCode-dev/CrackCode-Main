@@ -5,8 +5,6 @@ import Landing from './pages/landing/Landing'
 import EmailVerify from './pages/userauth/EmailVerify'
 import Login from './pages/userauth/Login'
 import ResetPassword from './pages/userauth/ResetPassword'
-import GameProfile from './pages/gameprofile/gameprofile'
-import UserProfile from './pages/userprofile/userprofile'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
