@@ -8,28 +8,21 @@ export const getUserStatistics = async (req, res) => {
 
     const userId = req.user.id;
 
-    // Only solved cases
     const solvedCases = await Case.find({
       userId,
-      isSolved: true
+      isSolved: true,
     });
 
-    /* =========================
-       Difficulty Distribution
-    ========================= */
     const difficultyStats = {
       Easy: 0,
       Medium: 0,
-      Hard: 0
+      Hard: 0,
     };
 
-    /* =========================
-       Learning Distribution
-    ========================= */
     const learningStats = {
       "Data Structures": 0,
       "Algorithms": 0,
-      "Web Development": 0
+      "Web Development": 0,
     };
 
     solvedCases.forEach(c => {
@@ -50,13 +43,13 @@ export const getUserStatistics = async (req, res) => {
       );
     }
 
-    return res.status(200).json({
+    res.status(200).json({
       difficultyDistribution: difficultyStats,
-      learningDistribution: learningPercentages
+      learningDistribution: learningPercentages,
     });
 
   } catch (error) {
     console.error("Statistics Error:", error);
-    return res.status(500).json({ message: "Failed to load statistics" });
+    res.status(500).json({ message: "Failed to load statistics" });
   }
 };
