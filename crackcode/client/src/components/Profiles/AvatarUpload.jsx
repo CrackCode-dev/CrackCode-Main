@@ -1,5 +1,6 @@
-import React, { useState, useRef,useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Upload, Link2, X, ZoomIn, RotateCw } from 'lucide-react'
+import Button from '../common/Button';
 
 const AvatarUpload = ({
     onAvatarSelect,
@@ -22,16 +23,16 @@ const AvatarUpload = ({
     const fileInputRef = useRef(null);
 
     //Reseting upladed avatar when deafult avatar changes
-    useEffect(()    =>{
+    useEffect(() => {
 
         setAvatar(currentAvatar)
         setTempImage('')
         setShowCrop(false)
         setZoom(1)
         setRotation(0)
-        if(fileInputRef.current) fileInputRef.current.value =''
-    },[currentAvatar])
-    
+        if (fileInputRef.current) fileInputRef.current.value = ''
+    }, [currentAvatar])
+
 
     //shape style(circle/square)
     const shapeClass = shape === 'circle' ? 'rounded-full' : 'rounded-xl';
@@ -142,15 +143,15 @@ const AvatarUpload = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-900 rounded-2xl p-6 max-w-xl w-full relative">
-                <button onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-white">
-                    <X className="w-6 h-6" />
+        <div className='fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4'>
+            <div className='bg-gray-900 rounded-2xl p-6 max-w-xl w-full relative'>
+                <button onClick={closeModal} className='absolute top-4 right-4 text-gray-400 hover:text-white'>
+                    <X className='w-6 h-6' />
                 </button>
 
                 {!showCrop ? (
                     <>
-                        <h2 className="text-2xl font-bold mb-4 text-white">Upload Your Avatar</h2>
+                        <h2 className='text-2xl font-bold mb-4 text-white'>Upload Your Avatar</h2>
 
                         {allowDragDrop && (
                             <div {...dragEvents} onClick={() => fileInputRef.current?.click()}
@@ -166,42 +167,42 @@ const AvatarUpload = ({
                         {allowUrl && (
                             <div className="flex gap-2">
                                 <div className="relative flex-1">
-                                    <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                                    <div className='absolute inset-y-0 left-3 flex items-center pointer-events-none'>
                                         <Link2 className="w-5 h-5 text-gray-400" />
                                     </div>
                                     <input type="url" value={imageUrl} onChange={e => setImageUrl(e.target.value)}
-                                        placeholder="Paste image URL"
+                                        placeholder='Paste image URL'
                                         onKeyDown={e => e.key === 'Enter' && importUrl()}
-                                        className="w-full pl-10 pr-3 py-2 bg-gray-800 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400" />
+                                        className='w-full pl-10 pr-3 py-2 bg-gray-800 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-400' />
                                 </div>
-                                <button onClick={importUrl} className="px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-xl text-white">
-                                    Import
-                                </button>
+
+                                <Button variant='primary' onClick={importUrl}>Import</Button>
                             </div>
                         )}
                     </>
 
                 ) : (
                     <>
-                        <h2 className="text-2xl font-bold mb-4 text-white">Adjust Your Avatar</h2>
+                        <h2 className='text-2xl font-bold mb-4 text-white'>Adjust Your Avatar</h2>
                         <div className={`w-64 h-64 mx-auto ${shapeClass} overflow-hidden bg-gray-800 mb-4`}>
-                            <img src={tempImage} alt="Preview" className="w-full h-full object-cover"
+                            <img src={tempImage} alt='Preview' className='w-full h-full object-cover'
                                 style={{ transform: `scale(${zoom}) rotate(${rotation}deg)` }} />
                         </div>
 
-                        <div className="mb-4">
-                            <label className="text-white flex items-center gap-2 mb-1"><ZoomIn /> Zoom: {zoom.toFixed(1)}x</label>
-                            <input type="range" min="1" max="3" step="0.1" value={zoom} onChange={e => setZoom(+e.target.value)} className="w-full" />
+                        <div className='mb-4'>
+                            <label className='text-white flex items-center gap-2 mb-1'><ZoomIn /> Zoom: {zoom.toFixed(1)}x</label>
+                            <input type="range" min="1" max="3" step="0.1" value={zoom} onChange={e => setZoom(+e.target.value)} className='w-full' />
                         </div>
 
                         <div className="mb-4">
-                            <label className="text-white flex items-center gap-2 mb-1"><RotateCw /> Rotation: {rotation}°</label>
-                            <input type="range" min="0" max="360" step="15" value={rotation} onChange={e => setRotation(+e.target.value)} className="w-full" />
+                            <label className='text-white flex items-center gap-2 mb-1'><RotateCw /> Rotation: {rotation}°</label>
+                            <input type='range' min='0' max='360' step='15' value={rotation} onChange={e => setRotation(+e.target.value)} className='w-full' />
                         </div>
 
-                        <div className="flex gap-2">
-                            <button onClick={closeModal} className="flex-1 py-2 bg-gray-800 hover:bg-gray-700 rounded-xl text-white">Cancel</button>
-                            <button onClick={applyCrop} className="flex-1 py-2 bg-orange-500 hover:bg-orange-600 rounded-xl text-white">Apply</button>
+                        <div className='flex gap-2'>
+
+                            <Button variant='outline' onClick={closeModal} className='flex-1 py-2'>Cancel</Button>
+                            <Button variant='primary' onClick={applyCrop} className='flex-1 py-2'>Apply</Button>
                         </div>
                     </>
                 )}

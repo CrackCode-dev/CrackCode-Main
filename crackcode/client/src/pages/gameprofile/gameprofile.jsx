@@ -3,7 +3,7 @@ import Button from '../../components/common/Button'
 import logo from '../../assets/logo/crackcode_logo.png'
 import { CircleUserIcon, Upload } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import AvatarUpload from '../../components/Profiles/AvatarUplaod'
+import AvatarUpload from '../../components/Profiles/AvatarUpload'
 
 
 
@@ -33,10 +33,10 @@ const GameProfile = () => {
         const newErrors = [];
 
         if (!selectedAvatar && !username.trim()) {
-            newErrors.push('Please select an Avatar and a Username!')
+            newErrors.push('Please select an Avatar and a Username !')
         } else {
-            if (!selectedAvatar) newErrors.push('Please select an Avatar!');
-            if (!username.trim()) newErrors.push('Please enter a username!');
+            if (!selectedAvatar) newErrors.push('Please select an Avatar !');
+            if (!username.trim()) newErrors.push('Please enter a username !');
             else if (username.length < 3) newErrors.push('Username must be at least 3 characters !');
         }
         setErrors(newErrors);
