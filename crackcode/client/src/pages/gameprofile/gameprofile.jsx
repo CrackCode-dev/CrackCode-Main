@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import Button from '../../components/common/Button'
 import logo from '../../assets/logo/crackcode_logo.png'
 import { CircleUserIcon, Upload } from 'lucide-react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'
+import AvatarUpload from '../../components/Profiles/AvatarUplaod'
 
 
 
@@ -12,6 +13,8 @@ const GameProfile = () => {
 
     const [selectedAvatar, setSelectedAvatar] = useState('');
     const [username, setUsername] = useState('');
+    const [uploadedAvatar, setUploadedAvatar] = useState('');
+    const [showAvatarUpload, setShowAvatarUpload] = useState(false);
 
     const [errors, setErrors] = useState([]); //array to hold all the errors
 
@@ -43,6 +46,17 @@ const GameProfile = () => {
         }
     };
 
+    {/*handles avatr section */ }
+
+    const handleAvatarSelection = (avatarData) => {
+        setUploadedAvatar(avatarData);
+        setSelectedAvatar('uploaded');
+        setShowAvatarUpload(false);
+    };
+
+    const handleCloseUpload = () => {
+        setShowAvatarUpload(false);
+    }
 
     return (
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
@@ -58,7 +72,7 @@ const GameProfile = () => {
                     <h1 className="text-4xl md:text-5xl font-bold text-white">
                         Choose your Detective Avatar
                     </h1>
-                    <p className="text-gray-400 text-lg">
+                    <p className="text-gray-300 text-lg">
                         Select the avatar that matches your vibe
                     </p>
                 </div>
@@ -81,14 +95,26 @@ const GameProfile = () => {
                     ))}
 
                     {/* Upload Button */}
+
                     <button
-                        className="w-24 h-24 rounded-full bg-gray-800 
-              flex flex-col items-center justify-center
-              transition-all duration-300 hover:scale-110 hover:bg-gray-700
-              ring-2 ring-gray-700"
+                        onClick={() => setShowAvatarUpload(true)}
+                        className={`w-24 h-24 rounded-full bg-gray-900 
+                        flex flex-col items-center justify-center
+                        transition-all duration-300 hover:scale-110 hover:bg-gray-700
+                        ring-2 ring-gray-700
+                        ${selectedAvatar === 'uploaded' ? 'ring-2 ring-orange-400 scale-110' : ''}`}
                     >
-                        <Upload className='w-5 h-5 text-gray-400' />
-                        <span className="text-xs text-gray-400 mt-1">Upload</span>
+                        {uploadedAvatar ? (
+                            <img src={uploadedAvatar} alt="Uploaded Avatar " className='w-full h-full rounded-full object-cover' />
+                        ) : (
+                            <>
+                                <Upload className='w-5 h-5 text-gray-300' />
+                                <span className="text-xs text-gray-300 mt-1">Upload</span>
+                            </>
+                        )}
+
+
+
                     </button>
                 </div>
 
@@ -100,7 +126,7 @@ const GameProfile = () => {
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none ">
-                            <CircleUserIcon className='w-7 h-7 text-gray-400' />
+                            <CircleUserIcon className='w-7 h-7 text-gray-300' />
                         </div>
                         <input
                             type="text"
@@ -111,7 +137,7 @@ const GameProfile = () => {
                             }}
                             className={`w-full pl-15 pr-6 py-4 bg-gray-800 rounded-full
                                         text-white transition-all
-                                        focus:outline-none focus:ring-2
+                                        focus:outline-none focus:ring-2 placeholder-gray-300
                                         ${errors.some(err => err.toLowerCase().includes('username'))
                                     ? 'ring-2 ring-red-500'
                                     : 'focus:ring-orange-400'}`}
@@ -132,6 +158,18 @@ const GameProfile = () => {
                     <Button variant='primary' size='lg' fullWidth type='button' className='!rounded-full h-auto py-2' onClick={handleProceed}  >Proceed</Button>
                 </div>
             </div>
+
+            {/* Avatar Upload Modal*/}
+            {showAvatarUpload && (
+                <AvatarUpload
+                    isOpen={showAvatarUpload}
+                    onClose={handleCloseUpload}
+                    onAvatarSelect={handleAvatarSelection}
+                    shape='Circle'
+                    allowUrl={true}
+                    allowDragDrop={true}
+                />
+            )}
         </div>
     );
 };
