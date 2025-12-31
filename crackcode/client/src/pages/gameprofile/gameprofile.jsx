@@ -82,7 +82,10 @@ const GameProfile = () => {
                     {avatars.map((avatar) => (
                         <button
                             key={avatar.id}
-                            onClick={() => setSelectedAvatar(avatar.id)}
+                            onClick={() => {
+                                setSelectedAvatar(avatar.id);
+                                setUploadedAvatar('');}
+                            }
                             className={`w-24 h-24 rounded-full bg-gray-900
                 transition-all duration-300 hover:scale-110
                 ${selectedAvatar === avatar.id
