@@ -27,4 +27,4 @@ const caseSchema = new mongoose.Schema(
 
 const Case = mongoose.model("Case", caseSchema);
 
-export default Case; // ✅ REQUIRED
+export default Case; 
