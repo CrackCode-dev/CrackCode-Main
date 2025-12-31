@@ -1,14 +1,19 @@
 import React, { useState } from 'react'
 import Button from '../../components/common/Button'
 import logo from '../../assets/logo/crackcode_logo.png'
-import { CircleUserIcon,Upload} from 'lucide-react'
+import { CircleUserIcon, Upload } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
 
 
 
 const GameProfile = () => {
 
-    const [selectedAvatar, setSelectedAvatar] = useState(null);
+    const navigate = useNavigate();
+
+    const [selectedAvatar, setSelectedAvatar] = useState('');
     const [username, setUsername] = useState('');
+
+    const [errors, setErrors] = useState([]); //array to hold all the errors
 
     const avatars = [
         { id: 1 },
@@ -21,13 +26,20 @@ const GameProfile = () => {
     ];
 
     const handleProceed = () => {
-        if (!selectedAvatar) {
-            alert('Please select an avatar ');
-            return;
+
+        const newErrors = [];
+
+        if (!selectedAvatar && !username.trim()) {
+            newErrors.push('Please select an Avatar and a Username!')
+        } else {
+            if (!selectedAvatar) newErrors.push('Please select an Avatar!');
+            if (!username.trim()) newErrors.push('Please enter a username!');
+            else if (username.length < 3) newErrors.push('Username must be at least 3 characters !');
         }
-        if (!username.trim()){
-            alert('Please enter a username');
-            return;
+        setErrors(newErrors);
+
+        if (newErrors.length === 0) {
+            navigate('/user-profile');
         }
     };
 
@@ -60,8 +72,9 @@ const GameProfile = () => {
                             className={`w-24 h-24 rounded-full bg-gray-900
                 transition-all duration-300 hover:scale-110
                 ${selectedAvatar === avatar.id
-                                    ? 'ring-4 ring-orange-400 scale-110'
+                                    ? 'ring-2 ring-orange-400 scale-110'
                                     : 'ring-2 ring-gray-700'
+
                                 }`}
                         >
                         </button>
@@ -74,7 +87,7 @@ const GameProfile = () => {
               transition-all duration-300 hover:scale-110 hover:bg-gray-700
               ring-2 ring-gray-700"
                     >
-                         <Upload className='w-5 h-5 text-gray-400' />
+                        <Upload className='w-5 h-5 text-gray-400' />
                         <span className="text-xs text-gray-400 mt-1">Upload</span>
                     </button>
                 </div>
@@ -87,21 +100,36 @@ const GameProfile = () => {
 
                     <div className="relative">
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none ">
-                             <CircleUserIcon className='w-7 h-7 text-gray-400' />
+                            <CircleUserIcon className='w-7 h-7 text-gray-400' />
                         </div>
                         <input
                             type="text"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            className="w-full pl-15 pr-6 py-4 bg-gray-800 rounded-full
-                                        text-white
-                                        focus:outline-none focus:ring-2 focus:ring-orange-400
-                                        transition-all" placeholder="Enter an username" required/>
+                            onChange={(e) => {
+                                setUsername(e.target.value)
+                                setErrors([]);
+                            }}
+                            className={`w-full pl-15 pr-6 py-4 bg-gray-800 rounded-full
+                                        text-white transition-all
+                                        focus:outline-none focus:ring-2
+                                        ${errors.some(err => err.toLowerCase().includes('username'))
+                                    ? 'ring-2 ring-red-500'
+                                    : 'focus:ring-orange-400'}`}
+                            placeholder="Enter an username" required />
 
                     </div>
 
+                    {/*Error display section*/}
+                    {errors.length > 0 && (
+                        <div className='space-y-1'>
+                            {errors.map((err, index) => (
+                                <p key={index} className='text-red-400 text-sm text-left ml-4'>{err}</p>
+                            ))}
+                        </div>
+                    )}
+
                     {/* Proceed Button */}
-                    <Button variant='primary' size='lg' fullWidth type='submit' className='!rounded-full h-auto py-2' onClick={handleProceed}  >Proceed</Button>
+                    <Button variant='primary' size='lg' fullWidth type='button' className='!rounded-full h-auto py-2' onClick={handleProceed}  >Proceed</Button>
                 </div>
             </div>
         </div>
