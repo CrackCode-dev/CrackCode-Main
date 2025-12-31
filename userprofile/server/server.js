@@ -12,14 +12,9 @@ import statisticsRoutes from "./routes/statisticsRoutes.js";
 
 const app = express();
 
-/* ===============================
-   Database Connection
-================================ */
 await connectDB();
 
-/* ===============================
-   Middleware
-================================ */
+
 app.use(express.json());
 app.use(cors());
 
@@ -34,14 +29,10 @@ app.use("/api/profile", profileRoutes);
 
 app.use("/api/statistics", statisticsRoutes);
 
-/* ===============================
-   Static Files
-================================ */
+
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
-/* ===============================
-   Server Start
-================================ */
+
 const PORT = process.env.PORT || 4000;
 
 app.listen(PORT, () =>
