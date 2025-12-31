@@ -112,7 +112,7 @@ function Login() {
                             className='bg-transparent outline-none text-white w-full 'type="password" placeholder='Password' required />
                     </div>
 
-                    <p onClick={() => navigate('/resetpassword')} className='mb-4 text-orange-400 cursor-pointer'>Forgot Password</p>
+                    <p onClick={() => navigate('/reset-password')} className='mb-4 text-orange-400 cursor-pointer'>Forgot Password</p>
 
                     <Button variant='primary' size='md' fullWidth type='submit' className='!rounded-full h-auto py-2'  >{state}</Button>
                 </form>
