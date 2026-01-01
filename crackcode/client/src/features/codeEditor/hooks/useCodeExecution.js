@@ -124,7 +124,7 @@
 
 
 
-import { useEditor } from '../../../context/code-editor/EditorContext';
+import { useEditor } from '../../../context/codeEditor/EditorContext';
 import { submitCodeToJudge0 } from '../../../services/api/judge0Service';
 import { generateDetectiveMessage } from '../utils/detectiveMessages';
 
