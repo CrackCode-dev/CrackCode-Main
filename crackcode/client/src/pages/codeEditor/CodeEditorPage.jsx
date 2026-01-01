@@ -1,9 +1,9 @@
 import React from 'react';
 import { useParams } from "react-router-dom";
-import { EditorProvider } from "../../context/code-editor/EditorContext";
-import { useProblemData } from "../../features/code-editor/hooks/useProblemData";
-import CaseDetails from "../../components/code-editor/CaseDetails";
-import EditorWrapper from "../../components/code-editor/EditorWrapper";
+import { EditorProvider } from "../../context/codeEditor/EditorContext";
+import { useProblemData } from "../../features/codeEditor/hooks/useProblemData";
+import CaseDetails from "../../components/codeEditor/CaseDetails";
+import EditorWrapper from "../../components/codeEditor/EditorWrapper";
 
 const CodeEditorContent = () => {
   const { problemId } = useParams();
