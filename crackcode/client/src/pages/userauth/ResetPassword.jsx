@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import Button from '../../components/common/Button'
+import Button from '../../components/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import { Mail, RectangleEllipsis } from 'lucide-react'
 import { AppContent } from '../../context/userauth/authenticationContext'
