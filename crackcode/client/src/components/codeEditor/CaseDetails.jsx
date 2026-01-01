@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEditor } from '../../context/code-editor/EditorContext';
+import { useEditor } from '../../context/codeEditor/EditorContext';
 import CaseHeader from './CaseHeader';
 import ObjectivesList from './ObjectivesList';
 import RequestClueButton from './RequestClueButton';
@@ -25,31 +25,30 @@ const CaseDetails = () => {
   }
 
   return (
-    <div className="h-full bg-[#1a1a1a] text-gray-100 p-8 overflow-y-auto">
-      {/* Case Header */}
-      <CaseHeader 
-        caseNumber={currentProblem.caseNumber}
-        difficulty={currentProblem.difficulty}
-      />
-
-      {/* Case Title */}
-      <h1 className="text-3xl font-bold text-white mb-4">
-        {currentProblem.title}
-      </h1>
-
-      {/* Case Description with Detective Narrative */}
-      <p className="text-gray-300 text-base leading-relaxed mb-8">
-        {currentProblem.description}
-      </p>
-
-      {/* Objectives Section */}
-      <ObjectivesList objectives={currentProblem.objectives} />
-
-      {/* Request Clue Button */}
-      <RequestClueButton clue={currentProblem.clue} />
-
-      {/* Example Card */}
-      <ExampleCard example={currentProblem.example} />
+    <div className="h-full bg-[#1a1a1a] text-gray-100 overflow-y-auto">
+      {/* ✅ FIXED: Better padding and spacing */}
+      <div className="p-8 space-y-6">
+        <CaseHeader 
+          caseNumber={currentProblem.caseNumber}
+          difficulty={currentProblem.difficulty}
+        />
+        
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-3">
+            {currentProblem.title}
+          </h1>
+          
+          <p className="text-gray-300 text-base leading-relaxed">
+            {currentProblem.description}
+          </p>
+        </div>
+        
+        <ObjectivesList objectives={currentProblem.objectives} />
+        
+        <RequestClueButton clue={currentProblem.clue} />
+        
+        <ExampleCard example={currentProblem.example} />
+      </div>
     </div>
   );
 };
