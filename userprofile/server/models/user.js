@@ -4,45 +4,60 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true
+      required: true,
     },
 
     email: {
       type: String,
       required: true,
-      unique: true
+      unique: true,
     },
 
     password: {
       type: String,
-      required: true
+      required: true,
     },
 
     // Profile fields
     avatar: {
       type: String,
-      default: ""
+      default: "",
     },
 
     bio: {
       type: String,
-      default: ""
+      default: "",
     },
 
-    // Account Settings (Configure Email)
+    // Account Settings
     emailSettings: {
       notifications: {
         type: Boolean,
-        default: true
+        default: true,
       },
       securityAlerts: {
         type: Boolean,
-        default: true
-      }
-    }
+        default: true,
+      },
+    },
+
+    // 🏆 Achievements
+    achievements: [
+      {
+        achievement: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Achievement",
+          required: true,
+        },
+        unlockedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
-    timestamps: true
+    timestamps: true,
   }
 );
 
