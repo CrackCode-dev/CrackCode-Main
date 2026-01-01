@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AppContent } from '../../context/userauth/authenticationContext'
-import Button from '../../components/common/Button'
+import Button from '../../components/ui/Button'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { UserRound, Mail, LockKeyhole } from 'lucide-react'

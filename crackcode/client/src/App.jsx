@@ -38,7 +38,7 @@ import Login from './pages/userauth/Login'
 import ResetPassword from './pages/userauth/ResetPassword'
 import GameProfile from './pages/gameprofile/gameprofile'
 import UserProfile from './pages/userprofile/userprofile'
-import CodeEditorPage from './pages/codeEditor/CodeEditorPage' // Import the editor page
+//import CodeEditorPage from './pages/codeEditor/CodeEditorPage' // Import the editor page
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -55,8 +55,8 @@ function App() {
         <Route path='/game-profile' element={<GameProfile />} />
         <Route path='/user-profile' element={<UserProfile />} />
         
-        {/* ✅ Temporary testing route for the Code Editor */}
-        <Route path='/solve/:problemId' element={<CodeEditorPage />} />
+        {/* ✅ Temporary testing route for the Code Editor 
+        <Route path='/solve/:problemId' element={<CodeEditorPage />} />*/}
       </Routes>
     </div>
   )
