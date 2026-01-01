@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEditor } from '../../context/code-editor/EditorContext';
+import { useEditor } from '../../context/codeEditor/EditorContext';
 
 const RequestClueButton = ({ clue }) => {
   const { showClue, setShowClue } = useEditor();
