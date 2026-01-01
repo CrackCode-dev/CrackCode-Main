@@ -1,6 +1,6 @@
 import React from 'react';
-import { useEditor } from '../../context/code-editor/EditorContext';
-import { useCodeExecution } from '../../features/code-editor/hooks/useCodeExecution';
+import { useEditor } from '../../context/codeEditor/EditorContext';
+import { useCodeExecution } from '../../features/codeEditor/hooks/useCodeExecution';
 
 const EditorToolbar = () => {
   const { language, setLanguage, isExecuting, currentProblem, setCode } = useEditor();
