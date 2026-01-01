@@ -2,6 +2,10 @@ import React from 'react'
 import logo from '../../assets/logo/crackcode_logo.png'
 
 function Footer() {
+  const handleLogoClick = () => {
+    window.location.href = '/home';
+  }
+
   return (
     <footer className='w-full flex justify-between items-center absolute bottom-0 left-0 z-50 h-18 bg-black backdrop-blur-md shadow-md 
     px-10 sm:px-10 border-t border-white/10'>
@@ -10,6 +14,7 @@ function Footer() {
             <img 
                 src={logo} 
                 alt="CrackCode Logo" 
+                onClick={handleLogoClick}
                 className='w-15 transition-transform hover:scale-105 duration-300'
             />
         </div>
