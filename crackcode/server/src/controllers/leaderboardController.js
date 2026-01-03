@@ -16,10 +16,12 @@ exports.getGlobalLeaderboard = async (req, res) => {
             
             // Seed Redis so next time it's fast
             for (let user of users) {
-                await redisClient.zAdd('global_leaderboard', {
-                    score: user.totalXP,
-                    value: user.username
-                });
+                const topPlayers = await redisClient.zRange(
+                    'global_leaderboard',
+                    0,
+                    9,
+                    { REV: true, WITHSCORES: true }
+                );
             }
             return res.status(200).json(users);
         }
