@@ -1,53 +1,52 @@
 const User = require('../models/user');
-const redisClient = require('../config/redis'); // Assuming your redis config is here
+const redisClient = require('../config/redis');
 
-// 1. Get Top 10 Players for the Leaderboard Page
+// 1. Get Top 10 Players
 exports.getGlobalLeaderboard = async (req, res) => {
-    try {
-        // Fetch top 10 from Redis (High to Low)
-        // 'global_leaderboard' is the key we use for the Sorted Set
-        const topPlayers = await redisClient.zRangeWithScores('global_leaderboard', 0, 9, {
-            REV: true
-        });
+  try {
+        // Get top 10 from Redis (highest XP first)
+        const redisPlayers = await redisClient.zRangeWithScores(
+        'global_leaderboard',
+        0,
+        9,
+        { REV: true }
+        );
 
-        // If Redis is empty, we need to fetch from MongoDB and seed Redis
-        if (topPlayers.length === 0) {
-            const users = await User.find().sort({ totalXP: -1 }).limit(10);
-            
-            // Seed Redis so next time it's fast
-            for (let user of users) {
-                const topPlayers = await redisClient.zRange(
-                    'global_leaderboard',
-                    0,
-                    9,
-                    { REV: true, WITHSCORES: true }
-                );
-            }
-            return res.status(200).json(users);
+        // If Redis has data
+        if (redisPlayers.length > 0) {
+        const formatted = redisPlayers.map((player, index) => ({
+            rank: index + 1,
+            username: player.value,
+            totalXP: player.score
+        }));
+
+        return res.status(200).json(formatted);
         }
 
-        // Format the data for the frontend (Podium + List)
-        res.status(200).json(topPlayers);
+        // Redis empty → fetch from MongoDB
+        const users = await User.find()
+        .sort({ totalXP: -1 })
+        .limit(10)
+        .select('username totalXP level experience lastActive -_id');
+
+        // Seed Redis
+        for (const user of users) {
+        await redisClient.zAdd('global_leaderboard', {
+            score: user.totalXP,
+            value: user.username
+        });
+        }
+
+        // Add ranking
+        const rankedUsers = users.map((user, index) => ({
+        rank: index + 1,
+        ...user.toObject()
+        }));
+
+        res.status(200).json(rankedUsers);
+        
     } catch (error) {
         console.error("Leaderboard Error:", error);
         res.status(500).json({ message: "Internal Server Error" });
-    }
-};
-
-// 2. Get the specific Rank of the logged-in user
-exports.getMyRank = async (req, res) => {
-    try {
-        const { username } = req.user; // Assuming you have auth middleware
-
-        // ZREVRANK gives the 0-based rank from the top
-        const rank = await redisClient.zRevRank('global_leaderboard', username);
-        const score = await redisClient.zScore('global_leaderboard', username);
-
-        res.status(200).json({
-            rank: rank !== null ? rank + 1 : "Unranked",
-            score: score || 0
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching user rank" });
     }
 };
