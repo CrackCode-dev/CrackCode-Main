@@ -17,6 +17,12 @@ const seedData = [
     { username: "Hackzilla", totalXP: 900, level: 6 }
 ];
 
+const getExperienceTier = (totalXP) => {
+    if (totalXP >= 3000) return "Gold";
+    if (totalXP >= 2000) return "Silver";
+    return "Bronze";
+};
+
 const seedDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);
