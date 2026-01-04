@@ -1,51 +1,44 @@
 const User = require('../models/user');
 const redisClient = require('../config/redis');
 
-// 1. Get Top 10 Players
 exports.getGlobalLeaderboard = async (req, res) => {
+  console.log('🧠 USERS FROM MONGO:', users);
   try {
-    // Get top 10 from Redis (highest XP first)
-    const redisPlayers = await redisClient.zRangeWithScores(
+    // Get ranked users from Redis
+    const leaderboard = await redisClient.zRangeWithScores(
       'global_leaderboard',
       0,
       9,
       { REV: true }
     );
 
-    // If Redis has data
-    if (redisPlayers.length > 0) {
-      const formatted = redisPlayers.map((player, index) => ({
-        rank: index + 1,
-        username: player.value,
-        totalXP: player.score
-      }));
+    const usernames = leaderboard.map(item => item.value);
 
-      return res.status(200).json(formatted);
-    }
+    // Fetch extra details from MongoDB
+    const users = await User.find(
+      { username: { $in: usernames } },
+      { _id: 0, username: 1, level: 1, batch: 1, lastActive: 1 }
+    );
 
-    // ❗ Redis empty → fetch from MongoDB
-    const users = await User.find()
-      .sort({ totalXP: -1 })
-      .limit(10)
-      .select('username totalXP level experience lastActive -_id');
+    // Map users by username for fast lookup
+    const userMap = {};
+    users.forEach(user => {
+      userMap[user.username] = user;
+    });
 
-    // Seed Redis
-    for (const user of users) {
-      await redisClient.zAdd('global_leaderboard', {
-        score: user.totalXP,
-        value: user.username
-      });
-    }
-
-    // Add ranking
-    const rankedUsers = users.map((user, index) => ({
+    // Build final ranked response
+    const response = leaderboard.map((item, index) => ({
       rank: index + 1,
-      ...user.toObject()
+      username: item.value,
+      totalXP: Number(item.score),
+      level: userMap[item.value]?.level ?? 0,
+      batch: userMap[item.value]?.batch ?? "Bronze",
+      lastActive: userMap[item.value]?.lastActive ?? null
     }));
 
-    res.status(200).json(rankedUsers);
+    res.json(response);
   } catch (error) {
-    console.error("Leaderboard Error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error(error);
+    res.status(500).json({ message: 'Failed to fetch leaderboard' });
   }
 };

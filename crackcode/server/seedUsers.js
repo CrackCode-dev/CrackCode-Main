@@ -4,6 +4,7 @@ const User = require('./src/models/user');
 
 dotenv.config();
 
+
 const seedData = [
     { username: "CodeNinja", totalXP: 1500, level: 10 },
     { username: "BitMaster", totalXP: 2400, level: 15 },
