@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
-// Load env variables HERE (important)
+// Load env variables
 dotenv.config();
 
 const transporter = nodemailer.createTransport({

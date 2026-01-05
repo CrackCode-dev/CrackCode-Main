@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const userSchema = new mongoose.Schema(
   {
     // AUTH & PROFILE
@@ -27,7 +26,6 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       sparse: true, // ⭐ prevents duplicate null crash
     },
-
     xp: { type: Number, default: 0 },
     tokens: { type: Number, default: 100 },
     rank: { type: String, default: "Rookie" },
