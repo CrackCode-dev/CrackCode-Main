@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { Upload, Link2, X, ZoomIn, RotateCw } from 'lucide-react'
-import Button from '../ui/Button';
+import Button from '../common/Button';
 
 const AvatarUpload = ({
     onAvatarSelect,
