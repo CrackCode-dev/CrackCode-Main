@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import { Button } from "./ui/button.jsx"
 import DotBackground from "./ui/dot-background.jsx"
-import { Terminal, Bot, Play, AlertTriangle, FileCode, ChevronDown, ChevronRight, Send, CheckCircle2, XCircle, Lightbulb, Code2 } from "lucide-react"
+import { Terminal, Bot, Play, AlertTriangle, FileCode, ChevronDown, ChevronRight, Send, Lightbulb, Code2 } from "lucide-react"
 
 export default function PreviewSection() {
   const sectionRef = useRef(null)
   const [isHintOpen, setIsHintOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('error')
-  const [codeOutput, setCodeOutput] = useState(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -95,20 +94,17 @@ export default function PreviewSection() {
                       <Target className="w-4 h-4" />
                       Your Objectives
                     </h4>
-                    <ul className="space-y-3">
+                    <ul className="space-y-4">
                       {[
-                        { done: true, text: "Define the row of houses (array)" },
-                        { done: true, text: "Create a loop to search each house" },
-                        { done: false, text: "Fix the loop limit to prevent errors" }
-                      ].map((obj, i) => (
-                        <li key={i} className="flex items-start gap-3 text-sm">
-                          {obj.done ? (
-                            <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" />
-                          ) : (
-                            <XCircle className="w-5 h-5 text-slate-600 shrink-0 mt-0.5" />
-                          )}
-                          <span className={obj.done ? "text-slate-400 line-through" : "text-slate-300"}>
-                            {obj.text}
+                        "Define the row of houses (array)",
+                        "Create a loop to search each house",
+                        "Fix the loop limit to prevent errors"
+                      ].map((text, i) => (
+                        <li key={i} className="flex items-center gap-3 text-sm">
+                          {/* Diamond point icon */}
+                          <div className="w-1.5 h-1.5 rotate-45 bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)] shrink-0" />
+                          <span className="text-slate-300">
+                            {text}
                           </span>
                         </li>
                       ))}
@@ -148,8 +144,8 @@ export default function PreviewSection() {
                       </div>
                     </div>
                   </div>
-                  
-                  {/* Example */}
+
+                  {/* RESTORED: Example Section */}
                   <div className="border border-border rounded-xl bg-slate-900/50 overflow-hidden">
                     <div className="p-3 border-b border-border bg-slate-800/30">
                       <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">Expected Output</span>
@@ -227,13 +223,8 @@ export default function PreviewSection() {
                       <span className="text-slate-600 select-none w-6 text-right">6</span>
                       <span>{"}"}</span>
                     </div>
-                    <div className="flex gap-4 hover:bg-slate-800/30 px-2 -mx-2 rounded transition-colors">
-                      <span className="text-slate-600 select-none w-6 text-right">7</span>
-                      <span></span>
-                    </div>
                   </div>
 
-                  {/* Error Indicator */}
                   <div className="absolute right-6 top-[108px] flex items-center gap-2">
                     <span className="text-xs text-red-400 bg-red-500/10 px-2 py-1 rounded">Error on line 4</span>
                   </div>
@@ -279,11 +270,6 @@ export default function PreviewSection() {
                             <p className="text-slate-300 text-sm leading-relaxed">
                               "Detective! You wandered off the map. You tried to search <span className="text-red-400 font-mono">House #5</span>, but the street only has 3 houses! You're knocking on thin air."
                             </p>
-                            <div className="mt-3 pt-3 border-t border-red-500/20">
-                              <code className="text-xs text-red-400/70 font-mono">
-                                TypeError: Cannot read property of undefined (houses[5])
-                              </code>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -299,7 +285,6 @@ export default function PreviewSection() {
                             It looks like your loop went too far, Detective. The <code className="text-cyan-400 bg-cyan-500/10 px-1 rounded">houses</code> array has only 3 elements, but you're trying to access index 5. Try using <code className="text-cyan-400 bg-cyan-500/10 px-1 rounded">houses.length</code> to set your loop boundary.
                           </div>
                         </div>
-                        
                         <div className="relative mt-4">
                           <input 
                             type="text" 
@@ -314,12 +299,14 @@ export default function PreviewSection() {
                     )}
 
                     {activeTab === 'output' && (
-                      <div className="font-mono text-sm text-slate-400">
-                        <div className="text-slate-600">$ Running robbery_investigation.js...</div>
-                        <div className="mt-2 text-slate-300">Searching House #0... Empty</div>
-                        <div className="text-slate-300">Searching House #1... Empty</div>
+                      <div className="font-mono text-sm text-slate-300">
+                        <div className="text-slate-600 mb-2">$ Running robbery_investigation.js...</div>
+                        <div>Searching House #0... Empty</div>
+                        <div>Searching House #1... Empty</div>
                         <div className="text-emerald-400">Searching House #2... 🎉 LOOT FOUND!</div>
-                        <div className="text-red-400 mt-2">❌ Error: Index out of bounds at House #3</div>
+                        <div className="text-red-400 mt-4 leading-relaxed">
+                          🚨 DISPATCH: Detective, you've gone off-grid. You attempted to search House #3, but our records only go up to House #5. Check your 'loop' before you trespass on civilian property!
+                        </div>
                       </div>
                     )}
                   </div>
@@ -327,23 +314,6 @@ export default function PreviewSection() {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Feature highlights below IDE */}
-        <div className="max-w-5xl mx-auto mt-16 grid md:grid-cols-3 gap-6 fade-in-section opacity-0 transition-all duration-1000 translate-y-10" style={{ transitionDelay: '400ms' }}>
-          {[
-            { icon: Bot, title: "AI-Powered Hints", desc: "Get contextual help without spoiling solutions" },
-            { icon: AlertTriangle, title: "Narrative Errors", desc: "Error messages that tell a story, not just codes" },
-            { icon: CheckCircle2, title: "Progress Tracking", desc: "See your objectives and celebrate wins" }
-          ].map((feature, i) => (
-            <div key={i} className="text-center p-6">
-              <div className="inline-flex p-3 bg-cyan-500/10 rounded-xl mb-4">
-                <feature.icon className="w-6 h-6 text-cyan-500" />
-              </div>
-              <h4 className="text-lg font-bold text-white mb-2">{feature.title}</h4>
-              <p className="text-sm text-muted-foreground">{feature.desc}</p>
-            </div>
-          ))}
         </div>
       </div>
       
@@ -367,9 +337,7 @@ export default function PreviewSection() {
 function Target(props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <circle cx="12" cy="12" r="10"/>
-      <circle cx="12" cy="12" r="6"/>
-      <circle cx="12" cy="12" r="2"/>
+      <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
     </svg>
   )
 }
