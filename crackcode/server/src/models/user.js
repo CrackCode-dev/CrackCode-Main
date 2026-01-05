@@ -1,11 +1,57 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-const UserSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    totalXP: { type: Number, default: 0 },
-    level: { type: Number, default: 0 },
-    batch: { type: String, default: "Bronze" },
-    lastActive: { type: Date, default: Date.now }
-});
+const userSchema = new mongoose.Schema(
+  {
+    // AUTH & PROFILE
+    name: { type: String, required: true, trim: true },
 
-module.exports = mongoose.model('User', UserSchema);
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+
+    password: { type: String, required: true },
+
+    avatar: { type: String, default: "" },
+    bio: { type: String, default: "" },
+
+    // GAME STATS
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+      sparse: true, // ⭐ prevents duplicate null crash
+    },
+
+    xp: { type: Number, default: 0 },
+    tokens: { type: Number, default: 100 },
+    rank: { type: String, default: "Rookie" },
+    lastActive: { type: Date, default: Date.now },
+
+    // ACCOUNT SETTINGS
+    emailSettings: {
+      notifications: { type: Boolean, default: true },
+      securityAlerts: { type: Boolean, default: true },
+    },
+
+    // ACHIEVEMENTS
+    achievements: [
+      {
+        achievement: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Achievement",
+          required: true,
+        },
+        unlockedAt: { type: Date, default: Date.now },
+      },
+    ],
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("User", userSchema);

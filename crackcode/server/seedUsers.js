@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const User = require('./src/models/user'); 
+const User = require('./src/models/user'); // Adjust path to your User model
 
 dotenv.config();
 
@@ -16,12 +16,6 @@ const seedData = [
     { username: "ReactRacer", totalXP: 3500, level: 22 },
     { username: "Hackzilla", totalXP: 900, level: 6 }
 ];
-
-const getExperienceTier = (totalXP) => {
-    if (totalXP >= 3000) return "Gold";
-    if (totalXP >= 2000) return "Silver";
-    return "Bronze";
-};
 
 const seedDB = async () => {
     try {

@@ -1,39 +1,75 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const connectDB = require('./src/config/db');
-const redisClient = require('./src/config/redis'); 
-const leaderboardRoutes = require('./src/routes/leaderboardRoutes');
+// server.js
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+import cookieParser from "cookie-parser";
+import { createClient } from "redis";
+import connectDB from "./src/config/db.js";
 
-// 1. Load Environment Variables
-dotenv.config();
+// ===== LOAD ENVIRONMENT VARIABLES =====
+dotenv.config({ path: path.resolve(".env") }); // loads .env from same folder
 
-// 2. Initialize Express
+// ===== IMPORT ROUTES =====
+import profileRoutes from "./src/routes/profileRoutes.js";
+import statisticsRoutes from "./src/routes/statisticsRoutes.js";
+import achievementRoutes from "./src/routes/achievementRoutes.js";
+import authRouter from "./src/routes/authRoutes.js";
+import leaderboardRoutes from "./src/routes/leaderboardRoutes.js";
+
+// ===== INITIALIZE EXPRESS =====
 const app = express();
 
-// 3. Database Connections
-connectDB(); // MongoDB
+// ===== MIDDLEWARE =====
+app.use(cors({ credentials: true, origin: "*" }));
+app.use(express.json());
+app.use(cookieParser());
 
-// Redis Connection (v4+ syntax)
-redisClient.connect()
-    .then(() => console.log('✅ Redis Connected'))
-    .catch((err) => console.error('❌ Redis Connection Error:', err));
+// ===== HEALTH CHECK =====
+app.get("/", (req, res) => res.send("CrackCode Backend API is Running!"));
 
-// 4. Middleware
-app.use(cors()); // Crucial for Frontend-Backend communication
-app.use(express.json()); // Allows parsing of JSON data in requests
+// ===== ROUTES =====
+app.use("/api/users", profileRoutes);
+app.use("/api/statistics", statisticsRoutes);
+app.use("/api/achievements", achievementRoutes);
+app.use("/api/auth", authRouter);
+app.use("/api/leaderboard", leaderboardRoutes);
 
-// 5. Routes
-// All leaderboard requests will start with /api/leaderboard
-app.use('/api/leaderboard', leaderboardRoutes);
+// ===== DATABASE CONNECTION =====
+const startServer = async () => {
+  try {
+    // --- MongoDB ---
+    if (!process.env.MONGODB_URI) {
+      throw new Error("MONGODB_URI is missing in .env");
+    }
+    await connectDB();
+    console.log("✅ MongoDB connected");
 
-// Base route for testing if the server is alive
-app.get('/', (req, res) => {
-    res.send('CrackCode Backend API is Running!');
-});
+    // --- Redis ---
+    if (!process.env.REDIS_URL) {
+      console.warn("⚠️ REDIS_URL missing in .env. Using default localhost.");
+      process.env.REDIS_URL = "redis://localhost:6379";
+    }
 
-// 6. Start the Server
-const PORT = process.env.PORT || 5050;
-app.listen(PORT, () => {
-    console.log(`🚀 Server started on http://localhost:${PORT}`);
-});
+    const redisClient = createClient({ url: process.env.REDIS_URL });
+
+    redisClient.on("error", (err) =>
+      console.error("❌ Redis Client Error:", err)
+    );
+    redisClient.on("connect", () => console.log("✅ Redis Client Connected"));
+
+    await redisClient.connect();
+
+    // --- Start Express server ---
+    const PORT = process.env.PORT || 5051;
+    app.listen(PORT, () =>
+      console.log(`🚀 Server running on http://localhost:${PORT}`)
+    );
+  } catch (err) {
+    console.error("❌ Server failed to start:", err.message);
+    process.exit(1);
+  }
+};
+
+// ===== START SERVER =====
+startServer();

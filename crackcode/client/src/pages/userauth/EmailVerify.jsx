@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
-import Button from '../../components/ui/Button'
+import Button from '../../components/common/Button'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import Footer from '../../components/common/Footer'

@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import Button from '../../components/ui/Button'
+import Button from '../../components/common/Button'
 import logo from '../../assets/logo/crackcode_logo.png'
 import { CircleUserIcon, Upload } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import AvatarUpload from '../../components/Profiles/AvatarUpload'
-
 
 
 
