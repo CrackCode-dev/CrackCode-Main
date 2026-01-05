@@ -1,6 +1,3 @@
-
-
-
 import { useEffect, useRef } from "react"
 
 export default function DotBackground({ color = "#a855f7", maxDistance = 150 }) {
