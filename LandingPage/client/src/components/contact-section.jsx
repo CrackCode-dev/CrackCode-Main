@@ -10,11 +10,11 @@ export default function ContactSection() {
   const faqs = [
     {
       question: "Is CrackCode free to use?",
-      answer: "CrackCode offers a free tier with access to introductory detective cases and basic features. Premium plans unlock advanced storylines, exclusive challenges, AI tutor sessions, and competitive leaderboard features."
+      answer: "CrackCode offers a free tier with access to introductory  Questionaries and basic features. Premium plans unlock advanced storylines, exclusive challenges, AI tutor sessions, and competitive leaderboard features."
     },
     {
       question: "What programming languages can I learn?",
-      answer: "We support C++, Python, Java, JavaScript, PHP, HTML, CSS, and React. Each language has detective-themed stories and challenges using our Monaco code editor with Judge0 API integration for real code execution."
+      answer: "We support C++, Python, Java, JavaScript, PHP, HTML, CSS, and React. Each language has stories and challenges using our Monaco code editor with Judge0 API integration for real code execution."
     },
     {
       question: "Do I need prior coding experience?",
@@ -22,7 +22,7 @@ export default function ContactSection() {
     },
     {
       question: "How does the AI error diagnosis work?",
-      answer: "When you submit code with errors, our AI analyzes the issue and explains it in detective narrative style - making debugging feel like solving a mystery rather than a frustrating task."
+      answer: "When you submit code with errors, our AI analyzes the issue and explains it in narrative style - making debugging feel like solving a mystery rather than a frustrating task."
     },
     {
       question: "What are XP and tokens used for?",
@@ -163,7 +163,7 @@ export default function ContactSection() {
                   <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-pink-500 transition-colors" />
                 </a>
                 
-                <a 
+                {/* <a 
                   href="#" 
                   // target="_blank" 
                   rel="noopener noreferrer" 
@@ -177,7 +177,7 @@ export default function ContactSection() {
                     <div className="text-xs text-muted-foreground">View our code</div>
                   </div>
                   <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-slate-400 transition-colors" />
-                </a>
+                </a> */}
 
                 <a 
                   href="mailto:info.crackcode@gmail.com" 
