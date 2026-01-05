@@ -7,69 +7,60 @@ import cookieParser from "cookie-parser";
 import { createClient } from "redis";
 import connectDB from "./src/config/db.js";
 
-// ===== LOAD ENVIRONMENT VARIABLES =====
-dotenv.config({ path: path.resolve(".env") }); // loads .env from same folder
+// Load env variables
+dotenv.config({ path: path.resolve(".env") });
 
-// ===== IMPORT ROUTES =====
+// Import routes
 import profileRoutes from "./src/routes/profileRoutes.js";
 import statisticsRoutes from "./src/routes/statisticsRoutes.js";
 import achievementRoutes from "./src/routes/achievementRoutes.js";
 import authRouter from "./src/routes/authRoutes.js";
 import leaderboardRoutes from "./src/routes/leaderboardRoutes.js";
 
-// ===== INITIALIZE EXPRESS =====
 const app = express();
 
-// ===== MIDDLEWARE =====
+// Middleware
 app.use(cors({ credentials: true, origin: "*" }));
 app.use(express.json());
 app.use(cookieParser());
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads"))); // static uploads
 
-// ===== HEALTH CHECK =====
+// Health / test routes
 app.get("/", (req, res) => res.send("CrackCode Backend API is Running!"));
+app.get("/test", (req, res) => res.send("Server is working!"));
+app.get("/api/users/test", (_req, res) => res.send("profile routes working"));
 
-// ===== ROUTES =====
+// Routes
 app.use("/api/users", profileRoutes);
 app.use("/api/statistics", statisticsRoutes);
 app.use("/api/achievements", achievementRoutes);
 app.use("/api/auth", authRouter);
 app.use("/api/leaderboard", leaderboardRoutes);
 
-// ===== DATABASE CONNECTION =====
+// Start server inside async function
 const startServer = async () => {
   try {
-    // --- MongoDB ---
+    // MongoDB
     if (!process.env.MONGODB_URI) {
       throw new Error("MONGODB_URI is missing in .env");
     }
     await connectDB();
     console.log("✅ MongoDB connected");
 
-    // --- Redis ---
-    if (!process.env.REDIS_URL) {
-      console.warn("⚠️ REDIS_URL missing in .env. Using default localhost.");
-      process.env.REDIS_URL = "redis://localhost:6379";
-    }
-
-    const redisClient = createClient({ url: process.env.REDIS_URL });
-
-    redisClient.on("error", (err) =>
-      console.error("❌ Redis Client Error:", err)
-    );
+    // Redis
+    const redisClient = createClient({ url: process.env.REDIS_URL || "redis://localhost:6379" });
+    redisClient.on("error", (err) => console.error("❌ Redis Client Error:", err));
     redisClient.on("connect", () => console.log("✅ Redis Client Connected"));
-
     await redisClient.connect();
 
-    // --- Start Express server ---
+    // Start Express
     const PORT = process.env.PORT || 5051;
-    app.listen(PORT, () =>
-      console.log(`🚀 Server running on http://localhost:${PORT}`)
-    );
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
   } catch (err) {
     console.error("❌ Server failed to start:", err.message);
     process.exit(1);
   }
 };
 
-// ===== START SERVER =====
+// Start server
 startServer();
