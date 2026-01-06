@@ -18,18 +18,12 @@ const seedData = [
     { username: "Hackzilla", totalXP: 900, level: 6 }
 ];
 
-const getExperienceTier = (totalXP) => {
-    if (totalXP >= 3000) return "Gold";
-    if (totalXP >= 2000) return "Silver";
-    return "Bronze";
-};
-
 const seedDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI);
         console.log("✅ Connected to MongoDB for seeding...");
 
-        // Optional: Clear existing users to start fresh
+        // Clear existing users to start fresh
         // await User.deleteMany({}); 
 
         await User.insertMany(seedData);
