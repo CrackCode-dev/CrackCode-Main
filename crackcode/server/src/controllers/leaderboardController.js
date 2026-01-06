@@ -25,13 +25,20 @@ exports.getGlobalLeaderboard = async (req, res) => {
       userMap[user.username] = user;
     });
 
+    // Helper to determine level badge
+    const getLevelBadge = (level) => {
+      if (level > 50) return "🥇 Gold";
+      if (level > 25) return "🥈 Silver";
+      return "🥉 Bronze";
+    };
+
     // Build final ranked response
     const response = leaderboard.map((item, index) => ({
       rank: index + 1,
       username: item.value,
       totalXP: Number(item.score),
       level: userMap[item.value]?.level ?? 0,
-      batch: userMap[item.value]?.batch ?? "Bronze",
+      badge: getLevelBadge(userMap[item.value]?.level || 0),
       lastActive: userMap[item.value]?.lastActive ?? null
     }));
 
