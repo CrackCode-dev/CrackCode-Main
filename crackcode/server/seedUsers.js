@@ -8,7 +8,7 @@ dotenv.config();
 const seedData = [
     { username: "CodeNinja", totalXP: 1500, level: 10 },
     { username: "BitMaster", totalXP: 2400, level: 15 },
-    { username: "DebugQueen", totalXP: 3200, level: 20 },
+    { username: "DebugQueen", totalXP: 3, level: 20 },
     { username: "ScriptWizard", totalXP: 1100, level: 8 },
     { username: "LogicKing", totalXP: 2800, level: 18 },
     { username: "SyntaxError", totalXP: 500, level: 3 },
