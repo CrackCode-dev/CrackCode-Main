@@ -2,7 +2,6 @@ const User = require('../models/user');
 const redisClient = require('../config/redis');
 
 exports.getGlobalLeaderboard = async (req, res) => {
-  console.log('🧠 USERS FROM MONGO:', users);
   try {
     // Get ranked users from Redis
     const leaderboard = await redisClient.zRangeWithScores(
@@ -36,9 +35,9 @@ exports.getGlobalLeaderboard = async (req, res) => {
       lastActive: userMap[item.value]?.lastActive ?? null
     }));
 
-    res.json(response);
+    return res.json(response);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Failed to fetch leaderboard' });
+    return res.status(500).json({ message: 'Failed to fetch leaderboard' });
   }
 };
