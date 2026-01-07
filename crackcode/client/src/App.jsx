@@ -54,7 +54,7 @@ function App() {
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/game-profile' element={<GameProfile />} />
         <Route path='/user-profile' element={<UserProfile />} />
-        
+       
         {/* ✅ Temporary testing route for the Code Editor */}
         <Route path='/solve/:problemId' element={<CodeEditorPage />} />
       </Routes>
