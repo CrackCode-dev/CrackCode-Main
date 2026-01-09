@@ -113,7 +113,7 @@ export default function TeamSection() {
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-foreground tracking-tight group-hover:text-purple-400 transition-colors duration-300">
                     {member.name}
                   </h3>
-                  <p className="text-muted-foreground font-mono text-xs sm:text-sm md:text-base tracking-wider uppercase mb-4">
+                  <p className="text-muted-foreground font-mono text-xs sm:text-sm md:text-base tracking-wider uppercase mb-4 group-hover:text-white transition-all duration-300">
                     {member.role}
                   </p>
                   
