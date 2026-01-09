@@ -164,7 +164,7 @@ export default function HowItWorksSection() {
                           <span className={`text-4xl font-bold ${colors.text} ${colors.textHover} opacity-50 group-hover:opacity-100 transition-all duration-300`}>{step.step}</span>
                         </div>
                         <h3 className={`text-xl md:text-2xl font-bold ${colors.textHover} mb-3 transition-all duration-300`}>{step.title}</h3>
-                        <p className="text-muted-foreground leading-relaxed">{step.description}</p>
+                        <p className="text-muted-foreground leading-relaxed group-hover:text-white transition-all duration-300 ease-in-out">{step.description}</p>
                       </div>
                     </div>
 
