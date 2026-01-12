@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/logo/crackcode_logo.png'
 import Navbar from './Navbar'
 import { Bell , Search, UserCircle} from 'lucide-react';
+import Avatar from './Avatar';
 
 const Header = ({ variant = "default" }) => {
     const baseStyles = "w-full flex justify-between items-center sm:p-6 fixed top-0 left-0 z-50 ";
@@ -56,11 +57,7 @@ const Header = ({ variant = "default" }) => {
 
                     {/* Gamer Profile Avatar*/}
                     <div className='ml-6' >
-                        {userAvatar ? (
-                            <img src={userAvatar} alt="User Profile" className='w-10 rounded-full border-2 border-white/30 hover:border-orange-500 transition-colors object-cover ' />
-                        ) : (
-                            <UserCircle size={25} className='text-white hover:text-orange-500 transition-colors'/>
-                        )}
+                        <Avatar />
                         
                     </div>
                     
