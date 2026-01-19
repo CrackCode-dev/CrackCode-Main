@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Button from '../../components/ui/Button';
 
 
 const UserProfile = () => {
@@ -150,10 +151,8 @@ const UserProfile = () => {
                   <div className="font-medium">Email Address</div>
                   <div className="text-sm text-gray-400">john@crackcode.com</div>
                 </div>
-                <button 
-                className="px-4 py-2 bg-black text-white border border-white hover:bg-zinc-700 rounded-lg text-sm font-medium transition-colors">
-                  {action}
-                </button>
+                <Button variant='outline' size='sm' className='text-white border border-white'>{action}</Button>
+
               </div>
             ))}
           </div>
@@ -167,12 +166,7 @@ const UserProfile = () => {
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
           <div className='flex justify-start'>
-            <button
-              className="px-6 py-2 text-red-600 border border-red-600 hover:text-white rounded-lg font-medium transition-colors"
-              style={{ backgroundColor: '#000000' }}
-            >
-              Delete Account
-            </button>
+            <Button variant='outline' size='lg' className='text-red-600 border border-red-600 hover:text-red-500 hover:border-red-500'>Delete Account</Button>
           </div>
         </div>
       </div>
