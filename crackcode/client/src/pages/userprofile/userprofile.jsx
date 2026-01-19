@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import Button from '../../components/ui/Button';
 
-
 const UserProfile = () => {
   const [userStatus] = useState({
     name: "Detective John Doe",
@@ -37,7 +36,8 @@ const UserProfile = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="relative bg-black text-white p-8">
+      
       {/* Profile Header */}
       <div className="profile-wrapper">
         <div className="bg-linear-to-r from-green-900/30 to-green-800/20 border border-green-700/50 rounded-2xl p-8 mb-8">
