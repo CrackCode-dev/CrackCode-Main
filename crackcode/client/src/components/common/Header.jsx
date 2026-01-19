@@ -21,9 +21,8 @@ const Header = ({ variant = "default" }) => {
     const isLanding = location.pathname === '/';
 
     const handleLogoClick = () => {
-        if (isLanding) {
-            // Scroll to top of landing page
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (!showHeaderActions) {
+            navigate('/');
         } else {
             // Navigate to home page
             navigate('/home');
