@@ -52,7 +52,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/email-verify' element={<EmailVerify />} />
         <Route path='/reset-password' element={<ResetPassword />} />
-        <Route path='/game-profile' element={<GameProfile />} />
+        <Route path='/gamer-profile' element={<GameProfile />} />
         <Route path='/user-profile' element={<UserProfile />} />
        
         {/* ✅ Temporary testing route for the Code Editor */}

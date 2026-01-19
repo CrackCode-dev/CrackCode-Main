@@ -19,6 +19,7 @@ const Button = ({
     const variants = {
         primary: 'bg-orange-600 hover:bg-orange-700 hover:shadow-orange-500/30 text-white focus:ring-orange-500',
         outline: 'bg-transparent border-2 border-orange-600 text-orange-600 hover:border-orange-500 hover:text-orange-400 hover:bg-orange-500/10 focus:ring-orange-500',
+        text: 'bg-none text-orange-400 hover:text-orange-500 focus:underline focus-visible:orange-500 focus:text-orange-500 text-sm !px-0 !py-0',
     };
 
     //Size Styles
