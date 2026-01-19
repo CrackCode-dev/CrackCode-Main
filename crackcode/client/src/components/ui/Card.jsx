@@ -50,7 +50,7 @@ const ContentCard = ({
     default: 'bg-white text-white',
     outlined: 'bg-transparent text-white border-1',
     elevated: 'bg-white',
-    flat: 'bg-gray-50'
+    flat: 'bg-[#121212]'
   };
   
   // Padding sizes
