@@ -1,9 +1,10 @@
 import React, { useContext, useEffect } from 'react'
 import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
-import Button from '../../components/common/Button'
+import Button from '../../components/ui/Button'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import Header from '../../components/common/Header'
 import Footer from '../../components/common/Footer'
 
 function EmailVerify() {
@@ -65,7 +66,7 @@ function EmailVerify() {
   return (
 
     <div className='flex flex-col items-center justify-center min-h-screen bg-[#050505]'>
-  
+      <Header variant='landing'/>
 
       {/*Background video*/}
       <video autoPlay loop muted playsInline className='absolute inset-0 w-full h-full object-cover z-0'>
@@ -74,8 +75,6 @@ function EmailVerify() {
 
       {/* Dark overlay */}
       <div className='absolute inset-0 bg-black/60 z-10'></div>
-
-
 
       <form onSubmit={onSubmitHandler} className='bg-[#121212] z-20 p-8 rounded-lg shadow-lg w-96 text-sm'>
         <h1 className='text-white text-2xl font-semibold text-center mb-4'>Email Verify OTP</h1>
