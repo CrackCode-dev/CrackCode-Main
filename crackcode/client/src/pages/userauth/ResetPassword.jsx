@@ -1,10 +1,11 @@
 import React, { useContext, useState } from 'react'
-import Button from '../../components/common/Button'
+import Button from '../../components/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import { Mail, RectangleEllipsis } from 'lucide-react'
 import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import Header from '../../components/common/Header'
 import Footer from '../../components/common/Footer'
 
 function ResetPassword() {
@@ -81,7 +82,7 @@ function ResetPassword() {
 
   return (
     <div className='flex felx-col items-center justify-center min-h-screen bg-[#050505]'>
-
+      <Header variant='landing'/>
 
       {/*Background video*/}
       <video autoPlay loop muted playsInline className='absolute inset-0 w-full h-full object-cover z-0'>
