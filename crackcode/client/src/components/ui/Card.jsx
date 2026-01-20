@@ -94,7 +94,7 @@ const ContentCard = ({
     'relative overflow-hidden group', // Added 'group' for hover effect
     className
   ].filter(Boolean).join(' ');
-  
+
   return (
     <Component 
       className={cardClasses}
@@ -117,7 +117,7 @@ const ContentCard = ({
       
       {/* Badge */}
       {badge && (
-        <div className="mb-3">
+        <div className="right-0 absolute top-0" >
           {badge}
         </div>
       )}
@@ -160,12 +160,12 @@ const ContentCard = ({
           {(title || subtitle) && (
             <div className="mb-5">
               {title && (
-                <h3 className="text-xl font-bold text-white mb-1 group-hover:text-orange-400 transition-colors duration-300">
+                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-orange-400 transition-colors duration-300">
                   {title}
                 </h3>
               )}
               {subtitle && (
-                <p className="text-sm text-white">
+                <p className="text-sm text-gray-300">
                   {subtitle}
                 </p>
               )}
@@ -207,7 +207,7 @@ const ContentCard = ({
       
       {/* Footer */}
       {footer && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="mt-4">
           {footer}
         </div>
       )}
