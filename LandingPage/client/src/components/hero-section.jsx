@@ -27,7 +27,7 @@ export default function HeroSection() {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out border-b ${
           isScrolled
-            ? "bg-[#050505]/90 backdrop-blur-xl border-white/10 py-3 shadow-2xl shadow-orange-500/5"
+            ? "bg-transparent backdrop-blur-xl border-white/10 py-3 shadow-2xl shadow-orange-500/5"
             : "bg-transparent border-transparent py-5"
         }`}
       >
