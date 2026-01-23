@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Button from '../../components/ui/Button'
-import logo from '../../assets/logo/crackcode_logo.png'
 import { CircleUserIcon, Upload } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import AvatarUpload from '../../components/Profiles/AvatarUpload'
@@ -18,13 +17,13 @@ const GameProfile = () => {
     const [errors, setErrors] = useState([]); //array to hold all the errors
 
     const avatars = [
-        { id: 1 },
-        { id: 2 },
-        { id: 3 },
-        { id: 4 },
-        { id: 5 },
-        { id: 6 },
-        { id: 7 }
+        { id: 1 , src:'/avatars/avatar1.png' },
+        { id: 2 , src:'/avatars/avatar2.png' },
+        { id: 3 , src:'/avatars/avatar3.png'},
+        { id: 4 , src:'/avatars/avatar4.png'},
+        { id: 5 , src:'/avatars/avatar5.png' },
+        { id: 6 , src:'/avatars/avatar6.png'},
+        { id: 7 , src:'/avatars/avatar7.png'}
     ];
 
     const handleProceed = () => {
@@ -46,7 +45,6 @@ const GameProfile = () => {
     };
 
     {/*handles avatr section */ }
-
     const handleAvatarSelection = (avatarData) => {
         setUploadedAvatar(avatarData);
         setSelectedAvatar('uploaded');
@@ -62,7 +60,7 @@ const GameProfile = () => {
 
             <Header />
             {/* Main Content */}
-            <div className="max-w-3xl w-full space-y-12">
+            <div className="max-w-3xl w-full space-y-10 mt-17">
                 {/* Title */}
                 <div className="text-center space-y-3">
                     <h1 className="text-4xl md:text-5xl font-bold text-white">
@@ -74,7 +72,7 @@ const GameProfile = () => {
                 </div>
 
                 {/* Avatar Grid */}
-                <div className="grid grid-cols-4 gap-6 justify-items-center max-w-2xl mx-auto">
+                <div className="grid grid-cols-4 gap-10 justify-items-center max-w-2xl mx-auto">
                     {avatars.map((avatar) => (
                         <button
                             key={avatar.id}
@@ -82,26 +80,31 @@ const GameProfile = () => {
                                 setSelectedAvatar(avatar.id);
                                 setUploadedAvatar('');}
                             }
-                            className={`w-24 h-24 rounded-full bg-gray-900
+                            className={`w-30 h-30 rounded-full overflow-hidden bg-gray-900
                 transition-all duration-300 hover:scale-110
                 ${selectedAvatar === avatar.id
-                                    ? 'ring-2 ring-orange-400 scale-110'
+                                    ? 'ring-2 ring-white scale-110'
                                     : 'ring-2 ring-gray-700'
 
                                 }`}
                         >
+
+                        <img 
+                            src = {avatar.src}
+                            alt = {`Avatar ${avatar.id}`}
+                            className='w-full h-full rounded-full object-cover'
+                        />
                         </button>
                     ))}
 
                     {/* Upload Button */}
-
                     <button
                         onClick={() => setShowAvatarUpload(true)}
-                        className={`w-24 h-24 rounded-full bg-gray-900 
+                        className={`w-30 h-30 rounded-full bg-gray-900 
                         flex flex-col items-center justify-center
                         transition-all duration-300 hover:scale-110 hover:bg-gray-700
                         ring-2 ring-gray-700
-                        ${selectedAvatar === 'uploaded' ? 'ring-2 ring-orange-400 scale-110' : ''}`}
+                        ${selectedAvatar === 'uploaded' ? 'ring-2 ring-white scale-110' : ''}`}
                     >
                         {uploadedAvatar ? (
                             <img src={uploadedAvatar} alt="Uploaded Avatar " className='w-full h-full rounded-full object-cover' />
@@ -123,7 +126,7 @@ const GameProfile = () => {
                         Pick a cool username for the adventure ahead
                     </p>
 
-                    <div className="relative">
+                    <div className="relative ">
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none ">
                             <CircleUserIcon className='w-7 h-7 text-gray-300' />
                         </div>
@@ -134,12 +137,15 @@ const GameProfile = () => {
                                 setUsername(e.target.value)
                                 setErrors([]);
                             }}
-                            className={`w-full pl-15 pr-6 py-4 bg-gray-800 rounded-full
-                                        text-white transition-all
+                            className={`w-full pl-15 pr-6 py-2.5 bg-gray-800 rounded-full
+                                        text-white  transition-all
                                         focus:outline-none focus:ring-2 placeholder-gray-300
                                         ${errors.some(err => err.toLowerCase().includes('username'))
-                                    ? 'ring-2 ring-red-500'
-                                    : 'focus:ring-orange-400'}`}
+                                    ? 'ring-2 ring-orange-600' // error state
+                                    : username.trim() !== ''
+                                    ? 'ring-2 ring-orange-400' //correct user name
+                                    : 'ring-1 ring-white' //empty input
+                                }`}
                             placeholder="Enter an username" required />
 
                     </div>
@@ -148,13 +154,13 @@ const GameProfile = () => {
                     {errors.length > 0 && (
                         <div className='space-y-1'>
                             {errors.map((err, index) => (
-                                <p key={index} className='text-red-400 text-sm text-left ml-4'>{err}</p>
+                                <p key={index} className='text-orange-600 text-sm text-left ml-4'>{err}</p>
                             ))}
                         </div>
                     )}
 
                     {/* Proceed Button */}
-                    <Button variant='outline' size='lg' fullWidth type='button' className='rounded-full! h-auto py-2' onClick={handleProceed}  >Proceed</Button>
+                    <Button variant='outline' size='md' fullWidth type='button' className='rounded-full! h-auto py-2' onClick={handleProceed}  >Proceed</Button>
 
                 </div>
             </div>
