@@ -18,10 +18,10 @@ function Login() {
     const [password, setPassword] = useState('')
 
     const onSubmitHandler = async (e) => {
-        try {
-            e.preventDefault();
-            axios.defaults.withCredentials = true
+        e.preventDefault();
+        axios.defaults.withCredentials = true
 
+        try {
             if (state === 'Sign Up') {
                 const { data } = await axios.post(backendUrl + '/api/auth/register', { name, email, password })
                 if (data.success) {
@@ -34,30 +34,48 @@ function Login() {
                             toast.success("Account created! OTP sent to email.");
                             navigate('/verify-account');
                         } else {
-                            toast.error(otpResponse.data.message);
-                            navigate('/');
+                            // OTP send failed but account created - still go to verify
+                            toast.warning(otpResponse.data.message || "Could not send OTP. Please try again.");
+                            navigate('/verify-account');
                         }
-                    } catch (error) {
-                        toast.error("Failed to send OTP: " + error.message);
-                        navigate('/');
+                    } catch (otpError) {
+                        // OTP request failed but account was created - still go to verify
+                        console.log('OTP send error:', otpError);
+                        toast.success("Account created! Please request OTP on verify page.");
+                        navigate('/verify-account');
                     }
-
-
                 } else {
-                    toast.error(data.message)
+                    toast.error(data.message || "Registration failed")
                 }
             } else {
                 const { data } = await axios.post(backendUrl + '/api/auth/login', { email, password })
                 if (data.success) {
                     setIsLoggedIn(true)
-                    getUserData()
-                    navigate('/home')
+                    
+                    // Check if user is verified before redirecting to home
+                    if (data.user && !data.user.isAccountVerified) {
+                        // Send OTP and redirect to verify page
+                        try {
+                            await axios.post(backendUrl + '/api/auth/send-verify-otp');
+                            toast.info("Please verify your email first. OTP sent!");
+                        } catch (err) {
+                            console.log('OTP send error on login:', err);
+                            toast.info("Please verify your email.");
+                        }
+                        navigate('/verify-account');
+                    } else {
+                        getUserData()
+                        toast.success("Login successful!")
+                        navigate('/home')
+                    }
                 } else {
-                    toast.error(data.message)
+                    toast.error(data.message || "Login failed")
                 }
             }
         } catch (error) {
-            toast.error(error.message)
+            // Extract proper error message from axios error
+            const errorMessage = error.response?.data?.message || error.message || "Something went wrong";
+            toast.error(errorMessage);
         }
     }
 
