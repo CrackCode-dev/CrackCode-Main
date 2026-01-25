@@ -5,6 +5,7 @@ import Button from '../../components/ui/Button'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { UserRound, Mail, LockKeyhole } from 'lucide-react'
+import Header from '../../components/common/Header'
 import Footer from '../../components/common/Footer'
 
 
@@ -68,7 +69,7 @@ function Login() {
     return (
 
         <div className='flex flex-col items-center justify-center min-h-screen overflow-hidden'>
-           
+           <Header variant='landing'/>
 
             {/*Background video*/}
             <video autoPlay loop muted playsInline className='absolute inset-0 w-full h-full object-cover z-0'>
@@ -112,19 +113,20 @@ function Login() {
                             className='bg-transparent outline-none text-white w-full 'type="password" placeholder='Password' required />
                     </div>
 
-                    <p onClick={() => navigate('/reset-password')} className='mb-4 text-orange-400 cursor-pointer'>Forgot Password</p>
+                    {/* <p onClick={() => navigate('/reset-password')} className='cursor-pointer'>Forgot Password</p> */}
+                    <Button variant='text' onClick={() => navigate('/reset-password')}>Forgot Password</Button>
 
                     <Button variant='primary' size='md' fullWidth type='submit' className='!rounded-full h-auto py-2'  >{state}</Button>
                 </form>
 
                 {state === 'Sign Up' ? (
                     <p className='text-gray-400 text-center text-xs mt-4'>Already have an account?{' '}
-                        <span onClick={() => setState('Login')} className='text-orange-400 cursor-pointer underline'>Login here</span>
+                        <Button variant='text' onClick={() => setState('Login')} className='text-xs font-extralight'>Login here</Button>
                     </p>
                 )
                     : (
                         <p className='text-gray-400 text-center text-xs mt-4'>Don't have an account?{' '}
-                            <span onClick={() => setState('Sign Up')} className='text-orange-400  cursor-pointer underline'>Sign Up</span>
+                            <Button variant='text' onClick={() => setState('Sign Up')} className='text-xs font-extralight'>Sign Up</Button>
                         </p>
                     )}
             

@@ -13,7 +13,7 @@ html, body {
   padding: 0;
   height: 100vh;
   width: 100vw;
-  overflow: hidden; /* Prevent double scrollbars */
+   /* Prevent double scrollbars */
 } 
 
 /* added above to check the code editor temporaly */
