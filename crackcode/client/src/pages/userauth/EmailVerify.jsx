@@ -93,7 +93,6 @@ function EmailVerify() {
 
         <Button variant='primary' size='md' fullWidth type='submit' className='!rounded-full h-auto py-2'  >Submit</Button>
       </form>
-      <Footer/>
     </div>
   )
 }
