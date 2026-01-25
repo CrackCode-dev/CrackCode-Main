@@ -1,14 +1,32 @@
 import React from 'react'
 import logo from '../../assets/logo/crackcode_logo.png'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
-function Footer() {
-  const handleLogoClick = () => {
-    window.location.href = '/home';
-  }
+const Footer = ({ variant = "default" }) => {
+    const baseStyles = "w-full flex justify-between items-center "
 
-  return (
-    <footer className='w-full flex justify-between items-center h-18 bg-black backdrop-blur-md shadow-md 
-    px-10 sm:px-10 border-t border-white/10'>
+    const variants = {
+        landing: "fixed bottom-0 left-0 z-50 bg-transparent h-18 px-10",
+        default: "h-18 bg-black backdrop-blur-md shadow-md px-10 sm:px-10 border-t border-white/10"
+    }
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const footerAtBottom = ['/', '/login', 'email-verify', 'reset-password', '/gamer-profile']
+    const footerAtEase = !footerAtBottom.includes(location.pathname);
+    
+    const isLanding = location.pathname === '/';
+    const handleLogoClick = () => {
+        if(!footerAtEase) {
+            navigate('/');
+        } else {
+            navigate('/home');
+        }
+    }
+
+    return (
+    <footer className={`${baseStyles} ${variants[variant]}`}>
         {/* Logo */}
         <div className='cursor-pointer'>
             <img 
@@ -32,7 +50,12 @@ function Footer() {
         </div>
 
     </footer>
-  )
+    )
 }
+
+
+    
+
+  
 
 export default Footer
