@@ -37,7 +37,7 @@ function Login() {
                         if (otpResponse.data.success) {
                             toast.success("Account created! OTP sent to email.");
 
-                            navigate('/email-verify');
+                            navigate('/verify-account');
                         } else {
                             toast.error(otpResponse.data.message);
                             navigate('/');
@@ -56,7 +56,7 @@ function Login() {
                 if (data.success) {
                     setIsLoggedIn(true)
                     getUserData()
-                    navigate('/')
+                    navigate('/home')
                 } else {
                     toast.error(data.message)
                 }
@@ -131,7 +131,6 @@ function Login() {
                     )}
             
             </div><br></br><br></br>
-            <Footer />
         </div>
         
     )
