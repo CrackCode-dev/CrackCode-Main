@@ -6,8 +6,6 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { UserRound, Mail, LockKeyhole } from 'lucide-react'
 import Header from '../../components/common/Header'
-import Footer from '../../components/common/Footer'
-
 
 function Login() {
 
@@ -22,21 +20,18 @@ function Login() {
     const onSubmitHandler = async (e) => {
         try {
             e.preventDefault();
-            console.log("Attempting to connect to:", backendUrl);
             axios.defaults.withCredentials = true
 
             if (state === 'Sign Up') {
                 const { data } = await axios.post(backendUrl + '/api/auth/register', { name, email, password })
                 if (data.success) {
                     setIsLoggedIn(true)
-                    getUserData()
 
                     try {
                         const otpResponse = await axios.post(backendUrl + '/api/auth/send-verify-otp');
 
                         if (otpResponse.data.success) {
                             toast.success("Account created! OTP sent to email.");
-
                             navigate('/verify-account');
                         } else {
                             toast.error(otpResponse.data.message);
