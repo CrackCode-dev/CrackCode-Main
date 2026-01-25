@@ -4,9 +4,7 @@ import logo from '../../assets/logo/crackcode_logo.png'
 import { CircleUserIcon, Upload } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import AvatarUpload from '../../components/Profiles/AvatarUpload'
-
-
-
+import Header from '../../components/common/Header'
 
 const GameProfile = () => {
 
@@ -62,10 +60,7 @@ const GameProfile = () => {
     return (
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
 
-            {/*CrackCode logo*/}
-            <div className="absolute top-4 left-4">
-                <img src={logo} alt="logo" className="w-40 h-16" />
-            </div>
+            <Header />
             {/* Main Content */}
             <div className="max-w-3xl w-full space-y-12">
                 {/* Title */}
@@ -113,7 +108,7 @@ const GameProfile = () => {
                         ) : (
                             <>
                                 <Upload className='w-5 h-5 text-gray-300' />
-                                <span className="text-xs text-gray-300 mt-1">Upload</span>
+                                <span className="text-xs font-semibold text-gray-300 mt-1">Upload</span>
                             </>
                         )}
 
@@ -159,11 +154,12 @@ const GameProfile = () => {
                     )}
 
                     {/* Proceed Button */}
-                    <Button variant='primary' size='lg' fullWidth type='button' className='!rounded-full h-auto py-2' onClick={handleProceed}  >Proceed</Button>
+                    <Button variant='outline' size='lg' fullWidth type='button' className='rounded-full! h-auto py-2' onClick={handleProceed}  >Proceed</Button>
+
                 </div>
             </div>
 
-            {/* Avatar Upload Modal*/}
+            {/* Avatar Upload Model*/}
             {showAvatarUpload && (
                 <AvatarUpload
                     isOpen={showAvatarUpload}

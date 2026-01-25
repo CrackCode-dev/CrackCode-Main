@@ -27,7 +27,7 @@ export default function HeroSection() {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out border-b ${
           isScrolled
-            ? "bg-[#050505]/90 backdrop-blur-xl border-white/10 py-3 shadow-2xl shadow-orange-500/5"
+            ? "bg-transparent backdrop-blur-xl border-white/10 py-3 shadow-2xl shadow-orange-500/5"
             : "bg-transparent border-transparent py-5"
         }`}
       >
@@ -94,19 +94,19 @@ export default function HeroSection() {
               <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all duration-300">
                 <BookOpen className="w-8 h-8 text-orange-500 animate-float" />
               </div>
-              <span className="text-sm text-muted-foreground font-bold">Story-Driven</span>
+              <span className="text-sm text-orange-500 font-semibold">Story-Driven</span>
             </div>
             <div className="flex flex-col items-center gap-3 group">
               <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all duration-300">
                 <Code2 className="w-8 h-8 text-orange-500 animate-float delay-200" />
               </div>
-              <span className="text-sm text-muted-foreground">Real Code</span>
+              <span className="text-sm text-orange-500 font-semibold">Real Code</span>
             </div>
             <div className="flex flex-col items-center gap-3 group">
               <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all duration-300">
                 <Trophy className="w-8 h-8 text-orange-500 animate-float delay-400" />
               </div>
-              <span className="text-sm text-muted-foreground">Gamified</span>
+              <span className="text-sm text-orange-500 font-semibold">Gamified</span>
             </div>
           </div>
           
