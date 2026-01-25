@@ -50,6 +50,7 @@ function App() {
         <Route path='/' element={<Landing />} />
         <Route path='/home' element={<Home />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/verify-account' element={<EmailVerify />} />
         <Route path='/email-verify' element={<EmailVerify />} />
         <Route path='/reset-password' element={<ResetPassword />} />
         <Route path='/gamer-profile' element={<GameProfile />} />

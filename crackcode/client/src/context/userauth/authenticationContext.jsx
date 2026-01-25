@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from "react";
-import { toast } from 'react-toastify';
 import axios from 'axios';
 
 export const AppContent = createContext()
@@ -21,7 +20,8 @@ export const AppContextProvider = (props) => {
                 getUserData()
             }
         } catch (error) {
-            toast.error(error.message)
+            // Silent fail - user is simply not logged in
+            console.log('Not authenticated');
         }
     }
 
@@ -30,11 +30,10 @@ export const AppContextProvider = (props) => {
             const { data } = await axios.get(backendUrl + '/api/user/data')
             if (data.success) {
                 setUserData(data.data) // Stores user info (name, email, isVerified)
-            } else {
-                toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message)
+            // Silent fail - expected when not logged in
+            console.log('Could not fetch user data');
         }
     }
 

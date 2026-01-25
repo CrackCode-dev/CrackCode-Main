@@ -6,7 +6,6 @@ import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import Header from '../../components/common/Header'
-import Footer from '../../components/common/Footer'
 
 function ResetPassword() {
   const { backendUrl } = useContext(AppContent)

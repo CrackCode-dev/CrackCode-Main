@@ -5,7 +5,6 @@ import Button from '../../components/ui/Button'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/common/Header'
-import Footer from '../../components/common/Footer'
 
 function EmailVerify() {
 
@@ -38,6 +37,7 @@ function EmailVerify() {
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
+      axios.defaults.withCredentials = true;
       const otpArray = inputRefs.current.map(e => e.value)
       const otp = otpArray.join('')
 
