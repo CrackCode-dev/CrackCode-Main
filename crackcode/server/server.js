@@ -72,12 +72,28 @@ connectDB(); // MongoDB
 //     .catch((err) => console.warn('⚠️ Redis Connection Error (running without cache):', err.message));
 
 // Middleware
-app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    credentials: true,
-}));
+// app.use(cors({
+//     origin: process.env.CLIENT_URL || 'http://localhost:5174',
+//     credentials: true,
+// }));
 app.use(express.json());
 app.use(cookieParser());
+
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+
+app.use(cors({
+    origin: function(origin, callback) {
+        // allow requests like Postman where origin is undefined
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            return callback(new Error('CORS not allowed'));
+        }
+    },
+    credentials: true
+}));
+
 
 // Static files for uploads
 app.use('/uploads', express.static('uploads'));
