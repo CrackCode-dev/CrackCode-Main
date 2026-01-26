@@ -31,3 +31,9 @@ export default function CodeEditorPage() {
     </EditorProvider>
   );
 }
+
+
+//jwt key : crackcodeAdmin
+//infocrackcode_db_user
+//Up3qn0HqPFN1xQ73
+//mongodb+srv://infocrackcode_db_user:Up3qn0HqPFN1xQ73@crackcodecluster.f8j0sea.mongodb.net/?appName=crackcodeCluster

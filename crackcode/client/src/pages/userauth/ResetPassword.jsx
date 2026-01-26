@@ -6,7 +6,6 @@ import { AppContent } from '../../context/userauth/authenticationContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import Header from '../../components/common/Header'
-import Footer from '../../components/common/Footer'
 
 function ResetPassword() {
   const { backendUrl } = useContext(AppContent)
@@ -48,13 +47,14 @@ function ResetPassword() {
     try {
       const { data } = await axios.post(backendUrl + '/api/auth/send-reset-otp', { email })
       if (data.success) {
-        toast.success(data.message)
+        toast.success(data.message || "OTP sent to your email")
         setIsEmailSent(true)
       } else {
-        toast.error(data.message)
+        toast.error(data.message || "Failed to send OTP")
       }
     } catch (error) {
-      toast.error(error.message)
+      const errorMessage = error.response?.data?.message || error.message || "Failed to send OTP";
+      toast.error(errorMessage);
     }
   }
 
@@ -70,13 +70,14 @@ function ResetPassword() {
     try {
       const { data } = await axios.post(backendUrl + '/api/auth/reset-password', { email, otp, newPassword })
       if (data.success) {
-        toast.success(data.message)
+        toast.success(data.message || "Password reset successfully!")
         navigate('/login')
       } else {
-        toast.error(data.message)
+        toast.error(data.message || "Password reset failed")
       }
     } catch (error) {
-      toast.error(error.message)
+      const errorMessage = error.response?.data?.message || error.message || "Password reset failed";
+      toast.error(errorMessage);
     }
   }
 
@@ -143,7 +144,6 @@ function ResetPassword() {
           <Button variant='primary' size='md' fullWidth type='submit' className="!rounded-full h-auto py-2"  >Submit</Button>
         </form>
       }
-      <Footer />
     </div>
   )
 }

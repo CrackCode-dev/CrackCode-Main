@@ -5,7 +5,6 @@ import Button from '../../components/ui/Button'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import Header from '../../components/common/Header'
-import Footer from '../../components/common/Footer'
 
 function EmailVerify() {
 
@@ -36,23 +35,24 @@ function EmailVerify() {
   }
 
   const onSubmitHandler = async (e) => {
-    try {
-      e.preventDefault();
-      const otpArray = inputRefs.current.map(e => e.value)
-      const otp = otpArray.join('')
+    e.preventDefault();
+    axios.defaults.withCredentials = true;
+    const otpArray = inputRefs.current.map(e => e.value)
+    const otp = otpArray.join('')
 
+    try {
       const { data } = await axios.post(backendUrl + '/api/auth/verify-account', { otp })
 
       if (data.success) {
-        toast.success(data.message)
+        toast.success(data.message || "Email verified successfully!")
         getUserData()
-        navigate('/')
+        navigate('/home')
       } else {
-        toast.error(data.message)
+        toast.error(data.message || "Verification failed")
       }
-
     } catch (error) {
-      toast.error(error.message)
+      const errorMessage = error.response?.data?.message || error.message || "Verification failed";
+      toast.error(errorMessage);
     }
   }
 
@@ -93,7 +93,6 @@ function EmailVerify() {
 
         <Button variant='primary' size='md' fullWidth type='submit' className='!rounded-full h-auto py-2'  >Submit</Button>
       </form>
-      <Footer/>
     </div>
   )
 }
