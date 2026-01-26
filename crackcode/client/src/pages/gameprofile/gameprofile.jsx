@@ -1,32 +1,54 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Button from '../../components/ui/Button'
 import { CircleUserIcon, Upload } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import AvatarUpload from '../../components/Profiles/AvatarUpload'
 import Header from '../../components/common/Header'
+import { AppContent } from '../../context/userauth/authenticationContext'
+import { gameprofileService } from '../../services/api/gameprofileService'
+import { toast } from 'react-toastify'
+
 
 const GameProfile = () => {
 
     const navigate = useNavigate();
+    const { backendUrl, getUserData } = useContext(AppContent)
 
-    const [selectedAvatar, setSelectedAvatar] = useState('');
-    const [username, setUsername] = useState('');
-    const [uploadedAvatar, setUploadedAvatar] = useState('');
-    const [showAvatarUpload, setShowAvatarUpload] = useState(false);
+    //UI states
+    const [selectedAvatar, setSelectedAvatar] = useState('')
+    const [username, setUsername] = useState('')
+    const [uploadedAvatar, setUploadedAvatar] = useState('')
+    const [showAvatarUpload, setShowAvatarUpload] = useState(false)
 
-    const [errors, setErrors] = useState([]); //array to hold all the errors
+    const [errors, setErrors] = useState([]) //array to hold all the errors
+
+    //loading and availability states
+    const [checkingUsername, setCheckingUsername] = useState(false);
+    const [usernameAvailable, setusernameAvailable] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const avatars = [
-        { id: 1 , src:'/avatars/avatar1.png' },
-        { id: 2 , src:'/avatars/avatar2.png' },
-        { id: 3 , src:'/avatars/avatar3.png'},
-        { id: 4 , src:'/avatars/avatar4.png'},
-        { id: 5 , src:'/avatars/avatar5.png' },
-        { id: 6 , src:'/avatars/avatar6.png'},
-        { id: 7 , src:'/avatars/avatar7.png'}
+        { id: 1, src: '/avatars/avatar1.png' }, { id: 2, src: '/avatars/avatar2.png' }, { id: 3, src: '/avatars/avatar3.png' },
+        { id: 4, src: '/avatars/avatar4.png' }, { id: 5, src: '/avatars/avatar5.png' }, { id: 6, src: '/avatars/avatar6.png' }, { id: 7, src: '/avatars/avatar7.png' }
     ];
 
-    const handleProceed = () => {
+    useEffect(() => {
+        if (!username.trim()) {
+            setusernameAvailable(null);
+            return;
+        }
+
+        const timer = setTimeout(async () => {
+            setCheckingUsername(true);
+            const available = await gameprofileService.checkUsername(backendUrl, username);
+            setusernameAvailable(available);
+            setCheckingUsername(false);
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [username, backendUrl]);
+
+    const handleProceed = async () => {
 
         const newErrors = [];
 
@@ -37,14 +59,30 @@ const GameProfile = () => {
             if (!username.trim()) newErrors.push('Please enter a username !');
             else if (username.length < 3) newErrors.push('Username must be at least 3 characters !');
         }
+
+        if (usernameAvailable === false) newErrors.push('Username is already taken,choose another!');
         setErrors(newErrors);
 
-        if (newErrors.length === 0) {
-            navigate('/user-profile');
-        }
-    };
+        if (newErrors.length > 0) return;
+        setIsLoading(true);
 
-    {/*handles avatr section */ }
+
+        try {
+            const avatarData = selectedAvatar === 'uploaded' ? uploadedAvatar : selectedAvatar;
+            const avatarType = selectedAvatar === 'uploaded' ? 'uploaded' : 'default';
+
+            await gameprofileService.updateGameProfile(backendUrl, getUserData, username, avatarData, avatarType);
+
+            toast.success('Profile updated successfully!');
+            navigate('/user-profile');
+        } catch (err) {
+            toast.error('Failed to update profile. Try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    //handles avatar section 
     const handleAvatarSelection = (avatarData) => {
         setUploadedAvatar(avatarData);
         setSelectedAvatar('uploaded');
@@ -55,13 +93,15 @@ const GameProfile = () => {
         setShowAvatarUpload(false);
     }
 
+
+
     return (
         <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
 
             <Header />
-            {/* Main Content */}
+            {/* Main Content*/}
             <div className="max-w-3xl w-full space-y-10 mt-17">
-                {/* Title */}
+                {/* Title*/}
                 <div className="text-center space-y-3">
                     <h1 className="text-4xl md:text-5xl font-bold text-white">
                         Choose your Detective Avatar
@@ -71,14 +111,15 @@ const GameProfile = () => {
                     </p>
                 </div>
 
-                {/* Avatar Grid */}
+                {/*Avatar Grid*/}
                 <div className="grid grid-cols-4 gap-10 justify-items-center max-w-2xl mx-auto">
                     {avatars.map((avatar) => (
                         <button
                             key={avatar.id}
                             onClick={() => {
                                 setSelectedAvatar(avatar.id);
-                                setUploadedAvatar('');}
+                                setUploadedAvatar('');
+                            }
                             }
                             className={`w-30 h-30 rounded-full overflow-hidden bg-gray-900
                 transition-all duration-300 hover:scale-110
@@ -89,15 +130,15 @@ const GameProfile = () => {
                                 }`}
                         >
 
-                        <img 
-                            src = {avatar.src}
-                            alt = {`Avatar ${avatar.id}`}
-                            className='w-full h-full rounded-full object-cover'
-                        />
+                            <img
+                                src={avatar.src}
+                                alt={`Avatar ${avatar.id}`}
+                                className='w-full h-full rounded-full object-cover'
+                            />
                         </button>
                     ))}
 
-                    {/* Upload Button */}
+                    {/*Upload Button*/}
                     <button
                         onClick={() => setShowAvatarUpload(true)}
                         className={`w-30 h-30 rounded-full bg-gray-900 
@@ -120,7 +161,7 @@ const GameProfile = () => {
                     </button>
                 </div>
 
-                {/* Username Input */}
+                {/*Username Input*/}
                 <div className="max-w-md mx-auto space-y-4">
                     <p className="text-center text-gray-300">
                         Pick a cool username for the adventure ahead
@@ -143,12 +184,27 @@ const GameProfile = () => {
                                         ${errors.some(err => err.toLowerCase().includes('username'))
                                     ? 'ring-2 ring-orange-600' // error state
                                     : username.trim() !== ''
-                                    ? 'ring-2 ring-orange-400' //correct user name
-                                    : 'ring-1 ring-white' //empty input
+                                        ? 'ring-2 ring-orange-400' //correct user name
+                                        : 'ring-1 ring-white' //empty input
                                 }`}
                             placeholder="Enter an username" required />
 
                     </div>
+
+                    {/*Username availability messages*/}
+                    <p className={`text-sm mt-1 ${checkingUsername ? 'text-white' :
+                        usernameAvailable === false ? 'text-orange-600' :
+                            usernameAvailable === true ? 'text-green-600' : ''
+                        }`}>
+                        {checkingUsername
+                            ? 'Checking username...'
+                            : usernameAvailable === false
+                                ? 'Username already taken!'
+                                : usernameAvailable === true
+                                    ? 'Username is available!'
+                                    : ''
+                        }
+                    </p>
 
                     {/*Error display section*/}
                     {errors.length > 0 && (
@@ -159,13 +215,13 @@ const GameProfile = () => {
                         </div>
                     )}
 
-                    {/* Proceed Button */}
-                    <Button variant='outline' size='md' fullWidth type='button' className='rounded-full! h-auto py-2' onClick={handleProceed}  >Proceed</Button>
+                    {/*Proceed Button*/}
+                    <Button variant='outline' size='md' fullWidth type='button' className='rounded-full! h-auto py-2' onClick={handleProceed} disabled={!selectedAvatar || username.trim().length < 3 || usernameAvailable === false || isLoading} >Proceed</Button>
 
                 </div>
             </div>
 
-            {/* Avatar Upload Model*/}
+            {/*Avatar Upload Model*/}
             {showAvatarUpload && (
                 <AvatarUpload
                     isOpen={showAvatarUpload}
