@@ -1,5 +1,5 @@
-import User from "../../models/auth/user.js";
-import redisClient from "../../config/leaderboard/redis.js";
+import User from "../auth/User.model.js";
+import redisClient from "./redis.config.js";
 
 // Get Top 10 Players for the Leaderboard Page
 export const getGlobalLeaderboard = async (_req, res) => {

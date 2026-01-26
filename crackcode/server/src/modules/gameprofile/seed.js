@@ -1,7 +1,14 @@
 import mongoose from "mongoose";
-import Achievement from "./Achievement.model.js";
 import dotenv from "dotenv";
-dotenv.config();
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Load env variables from server/.env
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, "../../../.env") });
+
+import Achievement from "./Achievement.model.js";
 
 const achievements = [
   {

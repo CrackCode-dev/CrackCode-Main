@@ -50,7 +50,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import connectDB from './src/config/db.js';
-// import redisClient from './src/config/leaderboard/redis.js';
+// import redisClient from './src/modules/leaderboard/redis.config.js';
 
 // Import module routes
 import authRoutes from './src/modules/auth/routes.js';

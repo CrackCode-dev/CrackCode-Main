@@ -14,4 +14,4 @@ redisClient.on('error', (err) => console.log('❌ Redis Client Error', err));
 redisClient.on('connect', () => console.log('✅ Redis Client Connecting...'));
 
 // Note: Connect in server.js using redisClient.connect()
-export default redisClient; // ✅ default export for ESM
+export default redisClient;
