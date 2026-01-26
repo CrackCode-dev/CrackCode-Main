@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const gameprofileService = () => {
+export const gameprofileService =  {
     //Check if username is available
-    const checkUsername = async (backendUrl, username) => {
+    checkUsername : async (backendUrl, username) => {
         if (username.length < 3) return null;
 
         try {
@@ -12,10 +12,10 @@ export const gameprofileService = () => {
             console.error("Error checking username:", error);
             return null;
         }
-    };
+    },
 
     //Update game-profile
-    const updateGameprofile = async(backendUrl, getUserData,username,avatarData,avatarType) => {
+   updateGameprofile : async(backendUrl, getUserData,username,avatarData,avatarType) => {
         try{
             const{data} = await axios.put(`${backendUrl}/api/gameprofile/update`,{
                 username,
@@ -29,7 +29,8 @@ export const gameprofileService = () => {
             console.error("Error updating profile:", error);
             throw error;
         }
-    };
+        
+    }
 
-    return {checkUsername,updateGameprofile};
-}
+   
+};
