@@ -4,6 +4,7 @@ export { default as userRoutes } from "./user/routes.js";
 export { default as profileRoutes } from "./profile/routes.js";
 export { default as leaderboardRoutes } from "./leaderboard/routes.js";
 export { default as learnRoutes } from "./learn/routes.js";
+export {default as gameProfileRoutes} from "./gameprofile/routes.js";
 
 // Re-export models
 export { default as User } from "./auth/User.model.js";

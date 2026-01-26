@@ -58,6 +58,7 @@ import userRoutes from './src/modules/user/routes.js';
 import profileRoutes from './src/modules/profile/routes.js';
 import leaderboardRoutes from './src/modules/leaderboard/routes.js';
 import learnRoutes from './src/modules/learn/routes.js';
+import gameProfileRoutes from './src/modules/gameprofile/routes.js'
 
 // Initialize Express
 const app = express();
@@ -87,6 +88,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/learn', learnRoutes);
+app.use('/api/gameprofile', gameProfileRoutes);
 
 // Health check
 app.get('/', (req, res) => {
