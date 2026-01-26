@@ -57,7 +57,6 @@ import authRoutes from './src/modules/auth/routes.js';
 import userRoutes from './src/modules/user/routes.js';
 import profileRoutes from './src/modules/profile/routes.js';
 import leaderboardRoutes from './src/modules/leaderboard/routes.js';
-import gameprofileRoutes from './src/modules/gameprofile/routes.js';
 import learnRoutes from './src/modules/learn/routes.js';
 
 // Initialize Express
@@ -87,7 +86,6 @@ app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
-app.use('/api/gameprofile', gameprofileRoutes);
 app.use('/api/learn', learnRoutes);
 
 // Health check
