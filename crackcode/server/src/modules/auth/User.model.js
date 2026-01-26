@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const userSchema = new mongoose.Schema(
   {
     // AUTH & PROFILE
@@ -50,7 +51,6 @@ const userSchema = new mongoose.Schema(
         achievement: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Achievement",
-          required: true,
         },
         unlockedAt: { type: Date, default: Date.now },
       },

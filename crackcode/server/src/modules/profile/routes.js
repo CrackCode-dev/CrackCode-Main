@@ -7,8 +7,8 @@ import {
   changeEmail,
   configureEmailSettings,
 } from "./controller.js";
-import userAuth from "../../middleware/auth/userAuth.js";
-import uploadAvatarMulter from "../../config/profile/multer.js";
+import userAuth from "../auth/middleware.js";
+import uploadAvatarMulter from "./multer.config.js";
 
 const router = express.Router();
 

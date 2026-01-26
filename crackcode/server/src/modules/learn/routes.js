@@ -1,5 +1,5 @@
 import express from "express";
-import userAuth from "../../middleware/auth/userAuth.js";
+import userAuth from "../auth/middleware.js";
 import { getAllQuestions, getQuestionById, createQuestion } from "./question.controller.js";
 import { getUserProgress, updateProgress, getRoadmap } from "./progress.controller.js";
 
