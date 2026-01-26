@@ -1,4 +1,4 @@
-import User from "../../models/auth/user.js";
+import User from "../auth/User.model.js";
 
 export const getUserData = async (req, res) => {
   try {

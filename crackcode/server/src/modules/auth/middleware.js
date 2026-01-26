@@ -1,7 +1,7 @@
-// middleware/userAuth.js
+// Auth Middleware - JWT verification and user protection
 
 import jwt from "jsonwebtoken";
-import User from "../../models/auth/user.js";
+import User from "./User.model.js";
 
 // Middleware to protect routes
 // Supports both Bearer token (Authorization header) and httpOnly cookie (token)
