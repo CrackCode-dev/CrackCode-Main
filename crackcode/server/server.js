@@ -16,8 +16,8 @@
 // connectDB(); // MongoDB
 
 // redisClient.connect()
-//     .then(() => console.log('✅ Redis Connected'))
-//     .catch((err) => console.error('❌ Redis Connection Error:', err));
+//     .then(() => console.log(' Redis Connected'))
+//     .catch((err) => console.error('Redis Connection Error:', err));
 
 // // Middleware
 // app.use(cors());
