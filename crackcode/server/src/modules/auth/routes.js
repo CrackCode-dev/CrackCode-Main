@@ -9,7 +9,7 @@ import {
   sendResetOtp,
   resetPassword,
 } from "./controller.js";
-import userAuth from "../../middleware/auth/userAuth.js";
+import userAuth from "./middleware.js";
 
 const router = express.Router();
 

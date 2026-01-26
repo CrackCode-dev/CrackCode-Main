@@ -1,5 +1,5 @@
 import express from "express";
-import userAuth from "../../middleware/auth/userAuth.js";
+import userAuth from "../auth/middleware.js";
 import { getUserAchievements, getAllAchievements } from "./achievement.controller.js";
 import { getUserStatistics } from "./statistics.controller.js";
 

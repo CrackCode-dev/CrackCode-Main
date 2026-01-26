@@ -1,4 +1,4 @@
-import User from "../../models/auth/user.js";
+import User from "../auth/User.model.js";
 import Achievement from "./Achievement.model.js";
 
 // Unlock an achievement for a user
