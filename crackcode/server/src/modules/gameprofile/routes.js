@@ -1,18 +1,16 @@
-import express from "express";
-import userAuth from "../auth/middleware.js";
-import { getUserAchievements, getAllAchievements } from "./achievement.controller.js";
-import { getUserStatistics } from "./statistics.controller.js";
+import express from 'express';
+import userAuth from '../auth/middleware.js';
+import { UpdateGameProfile,checkUsername,getCurrentUser } from './controller.js';
 
-const router = express.Router();
+const gameProfileRouter = express.Router();
 
-// Achievement routes
-router.get("/achievements", userAuth, getUserAchievements);
-router.get("/achievements/all", getAllAchievements);
+//Update game profile(avater+ username)
+gameProfileRouter.put('/update', userAuth,UpdateGameProfile);
 
-// Statistics routes
-router.get("/statistics", userAuth, getUserStatistics);
+//Check username availability
+gameProfileRouter.get('/check-username/:username',userAuth,checkUsername);
 
-// Test route
-router.get("/test", (_req, res) => res.send("gameprofile routes working"));
+//Get current user data
+gameProfileRouter.get('/currentUser',userAuth,getCurrentUser);
 
-export default router;
+export default gameProfileRouter;
