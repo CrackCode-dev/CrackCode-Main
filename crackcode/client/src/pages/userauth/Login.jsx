@@ -66,7 +66,7 @@ function Login() {
                     } else {
                         getUserData()
                         toast.success("Login successful!")
-                        navigate('/home')
+                        navigate('/gamer-profile')
                     }
                 } else {
                     toast.error(data.message || "Login failed")
