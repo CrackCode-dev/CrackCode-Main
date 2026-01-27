@@ -2,22 +2,21 @@ import { challenges } from "./challenges";
 import ChallengeCard from "../../components/caselog/ChallengeCard";
 import Button from "../../components/ui/Button";
 import Header from "../../components/common/Header";
+import Footer from "../../components/common/Footer";
 
 const CaseLogPage = () => {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white flex flex-col">
 
-      {/* Nav Bar (full width) */}
+      {/* Nav Bar */}
       <Header />
 
       {/* Page Content */}
-      <div className="px-8 py-10">
+      <main className="flex-1 px-8 py-10">
 
         {/* HQ Button */}
         <div className="mb-10">
-          <Button>
-            HQ
-          </Button>
+          <Button>HQ</Button>
         </div>
 
         {/* Title Section */}
@@ -42,7 +41,11 @@ const CaseLogPage = () => {
           ))}
         </div>
 
-      </div>
+      </main>
+
+      {/* Footer */}
+      <Footer />
+
     </div>
   );
 };
