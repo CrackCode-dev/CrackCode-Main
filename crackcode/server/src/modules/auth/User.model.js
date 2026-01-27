@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     // GAME STATS
     username: {
       type: String,
-      required: true,
+      sparse : true,
       unique: true,
       trim: true,
       lowercase: true,
