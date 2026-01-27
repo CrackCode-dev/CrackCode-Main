@@ -32,22 +32,32 @@ const GameProfile = () => {
         { id: 4, src: '/avatars/avatar4.png' }, { id: 5, src: '/avatars/avatar5.png' }, { id: 6, src: '/avatars/avatar6.png' }, { id: 7, src: '/avatars/avatar7.png' }
     ];
 
+    //Check username availability
     useEffect(() => {
         if (!username.trim()) {
             setusernameAvailable(null);
             return;
         }
 
+        let isActive = true;
+
         const timer = setTimeout(async () => {
             setCheckingUsername(true);
             const available = await gameprofileService.checkUsername(backendUrl, username);
-            setusernameAvailable(available);
-            setCheckingUsername(false);
+
+            if (isActive) {
+                setusernameAvailable(available);
+                setCheckingUsername(false);
+            }
         }, 500);
 
-        return () => clearTimeout(timer);
+        return () => {
+            isActive = false;
+            clearTimeout(timer);
+        };
     }, [username, backendUrl]);
 
+    // Validates input and updates the user's game profile via API, showing success/error messages
     const handleProceed = async () => {
 
         const newErrors = [];
@@ -63,7 +73,9 @@ const GameProfile = () => {
         if (usernameAvailable === false) newErrors.push('Username is already taken,choose another!');
         setErrors(newErrors);
 
+        //Stop submissions if errors exists
         if (newErrors.length > 0) return;
+
         setIsLoading(true);
 
 
@@ -71,7 +83,7 @@ const GameProfile = () => {
             const avatarData = selectedAvatar === 'uploaded' ? uploadedAvatar : selectedAvatar;
             const avatarType = selectedAvatar === 'uploaded' ? 'uploaded' : 'default';
 
-            await gameprofileService.updateGameProfile(backendUrl, getUserData, username, avatarData, avatarType);
+            await gameprofileService.updateGameprofile(backendUrl, getUserData, username, avatarData, avatarType);
 
             toast.success('Profile updated successfully!');
             navigate('/user-profile');
@@ -89,6 +101,7 @@ const GameProfile = () => {
         setShowAvatarUpload(false);
     };
 
+    //handles upload section
     const handleCloseUpload = () => {
         setShowAvatarUpload(false);
     }
@@ -216,7 +229,7 @@ const GameProfile = () => {
                     )}
 
                     {/*Proceed Button*/}
-                    <Button variant='outline' size='md' fullWidth type='button' className='rounded-full! h-auto py-2' onClick={handleProceed} disabled={!selectedAvatar || username.trim().length < 3 || usernameAvailable === false || isLoading} >Proceed</Button>
+                    <Button variant='outline' size='md' fullWidth type='button' className='rounded-full! h-auto py-2' onClick={handleProceed} disabled={checkingUsername || isLoading} >Proceed</Button>
 
                 </div>
             </div>
