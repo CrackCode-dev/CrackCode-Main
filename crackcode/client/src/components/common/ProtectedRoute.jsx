@@ -8,7 +8,18 @@ import { AppContent } from '../../context/userauth/authenticationContext';
  * @param {boolean} requireVerified - If true, also requires email verification
  */
 function ProtectedRoute({ children, requireVerified = true }) {
-    const { isLoggedIn, userData } = useContext(AppContent);
+    // const { isLoggedIn, userData } = useContext(AppContent);
+
+    const { isLoggedIn, userData, isLoading } = useContext(AppContent);
+
+    // Still checking auth status - show loading
+    if (isLoading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-500"></div>
+            </div>
+        );
+    }
 
     // Not logged in - redirect to login
     if (!isLoggedIn) {
@@ -23,5 +34,5 @@ function ProtectedRoute({ children, requireVerified = true }) {
     // All checks passed - render the protected content
     return children;
 }
-
+ devicePixelRatio
 export default ProtectedRoute;

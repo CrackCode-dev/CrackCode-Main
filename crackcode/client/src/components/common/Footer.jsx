@@ -1,5 +1,5 @@
 import React from 'react'
-import logo from '../../assets/logo/crackcode_logo.png'
+import logo from "../../assets/logo/crackcode_logo.svg"
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 const Footer = ({ variant = "default" }) => {
