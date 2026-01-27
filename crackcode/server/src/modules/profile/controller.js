@@ -1,4 +1,4 @@
-import User from "../../models/auth/user.js";
+import User from "../auth/User.model.js";
 
 // Get logged-in user profile
 export const getUserProfile = async (req, res) => {

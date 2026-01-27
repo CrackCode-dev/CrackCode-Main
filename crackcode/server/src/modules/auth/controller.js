@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import User from "../../models/auth/user.js";
-import transporter from "../../config/auth/nodemailer.js";
+import User from "./User.model.js";
+import transporter from "./nodemailer.config.js";
 
 const cookieOptions = {
   httpOnly: true,
