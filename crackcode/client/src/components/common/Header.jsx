@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-import logo from '../../assets/logo/crackcode_logo.png'
+import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
 import { Bell, Search, UserCircle } from 'lucide-react';
 import Avatar from './Avatar';
