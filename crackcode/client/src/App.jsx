@@ -29,7 +29,7 @@
 
 // export default App
 
-import { Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 import Home from './pages/home/Home'
 import Landing from './pages/landing/Landing'
@@ -42,6 +42,7 @@ import CodeEditorPage from './pages/codeEditor/CodeEditorPage'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 
 function App() {
   return (
@@ -76,9 +77,15 @@ function App() {
             <CodeEditorPage />
           </ProtectedRoute>
         } />
+        <Route path="/weeklychallenges" element={
+          <WeeklyChallenges />
+        } />
+
       </Routes>
     </div>
   )
 }
 
-export default App
+export default App;
+
+
