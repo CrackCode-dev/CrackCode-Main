@@ -8,17 +8,17 @@ function Title() {
     const navigate = useNavigate()
     
   return (
-    <div className='relative'>
+    <div className='relative '>
 
         {/* Title Section - Anchored at middle of viewport */}
-        <section id="title-section" className='w-full flex flex-col items-center justify-center mt-20'>
+        <section id="title-section" className='w-full flex flex-col items-center justify-center mt-20 md:mt-60 '>
             <div className='text-center space-y-6 px-4 md:px-0'>
                 <h1 className='text-5xl md:text-7xl font-bold leading-tight tracking-tight'>
-                    Solve Mysteries <br />Through <span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600'>Code</span>
+                    Solve Mysteries <br />Through <span className='text-transparent bg-clip-text bg-linear-to-r from-orange-400 to-orange-600'>Code</span>
                 </h1>
                 <p className="text-xl md:text-xl text-[#FFFFFF80] text-balance max-w-3xl mx-auto leading-relaxed">
                 Join the detective force and solve real-world coding challenges wrapped in thrilling mystery narratives. 
-                Every case brings you close to <span className='text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600'>mastery</span>.
+                Every case brings you close to <span className='text-transparent bg-clip-text bg-linear-to-r from-orange-400 to-orange-600'>mastery</span>.
                 </p>
 
                 <div className='flex justify-center gap-4 pt-10'>

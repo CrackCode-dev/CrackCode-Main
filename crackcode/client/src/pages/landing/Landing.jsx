@@ -9,7 +9,7 @@ function Landing() {
     <>
       <Header variant="landing" />
       <Title />
-      <Footer variant='landing'/>
+      <Footer variant='landing' />
     </>
   )
 }
