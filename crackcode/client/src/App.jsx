@@ -57,9 +57,9 @@ function App() {
         
         {/* Protected routes - require login + verified email */}
         <Route path='/home' element={
-          <ProtectedRoute>
+          // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
             <Home />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         } />
         <Route path='/gamer-profile' element={
           <ProtectedRoute>

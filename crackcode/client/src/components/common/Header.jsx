@@ -1,4 +1,3 @@
-import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
@@ -7,19 +6,19 @@ import Avatar from './Avatar';
 
 const Header = ({ variant = "default" }) => {
     // Base styles with fixed positioning
-    const baseStyles = "w-full flex justify-between items-center fixed top-0 left-0 z-50";
+    const baseStyles = "w-full flex justify-between items-center fixed top-0 left-0 z-50 box-border";
     
     // Variant styles
     const variants = {
-        landing: "h-20 sm:h-24 bg-transparent text-white px-6 sm:px-10",
-        default: "h-20 sm:h-20 bg-transparent backdrop-blur-md shadow-md px-6 sm:px-10 border-b border-white/10",
+        landing: "h-20 bg-transparent text-white px-6 sm:px-10 border-b border-transparent",
+        default: "h-20 sm:h-20 bg-transparent backdrop-blur-md px-6 sm:px-10 border-b border-white/10 [border-style:outset]",
     };
 
     const navigate = useNavigate();
     const location = useLocation();
 
-    const hideAuthHeaderActions = ['/', '/login', '/email-verify', '/reset-password', '/gamer-profile'];
-    const hideCorePagesHeaderActions = ['/user-profile'];
+    const hideAuthHeaderActions = ['/', '/login', '/email-verify', '/reset-password', '/gamer-profile']; //Add auth-related pages which need only the logo 
+    const hideCorePagesHeaderActions = ['/user-profile']; //Add more core functional pages(non-auth related) which need only the logo  
     const showHeaderActions = !hideAuthHeaderActions.includes(location.pathname) && !hideCorePagesHeaderActions.includes(location.pathname);
 
     const isAuth = hideAuthHeaderActions.includes(location.pathname);
