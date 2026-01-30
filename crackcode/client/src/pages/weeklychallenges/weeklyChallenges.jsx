@@ -1,58 +1,42 @@
+// src/pages/weeklychallenges/weeklyChallenges.jsx
+import React, { useState, useEffect } from "react";
 import ContentCard from "../../components/ui/Card";
 import DifficultyBadge from "../../components/ui/Badge";
 import { weeklyChallenges } from "./weeklyChallengesData";
 
-const WeeklyChallenges = () => {
-  const pointsEarnedToday = 0;
+export default function WeeklyChallenges() {
+  const [pointsEarnedToday, setPointsEarnedToday] = useState(0);
+  const [challenges, setChallenges] = useState([]);
+
+  // Load challenges safely
+  useEffect(() => {
+    try {
+      setChallenges(weeklyChallenges); // Load static data first
+    } catch (err) {
+      console.error("Failed to load weekly challenges:", err);
+      setChallenges([]);
+    }
+  }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white p-10">
+    <div className="p-6 bg-gray-900 min-h-screen text-white">
+      <h1 className="text-3xl font-bold mb-6">Weekly Challenges</h1>
+      <p className="mb-6">Points earned today: {pointsEarnedToday}</p>
       
-      {/* Header */}
-      <div className="flex justify-between items-center mb-10">
-        <div>
-          <h1 className="text-3xl font-bold mb-1">Weekly Challenges</h1>
-          <p className="text-gray-400">
-            Complete today’s mysteries to earn points
-          </p>
-        </div>
-
-        <div className="text-right">
-          <p className="text-4xl font-bold text-green-400">
-            {pointsEarnedToday}
-          </p>
-          <p className="text-gray-400 text-sm">
-            Points Earned Today
-          </p>
-        </div>
-      </div>
-
-      {/* Cards */}
-      <div className="flex gap-6">
-        {weeklyChallenges.map((challenge) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {challenges.map((challenge) => (
           <ContentCard
             key={challenge.id}
-            variant="flat"
-            padding="md"
-            shadow="sm"
-            hoverEffect="lift"
-            clickable
             title={challenge.title}
             subtitle={challenge.subtitle}
+            description={challenge.description}
             badge={<DifficultyBadge level={challenge.difficulty} />}
-            footer={
-              <div className="flex justify-end text-green-400 font-semibold">
-                ⚡ {challenge.points}
-              </div>
-            }
-            onClick={() => {
-              console.log("Open challenge:", challenge.title);
-            }}
+            onClick={() => alert(`Clicked: ${challenge.title}`)}
+            hoverEffect="lift"
+            clickable
           />
         ))}
       </div>
     </div>
   );
-};
-
-export default WeeklyChallenges;
+}
