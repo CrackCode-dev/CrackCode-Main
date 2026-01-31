@@ -11,11 +11,13 @@ const CaseLogPage = () => {
       {/* Nav Bar */}
       <Header />
 
+      <div className="h-45"></div>
+
       {/* Page Content */}
-      <main className="flex-1 px-8 py-10">
+      <main className="flex-1 px-8 pt-24 pb-10">
 
         {/* HQ Button */}
-        <div className="mb-10">
+        <div className="px-6">
           <Button>HQ</Button>
         </div>
 

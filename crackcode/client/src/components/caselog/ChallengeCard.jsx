@@ -3,6 +3,8 @@ import Badge from "../ui/Badge";
 
 const ChallengeCard = ({ challenge }) => {
   const isEasy = challenge.difficulty === "Easy";
+  const isMedium = challenge.difficulty === "Medium";
+
 
   return (
     <Card className="bg-zinc-900 border border-zinc-700 p-6">
@@ -25,9 +27,16 @@ const ChallengeCard = ({ challenge }) => {
           </div>
         </div>
 
-        <Badge className={isEasy ? "bg-green-600" : "bg-yellow-500 text-black"}>
+        <Badge
+          className={`
+            px-3 py-1 text-sm font-semibold rounded-full
+            ${isEasy && "bg-green-600 text-white"}
+            ${isMedium && "bg-yellow-500 text-black"}
+          `}
+        >
           {challenge.difficulty}
         </Badge>
+
       </div>
     </Card>
   );
