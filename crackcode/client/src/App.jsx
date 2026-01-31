@@ -42,7 +42,10 @@ import CodeEditorPage from './pages/codeEditor/CodeEditorPage'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import CaseLogMainPage from "./pages/caselog/CaseLogMainPage";
 import CaseLogPage from "./pages/caselog/CaseLogPage";
+
+
 
 function App() {
   return (
@@ -55,8 +58,9 @@ function App() {
         <Route path='/verify-account' element={<EmailVerify />} />
         <Route path='/email-verify' element={<EmailVerify />} />
         <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path="/caselog" element={<CaseLogMainPage />} />
         <Route path="/caselog" element={<CaseLogPage />} />
-
+        
         
         {/* Protected routes - require login + verified email */}
         <Route path='/home' element={
