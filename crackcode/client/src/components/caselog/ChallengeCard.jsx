@@ -1,6 +1,7 @@
 import Card from "../ui/Card";
 import Badge from "../ui/Badge";
 
+// check whther is it easy or medium
 const ChallengeCard = ({ challenge }) => {
   const isEasy = challenge.difficulty === "Easy";
   const isMedium = challenge.difficulty === "Medium";
