@@ -37,12 +37,11 @@ const UserProfile = () => {
   ];
 
   return (
-    <div className="relative bg-black text-white p-8">
-      <Header variant='landing'/>
-      
-      {/* Profile Header */}
-      <div className="profile-wrapper">
-        <div className="bg-linear-to-r from-green-900/30 to-green-800/20 border border-green-700/50 rounded-2xl p-8 mb-8">
+    <main className="h-screen flex flex-col justify-between bg-[#050505] text-white'">
+      {/* <Header variant='landing'/> */}
+
+      <div>
+          <div className="bg-linear-to-r from-green-900/30 to-green-800/20 border border-green-700/50 rounded-2xl p-8 mb-8">
           <div className="flex items-center gap-6 mb-8">
             <div className="w-20 h-20 bg-linear-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-4xl">
               {userStatus.avatar}
@@ -171,8 +170,8 @@ const UserProfile = () => {
             <Button variant='outline' size='lg' className='text-red-600 border border-red-600 hover:text-red-500 hover:border-red-500'>Delete Account</Button>
           </div>
         </div>
-      </div>
-    </div>
+        </div>
+    </main>
   );
 };
 
