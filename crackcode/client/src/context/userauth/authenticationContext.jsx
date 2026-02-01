@@ -14,7 +14,10 @@ export const AppContextProvider = (props) => {
     // Function to check auth status and get user data
     const getAuthState = async () => {
         try {
-            const { data } = await axios.post(backendUrl + '/api/auth/is-auth')
+            const { data } = await axios.get(`${backendUrl}/api/auth/is-auth`,{
+                withCredentials: true
+            });
+
             if (data.success) {
                 setIsLoggedIn(true)
                 getUserData()
@@ -27,7 +30,10 @@ export const AppContextProvider = (props) => {
 
     const getUserData = async () => {
         try {
-            const { data } = await axios.get(backendUrl + '/api/user/data')
+            const { data } = await axios.get(`${backendUrl}/api/user/data`,{
+                withCredentials: true
+            });
+            
             if (data.success) {
                 setUserData(data.data) // Stores user info (name, email, isVerified)
             }

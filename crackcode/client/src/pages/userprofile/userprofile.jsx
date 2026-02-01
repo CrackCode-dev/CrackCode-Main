@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import React,{ useState , useEffect} from 'react'
 import Button from '../../components/ui/Button';
+import Header from '../../components/common/Header';
 
 const UserProfile = () => {
   const [userStatus] = useState({
@@ -37,6 +38,7 @@ const UserProfile = () => {
 
   return (
     <div className="relative bg-black text-white p-8">
+      <Header variant='landing'/>
       
       {/* Profile Header */}
       <div className="profile-wrapper">
