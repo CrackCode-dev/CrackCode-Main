@@ -6,11 +6,10 @@ import { Bell } from 'lucide-react';
 import Avatar from './Avatar';
 
 const Header = forwardRef(({ variant = "default" }, ref) => {
-    // Remove 'fixed top-0 left-0' - use 'static' positioning instead
-    const baseStyles = "w-full flex justify-between items-center z-50";
+    const baseStyles = "fixed top-0 left-0 w-full flex justify-between items-center z-50";
     
     const variants = {
-        landing: "h-20 sm:h-24 bg-transparent text-white px-6 sm:px-10",
+        landing: "h-20 sm:h-20 bg-transparent text-white px-6 sm:px-10 border-b border-transparent",
         default: "h-20 sm:h-20 bg-transparent backdrop-blur-md shadow-md px-6 sm:px-10 border-b border-white/10",
     };
 
