@@ -1,6 +1,6 @@
 import React from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-import logo from '../../assets/logo/crackcode_logo.png'
+import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
 import { Bell, Search, UserCircle } from 'lucide-react';
 import Avatar from './Avatar';
@@ -18,13 +18,14 @@ const Header = ({ variant = "default" }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const hideHeaderActions = ['/', '/login', '/email-verify', '/reset-password', '/gamer-profile'];
-    const showHeaderActions = !hideHeaderActions.includes(location.pathname);
+    const hideAuthHeaderActions = ['/', '/login', '/email-verify', '/reset-password', '/gamer-profile'];
+    const hideCorePagesHeaderActions = ['/user-profile'];
+    const showHeaderActions = !hideAuthHeaderActions.includes(location.pathname) && !hideCorePagesHeaderActions.includes(location.pathname);
 
-    const isLanding = location.pathname === '/';
+    const isAuth = hideAuthHeaderActions.includes(location.pathname);
 
     const handleLogoClick = () => {
-        if (!showHeaderActions) {
+        if (isAuth) {
             navigate('/');
         } else {
             navigate('/home');
