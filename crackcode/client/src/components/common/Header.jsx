@@ -1,16 +1,17 @@
-import React, { forwardRef } from 'react'
+import React, { Children } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
 import { Bell } from 'lucide-react';
 import Avatar from './Avatar';
 
-const Header = forwardRef(({ variant = "default" }, ref) => {
+const Header = ({ variant = "default" }) => {
     const baseStyles = "fixed top-0 left-0 w-full flex justify-between items-center z-50";
     
     const variants = {
         landing: "h-20 sm:h-20 bg-transparent text-white px-6 sm:px-10 border-b border-transparent",
         default: "h-20 sm:h-20 bg-transparent backdrop-blur-md shadow-md px-6 sm:px-10 border-b border-white/10",
+        empty: "h-20 sm:h-20 bg-transparent text-white px-6 sm:px-10 border-b border-transparent"
     };
 
     const navigate = useNavigate();
@@ -34,8 +35,14 @@ const Header = forwardRef(({ variant = "default" }, ref) => {
         navigate('/gamer-profile');
     }
 
+    if(variant === 'empty') {
+        <header className={`${baseStyles} ${variants[variant]}`}>
+            {Children}
+        </header> 
+    }
+
     return (
-        <header ref={ref} className={`${baseStyles} ${variants[variant]}`}>
+        <header className={`${baseStyles} ${variants[variant]}`}>
             <div className='flex w-full items-center justify-between relative'>
                 <div className='cursor-pointer' onClick={handleLogoClick}>
                     <img 
@@ -69,13 +76,12 @@ const Header = forwardRef(({ variant = "default" }, ref) => {
                         <div>
                             <Avatar />
                         </div>
+
                     </div>
                 )}
             </div>
         </header>
     )
-})
-
-Header.displayName = 'Header'
+};
 
 export default Header
