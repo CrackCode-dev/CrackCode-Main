@@ -7,3 +7,16 @@ export default function WeeklyChallenges() {
     </div>
   );
 }
+
+const dummyChallenges = [
+  { id: 1, title: "Two Sum", difficulty: "Easy" },
+  { id: 2, title: "Binary Search", difficulty: "Medium" },
+];
+
+<ul>
+  {dummyChallenges.map((c) => (
+    <li key={c.id}>
+      {c.title} – {c.difficulty}
+    </li>
+  ))}
+</ul>
