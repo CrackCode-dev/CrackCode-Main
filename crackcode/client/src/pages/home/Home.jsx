@@ -9,7 +9,7 @@ function Home() {
     <div className='h-screen flex flex-col justify-between bg-[#050505] text-white'>
       <Header variant="default" />
       
-      <main className='flex flex-1 p-6 px-6 sm:px-10 py-6 w-full'>
+      <main className='flex flex-1 px-6 sm:px-10 py-6 w-full'>
         <div className='flex gap-6 pt-20 w-full overflow-hidden'>
           <LeftSidebar />
           <ContentArea />
