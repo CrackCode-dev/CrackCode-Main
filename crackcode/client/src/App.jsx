@@ -67,9 +67,9 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path='/user-profile' element={
-          <ProtectedRoute>
+          // <ProtectedRoute>
             <UserProfile />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         } />
         <Route path='/solve/:problemId' element={
           <ProtectedRoute>
