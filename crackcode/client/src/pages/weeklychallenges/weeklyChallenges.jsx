@@ -1,16 +1,20 @@
 import ContentCard from "../../components/ui/Card";
 
+const challenges = [
+  { id: 1, title: "Two Sum", difficulty: "Easy", points: 50 },
+  { id: 2, title: "Binary Search", difficulty: "Medium", points: 75 },
+];
+
 export default function WeeklyChallenges() {
   return (
-    <div className="min-h-screen bg-black p-10 text-white">
-      <h1 className="text-3xl font-bold mb-6">Weekly Challenges</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <ContentCard variant="flat">
-          <h3 className="text-xl font-bold">Two Sum</h3>
-          <p className="text-gray-400 mt-2">Easy</p>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {challenges.map((c) => (
+        <ContentCard key={c.id} variant="flat">
+          <h3 className="text-xl font-bold">{c.title}</h3>
+          <p className="text-gray-400 mt-1">{c.difficulty}</p>
+          <p className="mt-3 text-green-400 font-semibold">+{c.points} XP</p>
         </ContentCard>
-      </div>
+      ))}
     </div>
   );
 }
