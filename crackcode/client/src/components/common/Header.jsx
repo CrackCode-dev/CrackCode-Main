@@ -4,6 +4,8 @@ import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
 import { Bell } from 'lucide-react';
 import Avatar from './Avatar';
+import HQBtn from './HQBtn';
+import BackBtn from './BackBtn';
 
 const Header = ({ variant = "default" }) => {
     const baseStyles = "fixed top-0 left-0 w-full flex justify-between items-center z-50";
@@ -11,7 +13,7 @@ const Header = ({ variant = "default" }) => {
     const variants = {
         landing: "h-20 sm:h-20 bg-transparent text-white px-6 sm:px-10 border-b border-transparent",
         default: "h-20 sm:h-20 bg-transparent backdrop-blur-md shadow-md px-6 sm:px-10 border-b border-white/10",
-        empty: "h-20 sm:h-20 bg-transparent text-white px-6 sm:px-10 border-b border-transparent"
+        empty: "h-20 sm:h-20 bg-transparent backdrop-blur-md shadow-md text-white px-6 sm:px-10 border-b border-transparent"
     };
 
     const navigate = useNavigate();
@@ -36,14 +38,20 @@ const Header = ({ variant = "default" }) => {
     }
 
     if(variant === 'empty') {
+        return (
         <header className={`${baseStyles} ${variants[variant]}`}>
-            {Children}
+            <div className='flex w-full items-center gap-4'>
+                <HQBtn />
+                <BackBtn />
+            </div>
         </header> 
-    }
+    )}
 
     return (
-        <header className={`${baseStyles} ${variants[variant]}`}>
+        <header className={`${baseStyles} ${variants[variant] || variants.default}`}>
             <div className='flex w-full items-center justify-between relative'>
+
+                {/* Logo */}
                 <div className='cursor-pointer' onClick={handleLogoClick}>
                     <img 
                         src={logo} 
@@ -52,6 +60,7 @@ const Header = ({ variant = "default" }) => {
                     />
                 </div>
 
+                {/* Navbar */}
                 {showHeaderActions && (
                     <div className='absolute left-1/2 transform -translate-x-1/2 hidden md:block'>
                         <Navbar />
@@ -60,6 +69,8 @@ const Header = ({ variant = "default" }) => {
 
                 {showHeaderActions && (
                     <div className='flex items-center gap-4 sm:gap-6'>
+
+                        {/* Search Bar */}
                         <input 
                             type="text" 
                             placeholder='Search Cases...' 
@@ -68,17 +79,20 @@ const Header = ({ variant = "default" }) => {
                             transition-all duration-300 ease-in-out'
                         />
 
+                        {/* Notification Bell */}
                         <Bell 
                             className='w-5 h-5 sm:w-6 sm:h-6 text-white hover:text-orange-500 transition-colors duration-300 cursor-pointer' 
                             onClick={handleNotificationsClick}
                         />
 
+                        {/* User Avatar */}
                         <div>
                             <Avatar />
                         </div>
 
                     </div>
                 )}
+
             </div>
         </header>
     )

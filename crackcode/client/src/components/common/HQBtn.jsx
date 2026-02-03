@@ -1,15 +1,22 @@
+import { useNavigate } from "react-router-dom";
 import Button from "../ui/Button";
 import { Warehouse } from 'lucide-react'
 
 const HQBtn = () => {
-    return (
+  const navigate = useNavigate();
+
+  const handleHQBtnClick = () => {
+    navigate('/home');
+  }
+
+  return (
     <Button
       icon={Warehouse}
       iconPosition="left"
-      variant="outline"
-      size="md"
-      onClick={onClick}
-      className={`text-orange-400 hover:text-orange-500 ${className}`}
+      variant="primary"
+      size="lg"
+      onClick={handleHQBtnClick}
+      className={`text-orange-400 hover:text-black`}
     >
       HQ
     </Button>
