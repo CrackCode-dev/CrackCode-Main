@@ -8,15 +8,23 @@ const challenges = [
 export default function WeeklyChallenges() {
   return (
     <div className="min-h-screen bg-black text-white px-10 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {challenges.map((c) => (
-          <ContentCard key={c.id} variant="flat">
-            <h3 className="text-xl font-bold">{c.title}</h3>
-            <p className="text-gray-400 mt-1">{c.difficulty}</p>
-            <p className="mt-3 text-green-400 font-semibold">+{c.points} XP</p>
-          </ContentCard>
-        ))}
-      </div>
+        <div className="flex items-center justify-between mb-10">
+          <div>
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">📅</span>
+              <h1 className="text-3xl font-bold">Weekly Challenges</h1>
+            </div>
+            <p className="text-gray-400 mt-1">
+              Complete this week’s challenges to earn points
+            </p>
+          </div>
+
+          <div className="text-right">
+            <p className="text-gray-400 text-sm">Points Earned</p>
+            <p className="text-green-500 text-3xl font-bold">0</p>
+          </div>
+        </div>
+
     </div>
   );
 }
