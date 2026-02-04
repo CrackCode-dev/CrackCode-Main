@@ -72,6 +72,7 @@ const Header = ({ variant = "default" }) => {
 
                         {/* Search Bar */}
                         <input 
+                            name='search-bar'
                             type="text" 
                             placeholder='Search Cases...' 
                             className='w-24 sm:w-32 bg-orange-950 text-white text-xs sm:text-sm rounded-md px-2 py-1 
