@@ -26,7 +26,7 @@ const Badge = ({
       ? 'bg-[#185718] text-[#00FF6E] font-semibold'
       : difficulty === 'medium'
       ? 'bg-[#3D310E] text-[#FFF705] font-semibold'
-      : 'bg-[#FFF705] text-[#F25941] font-semibold' // hard
+      : 'bg-[#401719] text-[#F25941] font-semibold' // hard
   }
 
   const badgeClasses = [
