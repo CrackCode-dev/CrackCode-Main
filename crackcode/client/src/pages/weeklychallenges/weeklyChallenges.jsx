@@ -7,12 +7,12 @@ const challenges = [
 
 export default function WeeklyChallenges() {
   return (
-    <div className="min-h-screen bg-black text-white px-10 py-8">
+    <div className="min-h-screen bg-black text-white px-30 py-30">
         <div className="flex items-center justify-between mb-10">
           <div>
             <div className="flex items-center gap-3">
-              <span className="text-2xl">📅</span>
-              <h1 className="text-3xl font-bold">Weekly Challenges</h1>
+              <span className="text-4xl">📅</span>
+              <h1 className="text-5xl font-bold">Weekly Challenges</h1>
             </div>
             <p className="text-gray-400 mt-1">
               Complete this week’s challenges to earn points
@@ -20,8 +20,8 @@ export default function WeeklyChallenges() {
           </div>
 
           <div className="text-right">
-            <p className="text-gray-400 text-sm">Points Earned</p>
-            <p className="text-green-500 text-3xl font-bold">0</p>
+            <p className="text-gray-400 text-1xl">Points Earned</p>
+            <p className="text-green-500 text-5xl font-bold">0</p>
           </div>
         </div>
 
