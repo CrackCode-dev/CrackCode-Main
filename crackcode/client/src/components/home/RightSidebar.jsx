@@ -14,18 +14,20 @@ function RightSidebar() {
       subtitle='Level 24'/>
 
       <Card variant='flat'
-      title='Daily Challenge'
-      badge={<Badge type='point' size='md'>+50 pts</Badge>}
-      subtitle='"The Missing Witness" - Find the suspect using binary search'
-      description={<ProgressBar size='sm' completed={1} total={3} variant='default' labelText='cases completed' showLabel/>}
-      footer={<Button variant='outline' fullWidth>Start Challenge</Button>}/>
+        title='Daily Challenge'
+        badge={<Badge type='point' size='md'>+50 pts</Badge>}
+        subtitle='"The Missing Witness" - Find the suspect using binary search'>
+        <ProgressBar size='sm' completed={1} total={3} variant='default' labelText='cases completed' showLabel/>
+        <Button variant='outline' fullWidth>Start Challenge</Button>
+      </Card>
 
       <Card variant='flat'
-      badge={<Badge type='point' size='md'>+100 pts</Badge>}
-      title='Weekly Challenge'
-      subtitle='"The Heist" - Solve 5 cases this week' 
-      description={<ProgressBar size='sm' completed={1} total={4} variant='default' labelText='cases completed' showLabel/>}
-      footer={<Button variant='outline' fullWidth>View Challenge</Button>}/>
+        badge={<Badge type='point' size='md'>+100 pts</Badge>}
+        title='Weekly Challenge'
+        subtitle='"The Heist" - Solve 5 cases this week'>
+        <ProgressBar size='sm' completed={1} total={4} variant='default' labelText='cases completed' showLabel/>
+        <Button variant='outline' fullWidth>View Challenge</Button>
+      </Card>
 
     </div>
   )
