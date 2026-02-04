@@ -1,23 +1,27 @@
 import Card from '../ui/Card'
 import Badge from '../ui/Badge'
+import Button from '../ui/Button';
 
 const cases = [
     {
         title: 'The Sum Mystery', 
         description: 'A crucial set of data has been stolen and scattered through arrays. Track each piece and reconstruct what was taken.',
-        difficulty: 'Easy',
+        difficulty: 'easy',
+        difficultyLabel: 'Easy',
         points: '+100 pts'
     },
     {
         title: 'The Missing Evidence',
         description: 'Find the missing piece of evidence in a sequence of numbered items.',
-        difficulty: 'Medium',
+        difficulty: 'medium',
+        difficultyLabel: 'Medium',
         points: '+150 pts'
     },
     {
         title: 'Duplicate Case',
         description: 'Identify duplicate clues in the evidence collection.',
-        difficulty: 'Hard',
+        difficulty: 'hard',
+        difficultyLabel: 'Hard',
         points: '+250 pts'
     }    
 ];
@@ -30,12 +34,34 @@ function ContentArea() {
 
         <h3 className="text-2xl text-left font-bold mb-6">Active Cases</h3>
 
-        <Card variant='flat'
-        title='The Sum Mystery'
-        subtitle='A crucial set of data has been stolen and scattered through arrays. Track each 
-piece and reconstruct what was taken.'
-        badge={<Badge type='default' size='md' className=''>+50 pts</Badge>}
-        />
+        <div className='space-y-6'>
+          {cases.map((caseItem, index) => (
+            <Card key={index} 
+              variant='flat'
+              title={caseItem.title}
+              subtitle={caseItem.description}
+              actions={<Button variant='primary'>Investigate</Button>}
+              footer={
+                <div className='gap-2 flex'>
+                  <Badge
+                    type='difficulty'
+                    difficulty={caseItem.difficulty}
+                    size='md'
+                  >
+                    {caseItem.difficultyLabel}
+                  </Badge>
+
+                  <Badge
+                    type='default'
+                    size='md'
+                  >
+                    {caseItem.points}
+                  </Badge>
+                </div>
+              }
+            />
+          ))}
+        </div>
 
     </div>
   )
