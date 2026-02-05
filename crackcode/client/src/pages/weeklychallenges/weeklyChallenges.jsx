@@ -1,8 +1,9 @@
 import ContentCard from "../../components/ui/Card";
 
 const challenges = [
-  { id: 1, title: "Two Sum", difficulty: "Easy", points: 50 },
-  { id: 2, title: "Binary Search", difficulty: "Medium", points: 75 },
+  { id: 1, title: "Monday Morning Puzzle", difficulty: "Easy", points: 50, type: "Multiple Choice" },
+  { id: 2, title: "Code Debug Sprint", difficulty: "Intermediate", points: 75, type: "Debug Choice" },
+  { id: 3, title: "Detective’s Terminology", difficulty: "Easy", points: 40, type: "Text Answer" },
 ];
 
 export default function WeeklyChallenges() {
