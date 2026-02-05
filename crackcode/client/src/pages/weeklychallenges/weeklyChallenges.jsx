@@ -25,6 +25,16 @@ export default function WeeklyChallenges() {
           </div>
         </div>
 
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {challenges.map((c) => (
+            <ContentCard
+              key={c.id}
+              variant="flat"
+              className="bg-gradient-to-br from-[#111] to-[#0b0b0b]
+                        border border-white/10 rounded-xl p-6"
+            ></ContentCard>
+          ))}
+        </div>
     </div>
   );
 }
