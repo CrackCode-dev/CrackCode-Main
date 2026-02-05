@@ -9,6 +9,7 @@ const challenges = [
 export default function WeeklyChallenges() {
   return (
     <div className="min-h-screen bg-black text-white px-30 py-30">
+        {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
             <div className="flex items-center gap-3">
@@ -26,6 +27,7 @@ export default function WeeklyChallenges() {
           </div>
         </div>
 
+        {/* Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {challenges.map((c) => (
             <ContentCard
@@ -34,8 +36,10 @@ export default function WeeklyChallenges() {
               className="bg-gradient-to-br from-[#111] to-[#0b0b0b]
                         border border-white/10 rounded-xl p-6"
             >
-              <h3 className="text-lg font-semibold">{c.title}</h3>
-
+              <h3 className="text-lg font-semibold transition-colors duration-200 hover:text-orange-400 cursor-pointer">
+                {c.title}
+              </h3>
+              
               <span className="inline-block mt-2 text-xs px-3 py-1 rounded-full bg-white/10 text-gray-300">
                 {c.type}
               </span>
