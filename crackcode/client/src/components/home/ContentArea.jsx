@@ -1,6 +1,7 @@
 import Card from '../ui/Card'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button';
+import InviteCard from './InviteCard';
 
 const cases = [
     {
@@ -62,6 +63,9 @@ function ContentArea() {
             />
           ))}
         </div>
+
+          
+        <InviteCard />
 
     </div>
   )
