@@ -32,7 +32,30 @@ export default function WeeklyChallenges() {
               variant="flat"
               className="bg-gradient-to-br from-[#111] to-[#0b0b0b]
                         border border-white/10 rounded-xl p-6"
-            ></ContentCard>
+            >
+              <h3 className="text-lg font-semibold">{c.title}</h3>
+
+              <span className="inline-block mt-2 text-xs px-3 py-1 rounded-full bg-white/10 text-gray-300">
+                {c.type}
+              </span>
+
+              <span
+                className={`inline-block mt-3 text-xs px-3 py-1 rounded-full font-semibold
+                  ${
+                    c.difficulty === "Easy"
+                      ? "bg-green-600/20 text-green-400"
+                      : "bg-yellow-600/20 text-yellow-400"
+                  }
+                `}
+              >
+                {c.difficulty.toUpperCase()}
+              </span>
+
+              <p className="mt-4 text-green-400 font-bold flex items-center gap-1">
+                ⚡ {c.points} XP
+              </p>
+
+            </ContentCard>
           ))}
         </div>
     </div>
