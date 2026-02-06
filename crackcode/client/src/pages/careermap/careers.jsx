@@ -1,4 +1,11 @@
 //contains all the career information
+import softwareDeveloper from "../../assets/icons/softwareDeveloper.png";
+import mobileAppDeveloper from "../../assets/icons/mobileAppDeveloper.png";
+import webDeveloper from "../../assets/icons/webDeveloper.png";
+import backendDeveloper from "../../assets/icons/backendDeveloper.png";
+import gameDeveloper from "../../assets/icons/gameDeveloper.png";
+import dataAnalyst from "../../assets/icons/dataAnalyst.png";
+
 
 export const careers = [
     {
@@ -11,6 +18,7 @@ export const careers = [
         difficulty: "easy",
         locked: false,
         category: "software",
+        icon : softwareDeveloper,
     },
 
     {
@@ -23,6 +31,7 @@ export const careers = [
         difficulty: "easy",
         locked: true,
         category: "mobile",
+        icon :mobileAppDeveloper,
     },
 
     {
@@ -35,6 +44,7 @@ export const careers = [
         difficulty: "medium",
         locked: false,
         category: "web",
+        icon : webDeveloper,
     },
 
     {
@@ -42,11 +52,12 @@ export const careers = [
         title: "Backend Developer",
         level: "Beginner Level",
         gradient: "from-[#6200A9] to-[#A501C2]",
-        languages: "Python / Java / C++ / JavaScript (Node.js fundamentals)",
+        languages: "Python / Java / C++ / JavaScript \n\t\t\t\t\t(Node.js fundamentals)",
         focus: ["Understanding server-side task flow", "Handling input/output", "Simple CRUD logic", "Basic error handling"],
         difficulty: "medium",
         locked: true,
         category: "backend",
+        icon : backendDeveloper,
     },
 
     {
@@ -59,6 +70,7 @@ export const careers = [
         difficulty: "hard",
         locked: false,
         category: "gaming",
+        icon : gameDeveloper,
 
     },
 
@@ -72,6 +84,7 @@ export const careers = [
         difficulty: "hard",
         locked: true,
         category: "data",
+        icon : dataAnalyst,
     },
 ];
 
