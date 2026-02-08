@@ -13,7 +13,7 @@ const HQBtn = () => {
     <Button
       icon={Warehouse}
       iconPosition="left"
-      variant="outline"
+      variant="primary"
       size="lg"
       onClick={handleHQBtnClick}
       // className={`text-orange-400 hover:text-black`}
