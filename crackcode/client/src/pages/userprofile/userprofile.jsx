@@ -152,7 +152,7 @@ const UserProfile = () => {
                   <div className="font-medium">Email Address</div>
                   <div className="text-sm text-gray-400">john@crackcode.com</div>
                 </div>
-                <Button variant='outline' size='sm' className='text-white border border-white'>{action}</Button>
+                <Button variant='outline' size='sm' className='text-orange-400'>{action}</Button>
 
               </div>
             ))}

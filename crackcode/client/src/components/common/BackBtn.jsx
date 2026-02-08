@@ -16,7 +16,7 @@ const BackBtn = () => {
       variant="primary"
       size="lg"
       onClick={handleBackBtnClick}
-      className={`text-orange-400 hover:text-black`}
+      // className={`text-orange-400 hover:text-black`}
     >
       Back
     </Button>
