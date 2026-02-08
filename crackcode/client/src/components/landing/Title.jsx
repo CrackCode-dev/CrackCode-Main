@@ -26,7 +26,7 @@ function Title() {
                         Get Started
                     </Button>
 
-                    <Button variant="outline" size="lg" onClick={() => navigate('/home')}>
+                    <Button variant="outline" size="lg" onClick={() => navigate('/home')} className='text-orange-500'>
                         Learn More
                     </Button>
                 </div>

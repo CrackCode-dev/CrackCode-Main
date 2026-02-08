@@ -46,11 +46,11 @@ function InviteCard() {
       <div className="mb-6">
         <p className="text-sm text-gray-300 mb-3">Or share via</p>
         <div className="grid grid-cols-2 gap-4">
-          <Button variant='outline' className="flex items-center justify-center gap-2 py-3 px-4 ">
+          <Button variant='outline' className="flex items-center justify-center gap-2 py-3 px-4 text-orange-500">
             <Mail size={18} />
             <span>Email</span>
           </Button>
-          <Button variant='outline' className="flex items-center justify-center gap-2 py-3 px-4">
+          <Button variant='outline' className="flex items-center justify-center gap-2 py-3 px-4 text-orange-500">
             <Link size={18} />
             <span>Share</span>
           </Button>
