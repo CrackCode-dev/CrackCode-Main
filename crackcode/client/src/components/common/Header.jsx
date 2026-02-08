@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+// import React, { Children } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
@@ -21,7 +21,8 @@ const Header = ({ variant = "default" }) => {
 
     const hideAuthHeaderActions = ['/', '/login', '/email-verify', '/reset-password', '/gamer-profile'];
     const hideCorePagesHeaderActions = ['/user-profile'];
-    const showHeaderActions = !hideAuthHeaderActions.includes(location.pathname) && !hideCorePagesHeaderActions.includes(location.pathname);
+    const showHeaderActions = !hideAuthHeaderActions.includes(location.pathname) && !hideCorePagesHeaderActions.includes(location.pathname)
+                            && variant !== 'empty'  && variant !== 'landing';
 
     const isAuth = hideAuthHeaderActions.includes(location.pathname);
 
