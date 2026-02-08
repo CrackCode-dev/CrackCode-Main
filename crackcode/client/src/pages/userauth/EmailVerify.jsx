@@ -46,7 +46,7 @@ function EmailVerify() {
       if (data.success) {
         toast.success(data.message || "Email verified successfully!")
         getUserData()
-        navigate('/home')
+        navigate('/gamer-profile')
       } else {
         toast.error(data.message || "Verification failed")
       }
@@ -57,11 +57,11 @@ function EmailVerify() {
   }
 
   // Effect to protect the route
-  useEffect(() => {
-    if (isLoggedIn && userData && userData.isAccountVerified) {
-      navigate('/')
-    }
-  }, [isLoggedIn, userData, navigate])
+  // useEffect(() => {
+  //   if (isLoggedIn && userData && userData.isAccountVerified) {
+  //     navigate('/')
+  //   }
+  // }, [isLoggedIn, userData, navigate])
 
   return (
 
