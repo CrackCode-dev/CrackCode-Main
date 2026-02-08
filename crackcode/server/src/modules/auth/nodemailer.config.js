@@ -1,14 +1,14 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import path from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath } from "url"; 
 
 // Load env variables from server/.env
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, "../../../.env") });
 
-const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({ // configure the transporter with SMTP settings from environment variables
   host: process.env.SMTP_HOST || "smtp.gmail.com",
   port: process.env.SMTP_PORT || 587,
   secure: false,
@@ -38,3 +38,4 @@ transporter.verify((error) => {
 });
 
 export default transporter;
+
