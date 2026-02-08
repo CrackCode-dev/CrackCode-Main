@@ -94,10 +94,10 @@ const GameProfile = () => {
 
             await gameprofileService.updateGameprofile(backendUrl, getUserData, username, avatarData, avatarType);
 
-            toast.success('Profile updated successfully!');
+            toast.success('Profile Created successfully!');
             navigate('/home');
         } catch (err) {
-            toast.error('Failed to update profile. Try again.');
+            toast.error('Failed to create profile. Try again.');
         } finally {
             setIsLoading(false);
         }
