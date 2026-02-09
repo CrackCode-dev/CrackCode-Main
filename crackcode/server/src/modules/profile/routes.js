@@ -12,12 +12,25 @@ import uploadAvatarMulter from "./multer.config.js";
 
 const router = express.Router();
 
+// ═════════════════════════════════════════════════════════════
+// Profile Routes (All require authentication via userAuth)
+// ═════════════════════════════════════════════════════════════
+
+// Get user profile
 router.get("/profile", userAuth, getUserProfile);
+
+// Update profile (name, bio, preset avatar)
 router.put("/", userAuth, updateUserProfile);
+
+// Upload custom avatar (file upload)
 router.put("/avatar", userAuth, uploadAvatarMulter.single("avatar"), uploadAvatar);
+
+// Email management
 router.put("/email/edit", userAuth, editEmail);
 router.put("/email/change", userAuth, changeEmail);
 router.put("/email/configure", userAuth, configureEmailSettings);
-router.get("/test", (_req, res) => res.send("profile routes working"));
+
+// Test route
+router.get("/test", (_req, res) => res.send("✅ Profile routes working"));
 
 export default router;
