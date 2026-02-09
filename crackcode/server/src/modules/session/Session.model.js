@@ -33,7 +33,10 @@ const sessionSchema = new mongoose.Schema(
     deviceInfo: {
       userAgent: String,
       ip: String,
-      deviceType: { type: String, enum: ["mobile", "tablet", "desktop", "unknown"] },
+      deviceType: {
+        type: String,
+        enum: ["mobile", "tablet", "desktop", "unknown"],
+      },
       browser: String,
       os: String,
     },
@@ -58,10 +61,10 @@ const sessionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// TTL Index: Auto-delete expired sessions after 7 days
+// TTL Index: MongoDB auto-deletes documents once expiresAt is reached
 sessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-// Index for cleanup queries
+// Compound index for common query: "get active sessions for a user"
 sessionSchema.index({ userId: 1, isActive: 1 });
 
 export default mongoose.model("Session", sessionSchema);
