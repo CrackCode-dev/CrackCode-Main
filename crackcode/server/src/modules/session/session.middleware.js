@@ -2,8 +2,6 @@ import jwt from "jsonwebtoken";
 import User from "../auth/User.model.js";
 import { validateSession } from "./session.service.js";
 
-// ─── Helpers ─────────────────────────────────────────────────
-
 /**
  * Extract bearer / cookie token from the request.
  * Priority: Authorization header > accessToken cookie > legacy "token" cookie
@@ -18,16 +16,7 @@ const extractToken = (req) => {
   return null;
 };
 
-// ─── sessionAuth ─────────────────────────────────────────────
-/**
- * Primary authentication middleware for ALL protected routes.
- *
- * 1. Extracts JWT from header or cookie
- * 2. Verifies JWT signature + expiry
- * 3. If token contains sessionId → validate session in MongoDB
- * 4. Fetches user from DB
- * 5. Attaches req.user, req.userId, req.sessionId
- */
+
 const sessionAuth = async (req, res, next) => {
   try {
     const token = extractToken(req);
@@ -105,7 +94,6 @@ const sessionAuth = async (req, res, next) => {
 // ─── optionalAuth ────────────────────────────────────────────
 /**
  * Continues even if the user is NOT authenticated.
- * Useful for public pages that show extra info when logged in.
  */
 const optionalAuth = async (req, res, next) => {
   try {
@@ -129,8 +117,7 @@ const optionalAuth = async (req, res, next) => {
 
 // ─── rateLimiter ─────────────────────────────────────────────
 /**
- * Simple in-memory sliding-window rate limiter.
- * Replace with Redis-backed limiter when you scale beyond one server.
+ *  have to Replace with Redis-backed limiter when you scale beyond one server.
  */
 const rateLimitStore = new Map();
 
