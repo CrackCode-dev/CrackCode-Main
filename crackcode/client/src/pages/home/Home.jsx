@@ -6,13 +6,15 @@ import ContentArea from '../../components/home/ContentArea'
 
 function Home() {
   return (
-    <div className='min-h-screen flex flex-col justify-between bg-[#050505] text-white'>
+    <div className='h-screen flex flex-col justify-between bg-[#050505] text-white'>
       <Header variant="default" />
       
-      <main className='grow flex gap-6 p-6 px-6 sm:px-10 py-6 pt-40 w-full'>
-        <LeftSidebar />
-        <ContentArea />
-        <RightSidebar />
+      <main className='flex flex-1 px-6 sm:px-10 py-6 w-full'>
+        <div className='flex gap-6 pt-20 w-full overflow-hidden'>
+          <LeftSidebar />
+          <ContentArea />
+          <RightSidebar />
+        </div>
       </main>
 
       <Footer />
