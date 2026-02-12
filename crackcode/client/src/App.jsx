@@ -36,6 +36,7 @@ import Landing from './pages/landing/Landing'
 import EmailVerify from './pages/userauth/EmailVerify'
 import Login from './pages/userauth/Login'
 import ResetPassword from './pages/userauth/ResetPassword'
+import CareermapMain from './pages/careermap/CareermapMain' 
 import GameProfile from './pages/gameprofile/gameprofile'
 import UserProfile from './pages/userprofile/userprofile'
 import CodeEditorPage from './pages/codeEditor/CodeEditorPage'
@@ -54,12 +55,13 @@ function App() {
         <Route path='/verify-account' element={<EmailVerify />} />
         <Route path='/email-verify' element={<EmailVerify />} />
         <Route path='/reset-password' element={<ResetPassword />} />
+        <Route path='/careermaps-Main'element={<CareermapMain/>}/>
         
         {/* Protected routes - require login + verified email */}
         <Route path='/home' element={
-          <ProtectedRoute>
+          // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
             <Home />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         } />
         <Route path='/gamer-profile' element={
           <ProtectedRoute>
@@ -67,9 +69,9 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path='/user-profile' element={
-          <ProtectedRoute>
+          // <ProtectedRoute>
             <UserProfile />
-          </ProtectedRoute>
+          // </ProtectedRoute>
         } />
         <Route path='/solve/:problemId' element={
           <ProtectedRoute>

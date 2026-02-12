@@ -1,6 +1,3 @@
-// ContentCard.jsx
-import React from 'react';
-
 const ContentCard = ({
   // Layout & Structure
   variant = 'default',
@@ -21,6 +18,7 @@ const ContentCard = ({
   subtitle,
   description,
   badge,
+  points,
   footer,
   
   // Visual customization
@@ -121,6 +119,13 @@ const ContentCard = ({
           {badge}
         </div>
       )}
+
+      {/* Points(XP) */}
+      {points && (
+        <div className="left-0 relative" >
+          {points}
+        </div>
+      )}
       
       {/* Icon (for icon components) */}
       {icon && iconPosition === 'top' && (
@@ -174,9 +179,9 @@ const ContentCard = ({
           
           {/* Description */}
           {description && (
-            <p className="text-gray-400 mb-3">
+            <div className="text-gray-400 mb-3">
               {description}
-            </p>
+            </div>
           )}
           
           {/* Custom children content */}
@@ -197,21 +202,19 @@ const ContentCard = ({
           </div>
         )}
       </div>
-      
-      {/* Actions */}
-      {actions && (
-        <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200">
-          {actions}
-        </div>
+
+      {(footer || actions) && (
+        <div className='mt-6 pt-4 flex items-center justify-between gap-4'>
+          <div>
+            {footer}
+          </div>
+        {actions && (
+          <div className='shrink-0'>
+            {actions}
+          </div>
+        )}
+      </div>
       )}
-      
-      {/* Footer */}
-      {footer && (
-        <div className="mt-4">
-          {footer}
-        </div>
-      )}
-      
       </div> {/* End of content wrapper */}
     </Component>
   );

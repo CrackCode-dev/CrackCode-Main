@@ -8,7 +8,7 @@ function Navbar() {
       <Navlinks linkURL="/solve/case-101" linkText="Learn" />
       
       <Navlinks linkURL="/caselog" linkText="Case Log" />
-      <Navlinks linkURL="/career-maps" linkText="Career Maps" />
+      <Navlinks linkURL="/careermaps-Main" linkText="Career Maps" />
       <Navlinks linkURL="/leaderboard" linkText="Leaderboard" />
       <Navlinks linkURL="/store" linkText="Store" />
     </div>
