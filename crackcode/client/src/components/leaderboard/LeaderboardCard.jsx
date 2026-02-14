@@ -1,4 +1,5 @@
 import React from "react";
+import "../styles/leaderboard.css";
 
 const LeaderboardCard = ({ user, type }) => {
   return (

@@ -1,28 +1,30 @@
 import { useEffect, useState } from "react";
+import { fetchGlobalLeaderboard } from "../../api/leaderboard";
 import "./leaderboard.css";
-
-//const dummyData = [
-//  { rank: 1, username: "Alice", totalXP: 5420, level: 52, batch: "Gold" },
-//  { rank: 2, username: "Bob", totalXP: 4900, level: 48, batch: "Silver" },
-//  { rank: 3, username: "Charlie", totalXP: 4300, level: 45, batch: "Bronze" },
-//];
-
-useEffect(() => {
-  fetchGlobalLeaderboard()
-    .then((data) => setLeaderboard(data))
-    .catch((err) => {
-      console.error("API error:", err);
-      setLeaderboard([]); // fallback so table still renders
-    });
-}, []);
-
 
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLeaderboard(dummyData); // ✅ simulate API response
+    const loadLeaderboard = async () => {
+      try {
+        const data = await fetchGlobalLeaderboard();
+        setLeaderboard(data);
+      } catch (err) {
+        console.error("API error:", err);
+        setLeaderboard([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadLeaderboard();
   }, []);
+
+  if (loading) {
+    return <p>Loading leaderboard...</p>;
+  }
 
   return (
     <div className="leaderboard-container">
@@ -44,7 +46,9 @@ const Leaderboard = () => {
               <td>{user.username}</td>
               <td>{user.totalXP}</td>
               <td>{user.level}</td>
-              <td className={`batch ${user.batch.toLowerCase()}`}>{user.batch}</td>
+              <td className={`batch ${user.batch?.toLowerCase()}`}>
+                {user.batch}
+              </td>
             </tr>
           ))}
         </tbody>
