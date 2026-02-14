@@ -1,0 +1,114 @@
+body {
+  background-color: #0d0d0d;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.leaderboard-page {
+  padding: 40px;
+}
+
+.title {
+  text-align: center;
+  font-size: 36px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #aaa;
+  margin-bottom: 40px;
+}
+
+/* TOP THREE */
+
+.top-three {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+.card {
+  background: #1a1a1a;
+  padding: 30px;
+  width: 260px;
+  border-radius: 15px;
+  text-align: center;
+  position: relative;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+}
+
+.gold {
+  border: 2px solid gold;
+}
+
+.silver {
+  border: 2px solid silver;
+}
+
+.bronze {
+  border: 2px solid #cd7f32;
+}
+
+.crown {
+  position: absolute;
+  top: -15px;
+  right: -10px;
+  font-size: 24px;
+}
+
+.points {
+  font-size: 28px;
+  color: #00ff66;
+  margin: 10px 0;
+}
+
+.role {
+  color: #00ff66;
+  font-weight: bold;
+}
+
+.streak {
+  color: orange;
+}
+
+/* TABLE */
+
+.table-container {
+  background: #1a1a1a;
+  padding: 20px;
+  border-radius: 15px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  padding: 15px;
+  text-align: left;
+  color: #aaa;
+  border-bottom: 1px solid #333;
+}
+
+td {
+  padding: 15px;
+  border-bottom: 1px solid #333;
+}
+
+tbody tr:hover {
+  background-color: #222;
+}
+
+.green {
+  color: #00ff66;
+}
+
+.orange {
+  color: orange;
+}
