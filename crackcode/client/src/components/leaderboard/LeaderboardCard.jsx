@@ -1,4 +1,4 @@
-/*import React from "react";
+import React from "react";
 
 const LeaderboardCard = ({ user, type }) => {
   return (
@@ -16,4 +16,3 @@ const LeaderboardCard = ({ user, type }) => {
 };
 
 export default LeaderboardCard;
-*/
