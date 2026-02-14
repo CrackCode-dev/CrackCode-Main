@@ -1,6 +1,7 @@
 import React from "react";
 import LeaderboardCard from "./LeaderboardCard";
 import leaderboardData from "../../data/leaderboardData";
+import "../styles/leaderboard.css";
 
 const TopThree = () => {
   const topThree = leaderboardData.slice(0, 3);

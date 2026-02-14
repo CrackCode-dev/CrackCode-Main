@@ -1,5 +1,6 @@
 import React from "react";
 import leaderboardData from "../../data/leaderboardData";
+import "../styles/leaderboard.css";
 
 const  LeaderboardTable = () => {
     return (
