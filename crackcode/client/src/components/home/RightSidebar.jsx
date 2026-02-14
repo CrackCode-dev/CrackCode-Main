@@ -19,6 +19,7 @@ function RightSidebar() {
         total={3}
         buttonText='Start Challenge'
         buttonVariant='outline' 
+        className='text-orange-500'
       />
 
       <ChallengeCard
@@ -28,7 +29,8 @@ function RightSidebar() {
         completed={3}
         total={5}
         buttonText='View Challenge'
-        buttonVariant='outline' 
+        buttonVariant='outline'
+        className='text-orange-500' 
       />
 
     </div>

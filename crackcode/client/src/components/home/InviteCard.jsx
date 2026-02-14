@@ -16,8 +16,8 @@ function InviteCard() {
   };
 
   return (
-    <Card variant="flat" padding="lg" className="mt-8 border-orange-500/50">
-      <h2 className="text-2xl font-bold text-white mb-2">Invite a Friend</h2>
+    <Card variant="flat" padding="lg" className="mt-8 border-orange-500/50 bg-linear-to-b from-[#1a1a1a] to-orange-900/20">
+      <h2 className="text-2xl font-bold text-white mb-2 group-hover:text-orange-400 transition-colors duration-300">Invite a Friend</h2>
       <p className="text-gray-400 mb-6">
         Bring your friends into the investigation. Both of you get bonus points when they join!
       </p>
