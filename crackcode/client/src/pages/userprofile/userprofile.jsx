@@ -37,7 +37,7 @@ const UserProfile = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col justify-between bg-[#050505] text-white px-6 sm:px-10 py-6'">
+    <div className="h-screen flex flex-col justify-between bg-[#050505] text-white px-6 sm:px-10 py-6">
       <Header variant="empty" />
 
       <main className='mt-20 px-6 sm:px-10 py-6'>

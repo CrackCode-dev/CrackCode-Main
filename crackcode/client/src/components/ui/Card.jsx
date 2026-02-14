@@ -13,6 +13,11 @@ const ContentCard = ({
   imagePosition = 'top',
   imagePadding = 'none', // 'none' | 'sm' | 'md' | 'lg' - controls space around images
   
+  // NEW: Header band props (for gradient headers like LangCard)
+  headerContent,          // Custom header content (icon + title together)
+  headerClassName = '',   // Header Tailwind classes (padding, etc.)
+  headerStyle = {},       // Header inline styles (for gradients)
+  
   // Content props
   title,
   subtitle,
@@ -48,7 +53,7 @@ const ContentCard = ({
     default: 'bg-white text-white',
     outlined: 'bg-transparent text-white border-1',
     elevated: 'bg-white',
-    flat: 'bg-[#121212]'
+    flat: 'bg-[#121212]',
   };
   
   // Padding sizes
@@ -85,7 +90,8 @@ const ContentCard = ({
   const cardClasses = [
     baseStyles,
     variants[variant],
-    paddings[padding],
+    // Only apply padding if no headerContent (headerContent needs edge-to-edge)
+    headerContent ? '' : paddings[padding],
     shadows[shadow],
     bordered && 'border border-[#444040]',
     interactiveStyles,
@@ -112,6 +118,16 @@ const ContentCard = ({
       
       {/* Content wrapper - ensures content stays above overlay */}
       <div className={`relative z-10 transition-transform duration-500 ease-out ${hoverEffect === 'slide' ? 'group-hover:scale-105' : ''}`}>
+      
+      {/* NEW: Header band (for gradient headers with icon + title) */}
+      {headerContent && (
+        <div className={headerClassName} style={headerStyle}>
+          {headerContent}
+        </div>
+      )}
+      
+      {/* Main content area - apply padding here when headerContent is used */}
+      <div className={headerContent ? paddings[padding] : ''}>
       
       {/* Badge */}
       {badge && (
@@ -215,6 +231,8 @@ const ContentCard = ({
         )}
       </div>
       )}
+      
+      </div> {/* End of main content area */}
       </div> {/* End of content wrapper */}
     </Component>
   );
