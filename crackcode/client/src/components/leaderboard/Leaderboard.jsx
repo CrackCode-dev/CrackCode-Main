@@ -1,4 +1,4 @@
-/*import React from "react";
+import React from "react";
 import TopThree from "../components/leaderboard/TopThree";
 import LeaderboardTable from "../components/leaderboard/LeaderboardTable";
 import "../styles/leaderboard.css";
@@ -18,4 +18,4 @@ const LeaderBoard = () => {
 };
 
 export default LeaderBoard;
-*/
+
