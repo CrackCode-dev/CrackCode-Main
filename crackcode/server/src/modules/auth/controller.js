@@ -2,27 +2,34 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "./User.model.js";
 import transporter from "./nodemailer.config.js";
+import { createSession } from "../session/session.service.js";
+import {
+  setSessionCookies,
+  clearSessionCookies,
+} from "../session/session.controller.js";
+import Session from "../session/Session.model.js";
+import mongoose from "mongoose";
 
-const cookieOptions = {
+// ─── Legacy cookie (kept for backward-compat during migration) ──
+const legacyCookieOptions = {
   httpOnly: true,
-  secure: false,
-  sameSite: "lax",
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
-// Normalize and build a unique username
+// ─── Username builder ────────────────────────────────────────
 const buildUniqueUsername = async (rawUsername, fallbackName) => {
-  const base = (rawUsername || fallbackName || "user")
-    .toString()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "")
-    .slice(0, 18) || "user";
+  const base =
+    (rawUsername || fallbackName || "user")
+      .toString()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "")
+      .slice(0, 18) || "user";
 
   let candidate = base;
   let suffix = 1;
 
-  // Ensure uniqueness by checking the database
-  // eslint-disable-next-line no-await-in-loop
   while (await User.exists({ username: candidate })) {
     suffix += 1;
     candidate = `${base}${suffix}`.slice(0, 22);
@@ -31,23 +38,31 @@ const buildUniqueUsername = async (rawUsername, fallbackName) => {
   return candidate;
 };
 
+// ═════════════════════════════════════════════════════════════
 // REGISTER
+// ═════════════════════════════════════════════════════════════
 export const register = async (req, res) => {
   try {
     const { name, email, password, username } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ success: false, message: "Missing details" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing details" });
     }
 
-    const existingEmail = await User.findOne({ email });
-    if (existingEmail) {
-      return res.status(400).json({ success: false, message: "User already exists" });
+    if (await User.findOne({ email })) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User already exists" });
     }
 
-    const normalizedUsername = await buildUniqueUsername(username, name || email);
-
+    const normalizedUsername = await buildUniqueUsername(
+      username,
+      name || email
+    );
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await User.create({
       name,
       email,
@@ -55,12 +70,20 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    res.cookie("token", token, cookieOptions);
+    // ── Create session (replaces plain JWT) ──────────────────
+    const sessionData = await createSession(user._id, req);
+    setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
+
+    // Also set legacy cookie so old client code still works during migration
+    const legacyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.cookie("token", legacyToken, legacyCookieOptions);
 
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
+      sessionId: sessionData.sessionId,
       user: {
         id: user._id,
         name: user.name,
@@ -70,35 +93,54 @@ export const register = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("Register error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: error.message });
   }
 };
 
+// ═════════════════════════════════════════════════════════════
 // LOGIN
+// ═════════════════════════════════════════════════════════════
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ success: false, message: "Email and password are required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Email and password are required" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ success: false, message: "Invalid email" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid email" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ success: false, message: "Invalid password" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-    res.cookie("token", token, cookieOptions);
+    // ── Create session ──────────────────────────────────────
+    const sessionData = await createSession(user._id, req);
+    setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
+
+    // Legacy cookie
+    const legacyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+    res.cookie("token", legacyToken, legacyCookieOptions);
 
     return res.json({
       success: true,
       message: "Login successful",
+      sessionId: sessionData.sessionId,
       user: {
         id: user._id,
         name: user.name,
@@ -108,39 +150,110 @@ export const login = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("Login error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: error.message });
   }
 };
 
-// LOGOUT
-export const logout = async (_req, res) => {
+// ═════════════════════════════════════════════════════════════
+// LOGOUT (FIXED - handles both sessionId and userId)
+// ═════════════════════════════════════════════════════════════
+export const logout = async (req, res) => {
   try {
-    res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    // Try to delete session from database
+    let sessionDeleted = false;
+    
+    // Method 1: Try using sessionId if it's a valid ObjectId
+    if (req.sessionId && mongoose.Types.ObjectId.isValid(req.sessionId)) {
+      const result = await Session.findByIdAndDelete(req.sessionId);
+      if (result) {
+        sessionDeleted = true;
+        console.log(`✅ Session deleted: ${req.sessionId}`);
+      }
+    }
+    
+    // Method 2: If sessionId didn't work, try finding by userId
+    if (!sessionDeleted && req.userId) {
+      // Delete the most recent session for this user
+      const result = await Session.findOneAndDelete({ 
+        userId: req.userId 
+      });
+      if (result) {
+        sessionDeleted = true;
+        console.log(`✅ Session deleted for user: ${req.userId}`);
+      }
+    }
+    
+    // Always clear cookies, regardless of session deletion
+    clearSessionCookies(res);
+    
+    return res.json({ 
+      success: true, 
+      message: "Logged out successfully",
+      sessionDeleted 
     });
-
-    return res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("Logout error:", error);
+    // Still clear cookies even if there's an error
+    clearSessionCookies(res);
+    return res
+      .status(500)
+      .json({ success: false, message: error.message });
   }
 };
 
-// SEND VERIFY OTP
+// ═════════════════════════════════════════════════════════════
+// LOGOUT ALL DEVICES (FIXED)
+// ═════════════════════════════════════════════════════════════
+export const logoutAllDevices = async (req, res) => {
+  try {
+    const userId = req.userId || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated"
+      });
+    }
+
+    // Delete all sessions for this user from the database
+    const result = await Session.deleteMany({ userId });
+
+    // Clear cookies for the current device
+    clearSessionCookies(res);
+
+    return res.json({
+      success: true,
+      message: `Logged out from all devices. ${result.deletedCount} session(s) terminated.`,
+      sessionsTerminated: result.deletedCount,
+    });
+  } catch (error) {
+    console.error("Logout all devices error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to logout from all devices",
+      error: error.message,
+    });
+  }
+};
+
+// ═════════════════════════════════════════════════════════════
+// Email verification and Check OTP and reset password 
+// ═════════════════════════════════════════════════════════════
+
 export const sendVerifyOtp = async (req, res) => {
   try {
     const user = await User.findById(req.userId);
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-
     if (user.isAccountVerified) {
       return res.json({ success: false, message: "Account already verified" });
     }
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
-
     user.verifyotp = otp;
     user.verifyotpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
     await user.save();
@@ -158,11 +271,9 @@ export const sendVerifyOtp = async (req, res) => {
   }
 };
 
-// VERIFY EMAIL
 export const verifyEmail = async (req, res) => {
   try {
     const { otp } = req.body;
-
     if (!otp) {
       return res.status(400).json({ success: false, message: "Missing OTP" });
     }
@@ -171,7 +282,6 @@ export const verifyEmail = async (req, res) => {
     if (!user) {
       return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
-
     if (user.verifyotpExpireAt < Date.now()) {
       return res.status(400).json({ success: false, message: "OTP expired" });
     }
@@ -187,7 +297,6 @@ export const verifyEmail = async (req, res) => {
   }
 };
 
-// CHECK AUTH
 export const isAuthenticated = async (req, res) => {
   try {
     return res.json({
@@ -207,7 +316,6 @@ export const isAuthenticated = async (req, res) => {
   }
 };
 
-// SEND PASSWORD RESET OTP
 export const sendResetOtp = async (req, res) => {
   try {
     const { email } = req.body;
@@ -238,35 +346,36 @@ export const sendResetOtp = async (req, res) => {
   }
 };
 
-// RESET PASSWORD
 export const resetPassword = async (req, res) => {
   try {
     const { email, otp, newPassword } = req.body;
-
     if (!email || !otp || !newPassword) {
-      return res.status(400).json({ success: false, message: "Email, OTP, and new password are required." });
+      return res.status(400).json({
+        success: false,
+        message: "Email, OTP, and new password are required.",
+      });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
-
     if (!user.resetotp || user.resetotp !== otp) {
       return res.status(400).json({ success: false, message: "Invalid OTP" });
     }
-
     if (user.resetotpExpireAt < Date.now()) {
       return res.status(400).json({ success: false, message: "OTP expired." });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
+    user.password = await bcrypt.hash(newPassword, 10);
     user.resetotp = "";
     user.resetotpExpireAt = 0;
     await user.save();
 
-    return res.json({ success: true, message: "Password has been reset successfully" });
+    return res.json({
+      success: true,
+      message: "Password has been reset successfully",
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

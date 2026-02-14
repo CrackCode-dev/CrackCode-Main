@@ -8,6 +8,14 @@ import { AppContent } from '../../context/userauth/authenticationContext'
 import { gameprofileService } from '../../services/api/gameprofileService'
 import { toast } from 'react-toastify'
 
+//Importing the avatars
+import avatar1 from '../../assets/avatars/avatar1.png'
+import avatar2 from  '../../assets/avatars/avatar2.png'
+import avatar3 from '../../assets/avatars/avatar3.png'
+import avatar4 from '../../assets/avatars/avatar4.png'
+import avatar5 from '../../assets/avatars/avatar5.png'
+import avatar6 from '../../assets/avatars/avatar6.png'
+import avatar7 from '../../assets/avatars/avatar7.png'
 
 const GameProfile = () => {
 
@@ -27,9 +35,10 @@ const GameProfile = () => {
     const [usernameAvailable, setusernameAvailable] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
+    //avatar usage array
     const avatars = [
-        { id: 1, src: '/avatars/avatar1.png' }, { id: 2, src: '/avatars/avatar2.png' }, { id: 3, src: '/avatars/avatar3.png' },
-        { id: 4, src: '/avatars/avatar4.png' }, { id: 5, src: '/avatars/avatar5.png' }, { id: 6, src: '/avatars/avatar6.png' }, { id: 7, src: '/avatars/avatar7.png' }
+        { id: 1, src: avatar1 }, { id: 2, src: avatar2 }, { id: 3, src: avatar3 },
+        { id: 4, src:avatar4}, { id: 5, src: avatar5}, { id: 6, src:avatar6 }, { id: 7, src: avatar7}
     ];
 
     //Check username availability
@@ -85,10 +94,10 @@ const GameProfile = () => {
 
             await gameprofileService.updateGameprofile(backendUrl, getUserData, username, avatarData, avatarType);
 
-            toast.success('Profile updated successfully!');
-            navigate('/user-profile');
+            toast.success('Profile Created successfully!');
+            navigate('/home');
         } catch (err) {
-            toast.error('Failed to update profile. Try again.');
+            toast.error('Failed to create profile. Try again.');
         } finally {
             setIsLoading(false);
         }

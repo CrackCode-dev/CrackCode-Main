@@ -13,7 +13,7 @@ const Button = ({
 }) => {
 
     //Base styles
-    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-md focus:outline-none transition'
+    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg focus:outline-none transition'
     
     //Variant styles with hover styles
     const variants = {
