@@ -26,7 +26,7 @@ const Button = ({
                   focus-visible:ring-4 focus-visible:ring-orange-400 focus-visible:ring-offset-2 focus-visible:ring-offset-black
                   [text-shadow:0_2px_4px_rgba(0,0,0,0.5),0_-1px_2px_rgba(255,255,255,0.2)]`,
         
-        outline: `bg-gradient-to-b from-transparent to-black/10
+        outline: `bg-transparent
                   border-4 border-current
                   shadow-[0_6px_0_0_currentColor,0_8px_12px_rgba(0,0,0,0.4)]
                   hover:shadow-[0_4px_0_0_currentColor,0_6px_10px_rgba(0,0,0,0.4)]
@@ -65,19 +65,19 @@ const Button = ({
       {...props}
     >
       {/* Glossy shine effect - for primary and outline variants */}
-      {(variant === 'primary' || variant === 'outline') && (
+      {variant === 'primary' && (
         <>
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-white/30 via-transparent to-transparent opacity-80 pointer-events-none"></div>
+          <div className="absolute inset-0 rounded-2xl bg-linear-to-b from-white/30 via-transparent to-transparent opacity-80 pointer-events-none"></div>
           {variant === 'primary' && (
-            <div className="absolute inset-[2px] rounded-xl bg-gradient-to-b from-orange-400/50 to-transparent pointer-events-none"></div>
+            <div className="absolute inset-0.5 rounded-xl bg-linear-to-b from-orange-400/50 to-transparent pointer-events-none"></div>
           )}
         </>
       )}
       
       {/* Content wrapper with 3D text effect */}
       <span className={`flex items-center justify-center relative z-10
-        ${variant === 'primary' ? '[filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.4))_drop-shadow(0_-1px_1px_rgba(255,255,255,0.2))]' : ''}
-        ${variant === 'outline' ? '[filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.3))]' : ''}`}>
+        ${variant === 'primary' ? 'filter-[drop-shadow(0_2px_3px_rgba(0,0,0,0.4))_drop-shadow(0_-1px_1px_rgba(255,255,255,0.2))]' : ''}
+        ${variant === 'outline' ? 'filter-[drop-shadow(0_2px_3px_rgba(0,0,0,0.3))]' : ''}`}>
         {Icon && iconPosition === 'left' && <Icon className='mr-2 w-5 h-5' />}
         {children}
         {Icon && iconPosition === 'right' && <Icon className='ml-2 w-5 h-5 transition-transform duration-300 group-hover:translate-x-1' />}
