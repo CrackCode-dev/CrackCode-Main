@@ -1,4 +1,4 @@
-import React, { Children } from 'react'
+// import React, { Children } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
 import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
@@ -6,6 +6,7 @@ import { Bell } from 'lucide-react';
 import Avatar from './Avatar';
 import HQBtn from './HQBtn';
 import BackBtn from './BackBtn';
+import Button from '../ui/Button';
 
 const Header = ({ variant = "default" }) => {
     const baseStyles = "fixed top-0 left-0 w-full flex justify-between items-center z-50";
@@ -21,7 +22,8 @@ const Header = ({ variant = "default" }) => {
 
     const hideAuthHeaderActions = ['/', '/login', '/email-verify', '/reset-password', '/gamer-profile'];
     const hideCorePagesHeaderActions = ['/user-profile'];
-    const showHeaderActions = !hideAuthHeaderActions.includes(location.pathname) && !hideCorePagesHeaderActions.includes(location.pathname);
+    const showHeaderActions = !hideAuthHeaderActions.includes(location.pathname) && !hideCorePagesHeaderActions.includes(location.pathname)
+                            && variant !== 'empty'  && variant !== 'landing';
 
     const isAuth = hideAuthHeaderActions.includes(location.pathname);
 
@@ -35,6 +37,10 @@ const Header = ({ variant = "default" }) => {
 
     const handleNotificationsClick = () => {
         navigate('/gamer-profile');
+    }
+
+    const handleAvatarClick = () => {
+        navigate('/user-profile');
     }
 
     if(variant === 'empty') {
@@ -68,7 +74,7 @@ const Header = ({ variant = "default" }) => {
                 )}
 
                 {showHeaderActions && (
-                    <div className='flex items-center gap-4 sm:gap-6'>
+                    <div className='flex items-center gap-4'>
 
                         {/* Search Bar */}
                         <input 
@@ -80,16 +86,19 @@ const Header = ({ variant = "default" }) => {
                             transition-all duration-300 ease-in-out'
                         />
 
-                        {/* Notification Bell */}
-                        <Bell 
-                            className='w-5 h-5 sm:w-6 sm:h-6 text-white hover:text-orange-500 transition-colors duration-300 cursor-pointer' 
-                            onClick={handleNotificationsClick}
-                        />
+                            
+                            {/* Notification Bell */}
+                            <Button variant="ghost" size="icon" onClick={handleNotificationsClick}>
+                            <Bell 
+                                className='w-5 h-5 sm:w-6 sm:h-6 text-white hover:text-orange-500 transition-colors duration-300 cursor-pointer' 
+                                onClick={handleNotificationsClick}
+                            />
+                            </Button>
 
-                        {/* User Avatar */}
-                        <div>
-                            <Avatar />
-                        </div>
+                            {/* User Avatar */}
+                            <Button variant='ghost' size="icon" onClick={handleAvatarClick}>
+                                <Avatar />
+                            </Button>
 
                     </div>
                 )}

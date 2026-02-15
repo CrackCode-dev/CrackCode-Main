@@ -43,6 +43,7 @@ import CodeEditorPage from './pages/codeEditor/CodeEditorPage'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LearnMainPage from './pages/learn/LearnMainPage'
 
 function App() {
   return (
@@ -73,10 +74,10 @@ function App() {
             <UserProfile />
           // </ProtectedRoute>
         } />
-        <Route path='/solve/:problemId' element={
-          <ProtectedRoute>
-            <CodeEditorPage />
-          </ProtectedRoute>
+        <Route path='/learn' element={
+          // <ProtectedRoute>
+            <LearnMainPage />
+          // </ProtectedRoute>
         } />
       </Routes>
     </div>
