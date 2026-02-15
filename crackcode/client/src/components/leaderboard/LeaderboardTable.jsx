@@ -1,38 +1,35 @@
-import React from "react";
-import leaderboardData from "../../data/leaderboardData";
-import "../styles/leaderboard.css";
+import "./leaderboardComponents.css";
 
-const  LeaderboardTable = () => {
-    return (
-        <div className="table-container">
-            <table>
-                <thread>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Detective</th>
-                        <th>Title</th>
-                        <th>Specialization</th>
-                        <th>Investigation Points</th>
-                        <th>Cases Sloved</th>
-                        <th>Streak</th>
-                    </tr>
-                </thread>
-                <tbody>
-                    {leaderboardData.map((user) => (
-                        <tr key={user.rank}>
-                            <td>#{user.rank}</td>
-                            <td>{user.name}</td>
-                            <td>{user.title}</td>
-                            <td>{user.specialization}</td>
-                            <td className="green">{user.points.toLocaleString()}</td>
-                            <td>{user.cases}</td>
-                            <td className="orange">🔥 {user.streak}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+const LeaderboardTable = ({ data }) => {
+  return (
+    <table className="leader-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Detective</th>
+          <th>Title</th>
+          <th>Specialization</th>
+          <th>Points</th>
+          <th>Cases</th>
+          <th>Streak</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {data.map((u) => (
+          <tr key={u.position}>
+            <td>#{u.position}</td>
+            <td>{u.username}</td>
+            <td>{u.rank}</td>
+            <td>{u.specialization}</td>
+            <td>{u.totalXP}</td>
+            <td>{u.casesSolved}</td>
+            <td>🔥 {u.streak}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 };
 
 export default LeaderboardTable;

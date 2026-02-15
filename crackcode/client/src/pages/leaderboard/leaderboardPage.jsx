@@ -1,64 +1,37 @@
 import { useEffect, useState } from "react";
 import { fetchGlobalLeaderboard } from "../../api/leaderboard";
+import LeaderboardCard from "../../components/leaderboard/LeaderboardCard";
+import LeaderboardTable from "../../components/leaderboard/LeaderboardTable";
 import "./leaderboard.css";
-import Header from "../../components/common/Header";
-import Footer from "../../components/common/Footer";
-import Button from "../../components/ui/Button";
 
-
-const Leaderboard = () => {
-  const [leaderboard, setLeaderboard] = useState([]);
-  const [loading, setLoading] = useState(true);
+const LeaderboardPage = () => {
+  const [leaders, setLeaders] = useState([]);
 
   useEffect(() => {
-    const loadLeaderboard = async () => {
-      try {
-        const data = await fetchGlobalLeaderboard();
-        setLeaderboard(data);
-      } catch (err) {
-        console.error("API error:", err);
-        setLeaderboard([]);
-      } finally {
-        setLoading(false);
-      }
+    const load = async () => {
+      const data = await fetchGlobalLeaderboard();
+      setLeaders(data);
     };
-
-    loadLeaderboard();
+    load();
   }, []);
 
-  if (loading) {
-    return <p>Loading leaderboard...</p>;
-  }
+  const top3 = leaders.slice(0, 3);
+  const rest = leaders.slice(3);
 
   return (
-    <div className="leaderboard-container">
-      <h2>🌍 Global Leaderboard</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>User</th>
-            <th>XP</th>
-            <th>Level</th>
-            <th>Batch</th>
-          </tr>
-        </thead>
-        <tbody>
-          {leaderboard.map((user) => (
-            <tr key={user.username}>
-              <td>{user.rank}</td>
-              <td>{user.username}</td>
-              <td>{user.totalXP}</td>
-              <td>{user.level}</td>
-              <td className={`batch ${user.batch?.toLowerCase()}`}>
-                {user.batch}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="leaderboard-page">
+      <h1 className="leaderboard-title">🏆 Detective Hall of Fame</h1>
+      <p className="leaderboard-sub">Top investigators in the Code Detectives agency</p>
+
+      <div className="top3-container">
+        {top3.map((user) => (
+          <LeaderboardCard key={user.position} user={user} />
+        ))}
+      </div>
+
+      <LeaderboardTable data={leaders} />
     </div>
   );
 };
 
-export default Leaderboard;
+export default LeaderboardPage;

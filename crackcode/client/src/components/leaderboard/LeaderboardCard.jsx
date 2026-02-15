@@ -1,17 +1,20 @@
-import React from "react";
-import "../styles/leaderboard.css";
+import "./leaderboardComponents.css";
 
-const LeaderboardCard = ({ user, type }) => {
+const LeaderboardCard = ({ user }) => {
   return (
-    <div className={`card ${type}`}>
-      {user.rank === 1 && <div className="crown">🏆</div>}
-      <h2>{user.name}</h2>
-      <p className="role">{user.title}</p>
-      <div className="points">{user.points.toLocaleString()}</div>
-      <p>{user.cases} cases solved</p>
-      {user.rank === 1 && (
-        <p className="streak">🔥 {user.streak} Days Streak</p>
-      )}
+    <div className="leader-card">
+      <img src={user.avatar} alt={user.username} className="leader-avatar" />
+
+      <h3>{user.username}</h3>
+      <p className="title">{user.rank}</p>
+
+      <div className="points">{user.totalXP.toLocaleString()}</div>
+      <p>Investigation points</p>
+
+      <div className="stats">
+        <span>🔥 {user.streak} Days</span>
+        <span>🧩 {user.casesSolved} cases</span>
+      </div>
     </div>
   );
 };
