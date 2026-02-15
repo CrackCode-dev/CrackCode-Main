@@ -43,6 +43,8 @@ import CodeEditorPage from './pages/codeEditor/CodeEditorPage'
 import ProtectedRoute from './components/common/ProtectedRoute'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LearnMainPage from './pages/learn/LearnMainPage'
+import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 
 function App() {
   return (
