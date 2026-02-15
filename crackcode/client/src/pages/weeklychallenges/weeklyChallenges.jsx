@@ -1,9 +1,12 @@
 import ContentCard from "../../components/ui/Card";
 
 const challenges = [
-  { id: 1, title: "Monday Morning Puzzle", difficulty: "Easy", points: 50, type: "Multiple Choice" },
-  { id: 2, title: "Code Debug Sprint", difficulty: "Intermediate", points: 75, type: "Debug Choice" },
-  { id: 3, title: "Detective’s Terminology", difficulty: "Easy", points: 40, type: "Text Answer" },
+  { id: 1, title: "Week 1: Array Mastery", difficulty: "Easy", points: 50, type: "Multiple Choice" },
+  { id: 2, title: "Week 2: String Operations", difficulty: "Intermediate", points: 75, type: "Debug Choice" },
+  { id: 3, title: "Week 3: Algorithm Challenge", difficulty: "Easy", points: 40, type: "Text Answer" },
+  { id: 1, title: "Week 4: Data Structure Expert", difficulty: "Advanced", points: 80, type: "Multiple Choice" },
+  { id: 2, title: "Week 5: Code Debug Sprint", difficulty: "Intermediate", points: 75, type: "Debug Choice" },
+  { id: 3, title: "Week 6: Detective’s Terminology", difficulty: "Advanced", points: 90, type: "Text Answer" },
 ];
 
 export default function WeeklyChallenges() {
@@ -23,7 +26,7 @@ export default function WeeklyChallenges() {
 
           <div className="text-right">
             <p className="text-gray-400 text-1xl">Points Earned</p>
-            <p className="text-green-500 text-5xl font-bold">0</p>
+            <p className="text-orange-500 text-5xl font-bold">0</p>
           </div>
         </div>
 
@@ -49,12 +52,17 @@ export default function WeeklyChallenges() {
                   ${
                     c.difficulty === "Easy"
                       ? "bg-green-600/20 text-green-400"
-                      : "bg-yellow-600/20 text-yellow-400"
+                      : c.difficulty === "Intermediate"
+                      ? "bg-yellow-600/20 text-yellow-400"
+                      : c.difficulty === "Advanced"
+                      ? "bg-red-600/20 text-red-400"
+                      : "bg-gray-600/20 text-gray-400"
                   }
                 `}
               >
                 {c.difficulty.toUpperCase()}
               </span>
+
 
               <p className="mt-4 text-green-400 font-bold flex items-center gap-1">
                 ⚡ {c.points} XP
