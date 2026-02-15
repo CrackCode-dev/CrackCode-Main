@@ -1,11 +1,8 @@
 export const fetchGlobalLeaderboard = async () => {
-  const response = await fetch(
-    "http://localhost:5050/api/leaderboard/global"
-  );
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch leaderboard");
-  }
+  const res = await fetch("http://localhost:5050/api/leaderboard/global");
 
-  return response.json();
+  const data = await res.json();
+
+  return data.leaderboard;   // VERY IMPORTANT LINE
 };
