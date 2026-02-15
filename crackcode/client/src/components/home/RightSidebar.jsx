@@ -1,8 +1,6 @@
 import Card from '../ui/Card'
 import Avatar from '../common/Avatar'
-import Button from '../ui/Button';
-import Badge from '../ui/Badge';
-import ProgressBar from '../ui/ProgressBar';
+import ChallengeCard from './ChallengeCard';
 
 function RightSidebar() {
   return (
@@ -13,21 +11,27 @@ function RightSidebar() {
       title='John Doe'
       subtitle='Level 24'/>
 
-      <Card variant='flat'
+      <ChallengeCard
         title='Daily Challenge'
-        badge={<Badge type='point' size='md'>+50 pts</Badge>}
-        subtitle='"The Missing Witness" - Find the suspect using binary search'>
-        <ProgressBar size='sm' completed={1} total={3} variant='default' labelText='cases completed' showLabel/>
-        <Button variant='outline' fullWidth>Start Challenge</Button>
-      </Card>
+        subtitle='"The Missing Witness" - Find the suspect using binary search'
+        points='+50 pts'
+        completed={1}
+        total={3}
+        buttonText='Start Challenge'
+        buttonVariant='outline' 
+        className='text-orange-500'
+      />
 
-      <Card variant='flat'
-        badge={<Badge type='point' size='md'>+100 pts</Badge>}
+      <ChallengeCard
         title='Weekly Challenge'
-        subtitle='"The Heist" - Solve 5 cases this week'>
-        <ProgressBar size='sm' completed={1} total={4} variant='default' labelText='cases completed' showLabel/>
-        <Button variant='outline' fullWidth>View Challenge</Button>
-      </Card>
+        subtitle='"The Heist" - Solve 5 cases this week'
+        points='+150 pts'
+        completed={3}
+        total={5}
+        buttonText='View Challenge'
+        buttonVariant='outline'
+        className='text-orange-500' 
+      />
 
     </div>
   )
