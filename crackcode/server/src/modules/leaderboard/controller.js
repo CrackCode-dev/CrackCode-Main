@@ -1,134 +1,18 @@
-// import User from "../auth/User.model.js";
-
-// /**
-//  * Get Top 10 Players for the Leaderboard (MongoDB only)
-//  */
-// export const getGlobalLeaderboard = async (_req, res) => {
-//   try {
-//     const topPlayers = await User.find({ 
-//       username: { $exists: true, $ne: null } 
-//     })
-//       .sort({ totalXP: -1 })
-//       .limit(10)
-//       .select("username totalXP rank avatar");
-
-//     const leaderboard = topPlayers.map((player, index) => ({
-//       position: index + 1,
-//       username: player.username,
-//       totalXP: player.totalXP || 0,
-//       rank: player.rank || "Rookie",
-//       avatar: player.avatar,
-//     }));
-
-//     return res.status(200).json({
-//       success: true,
-//       leaderboard,
-//     });
-//   } catch (error) {
-//     console.error("Leaderboard Error:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Failed to fetch leaderboard",
-//     });
-//   }
-// };
-
-// /**
-//  * Get the specific Rank of the logged-in user
-//  */
-// export const getMyRank = async (req, res) => {
-//   try {
-//     const userId = req.userId;
-
-//     const user = await User.findById(userId).select("username totalXP rank");
-//     if (!user) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "User not found",
-//       });
-//     }
-
-//     // Count users with more XP
-//     const usersAhead = await User.countDocuments({
-//       totalXP: { $gt: user.totalXP || 0 },
-//       username: { $exists: true, $ne: null },
-//     });
-
-//     return res.status(200).json({
-//       success: true,
-//       position: usersAhead + 1,
-//       username: user.username,
-//       totalXP: user.totalXP || 0,
-//       rank: user.rank || "Rookie",
-//     });
-//   } catch (error) {
-//     console.error("Error fetching user rank:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Failed to fetch rank",
-//     });
-//   }
-// };
-
-// /**
-//  * Get leaderboard with pagination (for "View All" feature)
-//  */
-// export const getPaginatedLeaderboard = async (req, res) => {
-//   try {
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 20;
-//     const skip = (page - 1) * limit;
-
-//     const [players, total] = await Promise.all([
-//       User.find({ username: { $exists: true, $ne: null } })
-//         .sort({ totalXP: -1 })
-//         .skip(skip)
-//         .limit(limit)
-//         .select("username totalXP rank avatar"),
-//       User.countDocuments({ username: { $exists: true, $ne: null } }),
-//     ]);
-
-//     const leaderboard = players.map((player, index) => ({
-//       position: skip + index + 1,
-//       username: player.username,
-//       totalXP: player.totalXP || 0,
-//       rank: player.rank || "Rookie",
-//       avatar: player.avatar,
-//     }));
-
-//     return res.status(200).json({
-//       success: true,
-//       leaderboard,
-//       pagination: {
-//         page,
-//         limit,
-//         total,
-//         pages: Math.ceil(total / limit),
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Paginated Leaderboard Error:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Failed to fetch leaderboard",
-//     });
-//   }
-// };
-
-
 import User from "../auth/User.model.js";
 
 /**
- * Get Top 10 Players for the Leaderboard (MongoDB only)
+ * Get Top 10 Players for the Leaderboard
  */
 export const getGlobalLeaderboard = async (_req, res) => {
   try {
-    const topPlayers = await User.find({ 
-      username: { $exists: true, $ne: null } 
+    const topPlayers = await User.find({
+      username: { $exists: true, $ne: null },
     })
       .sort({ totalXP: -1 })
       .limit(10)
-      .select("username totalXP rank avatar");
+      .select(
+        "username totalXP rank avatar casesSolved streak specialization"
+      );
 
     const leaderboard = topPlayers.map((player, index) => ({
       position: index + 1,
@@ -136,6 +20,9 @@ export const getGlobalLeaderboard = async (_req, res) => {
       totalXP: player.totalXP || 0,
       rank: player.rank || "Rookie",
       avatar: player.avatar,
+      casesSolved: player.casesSolved || 0,
+      streak: player.streak || 0,
+      specialization: player.specialization || "General",
     }));
 
     return res.status(200).json({
@@ -152,13 +39,16 @@ export const getGlobalLeaderboard = async (_req, res) => {
 };
 
 /**
- * Get the specific Rank of the logged-in user
+ * Get logged-in user's rank
  */
 export const getMyRank = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const user = await User.findById(userId).select("username totalXP rank");
+    const user = await User.findById(userId).select(
+      "username totalXP rank avatar casesSolved streak specialization"
+    );
+
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -166,7 +56,6 @@ export const getMyRank = async (req, res) => {
       });
     }
 
-    // Count users with more XP
     const usersAhead = await User.countDocuments({
       totalXP: { $gt: user.totalXP || 0 },
       username: { $exists: true, $ne: null },
@@ -178,6 +67,10 @@ export const getMyRank = async (req, res) => {
       username: user.username,
       totalXP: user.totalXP || 0,
       rank: user.rank || "Rookie",
+      avatar: user.avatar,
+      casesSolved: user.casesSolved || 0,
+      streak: user.streak || 0,
+      specialization: user.specialization || "General",
     });
   } catch (error) {
     console.error("Error fetching user rank:", error);
@@ -189,7 +82,7 @@ export const getMyRank = async (req, res) => {
 };
 
 /**
- * Get leaderboard with pagination (for "View All" feature)
+ * Paginated leaderboard
  */
 export const getPaginatedLeaderboard = async (req, res) => {
   try {
@@ -202,7 +95,9 @@ export const getPaginatedLeaderboard = async (req, res) => {
         .sort({ totalXP: -1 })
         .skip(skip)
         .limit(limit)
-        .select("username totalXP rank avatar"),
+        .select(
+          "username totalXP rank avatar casesSolved streak specialization"
+        ),
       User.countDocuments({ username: { $exists: true, $ne: null } }),
     ]);
 
@@ -212,6 +107,9 @@ export const getPaginatedLeaderboard = async (req, res) => {
       totalXP: player.totalXP || 0,
       rank: player.rank || "Rookie",
       avatar: player.avatar,
+      casesSolved: player.casesSolved || 0,
+      streak: player.streak || 0,
+      specialization: player.specialization || "General",
     }));
 
     return res.status(200).json({
