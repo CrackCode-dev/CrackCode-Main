@@ -1,3 +1,4 @@
+import HQButton from "../../components/common/HQBtn";
 import ContentCard from "../../components/ui/Card";
 
 const challenges = [
@@ -5,17 +6,23 @@ const challenges = [
   { id: 2, title: "Week 2: String Operations", difficulty: "Intermediate", points: 75, type: "Debug Choice" },
   { id: 3, title: "Week 3: Algorithm Challenge", difficulty: "Easy", points: 40, type: "Text Answer" },
   { id: 1, title: "Week 4: Data Structure Expert", difficulty: "Advanced", points: 80, type: "Multiple Choice" },
-  { id: 2, title: "Week 5: Code Debug Sprint", difficulty: "Intermediate", points: 75, type: "Debug Choice" },
-  { id: 3, title: "Week 6: Detective’s Terminology", difficulty: "Advanced", points: 90, type: "Text Answer" },
+  { id: 2, title: "Week 5: Code Debug Sprint", difficulty: "Advanced", points: 90, type: "Debug Choice" },
+  { id: 3, title: "Week 6: Detective’s Terminology", difficulty: "Intermediate", points: 75, type: "Debug Choice" },
 ];
 
 export default function WeeklyChallenges() {
   return (
-    <div className="min-h-screen bg-black text-white px-30 py-30">
+    <div className="min-h-screen bg-black text-white px-30 py-40">
+
+        {/* HQ Button - Top Left */}
+        <div className="absolute top-6 left-6">
+          <HQButton />
+        </div>
+
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <span className="text-4xl">📅</span>
               <h1 className="text-5xl font-bold">Weekly Challenges</h1>
             </div>
