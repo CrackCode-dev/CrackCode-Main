@@ -21,11 +21,17 @@ body {
 
 /* Top 3 Cards */
 .top-three {
-  display: flex;
-  justify-content: center;
-  gap: 30px;
-  margin-bottom: 50px;
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:20px;
 }
+
+.card.gold {
+  transform: scale(1.1);
+  border:2px solid gold;
+}
+
 
 .card {
   background: #1a1a1a;

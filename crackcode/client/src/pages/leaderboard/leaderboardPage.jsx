@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { fetchGlobalLeaderboard } from "../../api/leaderboard";
 import "./leaderboard.css";
+import Header from "../../components/common/Header";
+import Footer from "../../components/common/Footer";
+import Button from "../../components/ui/Button";
+
 
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
