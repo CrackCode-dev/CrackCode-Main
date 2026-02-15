@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import React,{ useState , useEffect} from 'react'
 import Button from '../../components/ui/Button';
+import Header from '../../components/common/Header';
 
 const UserProfile = () => {
   const [userStatus] = useState({
@@ -36,22 +37,22 @@ const UserProfile = () => {
   ];
 
   return (
-    <div className="relative bg-black text-white p-8">
-      
-      {/* Profile Header */}
-      <div className="profile-wrapper">
-        <div className="bg-linear-to-r from-green-900/30 to-green-800/20 border border-green-700/50 rounded-2xl p-8 mb-8">
-          <div className="flex items-center gap-6 mb-8">
-            <div className="w-20 h-20 bg-linear-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-4xl">
-              {userStatus.avatar}
+    <div className="h-screen flex flex-col justify-between bg-[#050505] text-white px-6 sm:px-10 py-6">
+      <Header variant="empty" />
+
+      <main className='mt-20 px-6 sm:px-10 py-6'>
+          <div className="bg-linear-to-r from-green-900/30 to-green-800/20 border border-green-700/50 rounded-2xl p-8 mb-8">
+            <div className="flex items-center gap-6 mb-8">
+              <div className="w-20 h-20 bg-linear-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center text-4xl">
+                {userStatus.avatar}
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-white">{userStatus.name}</h1>
+                <p className="text-gray-400 text-left">
+                  Level {userStatus.level} | Rank <span className="text-green-400">{userStatus.rank}</span>
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-bold text-white">{userStatus.name}</h1>
-              <p className="text-gray-400 text-left">
-                Level {userStatus.level} | Rank <span className="text-green-400">{userStatus.rank}</span>
-              </p>
-            </div>
-          </div>
 
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-black/40 border border-green-800/50 rounded-xl p-4">
@@ -151,7 +152,7 @@ const UserProfile = () => {
                   <div className="font-medium">Email Address</div>
                   <div className="text-sm text-gray-400">john@crackcode.com</div>
                 </div>
-                <Button variant='outline' size='sm' className='text-white border border-white'>{action}</Button>
+                <Button variant='outline' size='sm' className='text-orange-400'>{action}</Button>
 
               </div>
             ))}
@@ -169,7 +170,7 @@ const UserProfile = () => {
             <Button variant='outline' size='lg' className='text-red-600 border border-red-600 hover:text-red-500 hover:border-red-500'>Delete Account</Button>
           </div>
         </div>
-      </div>
+        </main>
     </div>
   );
 };
