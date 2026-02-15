@@ -1,6 +1,3 @@
-// ContentCard.jsx
-import React from 'react';
-
 const ContentCard = ({
   // Layout & Structure
   variant = 'default',
@@ -16,11 +13,17 @@ const ContentCard = ({
   imagePosition = 'top',
   imagePadding = 'none', // 'none' | 'sm' | 'md' | 'lg' - controls space around images
   
+  // NEW: Header band props (for gradient headers like LangCard)
+  headerContent,          // Custom header content (icon + title together)
+  headerClassName = '',   // Header Tailwind classes (padding, etc.)
+  headerStyle = {},       // Header inline styles (for gradients)
+  
   // Content props
   title,
   subtitle,
   description,
   badge,
+  points,
   footer,
   
   // Visual customization
@@ -50,7 +53,7 @@ const ContentCard = ({
     default: 'bg-white text-white',
     outlined: 'bg-transparent text-white border-1',
     elevated: 'bg-white',
-    flat: 'bg-[#121212]'
+    flat: 'bg-[#121212]',
   };
   
   // Padding sizes
@@ -87,7 +90,8 @@ const ContentCard = ({
   const cardClasses = [
     baseStyles,
     variants[variant],
-    paddings[padding],
+    // Only apply padding if no headerContent (headerContent needs edge-to-edge)
+    headerContent ? '' : paddings[padding],
     shadows[shadow],
     bordered && 'border border-[#444040]',
     interactiveStyles,
@@ -115,10 +119,27 @@ const ContentCard = ({
       {/* Content wrapper - ensures content stays above overlay */}
       <div className={`relative z-10 transition-transform duration-500 ease-out ${hoverEffect === 'slide' ? 'group-hover:scale-105' : ''}`}>
       
+      {/* NEW: Header band (for gradient headers with icon + title) */}
+      {headerContent && (
+        <div className={headerClassName} style={headerStyle}>
+          {headerContent}
+        </div>
+      )}
+      
+      {/* Main content area - apply padding here when headerContent is used */}
+      <div className={headerContent ? paddings[padding] : ''}>
+      
       {/* Badge */}
       {badge && (
         <div className="right-0 absolute top-0" >
           {badge}
+        </div>
+      )}
+
+      {/* Points(XP) */}
+      {points && (
+        <div className="left-0 relative" >
+          {points}
         </div>
       )}
       
@@ -174,9 +195,9 @@ const ContentCard = ({
           
           {/* Description */}
           {description && (
-            <p className="text-gray-400 mb-3">
+            <div className="text-gray-400 mb-3">
               {description}
-            </p>
+            </div>
           )}
           
           {/* Custom children content */}
@@ -197,21 +218,21 @@ const ContentCard = ({
           </div>
         )}
       </div>
-      
-      {/* Actions */}
-      {actions && (
-        <div className="flex gap-2 mt-4 pt-4 border-t border-gray-200">
-          {actions}
-        </div>
+
+      {(footer || actions) && (
+        <div className='mt-6 pt-4 flex items-center justify-between gap-4'>
+          <div>
+            {footer}
+          </div>
+        {actions && (
+          <div className='shrink-0'>
+            {actions}
+          </div>
+        )}
+      </div>
       )}
       
-      {/* Footer */}
-      {footer && (
-        <div className="mt-4">
-          {footer}
-        </div>
-      )}
-      
+      </div> {/* End of main content area */}
       </div> {/* End of content wrapper */}
     </Component>
   );

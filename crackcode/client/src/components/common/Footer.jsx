@@ -1,13 +1,13 @@
 import React from 'react'
-import logo from '../../assets/logo/crackcode_logo.png'
+import logo from "../../assets/logo/crackcode_logo.svg"
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 const Footer = ({ variant = "default" }) => {
-    const baseStyles = "w-full flex justify-between items-center "
+    const baseStyles = "w-full flex justify-between items-center flex-shrink-0"
 
     const variants = {
-        landing: "fixed bottom-0 left-0 z-50 bg-transparent h-18 px-10",
-        default: "h-18 bg-black backdrop-blur-md shadow-md px-10 sm:px-10 border-t border-white/10"
+        landing: "h-16 bg-transparent px-10",
+        default: "h-20 bg-black backdrop-blur-md shadow-md px-10 sm:px-10 border-t border-white/10"
     }
 
     const navigate = useNavigate();
