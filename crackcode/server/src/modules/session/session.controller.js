@@ -33,10 +33,8 @@ export const clearSessionCookies = (res) => {
 };
 
 // ─────────────────────────────────────────────────────────────
-// NOTE: There is NO "createSession" endpoint here.
+//There is NO "createSession" endpoint here.
 // Sessions are created INSIDE the auth controller (login/register).
-// This avoids the chicken-and-egg problem where you'd need a session
-// to create a session.
 // ─────────────────────────────────────────────────────────────
 
 /**
