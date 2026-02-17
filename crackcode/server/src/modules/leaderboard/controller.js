@@ -2,6 +2,7 @@ import User from "../auth/User.model.js";
 import redisClient from "./redis.config.js";
 
 /**
+<<<<<<< HEAD
  * Helper to check if Redis is actually connected and ready
  */
 const isRedisReady = () => redisClient.isOpen;
@@ -31,9 +32,20 @@ export const getGlobalLeaderboard = async (_req, res) => {
 
     // Fallback to MongoDB if Redis is empty or disconnected
     const topPlayers = await User.find({ username: { $exists: true, $ne: null } })
+=======
+ * Get Top 10 Players for the Leaderboard
+ */
+export const getGlobalLeaderboard = async (_req, res) => {
+  try {
+    const topPlayers = await User.find({
+      username: { $exists: true, $ne: null },
+    })
+>>>>>>> Shenori
       .sort({ totalXP: -1 })
       .limit(10)
-      .select("username totalXP rank avatar");
+      .select(
+        "username totalXP rank avatar casesSolved streak specialization"
+      );
 
     const leaderboard = topPlayers.map((player, index) => ({
       position: index + 1,
@@ -41,6 +53,9 @@ export const getGlobalLeaderboard = async (_req, res) => {
       totalXP: player.totalXP || 0,
       rank: player.rank || "Rookie",
       avatar: player.avatar,
+      casesSolved: player.casesSolved || 0,
+      streak: player.streak || 0,
+      specialization: player.specialization || "General",
     }));
 
     return res.status(200).json({ success: true, source: "database", leaderboard });
@@ -51,6 +66,7 @@ export const getGlobalLeaderboard = async (_req, res) => {
 };
 
 /**
+<<<<<<< HEAD
  * Get the specific Rank of the logged-in user
  * Logic: Redis 'zRevRank' is O(log(N)), whereas MongoDB count is O(N).
  */
@@ -58,11 +74,23 @@ export const getMyRank = async (req, res) => {
   try {
     const userId = req.userId; // From auth middleware
     const user = await User.findById(userId).select("username totalXP rank");
+=======
+ * Get logged-in user's rank
+ */
+export const getMyRank = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const user = await User.findById(userId).select(
+      "username totalXP rank avatar casesSolved streak specialization"
+    );
+>>>>>>> Shenori
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
+<<<<<<< HEAD
     let position = null;
 
     if (isRedisReady()) {
@@ -79,6 +107,12 @@ export const getMyRank = async (req, res) => {
       });
       position = usersAhead + 1;
     }
+=======
+    const usersAhead = await User.countDocuments({
+      totalXP: { $gt: user.totalXP || 0 },
+      username: { $exists: true, $ne: null },
+    });
+>>>>>>> Shenori
 
     return res.status(200).json({
       success: true,
@@ -86,6 +120,10 @@ export const getMyRank = async (req, res) => {
       username: user.username,
       totalXP: user.totalXP || 0,
       rank: user.rank || "Rookie",
+      avatar: user.avatar,
+      casesSolved: user.casesSolved || 0,
+      streak: user.streak || 0,
+      specialization: user.specialization || "General",
     });
   } catch (error) {
     console.error("Error fetching user rank:", error);
@@ -94,8 +132,12 @@ export const getMyRank = async (req, res) => {
 };
 
 /**
+<<<<<<< HEAD
  * Get leaderboard with pagination
  * Logic: Uses Redis ZRANGE with offset/limit for efficiency.
+=======
+ * Paginated leaderboard
+>>>>>>> Shenori
  */
 export const getPaginatedLeaderboard = async (req, res) => {
   try {
@@ -131,7 +173,9 @@ export const getPaginatedLeaderboard = async (req, res) => {
         .sort({ totalXP: -1 })
         .skip(skip)
         .limit(limit)
-        .select("username totalXP rank avatar"),
+        .select(
+          "username totalXP rank avatar casesSolved streak specialization"
+        ),
       User.countDocuments({ username: { $exists: true, $ne: null } }),
     ]);
 
@@ -141,6 +185,9 @@ export const getPaginatedLeaderboard = async (req, res) => {
       totalXP: player.totalXP || 0,
       rank: player.rank || "Rookie",
       avatar: player.avatar,
+      casesSolved: player.casesSolved || 0,
+      streak: player.streak || 0,
+      specialization: player.specialization || "General",
     }));
 
     return res.status(200).json({
