@@ -1,0 +1,87 @@
+body {
+  background-color: #0f0f0f;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.leaderboard-page {
+  padding: 40px;
+  text-align: center;
+}
+
+.title {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #aaa;
+  margin-bottom: 40px;
+}
+
+/* Top 3 Cards */
+.top-three {
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:20px;
+}
+
+.card.gold {
+  transform: scale(1.1);
+  border:2px solid gold;
+}
+
+
+.card {
+  background: #1a1a1a;
+  padding: 25px;
+  border-radius: 15px;
+  width: 220px;
+  box-shadow: 0 0 15px rgba(0, 255, 100, 0.2);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card .xp {
+  color: #00ff88;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Table */
+.leaderboard-table {
+  width: 80%;
+  margin: auto;
+  border-collapse: collapse;
+  background: #1a1a1a;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 15px;
+  border-bottom: 1px solid #333;
+}
+
+.leaderboard-table th {
+  background: #222;
+}
+
+.leaderboard-table tr:hover {
+  background: #222;
+}
+
+.rank {
+  color: #00ff88;
+  font-weight: bold;
+}
+
+.xp {
+  color: #00ff88;
+  font-weight: bold;
+}
