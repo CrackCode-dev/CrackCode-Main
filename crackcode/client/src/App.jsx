@@ -11,18 +11,13 @@ import GameProfile from './pages/gameprofile/GameProfile'
 import UserProfile from './pages/userprofile/UserProfile'
 import CodeEditorPage from './pages/codeEditor/CodeEditorPage'
 import ProtectedRoute from './components/common/ProtectedRoute'
-<<<<<<< HEAD
 import CaseLogMainPage from './pages/caselog/CaseLogMainPage'
 import CaseLogPage from './pages/caselog/CaseLogPage'
 import Leaderboard from './pages/leaderboard/leaderboardPage'
+import LearnMainPage from './pages/learn/LearnMainPage'
 
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-=======
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import LearnMainPage from './pages/learn/LearnMainPage'
->>>>>>> 32beb94dcb1dcb92935785bee5fc382a709652c5
 
 function App() {
   return (
@@ -36,11 +31,9 @@ function App() {
         <Route path='/verify-account' element={<EmailVerify />} />
         <Route path='/email-verify' element={<EmailVerify />} />
         <Route path='/reset-password' element={<ResetPassword />} />
-<<<<<<< HEAD
 
         <Route path='/caselog' element={<CaseLogMainPage />} />
         <Route path='/caselog/details' element={<CaseLogPage />} />
-
         <Route path='/careermaps-Main' element={<CareermapMain />} />
         <Route path='/leaderboard' element={<Leaderboard />} />
 
@@ -48,7 +41,7 @@ function App() {
         <Route
           path='/home'
           element={
-            // <ProtectedRoute>   // temporarily bypassed for dev
+            // <ProtectedRoute>
               <Home />
             // </ProtectedRoute>
           }
@@ -81,31 +74,15 @@ function App() {
           }
         />
 
-=======
-        <Route path='/careermaps-Main'element={<CareermapMain/>}/>
-        
-        {/* Protected routes - require login + verified email */}
-        <Route path='/home' element={
-          // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
-            <Home />
-          // </ProtectedRoute>
-        } />
-        <Route path='/gamer-profile' element={
-          <ProtectedRoute>
-            <GameProfile />
-          </ProtectedRoute>
-        } />
-        <Route path='/user-profile' element={
-          // <ProtectedRoute>
-            <UserProfile />
-          // </ProtectedRoute>
-        } />
-        <Route path='/learn' element={
-          // <ProtectedRoute>
-            <LearnMainPage />
-          // </ProtectedRoute>
-        } />
->>>>>>> 32beb94dcb1dcb92935785bee5fc382a709652c5
+        <Route
+          path='/learn'
+          element={
+            // <ProtectedRoute>
+              <LearnMainPage />
+            // </ProtectedRoute>
+          }
+        />
+
       </Routes>
     </div>
   )
