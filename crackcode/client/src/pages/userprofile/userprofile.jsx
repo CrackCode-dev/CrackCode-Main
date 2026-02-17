@@ -37,7 +37,7 @@ const UserProfile = () => {
   ];
 
   return (
-    <div className="h-screen flex flex-col justify-between bg-[#050505] text-white px-6 sm:px-10 py-6'">
+    <div className="h-screen flex flex-col justify-between bg-[#050505] text-white px-6 sm:px-10 py-6">
       <Header variant="empty" />
 
       <main className='mt-20 px-6 sm:px-10 py-6'>
@@ -152,7 +152,7 @@ const UserProfile = () => {
                   <div className="font-medium">Email Address</div>
                   <div className="text-sm text-gray-400">john@crackcode.com</div>
                 </div>
-                <Button variant='outline' size='sm' className='text-white border border-white'>{action}</Button>
+                <Button variant='outline' size='sm' className='text-orange-400'>{action}</Button>
 
               </div>
             ))}
