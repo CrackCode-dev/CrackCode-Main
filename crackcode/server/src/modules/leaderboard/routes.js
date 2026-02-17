@@ -28,3 +28,4 @@ router.get("/paginated", getPaginatedLeaderboard);
 router.get("/me", userAuth, getMyRank);
 
 export default router;
+
