@@ -14,7 +14,7 @@ import mongoose from "mongoose";
 const legacyCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+  sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax", // only send cookie if our site is running in browser
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
@@ -38,9 +38,9 @@ const buildUniqueUsername = async (rawUsername, fallbackName) => {
   return candidate;
 };
 
-// ═════════════════════════════════════════════════════════════
+
 // REGISTER
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 export const register = async (req, res) => {
   try {
     const { name, email, password, username } = req.body;
@@ -100,9 +100,9 @@ export const register = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
+
 // LOGIN
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -157,9 +157,8 @@ export const login = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
-// LOGOUT (FIXED - handles both sessionId and userId)
-// ═════════════════════════════════════════════════════════════
+// LOGOUT - handles both sessionId and userId
+// ============================================================
 export const logout = async (req, res) => {
   try {
     // Try to delete session from database
@@ -204,9 +203,9 @@ export const logout = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
-// LOGOUT ALL DEVICES (FIXED)
-// ═════════════════════════════════════════════════════════════
+
+// LOGOUT ALL DEVICES 
+// ============================================================
 export const logoutAllDevices = async (req, res) => {
   try {
     const userId = req.userId || req.user?._id;
@@ -239,9 +238,9 @@ export const logoutAllDevices = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
+
 // Email verification and Check OTP and reset password 
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 
 export const sendVerifyOtp = async (req, res) => {
   try {

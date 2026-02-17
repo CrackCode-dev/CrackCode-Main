@@ -1,13 +1,10 @@
 
 /**
- * Auth Middleware (Updated for Session Management)
- *
- * This is the SAME middleware used by all existing modules (profile, user,
- * gameprofile, leaderboard, learn). It now supports BOTH:
- *   - New session-based access tokens (with sessionId + tokenVersion)
- *   - Legacy JWT tokens ({ id: userId }) for backward compatibility
- *
- * Once you've fully migrated, you can remove the legacy fallback.
+This is the SAME middleware used by all existing modules (profile, user,
+gameprofile, leaderboard, learn). It now supports BOTh: 
+New session-based access tokens (with sessionId + tokenVersion)
+Legacy JWT tokens ({ id: userId }) for backward compatibility
+ 
  */
 
 import jwt from "jsonwebtoken";

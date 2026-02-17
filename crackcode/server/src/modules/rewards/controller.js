@@ -16,10 +16,10 @@ const yesterdayString = () => {
   return d.toISOString().slice(0, 10);
 };
 
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 // POST /api/rewards/award-xp
 // Body: { amount: Number, source?: String }
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 export const awardXPHandler = async (req, res) => {
   try {
     const { amount, source } = req.body;
@@ -43,10 +43,10 @@ export const awardXPHandler = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 // POST /api/rewards/award-tokens
 // Body: { amount: Number, source?: String }
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 export const awardTokensHandler = async (req, res) => {
   try {
     const { amount, source } = req.body;
@@ -70,13 +70,13 @@ export const awardTokensHandler = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 // POST /api/rewards/complete-challenge
 // Body: { challengeId: String, xp?: Number, tokens?: Number }
 //
 // This is the endpoint the code editor / quiz system calls
 // after a user successfully passes all tests.
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 export const completeChallengeHandler = async (req, res) => {
   try {
     const { challengeId, xp = 50, tokens = 10 } = req.body;
@@ -105,10 +105,10 @@ export const completeChallengeHandler = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 // POST /api/rewards/daily-bonus
 // No body needed — claims based on server date + userId.
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 export const claimDailyBonus = async (req, res) => {
   try {
     const userId = req.userId;
@@ -170,11 +170,10 @@ export const claimDailyBonus = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 // GET /api/rewards/balance
 // Returns current XP, tokens, rank.
-// ═════════════════════════════════════════════════════════════
+// ============================================================
 export const getBalanceHandler = async (req, res) => {
   try {
     const balance = await getBalance(req.userId);
