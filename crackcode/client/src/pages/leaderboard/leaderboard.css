@@ -1,33 +1,319 @@
-.leaderboard-container {
-  padding: 20px;
-  background-color: white;
-  color: black;
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap');
+
+/* ─── Reset & Base ──────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #0a0a0a;
+  color: #e0e0e0;
+  font-family: 'Exo 2', sans-serif;
   min-height: 100vh;
 }
 
-table {
-  border-collapse: collapse;
-  width: 100%;
-  margin-top: 20px;
+/* ─── Page Layout ───────────────────────────────────────────── */
+.lb-page {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
 }
 
-th, td {
-  border: 1px solid #ddd;
-  padding: 8px;
+/* ─── Loading ───────────────────────────────────────────────── */
+.lb-loading {
+  text-align: center;
+  color: #555;
+  padding: 80px 0;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+/* ─── Header ────────────────────────────────────────────────── */
+.lb-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.lb-header h1 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 44px;
+  font-weight: 700;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  letter-spacing: 1px;
+}
+
+.lb-header p {
+  color: #777;
+  margin-top: 10px;
+  font-size: 15px;
+}
+
+/* ─── Podium ────────────────────────────────────────────────── */
+.podium {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 18px;
+  margin-bottom: 52px;
+}
+
+.podium-card {
+  background: #161616;
+  border-radius: 18px;
+  padding: 28px 22px 22px;
+  width: 235px;
+  text-align: center;
+  position: relative;
+  border: 1px solid #2a2a2a;
+  transition: transform 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.podium-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Gold card */
+.podium-card.gold {
+  border-color: #b8860b;
+  background: linear-gradient(160deg, #1c1600 0%, #161616 55%);
+  transform: scale(1.09);
+  z-index: 2;
+}
+.podium-card.gold:hover {
+  transform: scale(1.09) translateY(-5px);
+}
+
+/* Silver card */
+.podium-card.silver {
+  border-color: #505050;
+}
+
+/* Bronze card */
+.podium-card.bronze {
+  border-color: #7c4a1e;
+  background: linear-gradient(160deg, #150d06 0%, #161616 55%);
+}
+
+/* Crown above gold card */
+.trophy-crown {
+  position: absolute;
+  top: -26px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  filter: drop-shadow(0 0 10px rgba(255, 200, 0, 0.65));
+}
+
+.card-avatar {
+  font-size: 54px;
+  margin-top: 10px;
+  line-height: 1;
+}
+
+.card-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 4px;
+}
+
+/* Subtitle colours per medal */
+.card-title-gold   { color: #f4c430; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+.card-title-silver { color: #a8a8a8; font-size: 12px; font-weight: 600; }
+.card-title-bronze { color: #cd7f32; font-size: 12px; font-weight: 600; }
+
+/* XP highlight box */
+.card-xp-box {
+  width: 100%;
+  border-radius: 8px;
+  padding: 10px 0;
+  margin: 8px 0 4px;
+}
+
+.card-xp-box.gold-xp   { background: rgba(180, 130, 0, 0.30); }
+.card-xp-box.silver-xp { background: rgba(80, 80, 80, 0.30); }
+.card-xp-box.bronze-xp { background: rgba(130, 65, 10, 0.30); }
+
+.xp-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.xp-value.gold-text   { color: #f4c430; }
+.xp-value.silver-text { color: #c0c0c0; }
+.xp-value.bronze-text { color: #cd7f32; }
+
+.xp-label {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+/* Gold-only badge row */
+.card-badges {
+  display: flex;
+  gap: 10px;
+  margin: 4px 0;
+  font-size: 18px;
+}
+
+.card-streak-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ff6b35;
+}
+
+.card-streak-row .streak-num { color: #ff6b35; }
+
+.card-cases {
+  font-size: 12px;
+  color: #666;
+}
+
+/* ─── Table ─────────────────────────────────────────────────── */
+.lb-table-wrap {
+  background: #111;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #1e1e1e;
+}
+
+.lb-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Override any global table styles that might bleed in */
+.lb-table th,
+.lb-table td {
+  border: none;
+  text-align: left;
+}
+
+.lb-table thead tr {
+  background: #1a1a1a;
+}
+
+.lb-table th {
+  padding: 16px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: #555;
+}
+
+.lb-table th:first-child { padding-left: 26px; }
+.lb-table th:nth-child(7) { text-align: center; }
+
+.lb-table tbody tr {
+  border-top: 1px solid #1c1c1c;
+  transition: background 0.15s;
+}
+
+.lb-table tbody tr:hover {
+  background: #161616;
+}
+
+.lb-table td {
+  padding: 18px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #bbb;
+  vertical-align: middle;
+}
+
+.lb-table td:first-child { padding-left: 26px; }
+
+/* Rank cell */
+.rank-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #00ff88;
+  white-space: nowrap;
+}
+
+.rank-icon { font-size: 16px; }
+
+/* Detective name cell */
+.detective-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.det-avatar { font-size: 22px; }
+
+/* Title badge */
+.title-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* XP column */
+.xp-cell {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #00ff88;
+}
+
+/* Cases column */
+.cases-cell {
   text-align: center;
 }
 
-.batch.gold {
-  color: #d4af37;
-  font-weight: bold;
+/* Streak column */
+.streak-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-weight: 700;
+  color: #ff6b35;
 }
 
-.batch.silver {
-  color: #c0c0c0;
-  font-weight: bold;
-}
+/* ─── Responsive ────────────────────────────────────────────── */
+@media (max-width: 720px) {
+  .podium {
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
 
-.batch.bronze {
-  color: #cd7f32;
-  font-weight: bold;
+  .podium-card.gold {
+    transform: none;
+  }
+
+  .lb-header h1 {
+    font-size: 30px;
+  }
 }

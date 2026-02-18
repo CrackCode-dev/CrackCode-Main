@@ -7,6 +7,7 @@ const leaderboardData = [
     points: 4850,
     cases: 42,
     streak: 28,
+    avatar: "🕵️",
   },
   {
     rank: 2,
@@ -16,6 +17,7 @@ const leaderboardData = [
     points: 4620,
     cases: 38,
     streak: 22,
+    avatar: "🤖",
   },
   {
     rank: 3,
@@ -25,6 +27,7 @@ const leaderboardData = [
     points: 4390,
     cases: 35,
     streak: 18,
+    avatar: "🧙",
   },
   {
     rank: 4,
@@ -34,6 +37,7 @@ const leaderboardData = [
     points: 4120,
     cases: 32,
     streak: 15,
+    avatar: "🥷",
   },
   {
     rank: 5,
@@ -43,6 +47,17 @@ const leaderboardData = [
     points: 3890,
     cases: 29,
     streak: 12,
+    avatar: "🔍",
+  },
+  {
+    rank: 6,
+    name: "Pattern Master",
+    title: "Detective",
+    specialization: "Dynamic Programming",
+    points: 3650,
+    cases: 26,
+    streak: 10,
+    avatar: "🎯",
   },
 ];
 
