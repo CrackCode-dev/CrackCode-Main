@@ -15,6 +15,9 @@ const userSchema = new mongoose.Schema(
 
     password: { type: String, required: true },
 
+    // check acceptance of priacy policy
+    acceptedTC: { type: Boolean, required: true, default: false },
+
     avatar: { type: String, default: "" },
     bio: { type: String, default: "" },
 

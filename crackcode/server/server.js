@@ -11,13 +11,13 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import connectDB from './src/config/db.js';
-import redisClient from './src/modules/leaderboard/redis.config.js';
+//import redisClient from './src/modules/leaderboard/redis.config.js';
 
 // Import module routes
 import authRoutes from './src/modules/auth/routes.js';
 import userRoutes from './src/modules/user/routes.js';
 import profileRoutes from './src/modules/profile/routes.js';
-import leaderboardRoutes from './src/modules/leaderboard/routes.js';
+//import leaderboardRoutes from './src/modules/leaderboard/routes.js';
 import learnRoutes from './src/modules/learn/routes.js';
 import gameProfileRoutes from './src/modules/gameprofile/routes.js';
 import sessionRoutes from './src/modules/session/routes.js';
@@ -34,9 +34,9 @@ const app = express();
 connectDB(); // MongoDB
 
 // Connect Redis (optional - graceful fallback)
-redisClient.connect()
-    .then(() => console.log('✅ Redis Connected'))
-    .catch((err) => console.warn('⚠️ Redis Connection Error (running without cache):', err.message));
+// redisClient.connect()
+//     .then(() => console.log('✅ Redis Connected'))
+//     .catch((err) => console.warn('⚠️ Redis Connection Error (running without cache):', err.message));
 
 // Middleware
 app.use(express.json());
@@ -68,7 +68,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
+//app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/learn', learnRoutes);
 app.use('/api/gameprofile', gameProfileRoutes);
 app.use('/api/game-profile', gameProfileRoutes);   // alias so both paths work
