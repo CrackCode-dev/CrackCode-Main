@@ -1,5 +1,7 @@
 import React from 'react'
-import logo from "../../assets/logo/crackcode_logo.svg"
+// import logo from "../../assets/logo/crackcode_logo.svg"
+import logo_light from "../../assets/logo/logo_light.png";
+import logo_dark from  "../../assets/logo/logo_dark.png";
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 const Footer = ({ variant = "default" }) => {
@@ -30,7 +32,7 @@ const Footer = ({ variant = "default" }) => {
         {/* Logo */}
         <div className='cursor-pointer'>
             <img 
-                src={logo} 
+                src={logo_light} 
                 alt="CrackCode Logo" 
                 onClick={handleLogoClick}
                 className='w-15 transition-transform hover:scale-105 duration-300'

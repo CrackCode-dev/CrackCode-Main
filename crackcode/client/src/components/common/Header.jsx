@@ -1,6 +1,8 @@
 // import React, { Children } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
-import logo from "../../assets/logo/crackcode_logo.svg"
+// import logo from "../../assets/logo/crackcode_logo.svg"
+import logo_light from "../../assets/logo/logo_light.png";
+import logo_dark from  "../../assets/logo/logo_dark.png";
 import Navbar from './Navbar'
 import { Bell } from 'lucide-react';
 import Avatar from './Avatar';
@@ -60,7 +62,7 @@ const Header = ({ variant = "default" }) => {
                 {/* Logo */}
                 <div className='cursor-pointer' onClick={handleLogoClick}>
                     <img 
-                        src={logo} 
+                        src={logo_light} 
                         alt="CrackCode Logo" 
                         className='w-16 sm:w-20 transition-transform hover:scale-105 duration-300'
                     />
