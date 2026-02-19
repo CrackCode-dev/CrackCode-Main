@@ -44,6 +44,7 @@ import ProtectedRoute from './components/common/ProtectedRoute'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LearnMainPage from './pages/learn/LearnMainPage'
+import ChapterSelectionPage from './pages/learn/ChapterSelection'
 
 function App() {
   return (
@@ -79,6 +80,9 @@ function App() {
             <LearnMainPage />
           // </ProtectedRoute>
         } />
+
+        <Route path="/learn/:trackId" element={<ChapterSelectionPage />} />
+
       </Routes>
     </div>
   )
