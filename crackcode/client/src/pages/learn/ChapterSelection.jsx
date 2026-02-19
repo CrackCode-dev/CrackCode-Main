@@ -1,16 +1,15 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ChapterCard from '../../components/learn/ChapterCard';
-// import Roadmap from '../../components/ui/Roadmap';
+import { RoadmapNode } from '../../components/ui/Roadmap'; 
 import Header from '../../components/common/Header';
 
-// Import language icons
+
 import PythonIcon from '../../assets/icons/learn/python.png';
 import JavaScriptIcon from '../../assets/icons/learn/js.png';
 import JavaIcon from '../../assets/icons/learn/java.png';
 import CppIcon from '../../assets/icons/learn/cpp.png';
 
-// Import chapter images (update paths as needed)
 import PythonFundamentalsImg from '../../assets/icons/learn/chapters/python/py_ch1.png';
 import IntermediatePythonImg from '../../assets/icons/learn/chapters/python/py_ch2.png';
 import DataAnalysisImg from '../../assets/icons/learn/chapters/python/py_ch3.png';
@@ -30,9 +29,7 @@ import CppFundamentalsImg from '../../assets/icons/learn/chapters/cpp/cpp_ch1.pn
 import PointersMemoryImg from '../../assets/icons/learn/chapters/cpp/cpp_ch2.png';
 import STLImg from '../../assets/icons/learn/chapters/cpp/cpp_ch3.png';
 import SystemsProgrammingImg from '../../assets/icons/learn/chapters/cpp/cpp_ch4.png';
-// ============================================
-// LANGUAGE METADATA (matching LearnMainPage)
-// ============================================
+
 const LANGUAGE_META = {
   python: {
     icon: PythonIcon,
@@ -51,10 +48,6 @@ const LANGUAGE_META = {
     title: 'C++: Ghosts in the System',
   },
 };
-
-// ============================================
-// CHAPTERS DATA - Hashmap by language
-// ============================================
 const CHAPTERS_DATA = {
   python: [
     {
@@ -110,7 +103,7 @@ const CHAPTERS_DATA = {
       title: 'JavaScript Fundamentals',
       description: 'Learn the core concepts of JavaScript including variables, functions, and control structures.',
       difficulty: 'easy',
-      completed: 10,
+      completed: 2,
       total: 10,
       status: 'Completed',
       route: '/learn/javascript/fundamentals',
@@ -121,7 +114,7 @@ const CHAPTERS_DATA = {
       title: 'DOM Manipulation',
       description: 'Master the Document Object Model and learn to create interactive web pages.',
       difficulty: 'easy',
-      completed: 4,
+      completed: 3,
       total: 10,
       status: 'In Progress',
       route: '/learn/javascript/dom',
@@ -245,27 +238,19 @@ const CHAPTERS_DATA = {
   ],
 };
 
-// ============================================
-// CHAPTER SELECTION PAGE COMPONENT
-// ============================================
 const ChapterSelectionPage = () => {
-  const { trackId } = useParams(); // e.g., 'python', 'javascript'
+  const { trackId } = useParams(); 
   const navigate = useNavigate();
   
-  // Get data for current language
   const languageMeta = LANGUAGE_META[trackId];
   const chapters = CHAPTERS_DATA[trackId] || [];
   
-  // Handle invalid trackId
   if (!languageMeta) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Language not found</h1>
-          <button 
-            onClick={() => navigate('/learn')}
-            className="text-green-400 hover:underline"
-          >
+          <button onClick={() => navigate('/learn')} className="text-green-400 hover:underline">
             ← Back to Learn
           </button>
         </div>
@@ -274,77 +259,40 @@ const ChapterSelectionPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] p-8">
+    <div className="h-screen bg-[#050505]">
       <Header variant='empty'/>
 
-      <main className='mt-20 px-6 sm:px-10 py-6'>
+      <main className='mt-40 px-6 sm:px-10 py-6'>
         <div className="max-w-4xl mx-auto">
 
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-12">
-          <img 
-            src={languageMeta.icon} 
-            alt={trackId} 
-            className="w-12 h-12 object-contain"
-          />
-          <h1 className="text-3xl md:text-4xl font-bold text-white">
-            {languageMeta.title}
-          </h1>
-        </div>
+          {/* Header */}
+          <div className="flex items-center gap-4 mb-12">
+            <img src={languageMeta.icon} alt={trackId} className="w-12 h-12 object-contain" />
+            <h1 className="text-3xl md:text-4xl font-bold text-white">
+              {languageMeta.title}
+            </h1>
+          </div>
 
-        {/* Roadmap + Chapters */}
-        <div className="relative">
-          {/* Connecting Line - Full height background line */}
-          <div className="hidden md:block absolute left-4 top-0 bottom-0 w-0.5 bg-gray-700 -translate-x-1/2" />
-          
-          {/* Chapters with nodes */}
-          <div className="flex flex-col gap-6">
+          {/* Roadmap + Chapters */}
+          <div className="flex flex-col">
             {chapters.map((chapter, index) => {
               const progress = chapter.total > 0 ? (chapter.completed / chapter.total) * 100 : 0;
-              const isCompleted = progress === 100;
-              const isInProgress = progress > 0 && progress < 100;
 
               return (
-                <div key={chapter.id} className="flex items-center gap-8 md:gap-12">
-
-                  {/* Roadmap Node */}
-                  <div className="hidden md:flex items-center justify-center relative z-10">
-                    <div className="relative w-8 h-8 bg-[#0a0a0a]">
-                      <svg className="w-8 h-8 transform -rotate-90" viewBox="0 0 32 32">
-                        {/* Gray background circle */}
-                        <circle
-                          cx="16"
-                          cy="16"
-                          r="12"
-                          fill="#0a0a0a"
-                          stroke="#374151"
-                          strokeWidth="3"
-                        />
-                        {/* Progress circle */}
-                        <circle
-                          cx="16"
-                          cy="16"
-                          r="12"
-                          fill="none"
-                          stroke="#22c55e"
-                          strokeWidth="3"
-                          strokeLinecap="round"
-                          strokeDasharray={`${(progress / 100) * 75.4} 75.4`}
-                          className="transition-all duration-500"
-                        />
-                      </svg>
-                      {/* Inner dot */}
-                      {(isCompleted || isInProgress) && (
-                        <div 
-                          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-                            w-3 h-3 rounded-full ${isCompleted ? 'bg-green-500' : 'bg-green-500/50'}`}
-                        />
-                      )}
-                    </div>
+                <div key={chapter.id} className="flex gap-6 md:gap-10">
+                  
+                  {/* Roadmap Column */}
+                  <div className="hidden md:flex flex-col pt-2"> 
+                    {/* pt-2 ensures the circle aligns with the card's top section */}
+                    <RoadmapNode 
+                      progress={progress} 
+                      isLast={index === chapters.length - 1} 
+                    />
                   </div>
 
-                  {/* Chapter Card */}
-                  <div className="flex-1">
+                  {/* Chapter Card Column */}
+                  <div className="flex-1 pb-10"> 
+                    {/* pb-10 controls the vertical distance between chapters */}
                     <ChapterCard
                       image={chapter.image}
                       title={chapter.title}
@@ -354,6 +302,8 @@ const ChapterSelectionPage = () => {
                       total={chapter.total}
                       status={chapter.status}
                       onClick={() => navigate(chapter.route)}
+                      showRoadmap={false} // Set to false since RoadmapNode is handled externally
+                      isFirst={index === 0}
                     />
                   </div>
                 </div>
@@ -361,14 +311,10 @@ const ChapterSelectionPage = () => {
             })}
           </div>
         </div>
-      </div>
       </main>
-      
     </div>
   );
 };
 
 export default ChapterSelectionPage;
-
-// Export data for use in other components
 export { CHAPTERS_DATA, LANGUAGE_META };
