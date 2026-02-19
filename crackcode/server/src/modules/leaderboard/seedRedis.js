@@ -1,72 +1,49 @@
-// import mongoose from "mongoose";
-// import redisClient from "./redis.config.js";
-// import User from "../auth/User.model.js";
-// import dotenv from "dotenv";
-// dotenv.config();
+import mongoose from "mongoose";
+import redisClient from "./redis.config.js";
+import User from "../auth/User.model.js";
+import dotenv from "dotenv";
 
-// const seedLeaderboard = async () => {
-//   try {
-//     await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
-//     await redisClient.connect();
+// Load environment variables
+dotenv.config();
 
-//     const users = await User.find().sort({ totalXP: -1 });
+const seedLeaderboard = async () => {
+  try {
+    console.log("Connecting to databases...");
+    await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
     
-//     for (const user of users) {
-//       await redisClient.zAdd("global_leaderboard", { 
-//         score: user.totalXP || 0, 
-//         value: user.username 
-//       });
-//     }
+    // Check if redis is already open (from config), otherwise connect
+    if (!redisClient.isOpen) {
+        await redisClient.connect();
+    }
 
-//     console.log("✅ Leaderboard seeded to Redis successfully");
-//     process.exit(0);
-//   } catch (error) {
-//     console.error("❌ Error seeding leaderboard:", error);
-//     process.exit(1);
-//   }
-// };
-
-// seedLeaderboard();
-
-
-
-// ═════════════════════════════════════════════════════════════
-// REDIS SEEDING DISABLED - Using MongoDB only
-// ═════════════════════════════════════════════════════════════
-// This script is no longer needed since we're using MongoDB
-// for both sessions and leaderboard
-// ═════════════════════════════════════════════════════════════
-
-// import mongoose from "mongoose";
-// import redisClient from "./redis.config.js";
-// import User from "../auth/User.model.js";
-// import dotenv from "dotenv";
-// dotenv.config();
-
-// const seedLeaderboard = async () => {
-//   try {
-//     await mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI);
-//     await redisClient.connect();
-
-//     const users = await User.find().sort({ totalXP: -1 });
+    console.log("Fetching users from MongoDB...");
+    const users = await User.find({ username: { $exists: true, $ne: null } });
     
-//     for (const user of users) {
-//       await redisClient.zAdd("global_leaderboard", { 
-//         score: user.totalXP || 0, 
-//         value: user.username 
-//       });
-//     }
+    if (users.length === 0) {
+      console.log("⚠️ No users found in MongoDB to seed.");
+      process.exit(0);
+    }
 
-//     console.log("✅ Leaderboard seeded to Redis successfully");
-//     process.exit(0);
-//   } catch (error) {
-//     console.error("❌ Error seeding leaderboard:", error);
-//     process.exit(1);
-//   }
-// };
+    console.log(`Seeding ${users.length} users into Redis...`);
 
-// seedLeaderboard();
+    // Use a pipeline for performance if you have many users
+    const pipeline = redisClient.multi();
+    
+    for (const user of users) {
+      pipeline.zAdd("global_leaderboard", { 
+        score: user.totalXP || 0, 
+        value: user.username 
+      });
+    }
 
-console.log('ℹ️ Redis seeding is disabled. Leaderboard uses MongoDB directly.');
+    await pipeline.exec();
 
+    console.log("✅ Leaderboard seeded to Redis successfully!");
+    process.exit(0);
+  } catch (error) {
+    console.error("❌ Error seeding leaderboard:", error);
+    process.exit(1);
+  }
+};
 
+seedLeaderboard();
