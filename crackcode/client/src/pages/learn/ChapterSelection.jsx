@@ -302,8 +302,6 @@ const ChapterSelectionPage = () => {
                       total={chapter.total}
                       status={chapter.status}
                       onClick={() => navigate(chapter.route)}
-                      showRoadmap={false} // Set to false since RoadmapNode is handled externally
-                      isFirst={index === 0}
                     />
                   </div>
                 </div>
