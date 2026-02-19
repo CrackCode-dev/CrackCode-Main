@@ -4,9 +4,11 @@ import pythonIcon from '../../assets/icons/learn/python.png';
 import jsIcon from '../../assets/icons/learn/js.png';
 import javaIcon from '../../assets/icons/learn/java.png';
 import cppIcon from '../../assets/icons/learn/cpp.png';
+import { useNavigate } from 'react-router-dom';
 
 // Example usage: Creating language cards using ContentCard
 const LearnMainPage = () => {
+    const navigate = useNavigate();
 
     const languagesData = [
         {
@@ -16,6 +18,7 @@ const LearnMainPage = () => {
             description: 'Join the Python Bureau and uncover hidden patterns in data! Learn to trace and decode algorithms, follow the clues within code, and reveal the secrets behind every function. Perfect for rookie detectives ready to sharpen their Python instincts.',
             chapterCount: 4,
             headerGradient: 'linear-gradient(to right, #1F3A5F, #FCD34D)',
+            route: '/learn/python'
         },
         {
             id: 'javascript',
@@ -25,6 +28,7 @@ const LearnMainPage = () => {
             description: 'Set sail into the JavaScript seas and plunder the secrets of the digital realm! Learn to track interactions, decipher cunning scripts, and uncover the logic behind ever-changing web pages. Perfect for sharp-eyed pirates ready to master the art of front-end exploration.',
             chapterCount: 4,
             headerGradient: 'linear-gradient(to right, #FFB800, #FFF200)',
+            route: '/learn/javascript'
         },
         {
             id: 'java',
@@ -33,6 +37,7 @@ const LearnMainPage = () => {
             description: 'Step into the Java Task Force and investigate the foundations of digital infrastructure. Trace complex logic, decrypt object interactions, and reveal the secrets behind mission-critical backend systems. Perfect for elite agents sharpening their technical expertise.',
             chapterCount: 3,
             headerGradient: 'linear-gradient(to right, #7F1D1D, #F87171)',
+            route: '/learn/java'
         },
         {
             id: 'cpp',
@@ -41,6 +46,7 @@ const LearnMainPage = () => {
             description: 'Slip past the firewalls and hunt the echoes hidden deep within the core. Dissect memory fragments, trace algorithmic signatures, and rebuild the logic powering high-performance systems. For hackers fluent in the language of machines.',
             chapterCount: 1,
             headerGradient: 'linear-gradient(to right, #0F2027, #203A43, #2C5364)',
+            route: '/learn/cpp'
         },
     ];
 
@@ -75,7 +81,7 @@ const LearnMainPage = () => {
                                 description={lang.description}
                                 chapterCount={lang.chapterCount}
                                 headerGradient={lang.headerGradient}
-                                onClick={() => Navigate(lang.route)}
+                                onClick={() => navigate(lang.route)}
                             />
                         ))}
                     </div>
