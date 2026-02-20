@@ -205,6 +205,13 @@ export const login = async (req, res) => {
         .json({ success: false, message: "Invalid password" });
     }
 
+    // ── Check if account is verified ──────────────────────────────────────
+    if (!user.isAccountVerified) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Please verify your email first. Signing up pending verification." });
+    }
+
     // ── Create session ──────────────────────────────────────
     const sessionData = await createSession(user._id, req);
     setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
@@ -322,29 +329,9 @@ export const logoutAllDevices = async (req, res) => {
 
 export const sendVerifyOtp = async (req, res) => {
   try {
-    // Support two modes:
-    // 1) If authenticated (req.userId) -> send OTP to existing user (existing behavior)
-    // 2) If not authenticated -> accept { email } in body and send OTP for pending registration
-    if (req.userId) {
-      const user = await User.findById(req.userId);
-      if (!user) return res.status(404).json({ success: false, message: "User not found" });
-      if (user.isAccountVerified) return res.json({ success: false, message: "Account already verified" });
-
-      const otp = String(Math.floor(100000 + Math.random() * 900000));
-      user.verifyotp = otp;
-      user.verifyotpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
-      await user.save();
-
-      await transporter.sendMail({
-        from: process.env.SENDER_EMAIL,
-        to: user.email,
-        subject: "Account Verification OTP",
-        text: `Your OTP is ${otp}. Verify your account using this OTP.`,
-      });
-
-      return res.json({ success: true, message: "Verification OTP sent on email" });
-    }
-
+    // ✅ Only for signup flow - send OTP for pending registration
+    // (Verified accounts cannot call this, unverified login is rejected at backend)
+    
     const { email } = req.body;
     if (!email) return res.status(400).json({ success: false, message: "Email is required" });
 
