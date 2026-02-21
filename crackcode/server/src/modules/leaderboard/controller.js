@@ -1,35 +1,39 @@
 import User from "../auth/User.model.js";
 import redisClient from "./redis.config.js";
 
-/**
- * Helper to check if Redis is actually connected and ready
- */
 const isRedisReady = () => redisClient.isOpen;
 
 /**
  * Get Top 10 Players for the Leaderboard
- * Logic: Try Redis first (O(log(N))), fallback to MongoDB.
  */
 export const getGlobalLeaderboard = async (_req, res) => {
   try {
+    // Try Redis first, but safely fall through to MongoDB on any error
     if (isRedisReady()) {
-      // Fetch top 10 from Redis Sorted Set (High to Low)
-      const topPlayers = await redisClient.zRangeWithScores("global_leaderboard", 0, 9, { REV: true });
+      try {
+        // Use ZREVRANGE (compatible with all redis v4 versions)
+        const topPlayers = await redisClient.zRangeWithScores(
+          "global_leaderboard",
+          "+inf", "-inf",
+          { BY: "SCORE", REV: true, LIMIT: { offset: 0, count: 10 } }
+        );
 
-      if (topPlayers.length > 0) {
-        const leaderboard = topPlayers.map((player, index) => ({
-          position: index + 1,
-          username: player.value,
-          totalXP: player.score,
-          // Note: If you need avatars/ranks in Redis, you'd store JSON strings 
-          // or fetch these specific users from MongoDB here.
-        }));
-
-        return res.status(200).json({ success: true, source: "cache", leaderboard });
+        if (topPlayers && topPlayers.length > 0) {
+          const leaderboard = topPlayers.map((player, index) => ({
+            position: index + 1,
+            username: player.value,
+            totalXP: player.score,
+            rank: "Rookie",
+            avatar: null,
+          }));
+          return res.status(200).json({ success: true, source: "cache", leaderboard });
+        }
+      } catch (redisErr) {
+        console.warn("⚠️ Redis leaderboard fetch failed, using MongoDB:", redisErr.message);
       }
     }
 
-    // Fallback to MongoDB if Redis is empty or disconnected
+    // MongoDB fallback
     const topPlayers = await User.find({ username: { $exists: true, $ne: null } })
       .sort({ totalXP: -1 })
       .limit(10)
@@ -40,10 +44,11 @@ export const getGlobalLeaderboard = async (_req, res) => {
       username: player.username,
       totalXP: player.totalXP || 0,
       rank: player.rank || "Rookie",
-      avatar: player.avatar,
+      avatar: player.avatar || null,
     }));
 
     return res.status(200).json({ success: true, source: "database", leaderboard });
+
   } catch (error) {
     console.error("Leaderboard Error:", error);
     return res.status(500).json({ success: false, message: "Failed to fetch leaderboard" });
@@ -52,11 +57,10 @@ export const getGlobalLeaderboard = async (_req, res) => {
 
 /**
  * Get the specific Rank of the logged-in user
- * Logic: Redis 'zRevRank' is O(log(N)), whereas MongoDB count is O(N).
  */
 export const getMyRank = async (req, res) => {
   try {
-    const userId = req.userId; // From auth middleware
+    const userId = req.userId;
     const user = await User.findById(userId).select("username totalXP rank");
 
     if (!user) {
@@ -66,12 +70,14 @@ export const getMyRank = async (req, res) => {
     let position = null;
 
     if (isRedisReady()) {
-      // zRevRank returns 0-based index for highest scores
-      const rank = await redisClient.zRevRank("global_leaderboard", user.username);
-      if (rank !== null) position = rank + 1;
+      try {
+        const rank = await redisClient.zRevRank("global_leaderboard", user.username);
+        if (rank !== null) position = rank + 1;
+      } catch (redisErr) {
+        console.warn("⚠️ Redis rank fetch failed:", redisErr.message);
+      }
     }
 
-    // Fallback if Redis rank doesn't exist
     if (position === null) {
       const usersAhead = await User.countDocuments({
         totalXP: { $gt: user.totalXP || 0 },
@@ -95,7 +101,6 @@ export const getMyRank = async (req, res) => {
 
 /**
  * Get leaderboard with pagination
- * Logic: Uses Redis ZRANGE with offset/limit for efficiency.
  */
 export const getPaginatedLeaderboard = async (req, res) => {
   try {
@@ -103,29 +108,7 @@ export const getPaginatedLeaderboard = async (req, res) => {
     const limit = parseInt(req.query.limit) || 20;
     const skip = (page - 1) * limit;
 
-    if (isRedisReady()) {
-      const [total, players] = await Promise.all([
-        redisClient.zCard("global_leaderboard"),
-        redisClient.zRangeWithScores("global_leaderboard", skip, skip + limit - 1, { REV: true })
-      ]);
-
-      if (players.length > 0) {
-        const leaderboard = players.map((player, index) => ({
-          position: skip + index + 1,
-          username: player.value,
-          totalXP: player.score,
-        }));
-
-        return res.status(200).json({
-          success: true,
-          source: "cache",
-          leaderboard,
-          pagination: { page, limit, total, pages: Math.ceil(total / limit) },
-        });
-      }
-    }
-
-    // Fallback to MongoDB pagination
+    // MongoDB pagination (skip Redis for paginated to keep it simple)
     const [players, total] = await Promise.all([
       User.find({ username: { $exists: true, $ne: null } })
         .sort({ totalXP: -1 })
@@ -140,7 +123,7 @@ export const getPaginatedLeaderboard = async (req, res) => {
       username: player.username,
       totalXP: player.totalXP || 0,
       rank: player.rank || "Rookie",
-      avatar: player.avatar,
+      avatar: player.avatar || null,
     }));
 
     return res.status(200).json({

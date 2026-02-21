@@ -1,26 +1,58 @@
-export const fetchGlobalLeaderboard = async () => {
-  const response = await fetch("http://localhost:5050/api/leaderboard/global");
+// src/api/leaderboard.js
+// This is the file imported by leaderboardPage.jsx
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch leaderboard");
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+
+/**
+ * Fetch top 10 global leaderboard
+ * Returns the raw leaderboard array (not the wrapper object)
+ */
+export const fetchGlobalLeaderboard = async () => {
+  const res = await fetch(`${BASE_URL}/api/leaderboard/global`, {
+    credentials: "include",
+  });
+
+  if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
+  const data = await res.json();
+
+  // Backend returns: { success: true, leaderboard: [...] }
+  // leaderboardPage.jsx expects a plain array, so unwrap it:
+  if (data.success && Array.isArray(data.leaderboard)) {
+    return data.leaderboard;
   }
 
-  return response.json();
+  throw new Error(data.message || "Failed to load leaderboard");
 };
 
-const [loading, setLoading] = useState(true);
+/**
+ * Fetch the logged-in user's rank
+ * Returns the full response object { success, position, username, totalXP, rank }
+ */
+export const fetchMyRank = async () => {
+  const res = await fetch(`${BASE_URL}/api/leaderboard/me`, {
+    credentials: "include",
+  });
 
-// useEffect(() => {
-//   fetchGlobalLeaderboard()
-//     .then((data) => {
-//       setLeaderboard(data);
-//       setLoading(false);
-//     })
-//     .catch((err) => {
-//       console.error("API error:", err);
-//       setLeaderboard([]); // fallback
-//       setLoading(false);
-//     });
-// }, []);
+  if (!res.ok) throw new Error(`Server error: ${res.status}`);
 
-// if (loading) return <p>Loading leaderboard...</p>;
+  return res.json();
+};
+
+/**
+ * Fetch paginated leaderboard
+ */
+export const fetchPaginatedLeaderboard = async (page = 1, limit = 20) => {
+  const res = await fetch(
+    `${BASE_URL}/api/leaderboard/paginated?page=${page}&limit=${limit}`,
+    { credentials: "include" }
+  );
+
+  if (!res.ok) throw new Error(`Server error: ${res.status}`);
+
+  const data = await res.json();
+
+  if (data.success) return data;
+
+  throw new Error(data.message || "Failed to load leaderboard");
+};
