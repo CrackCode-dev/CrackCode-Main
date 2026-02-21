@@ -16,7 +16,6 @@ const LeaderboardPage = () => {
   const [error,   setError]   = useState(null);
   const [filter,  setFilter]  = useState("all");
 
-  // Translates backend field names → UI field names
   const normalize = (player, index) => ({
     rank:           player.position        ?? index + 1,
     name:           player.username        ?? "Unknown",
@@ -35,12 +34,10 @@ const LeaderboardPage = () => {
       try {
         const data = await fetchGlobalLeaderboard();
         if (data && data.length > 0) setLeaders(data.map(normalize));
-
         try {
           const me = await fetchMyRank();
           if (me?.success) setMyRank(me);
-        } catch { /* not logged in — banner won't show */ }
-
+        } catch { /* not logged in */ }
       } catch (err) {
         console.error("Leaderboard load error:", err);
         setError("Could not reach server. Please try again.");
@@ -52,7 +49,6 @@ const LeaderboardPage = () => {
   }, [filter]);
 
   const topThree = leaders.slice(0, 3);
-
   const filterButtons = [
     { label: "All Time", value: "all"     },
     { label: "Monthly",  value: "monthly" },
@@ -66,43 +62,42 @@ const LeaderboardPage = () => {
         rel="stylesheet"
       />
 
-      {/* Navbar */}
       <Header />
 
-      {/* Spacer — sits in normal flow, pushes everything below the fixed navbar */}
-      <div style={{ height: "80px" }} />
+      {/* HQ Button fixed to top-left below navbar */}
+      <button
+        onClick={() => navigate("/hq")}
+        style={{
+          position: "fixed",
+          top: "80px",
+          left: "20px",
+          zIndex: 50,
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "8px 14px",
+          borderRadius: "10px",
+          border: "1.5px solid #22c55e",
+          background: "transparent",
+          color: "#22c55e",
+          fontSize: "13px",
+          fontWeight: "700",
+          cursor: "pointer",
+          letterSpacing: "0.5px",
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = "rgba(34,197,94,0.1)"; }}
+        onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+      >
+        🏠 HQ
+      </button>
+
+      {/* Spacer below fixed navbar */}
+      <div style={{ height: "950px" }} />
 
       <main className="flex-1 px-10 pb-16">
 
-        {/* ── Top bar: HQ button + Filter buttons side by side ── */}
-        <div className="flex items-center justify-between max-w-5xl mx-auto mb-12 pt-6">
-
-          {/* HQ Button */}
-          <button
-            onClick={() => navigate("/hq")}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "52px",
-              height: "52px",
-              borderRadius: "12px",
-              border: "none",
-              background: "linear-gradient(135deg, #f97316, #ea580c)",
-              color: "#fff",
-              fontSize: "15px",
-              fontWeight: "700",
-              cursor: "pointer",
-              boxShadow: "0 4px 14px rgba(249,115,22,0.4)",
-              letterSpacing: "0.5px",
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = "linear-gradient(135deg, #fb923c, #f97316)"}
-            onMouseLeave={e => e.currentTarget.style.background = "linear-gradient(135deg, #f97316, #ea580c)"}
-          >
-            HQ
-          </button>
-
-          {/* Filter Buttons */}
+        {/* Filter buttons top-right */}
+        <div className="flex justify-end max-w-5xl mx-auto mb-8">
           <div className="flex gap-3">
             {filterButtons.map(({ label, value }) => (
               <Button
@@ -129,7 +124,7 @@ const LeaderboardPage = () => {
           </p>
         </div>
 
-        {/* Your Rank Banner — only shown when logged in */}
+        {/* Your Rank Banner */}
         {myRank && (
           <div className="flex items-center justify-between bg-[#161616] border border-green-900/40 rounded-xl px-6 py-4 mb-10 max-w-5xl mx-auto">
             <div className="flex items-center gap-3">
@@ -164,16 +159,11 @@ const LeaderboardPage = () => {
           </div>
         )}
 
-        {/* Loading */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
             <span className="text-4xl animate-pulse">🔍</span>
-            <p className="text-neutral-600 tracking-widest text-sm">
-              Investigating records…
-            </p>
+            <p className="text-neutral-600 tracking-widest text-sm">Investigating records…</p>
           </div>
-
-        /* Error */
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <span className="text-4xl">⚠️</span>
@@ -194,17 +184,10 @@ const LeaderboardPage = () => {
               Retry
             </button>
           </div>
-
-        /* Content */
         ) : (
           <div className="max-w-5xl mx-auto">
-            {/* Podium */}
             <TopThree users={topThree} />
-
-            {/* Table */}
             <LeaderboardTable data={leaders} />
-
-            {/* Back to top */}
             <div className="flex justify-center mt-10">
               <Button
                 variant="outline"
