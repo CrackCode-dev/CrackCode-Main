@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import "./App.css";
 
 import Home from "./pages/home/Home";
@@ -23,7 +23,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    <>
       <ToastContainer />
       <Routes>
         {/* Public routes */}
@@ -66,7 +66,7 @@ function App() {
 
         <Route path="/learn/:trackId" element={<ChapterSelectionPage />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
 
