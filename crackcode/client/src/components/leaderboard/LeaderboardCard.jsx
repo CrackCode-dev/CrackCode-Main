@@ -30,7 +30,6 @@ const LeaderboardCard = ({ user, type }) => {
     ? "text-neutral-300"
     : "text-orange-400";
 
-  // ── Determine if avatar is an image path or an emoji ──────
   const isImagePath =
     typeof user.avatar === "string" &&
     (user.avatar.startsWith("/") ||
@@ -39,7 +38,6 @@ const LeaderboardCard = ({ user, type }) => {
 
   return (
     <div className={`${cardBase} ${cardVariant}`}>
-
       {isGold && (
         <span
           className="text-3xl mt-1"
@@ -49,7 +47,6 @@ const LeaderboardCard = ({ user, type }) => {
         </span>
       )}
 
-      {/* ── Avatar: image or emoji fallback ── */}
       {isImagePath ? (
         <img
           src={user.avatar}

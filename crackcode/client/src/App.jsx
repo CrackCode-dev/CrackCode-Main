@@ -12,7 +12,7 @@ import EmailVerify from "./pages/userauth/EmailVerify";
 import Login from "./pages/userauth/Login";
 import ResetPassword from "./pages/userauth/ResetPassword";
 import CareermapMain from "./pages/careermap/CareermapMain";
-import GameProfile from "./pages/gameprofile/GameProfile";
+import GameProfile from "./pages/gameprofile/gameprofile";
 import UserProfile from "./pages/userprofile/UserProfile";
 import CodeEditorPage from "./pages/codeEditor/CodeEditorPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";

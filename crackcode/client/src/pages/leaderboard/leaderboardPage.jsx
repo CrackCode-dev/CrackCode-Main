@@ -57,11 +57,6 @@ const LeaderboardPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
-      <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
-
       <Header />
 
       {/* HQ Button fixed to top-left below navbar */}
