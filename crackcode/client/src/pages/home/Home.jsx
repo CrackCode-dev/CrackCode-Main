@@ -15,12 +15,10 @@ import StreakCalendar from '../../components/home/StreakCalendar'
 function Home() {
   const { theme, setTheme } = useTheme()
 
-  // Set light theme by default on home page
+  // Set light theme by default on home page (only on mount)
   useEffect(() => {
-    if (theme !== 'light') {
-      setTheme('light')
-    }
-  }, [theme, setTheme])
+    setTheme('light')
+  }, [])
 
   return (
     <div className='min-h-screen flex flex-col' style={{ background: 'var(--bg)', color: 'var(--text)' }}>

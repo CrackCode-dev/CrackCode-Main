@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header';
 import LangCard from '../../components/learn/LangCard';
 import pythonIcon from '../../assets/icons/learn/python.png';
@@ -7,6 +8,15 @@ import cppIcon from '../../assets/icons/learn/cpp.png';
 
 // Example usage: Creating language cards using ContentCard
 const LearnMainPage = () => {
+  const navigate = useNavigate();
+
+  // Mapping of languages to problem IDs (you can fetch these from backend later)
+  const languageProblemMap = {
+    'python': 'prob_000067',
+    'javascript': 'prob_000067',
+    'java': 'prob_000068',
+    'cpp': 'prob_000068',
+  };
   
   const languagesData = [
     {
@@ -76,7 +86,14 @@ const LearnMainPage = () => {
                     description={lang.description}
                     courseCount={lang.courseCount}
                     headerGradient={lang.headerGradient}
-                    onClick={() => Navigate(lang.route)}
+                    onClick={() => {
+                      const problemId = languageProblemMap[lang.id];
+                      if (problemId) {
+                        navigate(`/code-editor/${problemId}`);
+                      } else {
+                        console.warn(`No problem mapped for language: ${lang.id}`);
+                      }
+                    }}
                     />
                     ))}
                 </div>

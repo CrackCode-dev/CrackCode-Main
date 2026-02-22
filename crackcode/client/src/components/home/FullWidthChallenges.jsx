@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTheme } from '../../context/theme/ThemeContext'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
 import InviteCard from './InviteCard'
@@ -45,6 +46,7 @@ const cases = [
 ];
 
 function FullWidthChallenges() {
+  useTheme() // Subscribe to theme changes for CSS variables
   const [hoveredId, setHoveredId] = useState(null)
   
   return (
