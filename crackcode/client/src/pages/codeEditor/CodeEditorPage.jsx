@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { EditorProvider } from "../../context/codeEditor/EditorContext";
 import { useProblemData } from "../../features/codeEditor/hooks/useProblemData";
 import CaseDetails from "../../components/codeEditor/CaseDetails";
@@ -7,8 +7,16 @@ import EditorWrapper from "../../components/codeEditor/EditorWrapper";
 
 const CodeEditorContent = () => {
   const { problemId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
-  const { error } = useProblemData(problemId);
+  const { error, setLanguage } = useProblemData(problemId);
+
+  // Set language from navigation state if provided (from ChapterSelection)
+  useEffect(() => {
+    if (location.state?.language) {
+      setLanguage(location.state.language);
+    }
+  }, [location.state, setLanguage]);
 
   if (error) return (
     <div className="h-screen flex items-center justify-center bg-[#0a0a0a]">

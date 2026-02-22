@@ -3,7 +3,7 @@ import { useEditor } from '../../../context/codeEditor/EditorContext';
 import { fetchProblemByLanguage, transformProblemData } from '../../../services/api/questionService';
 
 export const useProblemData = (problemId) => {
-  const { setCurrentProblem, setCode, setLoading, language } = useEditor();
+  const { setCurrentProblem, setCode, setLoading, language, setLanguage } = useEditor();
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -41,5 +41,5 @@ export const useProblemData = (problemId) => {
     loadProblem();
   }, [problemId, language, setCurrentProblem, setCode, setLoading]);
 
-  return { error };
+  return { error, setLanguage };
 };
