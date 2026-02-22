@@ -8,6 +8,7 @@ export { default as gameProfileRoutes } from "./gameprofile/routes.js";
 export { default as sessionRoutes } from "./session/routes.js";       // NEW
 export { default as rewardsRoutes } from "./rewards/routes.js";       // NEW
 export { default as shopRoutes } from "./shop/routes.js";             // NEW
+export { default as codeEditorRoutes } from "./codeEditor/routes.js"; // NEW
 
 // ─── Model Exports ───────────────────────────────────────────
 export { default as User } from "./auth/User.model.js";
