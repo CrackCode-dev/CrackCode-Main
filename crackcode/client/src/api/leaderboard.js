@@ -10,17 +10,17 @@ export const fetchGlobalLeaderboard = async () => {
 
 const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  fetchGlobalLeaderboard()
-    .then((data) => {
-      setLeaderboard(data);
-      setLoading(false);
-    })
-    .catch((err) => {
-      console.error("API error:", err);
-      setLeaderboard([]); // fallback
-      setLoading(false);
-    });
-}, []);
+// useEffect(() => {
+//   fetchGlobalLeaderboard()
+//     .then((data) => {
+//       setLeaderboard(data);
+//       setLoading(false);
+//     })
+//     .catch((err) => {
+//       console.error("API error:", err);
+//       setLeaderboard([]); // fallback
+//       setLoading(false);
+//     });
+// }, []);
 
-if (loading) return <p>Loading leaderboard...</p>;
+// if (loading) return <p>Loading leaderboard...</p>;
