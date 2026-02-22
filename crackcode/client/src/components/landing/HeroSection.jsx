@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { Brain, Code, Zap, Users, ArrowDown } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
+import { cardHoverEffects, animationConfig } from './hoverEffects'
 
 export default function HeroSection() {
     const navigate = useNavigate()
@@ -15,8 +16,8 @@ export default function HeroSection() {
         { icon: Users, label: 'Community' }
     ]
 
-    // Use the app root background so landing matches other pages
-    const sectionStyle = { background: 'var(--bg)' }
+    // Use theme background color
+    const sectionStyle = { background: vars.from }
 
     return (
         <section style={sectionStyle} className='relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden py-12'>
@@ -58,17 +59,21 @@ export default function HeroSection() {
                     {features.map((feature, index) => {
                         const Icon = feature.icon
                         return (
-                                <div
+                                <motion.div
                                     key={index}
-                                    className='flex items-center gap-2 px-4 py-2 rounded-full border shadow-sm backdrop-blur'
+                                    className='flex items-center gap-2 px-4 py-2 rounded-full border shadow-md backdrop-blur cursor-pointer transition-all duration-300'
                                     style={{
                                         background: landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark,
                                         borderColor: vars.rim
                                     }}
+                                    whileHover={animationConfig.tagHover}
+                                    transition={animationConfig.cardHover}
+                                    onMouseEnter={(e) => cardHoverEffects.onTagHover(e.currentTarget, vars, landingTheme)}
+                                    onMouseLeave={(e) => cardHoverEffects.onTagLeave(e.currentTarget, vars, landingTheme)}
                                 >
-                                    <Icon className='w-4 h-4' style={{ color: vars.brand }} />
+                                    <Icon className='w-4 h-4 transition-transform duration-300' style={{ color: vars.brand }} />
                                     <span className='text-sm font-medium' style={{ color: vars.text }}>{feature.label}</span>
-                                </div>
+                                </motion.div>
                         )
                     })}
                 </motion.div>
@@ -80,32 +85,45 @@ export default function HeroSection() {
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className='flex flex-col sm:flex-row gap-4 justify-center mb-16'
                 >
-                    <button
+                    <motion.button
                         onClick={() => navigate('/login')}
-                        className='px-8 py-3 text-white font-semibold rounded-lg transition-all shadow-md hover:shadow-lg'
+                        className='px-8 py-3 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-2xl'
                         style={{
                             background: `linear-gradient(90deg, ${vars.btnStart}, ${vars.btnEnd})`,
                             color: vars.btnText
                         }}
+                        whileHover={{ scale: 1.05, y: -2 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ duration: 0.2 }}
                     >
                         Get Started
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                         onClick={() => navigate('/home')}
-                        className='px-8 py-3 border-2 font-semibold rounded-lg hover:bg-white/5 transition-all shadow-md hover:shadow-lg'
-                        style={{ borderColor: vars.rim, color: vars.text }}
+                        className='px-8 py-3 border-2 font-semibold rounded-lg transition-all shadow-md hover:shadow-xl backdrop-blur'
+                        style={{ 
+                            borderColor: vars.rim, 
+                            color: vars.text,
+                            backgroundColor: `rgba(255,150,68,0.05)`
+                        }}
+                        whileHover={animationConfig.buttonHover}
+                        whileTap={animationConfig.buttonTap}
+                        transition={animationConfig.cardHover}
+                        onMouseEnter={(e) => cardHoverEffects.onButtonHover(e.currentTarget, vars, landingTheme)}
+                        onMouseLeave={(e) => cardHoverEffects.onButtonLeave(e.currentTarget, vars)}
                     >
                         Learn More
-                    </button>
+                    </motion.button>
                 </motion.div>
 
                 {/* Scroll indicator */}
                 <motion.div
                     animate={{ y: [0, 10, 0] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className='flex justify-center gap-2'
+                    className='flex justify-center gap-2 cursor-pointer group'
+                    whileHover={{ scale: 1.1 }}
                 >
-                    <ArrowDown className='w-5 h-5' style={{ color: vars.via }} />
+                    <ArrowDown className='w-5 h-5 transition-all duration-300 group-hover:scale-125' style={{ color: vars.via }} />
                 </motion.div>
             </div>
         </section>

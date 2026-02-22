@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { AlertCircle, MessageSquare, Clock, BarChart3 } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
+import { cardHoverEffects, animationConfig } from './hoverEffects'
 
 export default function AITechSection() {
     const features = [
@@ -28,8 +29,8 @@ export default function AITechSection() {
     const { landingTheme } = useLandingTheme()
     const vars = resolveLandingVars(landingTheme)
 
-    // Use global page background so landing pages share the same base color
-    const sectionStyle = { background: 'var(--bg)' }
+    // Use theme background color
+    const sectionStyle = { background: vars.from }
 
     return (
 
@@ -70,24 +71,26 @@ export default function AITechSection() {
                             return (
                                 <motion.div
                                     key={index}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        whileInView={{ opacity: 1, y: 0 }}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.6, delay: index * 0.1 }}
                                     viewport={{ once: true }}
-                                        whileHover={{ y: -6, scale: 1.01 }}
-                                        className='group p-5 rounded-xl border transition-all duration-300 cursor-pointer backdrop-blur'
-                                        style={{
-                                            background: landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark,
-                                            borderColor: vars.rim
-                                        }}
+                                    whileHover={animationConfig.cardLift}
+                                    className='group p-5 rounded-xl border transition-all duration-300 cursor-pointer backdrop-blur shadow-md hover:shadow-xl'
+                                    style={{
+                                        background: landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark,
+                                        borderColor: vars.rim
+                                    }}
+                                    onMouseEnter={(e) => cardHoverEffects.onCardHover(e.currentTarget, vars, landingTheme)}
+                                    onMouseLeave={(e) => cardHoverEffects.onCardLeave(e.currentTarget, vars, landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark, landingTheme)}
                                 >
                                     <div className='flex items-start gap-4'>
-                                        <Icon className='w-6 h-6 flex-shrink-0 mt-1 transition-transform' style={{ color: vars.brand }} />
+                                        <Icon className='w-6 h-6 flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12' style={{ color: vars.brand }} />
                                         <div>
-                                            <h3 className='font-bold mb-2' style={{ color: vars.text }}>
+                                            <h3 className='font-bold mb-2 transition-colors duration-300' style={{ color: vars.text }}>
                                                 {feature.title}
                                             </h3>
-                                            <p className='text-sm' style={{ color: landingTheme === 'light' ? 'rgba(17,24,39,0.7)' : 'rgba(255,255,255,0.78)' }}>
+                                            <p className='text-sm transition-colors duration-300' style={{ color: landingTheme === 'light' ? 'rgba(17,24,39,0.7)' : 'rgba(255,255,255,0.78)' }}>
                                                 {feature.description}
                                             </p>
                                         </div>

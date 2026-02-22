@@ -11,24 +11,24 @@ const LandingThemeContext = createContext(null);
 // Keep a small local fallback, but prefer the centralized palette from ThemeContext
 const PRESETS = {
   dark: {
-    from: "#070708",
-    via: "#3B2415",
-    to: "#060606",
-    orb: "rgba(59,36,21,0.12)",
-    text: "#F5F5F5",
-    textSec: "#CFC6C0",
+    from: "#000000",
+    via: "#FF9644",
+    to: "#0a0a0a",
+    orb: "rgba(255,150,68,0.12)",
+    text: "#FFFFFF",
+    textSec: "rgba(255,255,255,0.85)",
     brand: "#FF9644",
     rim: "rgba(255,150,68,0.06)",
   },
   light: {
-    from: "#FFFDF1",
-    via: "#FFCE99",
-    to: "#FFFDF1",
-    orb: "rgba(86,47,0,0.06)",
-    text: "#213547",
-    textSec: "#475569",
+    from: "#FFFFFF",
+    via: "#FF9644",
+    to: "#FFFFFF",
+    orb: "rgba(255,150,68,0.06)",
+    text: "#111111",
+    textSec: "#555555",
     brand: "#FF9644",
-    rim: "rgba(0,0,0,0.04)",
+    rim: "rgba(255,150,68,0.08)",
   },
 };
 
@@ -71,7 +71,7 @@ export function resolveLandingVars(themeKey) {
 
   // card backgrounds
   const cardBgLight = tinycolor(base.to).lighten(6).setAlpha(0.9).toRgbString()
-  const cardBgDark = tinycolor(base.to).darken(6).setAlpha(0.06).toRgbString()
+  const cardBgDark = tinycolor(base.via).lighten(8).setAlpha(0.12).toRgbString()
 
   // subtle rim/shadow
   const rim = base.rim || tinycolor(base.via).setAlpha(0.06).toRgbString()

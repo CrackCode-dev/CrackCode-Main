@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { MapPin, Compass, Target, Users, TrendingUp, Code2 } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
+import { cardHoverEffects, animationConfig } from './hoverEffects'
 
 export default function CareerMapSection() {
     const careerPaths = [
@@ -73,8 +74,8 @@ export default function CareerMapSection() {
     const { landingTheme } = useLandingTheme()
     const vars = resolveLandingVars(landingTheme)
 
-    // Use global page background so landing pages share the same base color
-    const sectionStyle = { background: 'var(--bg)' }
+    // Use theme background color
+    const sectionStyle = { background: vars.from }
 
     return (
         <section style={sectionStyle} className='relative w-full py-20 md:py-32 overflow-hidden'>
@@ -104,15 +105,18 @@ export default function CareerMapSection() {
                                 <motion.div
                                     key={index}
                                     variants={cardVariant}
-                                    className='group relative p-6 rounded-2xl border transition-all duration-300 cursor-pointer backdrop-blur'
-                                    whileHover={{ y: -8 }}
+                                    className='group relative p-6 rounded-2xl border transition-all duration-300 cursor-pointer backdrop-blur shadow-md hover:shadow-2xl'
+                                    whileHover={animationConfig.cardLift}
+                                    transition={animationConfig.cardHover}
                                     style={{
                                         background: landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark,
                                         borderColor: vars.rim
                                     }}
+                                    onMouseEnter={(e) => cardHoverEffects.onCardHover(e.currentTarget, vars, landingTheme)}
+                                    onMouseLeave={(e) => cardHoverEffects.onCardLeave(e.currentTarget, vars, landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark, landingTheme)}
                                 >
                                     <div className='h-full flex flex-col items-center text-center'>
-                                        <Icon className='w-10 h-10 mb-4 group-hover:scale-125 group-hover:rotate-12 transition-all' style={{ color: vars.brand }} />
+                                        <Icon className='w-10 h-10 mb-4 group-hover:scale-135 group-hover:rotate-12 transition-all duration-300' style={{ color: vars.brand }} />
                                         <h3 className='font-bold mb-2 transition-colors' style={{ color: vars.text }}>
                                             {path.title}
                                         </h3>
@@ -123,7 +127,7 @@ export default function CareerMapSection() {
 
                                     {/* Side accent on hover */}
                                     <div
-                                        className='absolute right-0 top-0 bottom-0 w-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+                                        className='absolute right-3 top-3 bottom-3 w-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300'
                                         style={{ background: `linear-gradient(to bottom, ${vars.btnStart}, ${vars.btnEnd})` }}
                                     />
                                 </motion.div>
@@ -186,16 +190,19 @@ export default function CareerMapSection() {
                                     <motion.div
                                         key={index}
                                         variants={cardVariant}
-                                        className='group relative h-32 p-6 rounded-2xl border hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden'
-                                        whileHover={{ y: -4 }}
+                                        className='group relative h-32 p-6 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden shadow-md hover:shadow-xl'
+                                        whileHover={animationConfig.cardLift}
+                                        transition={animationConfig.cardHover}
                                         style={{ background: landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark, borderColor: vars.rim }}
+                                        onMouseEnter={(e) => cardHoverEffects.onCardHover(e.currentTarget, vars, landingTheme)}
+                                        onMouseLeave={(e) => cardHoverEffects.onCardLeave(e.currentTarget, vars, landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark, landingTheme)}
                                     >
                                         {/* Background glow on hover */}
                                         <div className='absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300' style={{ background: `linear-gradient(180deg, ${vars.btnStart}11, ${vars.btnEnd}08)` }} />
 
                                         {/* Icon area */}
                                         <div className='relative flex flex-col h-full justify-between'>
-                                            <Icon className='w-6 h-6 group-hover:scale-110 transition-all duration-300' style={{ color: vars.brand }} />
+                                            <Icon className='w-6 h-6 group-hover:scale-125 group-hover:rotate-6 transition-all duration-300' style={{ color: vars.brand }} />
 
                                             {/* Title and description */}
                                             <div className='flex flex-col gap-1'>
@@ -209,7 +216,7 @@ export default function CareerMapSection() {
                                         </div>
 
                                         {/* Hover accent line */}
-                                        <div className='absolute right-0 top-0 bottom-0 w-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300' style={{ background: `linear-gradient(to bottom, ${vars.btnStart}, ${vars.btnEnd})` }} />
+                                        <div className='absolute right-3 top-3 bottom-3 w-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300' style={{ background: `linear-gradient(to bottom, ${vars.btnStart}, ${vars.btnEnd})` }} />
                                     </motion.div>
                                 )
                             })}
