@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Gamepad2, Brain, Globe, Trophy, Zap, Users } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
+import { cardHoverEffects, animationConfig } from './hoverEffects'
 
 export default function WhyCrackCodeSection() {
     const { landingTheme } = useLandingTheme()
@@ -68,8 +69,8 @@ export default function WhyCrackCodeSection() {
         visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
     }
 
-    // Use the global app background so landing matches other pages
-    const sectionStyle = { background: 'var(--bg)' }
+    // Use theme background color
+    const sectionStyle = { background: vars.from }
 
     // card background depends on theme but prefer resolved vars
     const cardBg = landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark
@@ -131,15 +132,16 @@ export default function WhyCrackCodeSection() {
                                 key={index}
                                 variants={featureVariant}
                                 className='relative h-full'
-                                whileHover={{ y: -6, scale: 1.01 }}
+                                whileHover={{ y: -10, scale: 1.02 }}
+                                transition={{ duration: 0.3 }}
                             >
-                                <div className='absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300' style={{ background: `linear-gradient(90deg, ${hexToRgba(vars.via,0.06)}, ${hexToRgba(vars.from,0.03)})` }} />
+                                <div className='absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-400' style={{ background: `linear-gradient(135deg, ${hexToRgba(vars.via,0.15)}, ${hexToRgba(vars.from,0.08)})` }} />
 
-                                <div className='relative p-8 rounded-2xl border hover:border-purple-300 transition-all duration-300 h-full flex flex-col justify-between' style={{ background: cardBg, borderColor: vars.rim || (landingTheme === 'light' ? '#E6E6E6' : 'rgba(255,255,255,0.06)') }}>
+                                <div className='relative p-8 rounded-2xl border transition-all duration-300 h-full flex flex-col justify-between group shadow-md hover:shadow-2xl' style={{ background: cardBg, borderColor: vars.rim || (landingTheme === 'light' ? '#E6E6E6' : 'rgba(255,255,255,0.06)') }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = vars.brand; e.currentTarget.style.background = landingTheme === 'light' ? 'rgba(255,200,124,0.12)' : 'rgba(255,150,68,0.15)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = vars.rim || (landingTheme === 'light' ? '#E6E6E6' : 'rgba(255,255,255,0.06)'); e.currentTarget.style.background = cardBg; }}>>
                                     {/* Icon container + Content */}
                                     <div>
-                                        <div className='w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:shadow-lg transition-all duration-300' style={{ background: `linear-gradient(135deg, ${hexToRgba(vars.via,0.12)}, ${hexToRgba(vars.from,0.08)})` }}>
-                                            <Icon className='w-8 h-8 group-hover:scale-110 transition-transform duration-300' style={{ color: vars.brand }} />
+                                        <div className='w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:shadow-xl transition-all duration-300' style={{ background: `linear-gradient(135deg, ${hexToRgba(vars.via,0.15)}, ${hexToRgba(vars.from,0.1)})` }}>
+                                            <Icon className='w-8 h-8 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300' style={{ color: vars.brand }} />
                                         </div>
 
                                         <h3 className='text-xl font-bold mb-3' style={{ color: vars.text }}>
@@ -151,7 +153,7 @@ export default function WhyCrackCodeSection() {
                                     </div>
 
                                     {/* Decorative accent */}
-                                    <div className='absolute right-0 top-0 bottom-0 w-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300' style={{ background: `linear-gradient(to bottom, ${vars.btnStart}, ${vars.btnEnd})` }} />
+                                    <div className='absolute right-3 top-3 bottom-3 w-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300' style={{ background: `linear-gradient(to bottom, ${vars.btnStart}, ${vars.btnEnd})` }} />
                                 </div>
                             </motion.div>
                         )
