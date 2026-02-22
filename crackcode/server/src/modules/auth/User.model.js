@@ -26,24 +26,26 @@ const userSchema = new mongoose.Schema(
     resetotpExpireAt: { type: Number, default: 0 },
 
     // GAME STATS
+    // GAME STATS
     username: {
       type: String,
-      sparse : true,
+      sparse: true,
       unique: true,
       trim: true,
       lowercase: true,
     },
     xp: { type: Number, default: 0 },
-    totalXP: { type: Number, default: 0 }, // For leaderboard sorting
+    totalXP: { type: Number, default: 0 },
     tokens: { type: Number, default: 100 },
     rank: { type: String, default: "Rookie" },
+
+    // ⭐ ADD THESE FOR LEADERBOARD
+    casesSolved: { type: Number, default: 0 },
+    streak: { type: Number, default: 0 },
+    specialization: { type: String, default: "General" },
+
     lastActive: { type: Date, default: Date.now },
 
-    // ACCOUNT SETTINGS
-    emailSettings: {
-      notifications: { type: Boolean, default: true },
-      securityAlerts: { type: Boolean, default: true },
-    },
 
     // ACHIEVEMENTS
     achievements: [
