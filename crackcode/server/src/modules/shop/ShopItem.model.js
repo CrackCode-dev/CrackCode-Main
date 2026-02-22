@@ -20,8 +20,11 @@ const pricingSchema = new mongoose.Schema(
 
     currency: {
       type: String,
+      enum: ["USD", "XP"],
       default: "USD",
     },
+
+
   },
   { _id: false } // Prevents creating separate _id for pricing object
 );
@@ -71,11 +74,16 @@ const shopItemSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-/**
+/** 2026/02/22 
  * Validation:
  * Ensure xp and paid items have amount > 0
  */
+
 shopItemSchema.pre("validate", function (next) {
+  if (this.pricing.type === "free") {
+    this.pricing.amount = 0;
+  }
+
   if (
     this.pricing.type !== "free" &&
     (!this.pricing.amount || this.pricing.amount <= 0)
@@ -84,8 +92,10 @@ shopItemSchema.pre("validate", function (next) {
       new Error("Amount must be greater than 0 for xp or paid items")
     );
   }
+
   next();
 });
+
 
 /**
  * Indexes for performance

@@ -1,6 +1,7 @@
 import ShopItem from "./ShopItem.model.js";
 import Purchase from "./Purchase.model.js";
 import { spendTokens } from "../session/transaction.service.js";
+import Inventory from "./Inventory.model.js";
 
 /**
  * GET /api/shop/items
@@ -101,4 +102,31 @@ export const createShopItem = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
+};
+
+
+export const getMyInventory = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const inventory = await Inventory.find({ userId })
+      .populate("itemId")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      count: inventory.length,
+      inventory,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+const isConsumableCategory = (category) => {
+  // change this list based on your game rules
+  return ["boost", "bundle", "other"].includes(category);
 };

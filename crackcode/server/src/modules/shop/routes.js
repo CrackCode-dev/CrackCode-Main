@@ -1,10 +1,13 @@
 import express from "express";
 import userAuth from "../auth/middleware.js";
+
+
 import {
   getShopItems,
   purchaseItem,
   getUserPurchases,
   createShopItem,
+  getMyInventory   
 } from "./shop.controller.js";
 
 const router = express.Router();
@@ -23,5 +26,8 @@ router.post("/items", userAuth, createShopItem);
 router.get("/test", (_req, res) =>
   res.json({ success: true, message: "Shop routes working" })
 );
+
+// GET user inventory
+router.get("/inventory", userAuth, getMyInventory);;
 
 export default router;
