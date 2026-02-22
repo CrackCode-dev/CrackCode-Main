@@ -108,16 +108,9 @@ export default function AITechSection() {
                         viewport={{ once: true }}
                         className='hidden lg:flex items-center justify-center'
                     >
-                        <div className='w-full aspect-video rounded-2xl overflow-hidden shadow-lg' style={{ background: landingTheme === 'light' ? 'rgba(0,0,0,0.06)' : vars.cardBgDark, border: `1px solid ${vars.rim}` }}>
-                            <video
-                                autoPlay
-                                muted
-                                loop
-                                className='w-full h-full object-cover'
-                            >
-                                <source src='/auth-bg.mp4' type='video/mp4' />
-                                <p>Your browser does not support the video tag.</p>
-                            </video>
+                        {/* Placeholder: removed heavy GIF/video for performance. Add media later. */}
+                        <div className='w-full aspect-video rounded-2xl overflow-hidden shadow-lg flex items-center justify-center' style={{ background: landingTheme === 'light' ? 'rgba(0,0,0,0.02)' : vars.cardBgDark, border: `1px solid ${vars.rim}` }}>
+                            {/* Intentionally left empty for future GIF/video */}
                         </div>
                     </motion.div>
                 </div>

@@ -23,6 +23,7 @@ import gameProfileRoutes from './src/modules/gameprofile/routes.js';
 import sessionRoutes from './src/modules/session/routes.js';
 import shopRoutes from './src/modules/shop/routes.js';
 import rewardsRoutes from './src/modules/rewards/routes.js';
+import codeEditorRoutes from './src/modules/codeEditor/routes.js';
 
 // Session cleanup utility
 import { cleanupExpiredSessions } from './src/modules/session/session.service.js';
@@ -77,6 +78,9 @@ app.use('/api/game-profile', gameProfileRoutes);   // alias so both paths work
 app.use('/api/session', sessionRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/rewards', rewardsRoutes);
+
+// Code Editor routes
+app.use('/api/codeEditor', codeEditorRoutes);
 
 // ─── Health checks ───────────────────────────────────────────
 app.get('/', (_req, res) => {
