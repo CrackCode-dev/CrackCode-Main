@@ -147,3 +147,22 @@ export function useTheme() {
   if (!ctx) throw new Error("useTheme must be used inside <ThemeProvider>");
   return ctx;
 }
+
+// Map the global theme variables into a compact landing palette the landing
+// components can consume. This keeps the single source-of-truth in ThemeContext
+// while allowing landing UI to request a small set of colors (`from`, `via`,
+// `to`, `brand`, `text`, `textSec`, `rim`, `orb`) for gradients and accents.
+export function getLandingPalette(themeKey = 'light') {
+  const vars = THEME_VARS[themeKey] || THEME_VARS['dark'];
+
+  return {
+    from: vars['--bg'] || '#FFFDF1',
+    via: vars['--brandSoft'] || vars['--brand'] || '#FFCE99',
+    to: vars['--surface'] || vars['--bg'] || '#FFFFFF',
+    orb: vars['--brandSoft'] ? `${vars['--brandSoft']}33` : 'rgba(86,47,0,0.06)',
+    text: vars['--text'] || '#213547',
+    textSec: vars['--textSec'] || '#475569',
+    brand: vars['--brand'] || '#FF9644',
+    rim: vars['--border'] || 'rgba(255,150,68,0.06)'
+  };
+}

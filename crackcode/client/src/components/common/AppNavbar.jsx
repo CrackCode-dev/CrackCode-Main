@@ -40,7 +40,7 @@ export default function AppNavbar() {
     <header
       className="sticky top-0 z-50 w-full"
       style={{
-        background:   "var(--bg)",
+        background:   "var(--surface)",
         borderBottom: "2px solid var(--brand)",
         boxShadow:    "var(--shadow)",
       }}
@@ -66,14 +66,10 @@ export default function AppNavbar() {
             <NavLink
               key={to}
               to={to}
-              className={({ isActive }) =>
-                `px-4 py-2 rounded-lg text-sm font-semibold transition-opacity ${
-                  isActive ? "text-white" : "hover:opacity-70"
-                }`
-              }
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-opacity hover:opacity-70"
               style={({ isActive }) => ({
                 background: isActive ? "var(--brand)" : "transparent",
-                color:      isActive ? "#fff"         : "var(--text)",
+                color:      isActive ? "var(--brandInk)" : "var(--text)",
               })}
             >
               {label}
@@ -113,8 +109,8 @@ export default function AppNavbar() {
           <div className="relative">
             <button
               onClick={() => setOpen(!open)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-sm text-white transition-transform hover:scale-105 active:scale-95"
-              style={{ background: "var(--brand)", boxShadow: "var(--shadowBrand)" }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-sm transition-transform hover:scale-105 active:scale-95"
+              style={{ background: "var(--brand)", color: "var(--brandInk)", boxShadow: "var(--shadowBrand)" }}
             >
               <Settings size={14} className={open ? "animate-spin" : ""} />
               Settings
