@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTheme } from '../../context/theme/ThemeContext';
 import { Zap, Code, Trophy, Layers } from 'lucide-react';
 
 export default function CarouselFeatures() {
+  useTheme() // Subscribe to theme changes for CSS variables
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0);
 

@@ -111,7 +111,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/common/Header";
 
 function EmailVerify() {
-  const { backendUrl, getUserData } = useContext(AppContent);
+  const { backendUrl, getUserData, setIsLoggedIn } = useContext(AppContent);
   const navigate = useNavigate();
   const location = useLocation();
   const emailFromState = location?.state?.email || null;
@@ -152,6 +152,8 @@ function EmailVerify() {
 
       if (data?.success) {
         toast.success(data.message || "Email verified successfully!");
+        // User is now authenticated by the backend
+        setIsLoggedIn(true);
         await getUserData();
         navigate("/gamer-profile");
       } else {

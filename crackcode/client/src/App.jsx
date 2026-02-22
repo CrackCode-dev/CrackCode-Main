@@ -84,6 +84,16 @@ function App() {
               <LearnMainPage />
             // </ProtectedRoute>
           } />
+          <Route path='/code-editor/:problemId' element={
+            // <ProtectedRoute>
+              <CodeEditorPage />
+            // </ProtectedRoute>
+          } />
+          <Route path='/code-editor' element={
+            // <ProtectedRoute>
+              <CodeEditorPage />
+            // </ProtectedRoute>
+          } />
           <Route path="/weeklychallenges" element={
             <WeeklyChallenges />
           } />

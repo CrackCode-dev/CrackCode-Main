@@ -4,6 +4,8 @@ import DailyChallenge from './DailyChallenge'
 import { Sparkles } from 'lucide-react'
 
 function TopContentArea() {
+  useTheme() // Subscribe to theme changes for CSS variables
+  
   return (
     <div className='grow px-6 min-w-0 flex flex-col' style={{ color: 'var(--text)' }}>
       {/* Welcome Section - Enhanced */}
