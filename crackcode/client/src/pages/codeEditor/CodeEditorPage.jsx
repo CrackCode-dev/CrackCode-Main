@@ -1,5 +1,5 @@
 import React from 'react';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { EditorProvider } from "../../context/codeEditor/EditorContext";
 import { useProblemData } from "../../features/codeEditor/hooks/useProblemData";
 import CaseDetails from "../../components/codeEditor/CaseDetails";
@@ -7,13 +7,26 @@ import EditorWrapper from "../../components/codeEditor/EditorWrapper";
 
 const CodeEditorContent = () => {
   const { problemId } = useParams();
+  const navigate = useNavigate();
   const { error } = useProblemData(problemId);
 
-  if (error) return <div className="text-red-500 p-10 font-mono">ERROR: {error}</div>;
+  if (error) return (
+    <div className="h-screen flex items-center justify-center bg-[#0a0a0a]">
+      <div className="text-center">
+        <div className="text-red-500 p-10 font-mono text-lg mb-4">ERROR: {error}</div>
+        <button 
+          onClick={() => navigate('/learn')}
+          className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded font-bold"
+        >
+          Back to Learn
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div className="h-screen flex bg-[#0a0a0a] overflow-hidden gap-1">
-      {/* ✅ FIXED: Added gap between panels */}
+      {/* FIXED: Added gap between panels */}
       <div className="w-[45%] overflow-y-auto">
         <CaseDetails />
       </div>
@@ -31,9 +44,3 @@ export default function CodeEditorPage() {
     </EditorProvider>
   );
 }
-
-
-//jwt key : crackcodeAdmin
-//infocrackcode_db_user
-//Up3qn0HqPFN1xQ73
-//mongodb+srv://infocrackcode_db_user:Up3qn0HqPFN1xQ73@crackcodecluster.f8j0sea.mongodb.net/?appName=crackcodeCluster
