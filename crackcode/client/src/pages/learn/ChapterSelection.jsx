@@ -60,6 +60,7 @@ const CHAPTERS_DATA = {
       total: 10,
       status: 'In Progress',
       route: '/learn/python/fundamentals',
+      questionId: 'py_fundamentals_001', // Link to MongoDB question
     },
     {
       id: 'intermediate-python',
@@ -245,11 +246,14 @@ const ChapterSelectionPage = () => {
   const languageMeta = LANGUAGE_META[trackId];
   const chapters = CHAPTERS_DATA[trackId] || [];
   
+  console.log('ChapterSelectionPage - trackId:', trackId, 'languageMeta:', languageMeta, 'chapters:', chapters);
+  
   if (!languageMeta) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Language not found</h1>
+          <h1 className="text-2xl font-bold text-white mb-4">Language not found: {trackId}</h1>
+          <p className="text-gray-400 mb-6">Available: {Object.keys(LANGUAGE_META).join(', ')}</p>
           <button onClick={() => navigate('/learn')} className="text-green-400 hover:underline">
             ← Back to Learn
           </button>
@@ -258,11 +262,22 @@ const ChapterSelectionPage = () => {
     );
   }
 
+  // Handle chapter click - navigate to code editor with question ID or chapter route
+  const handleChapterClick = (chapter) => {
+    if (chapter.questionId) {
+      // Navigate to code editor with question ID - language is inferred from trackId
+      navigate(`/code-editor/${chapter.questionId}`, { state: { language: trackId } });
+    } else {
+      // Fallback to route if no questionId
+      navigate(chapter.route);
+    }
+  };
+
   return (
-    <div className="h-screen bg-[#050505]">
+    <div className="min-h-screen bg-[#050505]">
       <Header variant='empty'/>
 
-      <main className='mt-40 px-6 sm:px-10 py-6'>
+      <main className='pt-20 px-6 sm:px-10 py-6 pb-20'>
         <div className="max-w-4xl mx-auto">
 
           {/* Header */}
@@ -301,7 +316,7 @@ const ChapterSelectionPage = () => {
                       completed={chapter.completed}
                       total={chapter.total}
                       status={chapter.status}
-                      onClick={() => navigate(chapter.route)}
+                      onClick={() => handleChapterClick(chapter)}
                     />
                   </div>
                 </div>
