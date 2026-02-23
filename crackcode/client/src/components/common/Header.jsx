@@ -1,5 +1,6 @@
 // import React, { Children } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTheme } from '../../context/theme/ThemeContext'
 import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
 import { Bell } from 'lucide-react';
@@ -7,14 +8,19 @@ import Avatar from './Avatar';
 import HQBtn from './HQBtn';
 import BackBtn from './BackBtn';
 import Button from '../ui/Button';
+import SettingsDropdown from './SettingsDropdown';
+import { useState, useEffect } from 'react';
 
 const Header = ({ variant = "default" }) => {
+    const { theme } = useTheme()
+    const [showGameProfileModal, setShowGameProfileModal] = useState(false);
+    const [modalTimer, setModalTimer] = useState(null);
     const baseStyles = "fixed top-0 left-0 w-full flex justify-between items-center z-50";
     
     const variants = {
-        landing: "h-20 sm:h-20 bg-transparent text-white px-6 sm:px-10 border-b border-transparent",
-        default: "h-20 sm:h-20 bg-transparent backdrop-blur-md shadow-md px-6 sm:px-10 border-b border-white/10",
-        empty: "h-20 sm:h-20 bg-transparent backdrop-blur-md shadow-md text-white px-6 sm:px-10 border-b border-transparent"
+        landing: "h-20 sm:h-20 bg-transparent px-6 sm:px-10 border-b border-transparent",
+        default: "h-20 sm:h-20 backdrop-blur-md shadow-md px-6 sm:px-10 border-b",
+        empty: "h-20 sm:h-20 bg-transparent backdrop-blur-md shadow-md px-6 sm:px-10 border-b border-transparent"
     };
 
     const navigate = useNavigate();
@@ -36,16 +42,46 @@ const Header = ({ variant = "default" }) => {
     };
 
     const handleNotificationsClick = () => {
-        navigate('/gamer-profile');
+        // Show the modal
+        setShowGameProfileModal(true);
+        
+        // Clear any existing timer
+        if (modalTimer) {
+            clearTimeout(modalTimer);
+        }
+        
+        // Auto-close after 1 second
+        const timer = setTimeout(() => {
+            setShowGameProfileModal(false);
+        }, 1000);
+        
+        setModalTimer(timer);
     }
+
+    // Cleanup timer on unmount
+    useEffect(() => {
+        return () => {
+            if (modalTimer) {
+                clearTimeout(modalTimer);
+            }
+        };
+    }, [modalTimer]);
 
     const handleAvatarClick = () => {
         navigate('/user-profile');
     }
 
+    const headerStyle = variant === 'landing' 
+        ? {} 
+        : {
+            background: 'var(--surface)',
+            color: 'var(--text)',
+            borderColor: 'var(--border)'
+          };
+
     if(variant === 'empty') {
         return (
-        <header className={`${baseStyles} ${variants[variant]}`}>
+        <header className={`${baseStyles} ${variants[variant]}`} style={headerStyle}>
             <div className='flex w-full items-center gap-4'>
                 <HQBtn />
                 <BackBtn />
@@ -54,7 +90,8 @@ const Header = ({ variant = "default" }) => {
     )}
 
     return (
-        <header className={`${baseStyles} ${variants[variant] || variants.default}`}>
+        <>
+        <header className={`${baseStyles} ${variants[variant] || variants.default}`} style={headerStyle}>
             <div className='flex w-full items-center justify-between relative'>
 
                 {/* Logo */}
@@ -81,30 +118,108 @@ const Header = ({ variant = "default" }) => {
                             name='search-bar'
                             type="text" 
                             placeholder='Search Cases...' 
-                            className='w-24 sm:w-32 bg-orange-950 text-white text-xs sm:text-sm rounded-md px-2 py-1 
-                            focus:outline-none focus:ring-1 focus:ring-orange-600 focus:w-32 sm:focus:w-40 
+                            className='w-24 sm:w-32 text-xs sm:text-sm rounded-md px-2 py-1 
+                            focus:outline-none focus:ring-1 focus:w-32 sm:focus:w-40 
                             transition-all duration-300 ease-in-out'
+                            style={{
+                                background: 'rgba(255, 165, 0, 0.1)',
+                                color: 'var(--text)',
+                                border: '1px solid var(--border)'
+                            }}
+                            onFocus={(e) => {
+                                e.target.style.boxShadow = '0 0 0 1px var(--brand)';
+                                e.target.style.background = 'rgba(255, 165, 0, 0.15)';
+                            }}
+                            onBlur={(e) => {
+                                e.target.style.boxShadow = 'none';
+                                e.target.style.background = 'rgba(255, 165, 0, 0.1)';
+                            }}
                         />
 
+                            {/* Settings Dropdown */}
+                            <SettingsDropdown />
                             
                             {/* Notification Bell */}
                             <Button variant="ghost" size="icon" onClick={handleNotificationsClick}>
                             <Bell 
-                                className='w-5 h-5 sm:w-6 sm:h-6 text-white hover:text-orange-500 transition-colors duration-300 cursor-pointer' 
+                                className='w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-300 cursor-pointer'
+                                style={{ color: 'var(--text)' }}
+                                onMouseEnter={(e) => e.currentTarget.style.color = 'var(--brand)'}
+                                onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text)'}
                                 onClick={handleNotificationsClick}
                             />
                             </Button>
 
-                            {/* User Avatar */}
-                            <Button variant='ghost' size="icon" onClick={handleAvatarClick}>
-                                <Avatar />
-                            </Button>
+
 
                     </div>
                 )}
 
             </div>
         </header>
+
+        {/* GameProfile Modal Popup */}
+        {showGameProfileModal && (
+            <div
+                className='fixed inset-0 z-50 flex items-center justify-center'
+                style={{
+                    background: 'rgba(0, 0, 0, 0.5)',
+                    animation: 'fadeIn 0.3s ease-in-out'
+                }}
+            >
+                <style>{`
+                    @keyframes fadeIn {
+                        from { opacity: 0; transform: scale(0.95); }
+                        to { opacity: 1; transform: scale(1); }
+                    }
+                    @keyframes fadeOut {
+                        from { opacity: 1; transform: scale(1); }
+                        to { opacity: 0; transform: scale(0.95); }
+                    }
+                `}</style>
+                <div
+                    className='rounded-lg shadow-2xl p-8 w-96 max-h-96 overflow-y-auto'
+                    style={{
+                        background: 'var(--surface)',
+                        border: '2px solid var(--brand)',
+                        color: 'var(--text)',
+                        animation: 'fadeIn 0.3s ease-in-out'
+                    }}
+                >
+                    <div className='text-center'>
+                        <h2 className='text-2xl font-bold mb-2'>Complete Your Profile</h2>
+                        <p style={{ color: 'var(--textSec)' }} className='text-sm mb-6'>
+                            Set up your avatar and username to get started!
+                        </p>
+                        
+                        <div className='flex justify-center mb-6'>
+                            <Avatar showClick={false} className='w-20 h-20 rounded-full border-4' style={{ borderColor: 'var(--brand)' }} />
+                        </div>
+                        
+                        <p className='text-sm font-semibold mb-4'>
+                            🎮 Ready to complete your profile?
+                        </p>
+                        
+                        <button
+                            onClick={() => {
+                                navigate('/gamer-profile');
+                                setShowGameProfileModal(false);
+                            }}
+                            className='w-full py-3 rounded-lg font-bold transition-all'
+                            style={{
+                                background: 'var(--brand)',
+                                color: 'white'
+                            }}
+                            onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                            onMouseLeave={(e) => e.target.style.opacity = '1'}
+                        >
+                            Go to Profile Setup
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+        </>
     )
 };
 

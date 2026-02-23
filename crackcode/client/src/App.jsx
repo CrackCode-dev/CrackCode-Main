@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from './context/theme/ThemeContext'
+import { UserProgressProvider } from './context/userauth/UserProgressContext'
 import './App.css'
 import Home from './pages/home/Home'
 import Landing from './pages/landing/Landing'
@@ -18,52 +20,63 @@ import ChapterSelectionPage from './pages/learn/ChapterSelection'
 
 function App() {
   return (
-    <div>
-      <ToastContainer />
-      <Routes>
-        {/* Public routes */}
-        <Route path='/' element={<Landing />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/verify-account' element={<EmailVerify />} />
-        <Route path='/email-verify' element={<EmailVerify />} />
-        <Route path='/reset-password' element={<ResetPassword />} />
-        <Route path='/careermaps-Main'element={<CareermapMain/>}/>
-        
-        {/* Protected routes - require login + verified email */}
-        <Route path='/home' element={
-          // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
-            <Home />
-          // </ProtectedRoute>
-        } />
-        <Route path='/gamer-profile' element={
-          <ProtectedRoute>
-            <GameProfile />
-          </ProtectedRoute>
-        } />
-        <Route path='/user-profile' element={
-          // <ProtectedRoute>
-            <UserProfile />
-          // </ProtectedRoute>
-        } />
-        <Route path='/learn' element={
-          // <ProtectedRoute>
-            <LearnMainPage />
-          // </ProtectedRoute>
-        } />
-        <Route path="/weeklychallenges" element={
-          <WeeklyChallenges />
-        } />
+    <ThemeProvider>
+      <UserProgressProvider>
+        <div>
+          <ToastContainer />
+        <Routes>
+          {/* Public routes */}
+          <Route path='/' element={<Landing />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/verify-account' element={<EmailVerify />} />
+          <Route path='/email-verify' element={<EmailVerify />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
+          <Route path='/careermaps-Main'element={<CareermapMain/>}/>
+          
+          {/* Protected routes - require login + verified email */}
+          <Route path='/home' element={
+            // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
+              <Home />
+            // </ProtectedRoute>
+          } />
+          <Route path='/gamer-profile' element={
+            <ProtectedRoute>
+              <GameProfile />
+            </ProtectedRoute>
+          } />
+          <Route path='/user-profile' element={
+            // <ProtectedRoute>
+              <UserProfile />
+            // </ProtectedRoute>
+          } />
+          <Route path='/learn' element={
+            // <ProtectedRoute>
+              <LearnMainPage />
+            // </ProtectedRoute>
+          } />
+          <Route path='/code-editor/:problemId' element={
+            // <ProtectedRoute>
+              <CodeEditorPage />
+            // </ProtectedRoute>
+          } />
+          <Route path='/code-editor' element={
+            // <ProtectedRoute>
+              <CodeEditorPage />
+            // </ProtectedRoute>
+          } />
+          <Route path="/weeklychallenges" element={
+            <WeeklyChallenges />
+          } />
+          <Route path="/learn/:trackId" element={
+            // <ProtectedRoute>
+              <ChapterSelectionPage />
+            // </ProtectedRoute>
+          } />
 
-
-        <Route path="/learn/:trackId" element={
-        // <ProtectedRoute>  
-          <ChapterSelectionPage />
-        // </ProtectedRoute>
-        } />
-        
-
-      </Routes>
-    </div>
+        </Routes>
+        </div>
+      </UserProgressProvider>
+    </ThemeProvider>
   )
 }
 
