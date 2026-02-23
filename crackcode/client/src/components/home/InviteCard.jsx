@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Mail, Link } from 'lucide-react';
-import Card from '../ui/Card';
+import { useTheme } from '../../context/theme/ThemeContext'
+import { Mail, Link, Copy, CheckCircle2 } from 'lucide-react';
 import Button from '../ui/Button';
 
 function InviteCard() {
+  const { theme } = useTheme()
   const [copied, setCopied] = useState(false);
   const inviteLink = 'https://codedetectives.com/invite/abc123xyz';
   const friendsInvited = 3;
@@ -16,59 +17,81 @@ function InviteCard() {
   };
 
   return (
-    <Card variant="flat" padding="lg" className="mt-8 border-orange-500/50 bg-linear-to-b from-[#1a1a1a] to-orange-900/20">
-      <h2 className="text-2xl font-bold text-white mb-2 group-hover:text-orange-400 transition-colors duration-300">Invite a Friend</h2>
-      <p className="text-gray-400 mb-6">
-        Bring your friends into the investigation. Both of you get bonus points when they join!
-      </p>
+    <div
+      className="rounded-lg p-5 transition-all duration-300 hover:shadow-lg hover:scale-102 border-l-4"
+      style={{
+        background: `linear-gradient(135deg, var(--surface) 0%, rgba(255, 165, 0, 0.03) 100%)`,
+        color: 'var(--text)',
+        borderColor: 'var(--brand)',
+        borderWidth: '1px'
+      }}
+    >
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-6 items-center'>
+        {/* Left: Info */}
+        <div className='md:col-span-1'>
+          <h3 className="text-lg font-bold mb-1">🎉 Invite Friends</h3>
+          <p style={{ color: 'var(--textSec)' }} className="text-xs">
+            Earn bonus points together
+          </p>
+        </div>
 
-      {/* Invite Link Section */}
-      <div className="mb-4">
-        <label className="text-sm text-gray-300 mb-2 block">Your Invite Link</label>
-        <div className="flex gap-6">
-          <input
-            type="text"
-            readOnly
-            value={inviteLink}
-            className="flex-1 bg-[#1a1a1a] border border-[#444040] rounded-lg px-4 py-3 text-gray-400 text-sm focus:outline-none"
-          />
-          <Button 
-            variant="primary" 
-            onClick={handleCopy}
-            className="px-6"
-          >
-            {copied ? 'Copied!' : 'Copy'}
-          </Button>
+        {/* Center: Copy Link */}
+        <div className='md:col-span-1'>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              readOnly
+              value={inviteLink}
+              className="flex-1 rounded-lg px-3 py-2 text-xs focus:outline-none transition-all duration-300"
+              style={{
+                background: 'rgba(255, 165, 0, 0.05)',
+                color: 'var(--text)',
+                border: '1px solid var(--border)'
+              }}
+            />
+            <button
+              onClick={handleCopy}
+              className="px-3 py-2 rounded-lg font-semibold transition-all duration-300 flex items-center gap-1 text-xs flex-shrink-0"
+              style={{
+                background: 'var(--brand)',
+                color: 'var(--surface)'
+              }}
+              onMouseEnter={(e) => (e.target.style.opacity = '0.9')}
+              onMouseLeave={(e) => (e.target.style.opacity = '1')}
+            >
+              {copied ? (
+                <>
+                  <CheckCircle2 className='w-3 h-3' />
+                  ✓
+                </>
+              ) : (
+                <Copy className='w-3 h-3' />
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Right: Stats */}
+        <div className='md:col-span-1 flex gap-4'>
+          <div className='flex-1'>
+            <p className="text-xs font-semibold mb-1" style={{ color: 'var(--textSec)' }}>
+              Invited
+            </p>
+            <p className="text-lg font-bold" style={{ color: 'var(--brand)' }}>
+              {friendsInvited}
+            </p>
+          </div>
+          <div className='flex-1'>
+            <p className="text-xs font-semibold mb-1" style={{ color: 'var(--textSec)' }}>
+              Points
+            </p>
+            <p className="text-lg font-bold" style={{ color: 'var(--brand)' }}>
+              +{bonusPoints}
+            </p>
+          </div>
         </div>
       </div>
-
-      {/* Share Buttons */}
-      <div className="mb-6">
-        <p className="text-sm text-gray-300 mb-3">Or share via</p>
-        <div className="grid grid-cols-2 gap-4">
-          <Button variant='outline' className="flex items-center justify-center gap-2 py-3 px-4 text-orange-500">
-            <Mail size={18} />
-            <span>Email</span>
-          </Button>
-          <Button variant='outline' className="flex items-center justify-center gap-2 py-3 px-4 text-orange-500">
-            <Link size={18} />
-            <span>Share</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="border-t border-orange-500/50 pt-6 grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-gray-400 text-sm mb-1">Friends Invited</p>
-          <p className="text-4xl font-bold text-orange-700">{friendsInvited}</p>
-        </div>
-        <div>
-          <p className="text-gray-400 text-sm mb-1">Bonus Points Earned</p>
-          <p className="text-4xl font-bold text-orange-700">{bonusPoints}</p>
-        </div>
-      </div>
-    </Card>
+    </div>
   );
 }
 

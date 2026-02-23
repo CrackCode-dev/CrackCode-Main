@@ -6,11 +6,25 @@ export const getUserData = async (req, res) => {
       return res.json({
         success: true,
         data: {
+          // Basic Info
           id: req.user._id,
           name: req.user.name,
           email: req.user.email,
           username: req.user.username,
+          avatar: req.user.avatar,
           isAccountVerified: req.user.isAccountVerified,
+          
+          // Game Stats
+          level: req.user.level || 0,
+          xp: req.user.xp || 0,
+          xpMax: 5000, // XP needed for next level
+          tokens: req.user.tokens || 0,
+          tokensMax: 2000, // Max tokens cap
+          rank: req.user.rank || "Rookie",
+          rankMax: 100,
+          casesSolved: req.user.casesSolved || 0,
+          currentStreak: req.user.currentStreak || 0,
+          totalXP: req.user.totalXP || 0,
         },
       });
     }
@@ -23,11 +37,25 @@ export const getUserData = async (req, res) => {
     return res.json({
       success: true,
       data: {
+        // Basic Info
         id: user._id,
         name: user.name,
         email: user.email,
         username: user.username,
+        avatar: user.avatar,
         isAccountVerified: user.isAccountVerified,
+        
+        // Game Stats
+        level: user.level || 0,
+        xp: user.xp || 0,
+        xpMax: 5000, // XP needed for next level
+        tokens: user.tokens || 0,
+        tokensMax: 2000, // Max tokens cap
+        rank: user.rank || "Rookie",
+        rankMax: 100,
+        casesSolved: user.casesSolved || 0,
+        currentStreak: user.currentStreak || 0,
+        totalXP: user.totalXP || 0,
       },
     });
   } catch (error) {

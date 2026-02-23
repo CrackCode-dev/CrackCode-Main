@@ -142,25 +142,74 @@ export const useCodeExecution = () => {
     setTestResults([]);
 
     const testCases = currentProblem.testCases || [];
-    const results = [];
-
-    for (let i = 0; i < testCases.length; i++) {
-      const testCase = testCases[i];
-      try {
-        const result = await submitCodeToJudge0(code, language, testCase.input);
-        let testResult;
-        if (result.stdout && result.stdout.trim() === testCase.expectedOutput.trim()) {
-          testResult = { status: 'passed', detectiveMessage: `Test Case ${i+1} - Case Solved!`, narrativeMessage: generateDetectiveMessage('success', i+1) };
-        } else {
-          testResult = { status: 'failed', detectiveMessage: `Test Case ${i+1} - Failed`, narrativeMessage: generateDetectiveMessage('wrong_answer', i+1), error: result.stderr || `Expected: ${testCase.expectedOutput}\nGot: ${result.stdout}` };
-        }
-        results.push(testResult);
-        setTestResults([...results]);
-      } catch (error) {
-        setTestResults(prev => [...prev, { status: 'failed', detectiveMessage: 'System Error' }]);
-      }
+    
+    if (testCases.length === 0) {
+      alert('No test cases available for this problem');
+      setIsExecuting(false);
+      return;
     }
-    setIsExecuting(false);
+
+    try {
+      // Transform test cases from MongoDB format (expected_output) to backend format (expectedOutput)
+      const transformedTestCases = testCases.map(tc => ({
+        input: tc.input,
+        expectedOutput: tc.expected_output || tc.expectedOutput, // Support both formats
+        setup: tc.setup || ''
+      }));
+
+      // Call the backend API with all test cases
+      const result = await submitCodeToJudge0(code, language, transformedTestCases);
+      
+      // Transform backend response to frontend format
+      const results = result.results.map((testResult, index) => {
+        if (testResult.status === 'passed') {
+          return {
+            status: 'passed',
+            detectiveMessage: `Test Case ${index + 1} - Case Solved! ✓`,
+            narrativeMessage: generateDetectiveMessage('success', index + 1),
+            details: {
+              input: testResult.input,
+              expected: testResult.expected,
+              actual: testResult.actual,
+              time: testResult.time,
+              memory: testResult.memory,
+            },
+          };
+        } else {
+          // Failed test case
+          return {
+            status: 'failed',
+            detectiveMessage: `Test Case ${index + 1} - ${testResult.message}`,
+            narrativeMessage: generateDetectiveMessage('wrong_answer', index + 1),
+            error: testResult.error || `Expected: ${testResult.expected}\nGot: ${testResult.actual || 'No output'}`,
+            aiSuggestion: testResult.error ? 
+              'Your code encountered an error. Check the error message and debug accordingly.' :
+              'Your code produced an incorrect output. Double-check your logic and edge cases.',
+          };
+        }
+      });
+
+      setTestResults(results);
+
+      // Check if all tests passed
+      const allPassed = results.every(r => r.status === 'passed');
+      if (allPassed) {
+        console.log('🎉 All test cases passed! Case solved!');
+      }
+
+    } catch (error) {
+      console.error('Code execution error:', error);
+      setTestResults([{
+        status: 'failed',
+        detectiveMessage: 'Execution Failed',
+        narrativeMessage: 'The detective encountered an obstacle...',
+        error: error.message || 'Failed to execute code. Please try again.',
+        aiSuggestion: 'Please check your code and ensure the backend is running properly.'
+      }]);
+    } finally {
+      setIsExecuting(false);
+    }
   };
+
   return { executeCode };
 };
