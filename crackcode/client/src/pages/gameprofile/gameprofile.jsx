@@ -20,7 +20,7 @@ import avatar7 from '../../assets/avatars/avatar7.png'
 const GameProfile = () => {
 
     const navigate = useNavigate();
-    const { backendUrl, getUserData } = useContext(AppContent)
+    const { backendUrl, getUserData, userData } = useContext(AppContent)
 
     //UI states
     const [selectedAvatar, setSelectedAvatar] = useState('')
@@ -40,6 +40,13 @@ const GameProfile = () => {
         { id: 1, src: avatar1 }, { id: 2, src: avatar2 }, { id: 3, src: avatar3 },
         { id: 4, src:avatar4}, { id: 5, src: avatar5}, { id: 6, src:avatar6 }, { id: 7, src: avatar7}
     ];
+
+    // Redirect if user already has username and avatar (already completed profile setup)
+    useEffect(() => {
+        if (userData && userData.username && userData.avatar) {
+            navigate('/home', { replace: true });
+        }
+    }, [userData, navigate]);
 
     //Check username availability
     useEffect(() => {
@@ -89,8 +96,8 @@ const GameProfile = () => {
 
 
         try {
-            const avatarData = selectedAvatar === 'uploaded' ? uploadedAvatar : selectedAvatar;
-            const avatarType = selectedAvatar === 'uploaded' ? 'uploaded' : 'default';
+            const avatarData = uploadedAvatar || selectedAvatar;
+            const avatarType = uploadedAvatar ? 'uploaded' : 'default';
 
             await gameprofileService.updateGameprofile(backendUrl, getUserData, username, avatarData, avatarType);
 
@@ -139,13 +146,13 @@ const GameProfile = () => {
                         <button
                             key={avatar.id}
                             onClick={() => {
-                                setSelectedAvatar(avatar.id);
+                                setSelectedAvatar(avatar.src);
                                 setUploadedAvatar('');
                             }
                             }
                             className={`w-30 h-30 rounded-full overflow-hidden bg-gray-900
                 transition-all duration-300 hover:scale-110
-                ${selectedAvatar === avatar.id
+                ${selectedAvatar === avatar.src
                                     ? 'ring-2 ring-white scale-110'
                                     : 'ring-2 ring-gray-700'
 
