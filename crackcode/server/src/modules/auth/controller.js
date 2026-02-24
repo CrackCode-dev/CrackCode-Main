@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "./User.model.js";
+import PendingRegistration from "./PendingRegistration.model.js";
 import transporter from "./nodemailer.config.js";
 import { createSession } from "../session/session.service.js";
 import {
@@ -41,64 +42,141 @@ const buildUniqueUsername = async (rawUsername, fallbackName) => {
 
 // REGISTER
 // ============================================================
-export const register = async (req, res) => {
+
+export const register = async (req, res) =>{
   try {
-    const { name, email, password, username } = req.body;
+    // extract entered details from fields 
+    const { name, email, password, confirmPassword, acceptedTC} = req.body;
 
-    if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Missing details" });
+    if(!name || !email || !password){
+      return res.status(400).json({
+        success:false,
+        message: "Missing essentail details."
+      });
     }
 
-    if (await User.findOne({ email })) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User already exists" });
+    if (confirmPassword && password !== confirmPassword){
+      return res.status(400).json({
+        success: false,
+        message: "Passwords do not match."
+      });
     }
 
-    const normalizedUsername = await buildUniqueUsername(
-      username,
-      name || email
-    );
+    if(acceptedTC !== undefined && acceptedTC !== true) {
+      return res.status(400).json({
+        success: false,
+        message: "You must accept the Terms and Conditions to register."
+      });
+    }
+
+    // Ensure email not already used by a real user
+    const existingUser = await User.findOne({ email });
+    if(existingUser){
+      return res.status(400).json({
+        success: false,
+        message: "User already exists with this email."
+      });
+    }
+    // If a pending registration exists for this email, remove it (we'll recreate)
+    await PendingRegistration.deleteMany({ email });
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
+    // Create pending registration and send OTP (account will be created after verification)
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
+    const pending = new PendingRegistration({
       name,
       email,
-      username: normalizedUsername,
       password: hashedPassword,
+      acceptedTC,
+      otp,
+      otpExpireAt: Date.now() + 24 * 60 * 60 * 1000,
+    });
+    await pending.save();
+
+    await transporter.sendMail({
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "Account Verification OTP",
+      text: `Your OTP is ${otp}. Verify your account using this OTP.`,
     });
 
-    // ── Create session (replaces plain JWT) ──────────────────
-    const sessionData = await createSession(user._id, req);
-    setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
-
-    // Also set legacy cookie so old client code still works during migration
-    const legacyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
-    res.cookie("token", legacyToken, legacyCookieOptions);
-
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
-      message: "User registered successfully",
-      sessionId: sessionData.sessionId,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        username: user.username,
-        isAccountVerified: user.isAccountVerified,
-      },
+      message: "OTP sent to email. Complete verification to create your account.",
+      tempId: pending._id,
     });
+
   } catch (error) {
-    console.error("Register error:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: error.message });
+    console.error("Registration Error:", error);
+    return res.status(500).json({ 
+      success: false, 
+      message: "Internal server error. Please try again." 
+    });
   }
 };
+
+ 
+
+
+// export const register = async (req, res) => {
+//   try {
+//     const { name, email, password, username } = req.body;
+
+//     if (!name || !email || !password) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Missing details" });
+//     }
+
+//     if (await User.findOne({ email })) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "User already exists" });
+//     }
+
+//     const normalizedUsername = await buildUniqueUsername(
+//       username,
+//       name || email
+//     );
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     const user = await User.create({
+//       name,
+//       email,
+//       username: normalizedUsername,
+//       password: hashedPassword,
+//     });
+
+//     // ── Create session (replaces plain JWT) ──────────────────
+//     const sessionData = await createSession(user._id, req);
+//     setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
+
+//     // Also set legacy cookie so old client code still works during migration
+//     const legacyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//       expiresIn: "7d",
+//     });
+//     res.cookie("token", legacyToken, legacyCookieOptions);
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "User registered successfully",
+//       sessionId: sessionData.sessionId,
+//       user: {
+//         id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         username: user.username,
+//         isAccountVerified: user.isAccountVerified,
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Register error:", error);
+//     return res
+//       .status(500)
+//       .json({ success: false, message: error.message });
+//   }
+// };
 
 
 // LOGIN
@@ -125,6 +203,13 @@ export const login = async (req, res) => {
       return res
         .status(400)
         .json({ success: false, message: "Invalid password" });
+    }
+
+    // ── Check if account is verified ──────────────────────────────────────
+    if (!user.isAccountVerified) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Please verify your email first. Signing up pending verification." });
     }
 
     // ── Create session ──────────────────────────────────────
@@ -244,22 +329,24 @@ export const logoutAllDevices = async (req, res) => {
 
 export const sendVerifyOtp = async (req, res) => {
   try {
-    const user = await User.findById(req.userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-    if (user.isAccountVerified) {
-      return res.json({ success: false, message: "Account already verified" });
-    }
+    // ✅ Only for signup flow - send OTP for pending registration
+    // (Verified accounts cannot call this, unverified login is rejected at backend)
+    
+    const { email } = req.body;
+    if (!email) return res.status(400).json({ success: false, message: "Email is required" });
+
+    // Find a pending registration for this email
+    const pending = await PendingRegistration.findOne({ email });
+    if (!pending) return res.status(404).json({ success: false, message: "No pending registration found for this email" });
 
     const otp = String(Math.floor(100000 + Math.random() * 900000));
-    user.verifyotp = otp;
-    user.verifyotpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
-    await user.save();
+    pending.otp = otp;
+    pending.otpExpireAt = Date.now() + 24 * 60 * 60 * 1000;
+    await pending.save();
 
     await transporter.sendMail({
       from: process.env.SENDER_EMAIL,
-      to: user.email,
+      to: pending.email,
       subject: "Account Verification OTP",
       text: `Your OTP is ${otp}. Verify your account using this OTP.`,
     });
@@ -272,18 +359,44 @@ export const sendVerifyOtp = async (req, res) => {
 
 export const verifyEmail = async (req, res) => {
   try {
-    const { otp } = req.body;
-    if (!otp) {
-      return res.status(400).json({ success: false, message: "Missing OTP" });
+    // Accept either { otp } (legacy find user by otp) OR { email, otp } for pending registration flow
+    const { otp, email } = req.body;
+    if (!otp) return res.status(400).json({ success: false, message: "Missing OTP" });
+
+    // First try to find a pending registration matching email+otp (preferred)
+    if (email) {
+      const pending = await PendingRegistration.findOne({ email, otp });
+      if (!pending) return res.status(400).json({ success: false, message: "Invalid OTP or email" });
+      if (pending.otpExpireAt < Date.now()) return res.status(400).json({ success: false, message: "OTP expired" });
+
+      // Create the real user now
+      const uniqueUsername = await buildUniqueUsername(pending.name);
+      const user = new User({
+        name: pending.name,
+        email: pending.email,
+        password: pending.password,
+        username: uniqueUsername,
+        acceptedTC: pending.acceptedTC,
+        isAccountVerified: true,
+      });
+      await user.save();
+
+      // Delete pending
+      await PendingRegistration.findByIdAndDelete(pending._id);
+
+      // Create session and set cookies (log user in)
+      const sessionData = await createSession(user._id, req);
+      setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
+      const legacyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
+      res.cookie("token", legacyToken, legacyCookieOptions);
+
+      return res.json({ success: true, message: "Email verified and account created.", user: { id: user._id, name: user.name, email: user.email, username: user.username, isAccountVerified: user.isAccountVerified }, sessionId: sessionData.sessionId });
     }
 
+    // Fallback: existing user verification by otp
     const user = await User.findOne({ verifyotp: otp });
-    if (!user) {
-      return res.status(400).json({ success: false, message: "Invalid OTP" });
-    }
-    if (user.verifyotpExpireAt < Date.now()) {
-      return res.status(400).json({ success: false, message: "OTP expired" });
-    }
+    if (!user) return res.status(400).json({ success: false, message: "Invalid OTP" });
+    if (user.verifyotpExpireAt < Date.now()) return res.status(400).json({ success: false, message: "OTP expired" });
 
     user.isAccountVerified = true;
     user.verifyotp = "";

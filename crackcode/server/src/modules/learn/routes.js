@@ -1,6 +1,13 @@
 import express from "express";
 import userAuth from "../auth/middleware.js";
-import { getAllQuestions, getQuestionById, createQuestion } from "./question.controller.js";
+import { 
+  getAllQuestions, 
+  getQuestionById, 
+  getQuestionByIdAndLanguage,
+  createQuestion,
+  updateQuestion,
+  deleteQuestion
+} from "./question.controller.js";
 import { getUserProgress, updateProgress, getRoadmap } from "./progress.controller.js";
 
 const router = express.Router();
@@ -8,7 +15,10 @@ const router = express.Router();
 // Question routes
 router.get("/questions", getAllQuestions);
 router.get("/questions/:id", getQuestionById);
-router.post("/questions", userAuth, createQuestion); // TODO: add admin check
+router.get("/questions/:id/:language", getQuestionByIdAndLanguage);
+router.post("/questions", userAuth, createQuestion);
+router.put("/questions/:id", userAuth, updateQuestion);
+router.delete("/questions/:id", userAuth, deleteQuestion);
 
 // Progress routes
 router.get("/progress", userAuth, getUserProgress);
