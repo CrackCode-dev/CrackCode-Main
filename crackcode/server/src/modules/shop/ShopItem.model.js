@@ -4,6 +4,7 @@ import mongoose from "mongoose";
  * Pricing Sub-Schema
  * Handles free, xp-based, and paid items
  */
+
 const pricingSchema = new mongoose.Schema(
   {
     type: {
@@ -102,5 +103,7 @@ shopItemSchema.pre("validate", function (next) {
  */
 shopItemSchema.index({ category: 1, isActive: 1 });
 
-export default mongoose.models.ShopItem ||
-  mongoose.model("ShopItem", shopItemSchema);
+
+
+const shopItem = mongoose.models.ShopItem ||  mongoose.model("ShopItem", shopItemSchema);
+export default shopItem;

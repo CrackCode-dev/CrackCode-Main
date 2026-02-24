@@ -1,6 +1,7 @@
 //preventing user buying same item that purchased. for that we should make the user as a saved user 
 
 import mongoose from "mongoose";
+// import shopItem from "...shop/ShopItem.model.js"
 
 const inventorySchema = new mongoose.Schema(
 
