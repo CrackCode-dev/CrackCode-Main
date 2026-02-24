@@ -92,7 +92,7 @@ const LeaderboardPage = () => {
       </button>
 
       {/* Spacer below fixed navbar */}
-      <div style={{ height: "950px" }} />
+      <div style={{ height: "850px" }} />
 
       <main className="flex-1 px-10 pb-16">
 

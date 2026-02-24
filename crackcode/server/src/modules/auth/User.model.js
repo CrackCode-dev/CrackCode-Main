@@ -26,7 +26,6 @@ const userSchema = new mongoose.Schema(
     resetotpExpireAt: { type: Number, default: 0 },
 
     // GAME STATS
-    // GAME STATS
     username: {
       type: String,
       sparse: true,
