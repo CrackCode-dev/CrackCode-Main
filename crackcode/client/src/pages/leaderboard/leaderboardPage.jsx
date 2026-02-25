@@ -6,6 +6,7 @@ import LeaderboardTable from "../../components/leaderboard/LeaderboardTable";
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import Button from "../../components/ui/Button";
+import ThemeSwitch from "../../components/common/ThemeSwitcher";
 
 const LeaderboardPage = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const LeaderboardPage = () => {
     streak:         player.streak          ?? 0,
     avatar:         player.avatar          ?? "🕵️",
   });
+
 
   useEffect(() => {
     const load = async () => {
@@ -56,13 +58,21 @@ const LeaderboardPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col">
+      <div
+        className="min-h-screen flex flex-col relative"
+        style={{
+          backgroundColor: "var(--bg)",
+          color: "var(--text)",
+        }}
+      >
+
       <link
         href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap"
         rel="stylesheet"
       />
 
       <Header />
+      
 
       {/* HQ Button fixed to top-left below navbar */}
       <button
@@ -77,24 +87,22 @@ const LeaderboardPage = () => {
           gap: "6px",
           padding: "8px 14px",
           borderRadius: "10px",
-          border: "1.5px solid #22c55e",
+          border: "1.5px solid var(--brand)",
           background: "transparent",
-          color: "#22c55e",
+          color: "var(--brand)",
           fontSize: "13px",
           fontWeight: "700",
           cursor: "pointer",
           letterSpacing: "0.5px",
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = "rgba(34,197,94,0.1)"; }}
+        onMouseEnter={e => { e.currentTarget.style.background = "var(--brandSoft)"; }}
         onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
       >
         🏠 HQ
       </button>
 
       {/* Spacer below fixed navbar */}
-      <div style={{ height: "850px" }} />
-
-      <main className="flex-1 px-10 pb-16">
+      <main className="flex-1 px-10 pb-16 pt-24">
 
         {/* Filter buttons top-right */}
         <div className="flex justify-end max-w-5xl mx-auto mb-8">
@@ -114,46 +122,50 @@ const LeaderboardPage = () => {
         {/* Page Title */}
         <div className="text-center mb-12">
           <h1
-            className="flex items-center justify-center gap-3 text-4xl font-bold text-white tracking-wide"
+            className="flex items-center justify-center gap-3 text-4xl font-bold tracking-wide"
             style={{ fontFamily: "'Rajdhani', sans-serif" }}
           >
             🏆 Detective Hall of Fame
           </h1>
-          <p className="text-neutral-500 mt-2 text-sm">
+          <p className="text-[var(--muted)]">
             Top investigators in the Code Detectives agency
           </p>
         </div>
 
         {/* Your Rank Banner */}
         {myRank && (
-          <div className="flex items-center justify-between bg-[#161616] border border-green-900/40 rounded-xl px-6 py-4 mb-10 max-w-5xl mx-auto">
+          <div className="flex items-center justify-between rounded-xl px-6 py-4 mb-10 max-w-5xl mx-auto border"
+            style={{
+              backgroundColor: "var(--surface)",
+              borderColor: "var(--border)",
+            }}>
             <div className="flex items-center gap-3">
               <span className="text-2xl">{myRank.avatar ?? "🕵️"}</span>
               <div>
-                <p className="text-xs text-neutral-500 uppercase tracking-widest mb-0.5">Your Rank</p>
-                <p className="font-semibold text-white" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
+                <p className="text-xs text-[var(--muted)] uppercase tracking-widest mb-0.5">Your Rank</p>
+                <p className="font-semibold" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
                   {myRank.username}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-8 text-sm">
               <div className="text-center">
-                <p className="text-green-400 font-bold text-lg" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
+                <p className="text-[var(--muted)]" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
                   #{myRank.position}
                 </p>
-                <p className="text-neutral-600 text-xs">Position</p>
+                <p className="text-[var(--muted)]">Position</p>
               </div>
               <div className="text-center">
-                <p className="text-green-400 font-bold text-lg" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
+                <p className="text-[var(--muted)] font-bold text-lg" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
                   {(myRank.totalXP ?? 0).toLocaleString()}
                 </p>
-                <p className="text-neutral-600 text-xs">Total XP</p>
+                <p className="text-[var(--muted)] text-xs">Total XP</p>
               </div>
               <div className="text-center">
-                <p className="text-orange-400 font-bold text-lg" style={{ fontFamily: "'Rajdhani', sans-serif" }}>
+                <p className="font-bold text-lg" style={{ color: "var(--accent)", fontFamily: "'Rajdhani', sans-serif" }}>
                   🔥 {myRank.streak ?? 0}
                 </p>
-                <p className="text-neutral-600 text-xs">Streak</p>
+                <p className="text-[var(--muted)] mt-2 text-sm">Streak</p>
               </div>
             </div>
           </div>
@@ -162,19 +174,19 @@ const LeaderboardPage = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
             <span className="text-4xl animate-pulse">🔍</span>
-            <p className="text-neutral-600 tracking-widest text-sm">Investigating records…</p>
+            <p className="text-[var(--muted)] mt-2 text-sm">Investigating records…</p>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <span className="text-4xl">⚠️</span>
-            <p className="text-red-400 text-sm">{error}</p>
+            <p style={{ color: "var(--brand)" }}>{error}</p>
             <button
               onClick={() => window.location.reload()}
               style={{
                 padding: "8px 20px",
                 borderRadius: "8px",
-                border: "1px solid #ef4444",
-                color: "#f87171",
+                border: "1px solid var(--brand)",
+                color: "var(--brand)",
                 background: "transparent",
                 fontSize: "14px",
                 fontWeight: "600",
