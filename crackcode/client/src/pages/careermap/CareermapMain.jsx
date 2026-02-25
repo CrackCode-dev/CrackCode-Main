@@ -4,11 +4,13 @@ import HQBtn from "../../components/common/HQBtn";
 import ContentCard from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import { Lock, ArrowRight } from "lucide-react";
-import { careers, getDifficultyLabel } from "./careers";
+import { careers, getDifficultyLabel } from "./Careers";
+import { useNavigate } from "react-router-dom";
 
 
 function CareermapMain() {
 
+  const navigate = useNavigate();
   const careersList = useMemo(() => careers, []);
 
   //Handle card click
@@ -20,11 +22,13 @@ function CareermapMain() {
       return;
     }
     //Handles unlocked career selection
-    console.log("Career selected:", career.id);
-  }, []);
+    navigate (`/careermap/${career.id}`,{
+      state:{title:career.title, icon:career.icon}
+    });
+  },[navigate]);
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white flex flex-col pt-[850px]  ">
+    <div className="min-h-screen bg-[#0B0B0B] text-white flex flex-col pt-18 ">
       {/*HQ Button */}
       <div className="absolute top-6 left-6 z-30">
     <HQBtn />
