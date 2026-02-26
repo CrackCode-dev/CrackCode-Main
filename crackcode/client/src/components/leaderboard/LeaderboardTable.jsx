@@ -1,88 +1,143 @@
+/**
+ * LeaderboardTable.jsx
+ * Uses CSS variables from ThemeContext — works with all themes (light/dark/cream/etc.)
+ */
+
 const RANK_ICONS = { 1: "🏆", 2: "🥈", 3: "🥉" };
 
-const TITLE_COLORS = {
-  "Master Detective": { bg: "bg-green-200/30 dark:bg-green-900/20", text: "text-green-600 dark:text-green-400", border: "border-green-700/30" },
-  "Chief Detective":  { bg: "bg-sky-200/30 dark:bg-sky-900/20",   text: "text-sky-600 dark:text-sky-400",     border: "border-sky-700/30" },
-  "Senior Detective": { bg: "bg-violet-200/30 dark:bg-violet-900/20", text: "text-violet-600 dark:text-violet-400", border: "border-violet-700/30" },
-  "Detective":        { bg: "bg-orange-200/30 dark:bg-orange-900/20", text: "text-orange-600 dark:text-orange-400", border: "border-orange-700/30" },
+// Title badge accent colours (rank-semantic, not theme bg)
+const TITLE_ACCENTS = {
+  "Master Detective": { bg: "rgba( 34,197, 94,0.12)", text: "#16a34a", border: "rgba(34,197,94,0.3)" },
+  "Chief Detective":  { bg: "rgba( 56,189,248,0.12)", text: "#0284c7", border: "rgba(56,189,248,0.3)" },
+  "Senior Detective": { bg: "rgba(139,92, 246,0.12)", text: "#7c3aed", border: "rgba(139,92,246,0.3)" },
+  "Detective":        { bg: "rgba(234, 88, 12,0.12)", text: "#ea580c", border: "rgba(234,88,12,0.3)" },
+  "Rookie":           { bg: "rgba(148,163,184,0.12)", text: "var(--textSec)", border: "rgba(148,163,184,0.25)" },
 };
 
 const TitleBadge = ({ title }) => {
-  const style = TITLE_COLORS[title] ?? TITLE_COLORS["Detective"];
+  const s = TITLE_ACCENTS[title] ?? TITLE_ACCENTS["Rookie"];
   return (
-    <span
-      className={`inline-block px-2.5 py-0.5 rounded text-[11px] font-bold uppercase tracking-wide border
-        ${style.bg} ${style.text} ${style.border}`}
-    >
+    <span style={{
+      display:       "inline-block",
+      padding:       "2px 10px",
+      borderRadius:  "4px",
+      fontSize:      "0.68rem",
+      fontWeight:    700,
+      textTransform: "uppercase",
+      letterSpacing: "0.06em",
+      background:    s.bg,
+      color:         s.text,
+      border:        `1px solid ${s.border}`,
+    }}>
       {title}
     </span>
   );
 };
 
+const HEADERS = ["Rank", "Detective", "Title", "Specialization", "Investigation Points", "Cases Solved", "Streak"];
+
 const LeaderboardTable = ({ data = [] }) => {
   return (
-    <div className="rounded-2xl overflow-hidden border border-neutral-300 bg-white dark:border-neutral-800 dark:bg-[#111]">
-      <table className="w-full border-collapse">
+    <div style={{
+      borderRadius: "1rem",
+      overflow:     "hidden",
+      // ✅ Theme-aware wrapper
+      border:       "1px solid var(--border)",
+      background:   "var(--surface)",
+    }}>
+      <table style={{ width: "100%", borderCollapse: "collapse" }}>
+
+        {/* ── Head ─────────────────────────────────────────── */}
         <thead>
-          <tr className="bg-gray-100 dark:bg-[#1a1a1a]">
-            {["Rank", "Detective", "Title", "Specialization", "Investigation Points", "Cases Solved", "Streak"].map(
-              (h) => (
-                <th
-                  key={h}
-                  className="py-4 px-3.5 text-[11px] font-bold uppercase tracking-widest text-gray-500 dark:text-neutral-500 text-left first:pl-6 last:text-center"
-                >
-                  {h}
-                </th>
-              )
-            )}
+          <tr style={{
+            // ✅ Slightly offset from surface so it reads as a header band
+            background: "rgba(0,0,0,0.04)",
+            borderBottom: "1px solid var(--border)",
+          }}>
+            {HEADERS.map((h, i) => (
+              <th key={h} style={{
+                padding:       "14px 14px",
+                paddingLeft:   i === 0 ? "24px" : "14px",
+                textAlign:     h === "Cases Solved" || h === "Streak" ? "center" : "left",
+                fontSize:      "0.68rem",
+                fontWeight:    700,
+                textTransform: "uppercase",
+                letterSpacing: "0.07em",
+                // ✅ Theme-aware muted text
+                color:         "var(--textSec)",
+                whiteSpace:    "nowrap",
+              }}>
+                {h}
+              </th>
+            ))}
           </tr>
         </thead>
 
+        {/* ── Body ─────────────────────────────────────────── */}
         <tbody>
-          {data.map((user) => (
+          {data.map((user, idx) => (
             <tr
               key={user.rank}
-              className="border-t border-neutral-300/70 dark:border-neutral-800/70 transition-colors hover:bg-gray-200/30 dark:hover:bg-[#161616]"
+              style={{
+                // ✅ Theme-aware row separators
+                borderTop:  "1px solid var(--border)",
+                background: "var(--surface)",
+                transition: "background 0.15s",
+                cursor:     "default",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = "rgba(255,165,0,0.04)"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "var(--surface)"; }}
             >
               {/* Rank */}
-              <td className="py-4 px-3.5 pl-6">
-                <div className="flex items-center gap-1.5 font-rajdhani text-base font-bold text-green-600 dark:text-green-400 whitespace-nowrap">
+              <td style={{ padding: "16px 14px", paddingLeft: "24px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6,
+                  fontFamily: "'Rajdhani', sans-serif", fontSize: "0.95rem",
+                  fontWeight: 700, color: "var(--brand)", whiteSpace: "nowrap" }}>
                   <span>#{user.rank}</span>
-                  {RANK_ICONS[user.rank] && <span className="text-base">{RANK_ICONS[user.rank]}</span>}
+                  {RANK_ICONS[user.rank] && (
+                    <span style={{ fontSize: "1rem" }}>{RANK_ICONS[user.rank]}</span>
+                  )}
                 </div>
               </td>
 
               {/* Detective */}
-              <td className="py-4 px-3.5">
-                <div className="flex items-center gap-2.5 font-semibold text-gray-900 dark:text-neutral-100">
-                  <span className="text-xl">{user.avatar}</span>
+              <td style={{ padding: "16px 14px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10,
+                  fontWeight: 600, color: "var(--text)" }}>
+                  <span style={{ fontSize: "1.25rem" }}>{user.avatar}</span>
                   <span>{user.name}</span>
                 </div>
               </td>
 
-              {/* Title */}
-              <td className="py-4 px-3.5">
+              {/* Title badge */}
+              <td style={{ padding: "16px 14px" }}>
                 <TitleBadge title={user.title} />
               </td>
 
               {/* Specialization */}
-              <td className="py-4 px-3.5 text-sm text-gray-600 dark:text-neutral-400">
+              <td style={{ padding: "16px 14px", fontSize: "0.875rem",
+                color: "var(--textSec)" }}>
                 {user.specialization}
               </td>
 
               {/* Points */}
-              <td className="py-4 px-3.5 font-rajdhani text-base font-bold text-green-600 dark:text-green-400">
+              <td style={{ padding: "16px 14px",
+                fontFamily: "'Rajdhani', sans-serif", fontSize: "0.95rem",
+                fontWeight: 700, color: "var(--brand)" }}>
                 {user.points.toLocaleString()}
               </td>
 
-              {/* Cases */}
-              <td className="py-4 px-3.5 text-center text-sm text-gray-500 dark:text-neutral-300">
+              {/* Cases Solved */}
+              <td style={{ padding: "16px 14px", textAlign: "center",
+                fontSize: "0.875rem", color: "var(--textSec)" }}>
                 {user.cases}
               </td>
 
               {/* Streak */}
-              <td className="py-4 px-3.5">
-                <div className="flex items-center justify-center gap-1 font-bold text-orange-600 dark:text-orange-400">
+              <td style={{ padding: "16px 14px" }}>
+                <div style={{ display: "flex", alignItems: "center",
+                  justifyContent: "center", gap: 4,
+                  fontWeight: 700, color: "#ea580c" }}>
                   🔥 <span>{user.streak}</span>
                 </div>
               </td>

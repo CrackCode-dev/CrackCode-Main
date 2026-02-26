@@ -1,95 +1,104 @@
 /**
  * LeaderboardCard.jsx
- * Fully Tailwind dark-mode aware.
- * Light mode default, dark mode switches automatically.
+ * Uses CSS variables from ThemeContext — works with all themes (light/dark/cream/etc.)
  */
 
 const LeaderboardCard = ({ user, type }) => {
-  const isGold = type === "gold";
+  const isGold   = type === "gold";
   const isSilver = type === "silver";
   const isBronze = type === "bronze";
 
-  const cardBase =
-    "relative flex flex-col items-center text-center rounded-2xl px-6 py-7 w-56 gap-1.5 border transition-transform duration-300";
-
-  // ── Podium card variants ──
-  const cardVariant = isGold
-    ? "border-yellow-700 scale-110 z-10 hover:-translate-y-1 bg-yellow-50 dark:bg-yellow-900"
+  // ── Per-type accent colours (these are rank-specific, not theme bg) ──
+  const accent = isGold
+    ? { border: "#ca8a04", xpText: "#ca8a04", titleText: "#ca8a04", xpBg: "rgba(202,138,4,0.12)" }
     : isSilver
-    ? "border-neutral-600 hover:-translate-y-1 bg-gray-100 dark:bg-neutral-800"
-    : "border-orange-900 hover:-translate-y-1 bg-orange-50 dark:bg-orange-900";
+    ? { border: "var(--border)", xpText: "var(--textSec)", titleText: "var(--textSec)", xpBg: "rgba(148,163,184,0.12)" }
+    : { border: "#c2410c", xpText: "#ea580c", titleText: "#ea580c", xpBg: "rgba(234,88,12,0.12)" };
 
-  const titleColor = isGold
-    ? "text-yellow-600 dark:text-yellow-400"
-    : isSilver
-    ? "text-gray-600 dark:text-neutral-400"
-    : "text-orange-600 dark:text-orange-400";
+  const cardStyle = {
+    display:         "flex",
+    flexDirection:   "column",
+    alignItems:      "center",
+    textAlign:       "center",
+    borderRadius:    "1rem",
+    padding:         "1.75rem 1.5rem",
+    width:           "224px",
+    gap:             "6px",
+    border:          `1px solid ${accent.border}`,
+    // ✅ Theme-aware background and text
+    background:      "var(--surface)",
+    color:           "var(--text)",
+    transition:      "transform 0.3s",
+    transform:       isGold ? "scale(1.08)" : "scale(1)",
+    position:        "relative",
+    zIndex:          isGold ? 10 : 1,
+    boxShadow:       isGold
+      ? "0 8px 32px rgba(202,138,4,0.18)"
+      : "0 2px 8px rgba(0,0,0,0.08)",
+  };
 
-  const xpBoxBg = isGold
-    ? "bg-yellow-200/30 dark:bg-yellow-900/30"
-    : isSilver
-    ? "bg-gray-200/30 dark:bg-neutral-700/30"
-    : "bg-orange-200/30 dark:bg-orange-900/30";
-
-  const xpColor = isGold
-    ? "text-yellow-600 dark:text-yellow-400"
-    : isSilver
-    ? "text-gray-700 dark:text-neutral-300"
-    : "text-orange-600 dark:text-orange-400";
-
-  const neutralText = "text-gray-500 dark:text-neutral-400";
+  const xpBoxStyle = {
+    width:        "100%",
+    borderRadius: "0.5rem",
+    padding:      "10px 0",
+    margin:       "8px 0",
+    background:   accent.xpBg,
+  };
 
   return (
-    <div className={`${cardBase} ${cardVariant} text-gray-900 dark:text-white`}>
-      {/* Trophy for gold */}
+    <div style={cardStyle}>
+      {/* Trophy icon for gold */}
       {isGold && (
-        <span
-          className="text-3xl mt-1"
-          style={{ filter: "drop-shadow(0 0 8px rgba(255,200,0,0.6))" }}
-        >
+        <span style={{ fontSize: "1.8rem", marginTop: 4, filter: "drop-shadow(0 0 8px rgba(255,200,0,0.6))" }}>
           🏆
         </span>
       )}
 
       {/* Avatar */}
-      <span className="text-5xl mt-2 leading-none">{user.avatar}</span>
+      <span style={{ fontSize: "3rem", marginTop: 8, lineHeight: 1 }}>{user.avatar}</span>
 
       {/* Username */}
-      <h3 className="font-rajdhani text-xl font-bold mt-1 tracking-wide">
+      <h3 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: "1.2rem", fontWeight: 700,
+        marginTop: 4, letterSpacing: "0.05em", color: "var(--text)" }}>
         {user.name}
       </h3>
 
       {/* Rank title */}
-      <p className={`text-xs font-semibold tracking-wide ${titleColor}`}>
+      <p style={{ fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.05em",
+        color: accent.titleText }}>
         {user.title}
       </p>
 
       {/* XP Box */}
-      <div className={`w-full rounded-lg py-2.5 my-2 ${xpBoxBg}`}>
-        <p className={`font-rajdhani text-3xl font-bold ${xpColor}`}>
+      <div style={xpBoxStyle}>
+        <p style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: "1.9rem",
+          fontWeight: 700, color: accent.xpText }}>
           {user.points.toLocaleString()}
         </p>
-        <p className={`${neutralText} text-xs mt-0.5`}>Investigation points</p>
+        <p style={{ color: "var(--textSec)", fontSize: "0.75rem", marginTop: 2 }}>
+          Investigation points
+        </p>
       </div>
 
-      {/* Achievement badges for gold */}
+      {/* Achievement badges — gold only */}
       {isGold && (
-        <div className="flex gap-2 text-lg my-1">
-          <span>🏆</span>
-          <span>⭐</span>
-          <span>🔥</span>
+        <div style={{ display: "flex", gap: 8, fontSize: "1.1rem", margin: "4px 0" }}>
+          <span>🏆</span><span>⭐</span><span>🔥</span>
         </div>
       )}
 
-      {/* Streak for gold */}
+      {/* Streak — gold only */}
       {isGold && (
-        <p className="flex items-center gap-1 text-sm font-semibold text-orange-600 dark:text-orange-400">
+        <p style={{ display: "flex", alignItems: "center", gap: 4,
+          fontSize: "0.875rem", fontWeight: 600, color: "#ea580c" }}>
           🔥 <span>{user.streak} Days Streak</span>
         </p>
       )}
 
       {/* Cases solved */}
-      <p className={`${neutralText} text-xs`}>{user.cases} cases solved</p>
+      <p style={{ color: "var(--textSec)", fontSize: "0.75rem" }}>
+        {user.cases} cases solved
+      </p>
     </div>
   );
 };
