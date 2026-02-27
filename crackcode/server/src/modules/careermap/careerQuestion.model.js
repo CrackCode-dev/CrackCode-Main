@@ -1,38 +1,37 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
-const careerQuestionSchema = new mongoose.Schema(
+const CareerQuestionSchema = new mongoose.Schema(
   {
-    careerPath: {
-      type: String,
-      required: true, // "software", "datascience", "devops"
-    },
-
-    level: {
-      type: String,
-      enum: ["beginner", "intermediate", "advanced"],
-      required: true,
-    },
-
     question: {
       type: String,
       required: true,
+      trim: true,
     },
-
     options: {
       type: [String],
       required: true,
+      validate: [(val) => val.length >= 2, "At least 2 options required"],
     },
-
     correctAnswer: {
-      type: Number, // index of correct option (0–3)
+      type: String,
       required: true,
     },
-
+    category: {
+      type: String,
+      required: true,
+      enum: ["Software", "DataScience", "DevOps"],
+    },
+    difficulty: {
+      type: String,
+      enum: ["Easy", "Medium", "Hard"],
+      default: "Medium",
+    },
     explanation: {
-      type: String, // optional (nice for advanced level)
+      type: String,
+      default: "",
     },
   },
   { timestamps: true }
 );
 
-export default mongoose.model("CareerQuestion", careerQuestionSchema);
+module.exports = mongoose.model("CareerQuestion", CareerQuestionSchema);
