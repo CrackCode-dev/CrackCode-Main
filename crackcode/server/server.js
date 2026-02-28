@@ -87,5 +87,31 @@ app.use((err, _req, res, _next) => {
 // Start
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
+
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+    console.log(`🚀 Server started on http://localhost:${PORT}`);
+
+    // Clean up expired/inactive sessions every hour
+    setInterval(async () => {
+        try {
+            const count = await cleanupExpiredSessions();
+            if (count > 0) {
+                console.log(`[CRON] Cleaned ${count} expired session(s)`);
+            }
+        } catch (err) {
+            console.error('[CRON] Session cleanup error:', err.message);
+        }
+    }, 60 * 60 * 1000); // every hour
+});
+
+// ─── Graceful shutdown ───────────────────────────────────────
+const shutdown = async (signal) => {
+    console.log(`${signal} received. Closing connections...`);
+    process.exit(0);
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+(feat: integrate AI aggent into code execution flow and add rate limiting)

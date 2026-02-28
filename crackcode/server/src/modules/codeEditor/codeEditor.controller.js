@@ -1,9 +1,10 @@
 import { runTestCases, executeCode, getLanguageId } from './codeEditor.service.js';
+import { analyseError, classifyErrorType } from '../../services/aiErrorAgent.js';
 
 // Run test cases for a submission
 export const executeTestCases = async (req, res) => {
   try {
-    const { sourceCode, language, testCases } = req.body;
+    const { sourceCode, language, testCases, previousErrors = [] } = req.body;
 
     // Validation
     if (!sourceCode) {
@@ -29,6 +30,26 @@ export const executeTestCases = async (req, res) => {
 
     // Execute test cases
     const results = await runTestCases(sourceCode, language, testCases);
+
+    // ── AI Error Analysis ────────────────────────────────────────────────────
+    // attach a clean error type label to every failed result
+    results.forEach(r => {
+      if (r.status === 'failed') {
+        r.errorType = classifyErrorType(r);
+      }
+    });
+
+    // only call Gemini for the first failed test — saves API quota
+    const firstFailedIndex = results.findIndex(r => r.status === 'failed');
+    if (firstFailedIndex !== -1) {
+      results[firstFailedIndex].aiAnalysis = await analyseError({
+        code:          sourceCode,
+        language,
+        testResult:    results[firstFailedIndex],
+        previousErrors, // real history sent from the client
+      });
+    }
+    // ────────────────────────────────────────────────────────────────────────
 
     const passedCount = results.filter(r => r.status === 'passed').length;
     const failedCount = results.filter(r => r.status === 'failed').length;
