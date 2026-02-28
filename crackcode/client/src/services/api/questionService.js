@@ -1,10 +1,6 @@
 const API_BASE_URL = 'http://localhost:5050/api/learn';
 
-/**
- * Fetch all questions with optional filters
- * @param {string} difficulty - Optional: 'Easy', 'Medium', 'Hard'
- * @param {string} topic - Optional: 'arrays', 'trees', 'graphs', etc.
- */
+// fetch all questions, optionally filtered by difficulty or topic
 export const fetchAllQuestions = async (difficulty = null, topic = null) => {
   try {
     let url = `${API_BASE_URL}/questions`;
@@ -24,16 +20,13 @@ export const fetchAllQuestions = async (difficulty = null, topic = null) => {
     }
 
     const result = await response.json();
-    return result.data || result; // Handle both formats
+    return result.data || result; // handle both response formats
   } catch (error) {
     throw new Error(error.message || 'Failed to fetch questions');
   }
 };
 
-/**
- * Fetch a single problem by ID (full details with test cases)
- * @param {string} id - Problem ID (problemId or MongoDB _id)
- */
+// fetch a single problem by its ID (includes test cases)
 export const fetchProblemById = async (id) => {
   try {
     if (!id) {
@@ -53,11 +46,7 @@ export const fetchProblemById = async (id) => {
   }
 };
 
-/**
- * Fetch a problem with a specific language variant
- * @param {string} id - Problem ID
- * @param {string} language - Language code (python, javascript, java, cpp)
- */
+// fetch a problem with starter code for a specific language
 export const fetchProblemByLanguage = async (id, language) => {
   try {
     if (!id || !language) {
@@ -79,10 +68,7 @@ export const fetchProblemByLanguage = async (id, language) => {
   }
 };
 
-/**
- * Fetch problems by topic/category
- * @param {string} topic - Topic name (arrays, trees, graphs, etc.)
- */
+// fetch all problems belonging to a topic (e.g. 'arrays')
 export const fetchProblemsByTopic = async (topic) => {
   try {
     if (!topic) {
@@ -102,10 +88,7 @@ export const fetchProblemsByTopic = async (topic) => {
   }
 };
 
-/**
- * Transform problem data to match frontend format
- * Converts MongoDB schema to UI-friendly format
- */
+// converts a MongoDB problem object into the shape the UI expects
 export const transformProblemData = (problem, language = 'python') => {
   if (!problem) return null;
 
