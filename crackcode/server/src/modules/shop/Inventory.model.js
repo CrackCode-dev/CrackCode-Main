@@ -20,6 +20,12 @@ const inventorySchema = new mongoose.Schema(
       index: true,
     },
 
+    category: {
+      type: String,
+      enum: ["avatar", "theme", "title", "boost", "badge", "bundle", "other"],
+      required: true,
+    },
+
     // For consumables ( bundles and all)
     quantity: {
       type: Number,
@@ -27,13 +33,12 @@ const inventorySchema = new mongoose.Schema(
       min: 1,
     },
 
-
     // For equipable items (avatars,themes and badges)
 
-    equipped: {
-      type: Boolean,
-      default: false,
-    },
+    // equipped: {
+    //   type: Boolean,
+    //   default: false,
+    // },
 
   },
   { timestamps: true }
@@ -47,5 +52,6 @@ const inventorySchema = new mongoose.Schema(
 
 inventorySchema.index({ userId: 1, itemId: 1 }, { unique: true });
 
-export default mongoose.models.Inventory ||
-  mongoose.model("Inventory", inventorySchema);
+const Inventory = mongoose.models.Inventory || mongoose.model("Inventory", inventorySchema);
+
+export default Inventory;

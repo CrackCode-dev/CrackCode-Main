@@ -1,3 +1,7 @@
+// This is for defining what items are in the store to the database...
+
+
+
 import mongoose from "mongoose";
 
 /**
@@ -81,12 +85,24 @@ const shopItemSchema = new mongoose.Schema(
  */
 
 shopItemSchema.pre("validate", function (next) {
+
+  if(!this.pricing) return next(new Error ("Price is required"));
+
   if (this.pricing.type === "free") {
     this.pricing.amount = 0;
+    this.pricing.currency = "XP";
   }
 
-  if (
-    this.pricing.type !== "free" &&
+  if (this.pricing.type === "xp"){
+    this.pricing.currency = "XP";
+  }
+
+  if (this.pricing.type === "paid"){
+    this.pricing.currency = "USD";
+  }
+
+
+  if (this.pricing.type !== "free" &&
     (!this.pricing.amount || this.pricing.amount <= 0)
   ) {
     return next(

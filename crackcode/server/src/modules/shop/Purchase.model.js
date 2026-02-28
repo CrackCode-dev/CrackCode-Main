@@ -1,3 +1,6 @@
+//This file is for the users to view payment histories, get receipts...
+
+
 import mongoose from "mongoose";
 
 const purchaseSchema = new mongoose.Schema(
@@ -27,13 +30,17 @@ const purchaseSchema = new mongoose.Schema(
 
     tokensAfterPurchase: {
       type: Number,
-      default: 0,
+      required: true,
     },
+    
   },
   { timestamps: true }
 );
 
 // Index for "get user's purchases"
+
 purchaseSchema.index({ userId: 1, createdAt: -1 });
 
-export default mongoose.model("Purchase", purchaseSchema);
+const Purchase = mongoose.models.Purchase || mongoose.model("Purchase", purchaseSchema);
+
+export default Purchase;
