@@ -11,7 +11,6 @@ const CodeEditorContent = () => {
   const navigate = useNavigate();
   const { error, setLanguage } = useProblemData(problemId);
 
-  // Set language from navigation state if provided (from ChapterSelection)
   useEffect(() => {
     if (location.state?.language) {
       setLanguage(location.state.language);
@@ -21,24 +20,29 @@ const CodeEditorContent = () => {
   if (error) return (
     <div className="h-screen flex items-center justify-center bg-[#0a0a0a]">
       <div className="text-center">
-        <div className="text-red-500 p-10 font-mono text-lg mb-4">ERROR: {error}</div>
-        <button 
+        <div className="text-6xl mb-4">🔍</div>
+        <div className="text-red-400 p-6 font-mono text-lg mb-4 bg-red-900/10 border border-red-500/30 rounded-lg">
+          CASE NOT FOUND: {error}
+        </div>
+        <button
           onClick={() => navigate('/learn')}
-          className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2 rounded font-bold"
+          className="bg-cyan-600 hover:bg-cyan-500 text-white px-8 py-2 rounded-lg font-bold transition-colors"
         >
-          Back to Learn
+          ← Back to Cases
         </button>
       </div>
     </div>
   );
 
   return (
-    <div className="h-screen flex bg-[#0a0a0a] overflow-hidden gap-1">
-      {/* FIXED: Added gap between panels */}
-      <div className="w-[45%] overflow-y-auto">
+    <div className="h-screen flex bg-[#0d0d0d] overflow-hidden">
+      {/* LEFT: Problem Description */}
+      <div className="w-[42%] flex-shrink-0 overflow-y-auto border-r border-gray-800/60">
         <CaseDetails />
       </div>
-      <div className="w-[55%] flex flex-col">
+
+      {/* RIGHT: Editor + Analysis Panel */}
+      <div className="flex-1 flex flex-col min-w-0">
         <EditorWrapper />
       </div>
     </div>

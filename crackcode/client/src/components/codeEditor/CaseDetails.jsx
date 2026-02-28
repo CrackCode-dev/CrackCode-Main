@@ -10,43 +10,45 @@ const CaseDetails = () => {
 
   if (loading) {
     return (
-      <div className="h-full flex items-center justify-center bg-[#1a1a1a]">
-        <div className="text-cyan-400 text-lg">Loading case files...</div>
+      <div className="h-full flex flex-col items-center justify-center gap-3 bg-[#111111]">
+        <div className="w-8 h-8 rounded-full border-2 border-cyan-500 border-t-transparent animate-spin" />
+        <p className="text-cyan-500 text-xs font-mono animate-pulse">Loading case file…</p>
       </div>
     );
   }
 
   if (!currentProblem) {
     return (
-      <div className="h-full flex items-center justify-center bg-[#1a1a1a]">
-        <div className="text-red-400 text-lg">Case file not found</div>
+      <div className="h-full flex items-center justify-center bg-[#111111]">
+        <p className="text-red-400 text-sm font-mono">Case file not found</p>
       </div>
     );
   }
 
   return (
-    <div className="h-full bg-[#1a1a1a] text-gray-100 overflow-y-auto">
-      {/* ✅ FIXED: Better padding and spacing */}
-      <div className="p-8 space-y-6">
-        <CaseHeader 
+    <div className="min-h-full bg-[#111111] text-gray-100">
+      {/* Sticky top header */}
+      <div className="sticky top-0 z-10 bg-[#111111]/95 backdrop-blur-sm border-b border-gray-800/60 px-5 py-4">
+        <CaseHeader
           caseNumber={currentProblem.caseNumber}
           difficulty={currentProblem.difficulty}
         />
-        
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-3">
-            {currentProblem.title}
-          </h1>
-          
-          <p className="text-gray-300 text-base leading-relaxed">
-            {currentProblem.description}
-          </p>
-        </div>
-        
+        <h1 className="text-lg font-bold text-white leading-tight mt-2">
+          {currentProblem.title}
+        </h1>
+      </div>
+
+      {/* Scrollable body */}
+      <div className="px-5 py-5 space-y-6">
+        {/* Description */}
+        <p className="text-gray-400 text-sm leading-relaxed">
+          {currentProblem.description}
+        </p>
+
         <ObjectivesList objectives={currentProblem.objectives} />
-        
+
         <RequestClueButton clue={currentProblem.clue} />
-        
+
         <ExampleCard example={currentProblem.example} />
       </div>
     </div>
