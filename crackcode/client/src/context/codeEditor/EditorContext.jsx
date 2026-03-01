@@ -23,7 +23,7 @@ export const EditorProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState('error-diagnosis');
 
   // Right-panel analysis tabs: error-diagnosi ai-assistant  history
-  const [activeRightTab, setActiveRightTab] = useState('error-diagnosis');
+  const [activeRightTab, setActiveRightTab] = useState('test-cases');
 
   // Error run history each entry 
   const [errorHistory, setErrorHistory] = useState([]);
