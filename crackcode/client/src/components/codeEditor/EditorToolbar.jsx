@@ -25,7 +25,7 @@ const EditorToolbar = () => {
       <div className="flex items-center gap-4">
         <select value={language} onChange={handleLanguageChange} className="bg-[#1e1e1e] text-white px-3 py-1 rounded border border-gray-600">
           <option value="python">Python 3</option>
-          <option value="javascript">JavaScript</option>
+          <option value="java">Java</option>
         </select>
         <button 
           onClick={executeCode} 

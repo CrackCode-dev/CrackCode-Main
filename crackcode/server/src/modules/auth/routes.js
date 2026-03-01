@@ -23,8 +23,9 @@ router.post("/reset-password", resetPassword);
 // Protected routes (requires userAuth middleware)
 router.post("/logout", userAuth, logout);
 router.post("/logout-all", userAuth, logoutAllDevices);
-router.post("/send-verify-otp", userAuth, sendVerifyOtp);
-router.post("/verify-account", userAuth, verifyEmail);
+// Allow OTP send and verification for both pending registrations and logged-in users
+router.post("/send-verify-otp", sendVerifyOtp);
+router.post("/verify-account", verifyEmail);
 router.get("/is-auth", userAuth, isAuthenticated); // Used for real-time state sync
 
 export default router;

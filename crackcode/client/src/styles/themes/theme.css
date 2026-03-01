@@ -1,0 +1,27 @@
+/* src/styles/themes/theme.css
+ * 
+ * FALLBACK ONLY - Single source of truth is ThemeContext.jsx
+ * 
+ * This file provides minimal CSS variable defaults.
+ * JavaScript (ThemeContext.jsx) injects the actual theme colors.
+ * Keep these fallback values generic/neutral - they'll be overridden immediately.
+ */
+
+:root {
+  /* Basic fallback - these are overridden by JavaScript on app load */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface2: #f5f5f5;
+  --text: #000000;
+  --textSec: #666666;
+  --muted: #999999;
+  --brand: #ff9644;
+  --brandSoft: #ffce99;
+  --brandInk: #562f00;
+  --border: #e0e0e0;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadowBrand: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --progressTrack: #e0e0e0;
+  --challengeBg: #f0f0f0;
+  --inviteBg: #f5f5f5;
+}

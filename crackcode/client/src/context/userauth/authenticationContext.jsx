@@ -15,7 +15,8 @@ export const AppContextProvider = (props) => {
     const getAuthState = async () => {
         try {
             const { data } = await axios.get(`${backendUrl}/api/auth/is-auth`,{
-                withCredentials: true
+                withCredentials: true,
+                timeout: 5000 // 5 second timeout
             });
 
             if (data.success) {
@@ -23,23 +24,23 @@ export const AppContextProvider = (props) => {
                 getUserData()
             }
         } catch (error) {
-            // Silent fail - user is simply not logged in
-            console.log('Not authenticated');
+            // Silent fail - user is simply not logged in or backend unavailable
+            // This allows the app to render even if backend is down
         }
     }
 
     const getUserData = async () => {
         try {
             const { data } = await axios.get(`${backendUrl}/api/user/data`,{
-                withCredentials: true
+                withCredentials: true,
+                timeout: 5000 // 5 second timeout
             });
             
             if (data.success) {
                 setUserData(data.data) // Stores user info (name, email, isVerified)
             }
         } catch (error) {
-            // Silent fail - expected when not logged in
-            console.log('Could not fetch user data');
+            // Silent fail - expected when not logged in or backend unavailable
         }
     }
 
