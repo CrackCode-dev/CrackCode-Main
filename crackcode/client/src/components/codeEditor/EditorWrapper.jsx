@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { useEditor } from '../../context/codeEditor/EditorContext';
 import EditorToolbar from './EditorToolbar';
 import ConsolePanel from './ConsolePanel';
+import { useEditorDecorations } from '../../features/codeEditor/hooks/useEditorDecorations';
 
 const EditorWrapper = () => {
-  const { code, setCode, language } = useEditor();
+  const { code, setCode, language, testResults } = useEditor();
+  const editorRef = useRef(null);
+
+  // Apply red line highlights in Monaco for AI-identified error lines
+  useEditorDecorations(editorRef, testResults);
 
   return (
     <div className="h-full flex flex-col bg-[#141414]">
@@ -18,6 +23,7 @@ const EditorWrapper = () => {
           language={language === 'python' ? 'python' : 'javascript'}
           value={code}
           onChange={(val) => setCode(val || '')}
+          onMount={(editor) => { editorRef.current = editor; }}
           theme="vs-dark"
           options={{
             fontSize: 14,
