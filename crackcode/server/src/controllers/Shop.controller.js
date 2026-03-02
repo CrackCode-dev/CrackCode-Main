@@ -1,42 +1,149 @@
-import { purchaseItemWithXP, getShopItems, getMyInventory } from "../modules/shop/Shop.service.js";
+// // import User from "../modules/auth/User.model.js";
+// import { purchaseItemWithXP, getShopItems, getMyInventory } from "../modules/shop/Shop.service.js";
+
+
+// /**
+//  * POST /api/shop/purchase
+//  * Body: { itemId }
+//  */
+// export const purchaseItem = async (req, res) => {
+//   try {
+
+//     //new 2 consoles for test authMiddleware connection for auth.user
+//     // console.log("AUTH HEADER:", req.headers.authorization);
+//     // console.log("REQ.USER:", req.user);
+//     const userId = req.user?.id || req.user?._id;
+
+//     if (!userId) {
+//       return res.status(401).json({ success: false, message: "Unauthorized" });
+//     }
+
+//     const { itemId } = req.body;
+
+//     if (!itemId) {
+//       return res.status(400).json({ success: false, message: "itemId is required" });
+//     }
+
+//     const result = await purchaseItemWithXP(userId, itemId);
+//     return res.json(result);
+//   } catch (error) {
+//     console.error("Purchase error:", error);
+//     return res.status(400).json({ success: false, message: error.message || "Purchase failed" });
+//   }
+// };
+
+// /**
+//  * GET /api/shop/items?category=avatar|theme|title|all
+//  */
+// export const listItems = async (req, res) => {
+//   try {
+//     const { category } = req.query;
+//     const items = await getShopItems(category);
+
+//     return res.json({ success: true, items });
+//   } catch (error) {
+//     console.error("List items error:", error);
+//     return res.status(500).json({ success: false, message: error.message || "Failed to fetch items" });
+//   }
+// };
+
+// /**
+//  * GET /api/shop/inventory?category=avatar|theme|title|all
+//  * Requires auth
+//  */
+// export const myInventory = async (req, res) => {
+//   try {
+//     const userId = req.user?.id || req.user?._id;
+
+//     if (!userId) {
+//       return res.status(401).json({ success: false, message: "Unauthorized" });
+//     }
+
+//     const { category } = req.query;
+//     const items = await getMyInventory(userId, category);
+
+//     return res.json({ success: true, items });
+//   } catch (error) {
+//     console.error("Inventory error:", error);
+//     return res.status(500).json({ success: false, message: error.message || "Failed to fetch inventory" });
+//   }
+// };
+
+//-----------------------------------------------------------------------------------------------------
+
+// new version with ._id checkings 
+
+import {
+  purchaseItemWithXP,
+  getShopItems,
+  getMyInventory,
+} from "../modules/shop/Shop.service.js";
+
+/**
+ * Helper: consistently extract userId from req.user
+ */
+const getUserId = (req) => req.user?._id || req.user?.id;
+
 /**
  * POST /api/shop/purchase
  * Body: { itemId }
+ * Requires auth
  */
 export const purchaseItem = async (req, res) => {
   try {
-    const userId = req.user?.id || req.user?._id;
+    // Debug (uncomment when testing auth middleware)
+    // console.log("AUTH HEADER:", req.headers.authorization);
+    // console.log("REQ.USER:", req.user);
 
+    const userId = getUserId(req);
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const { itemId } = req.body;
-
+    const { itemId } = req.body || {};
     if (!itemId) {
-      return res.status(400).json({ success: false, message: "itemId is required" });
+      return res
+        .status(400)
+        .json({ success: false, message: "itemId is required" });
     }
 
     const result = await purchaseItemWithXP(userId, itemId);
-    return res.json(result);
+    return res.status(200).json(result);
   } catch (error) {
     console.error("Purchase error:", error);
-    return res.status(400).json({ success: false, message: error.message || "Purchase failed" });
+
+    // Map common business errors to more appropriate statuses
+    const msg = error?.message || "Purchase failed";
+
+    if (/not found|inactive/i.test(msg)) {
+      return res.status(404).json({ success: false, message: msg });
+    }
+    if (/unauthorized/i.test(msg)) {
+      return res.status(401).json({ success: false, message: msg });
+    }
+    if (/not enough|insufficient/i.test(msg)) {
+      return res.status(400).json({ success: false, message: msg });
+    }
+
+    return res.status(400).json({ success: false, message: msg });
   }
 };
 
 /**
  * GET /api/shop/items?category=avatar|theme|title|all
+ * Requires auth (keep if your app needs auth to see shop, otherwise remove middleware in routes)
  */
 export const listItems = async (req, res) => {
   try {
-    const { category } = req.query;
+    const { category } = req.query || {};
     const items = await getShopItems(category);
-
-    return res.json({ success: true, items });
+    return res.status(200).json({ success: true, items });
   } catch (error) {
     console.error("List items error:", error);
-    return res.status(500).json({ success: false, message: error.message || "Failed to fetch items" });
+    return res.status(500).json({
+      success: false,
+      message: error?.message || "Failed to fetch items",
+    });
   }
 };
 
@@ -46,18 +153,20 @@ export const listItems = async (req, res) => {
  */
 export const myInventory = async (req, res) => {
   try {
-    const userId = req.user?.id || req.user?._id;
-
+    const userId = getUserId(req);
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const { category } = req.query;
+    const { category } = req.query || {};
     const items = await getMyInventory(userId, category);
 
-    return res.json({ success: true, items });
+    return res.status(200).json({ success: true, items });
   } catch (error) {
     console.error("Inventory error:", error);
-    return res.status(500).json({ success: false, message: error.message || "Failed to fetch inventory" });
+    return res.status(500).json({
+      success: false,
+      message: error?.message || "Failed to fetch inventory",
+    });
   }
 };
