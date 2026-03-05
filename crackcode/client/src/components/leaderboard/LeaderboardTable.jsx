@@ -19,6 +19,28 @@ const TitleBadge = ({ title }) => {
   );
 };
 
+// ── Renders either an <img> or emoji depending on the avatar value ──
+const Avatar = ({ avatar, name }) => {
+  const isImagePath =
+    typeof avatar === "string" &&
+    (avatar.startsWith("/") ||
+      avatar.startsWith("http") ||
+      avatar.match(/\.(png|jpg|jpeg|gif|webp|svg)$/i));
+
+  if (isImagePath) {
+    return (
+      <img
+        src={avatar}
+        alt={name}
+        style={{ width: 32, height: 32, borderRadius: "50%", objectFit: "cover",
+          border: "2px solid #334155", flexShrink: 0 }}
+        onError={(e) => { e.target.replaceWith(Object.assign(document.createElement("span"), { textContent: "🕵️" })); }}
+      />
+    );
+  }
+  return <span className="text-xl">{avatar || "🕵️"}</span>;
+};
+
 const LeaderboardTable = ({ data = [] }) => {
   return (
     <div className="rounded-2xl overflow-hidden border border-neutral-800 bg-[#111]">
@@ -44,7 +66,6 @@ const LeaderboardTable = ({ data = [] }) => {
               key={user.rank}
               className="border-t border-neutral-800/70 transition-colors hover:bg-[#161616]"
             >
-              {/* Rank */}
               <td className="py-4 px-3.5 pl-6">
                 <div className="flex items-center gap-1.5 font-rajdhani text-base font-bold text-green-400 whitespace-nowrap">
                   <span>#{user.rank}</span>
@@ -54,35 +75,29 @@ const LeaderboardTable = ({ data = [] }) => {
                 </div>
               </td>
 
-              {/* Detective */}
               <td className="py-4 px-3.5">
                 <div className="flex items-center gap-2.5 font-semibold text-neutral-100">
-                  <span className="text-xl">{user.avatar}</span>
+                  <Avatar avatar={user.avatar} name={user.name} />
                   <span>{user.name}</span>
                 </div>
               </td>
 
-              {/* Title */}
               <td className="py-4 px-3.5">
                 <TitleBadge title={user.title} />
               </td>
 
-              {/* Specialization */}
               <td className="py-4 px-3.5 text-sm text-neutral-400">
                 {user.specialization}
               </td>
 
-              {/* Points */}
               <td className="py-4 px-3.5 font-rajdhani text-base font-bold text-green-400">
                 {user.points.toLocaleString()}
               </td>
 
-              {/* Cases */}
               <td className="py-4 px-3.5 text-center text-sm text-neutral-300">
                 {user.cases}
               </td>
 
-              {/* Streak */}
               <td className="py-4 px-3.5">
                 <div className="flex items-center justify-center gap-1 font-bold text-orange-400">
                   🔥 <span>{user.streak}</span>
