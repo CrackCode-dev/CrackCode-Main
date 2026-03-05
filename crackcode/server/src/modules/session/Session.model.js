@@ -55,7 +55,7 @@ const sessionSchema = new mongoose.Schema(
     expiresAt: {
       type: Date,
       required: true,
-      index: true,
+      // index: true  ← removed: TTL index below already covers this
     },
   },
   { timestamps: true }

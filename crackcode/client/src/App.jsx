@@ -1,7 +1,11 @@
-<<<<<<< HEAD
 import { Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./context/theme/ThemeContext";
+import { UserProgressProvider } from "./context/userauth/UserProgressContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 
+// Pages
 import Home from "./pages/home/Home";
 import Landing from "./pages/landing/Landing";
 import EmailVerify from "./pages/userauth/EmailVerify";
@@ -16,139 +20,58 @@ import CaseLogMainPage from "./pages/caselog/CaseLogMainPage";
 import CaseLogPage from "./pages/caselog/CaseLogPage";
 import Leaderboard from "./pages/leaderboard/leaderboardPage";
 import LearnMainPage from "./pages/learn/LearnMainPage";
-=======
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from './context/theme/ThemeContext'
-import { UserProgressProvider } from './context/userauth/UserProgressContext'
-import './App.css'
-import Home from './pages/home/Home'
-import Landing from './pages/landing/Landing'
-import EmailVerify from './pages/userauth/EmailVerify'
-import Login from './pages/userauth/Login'
-import ResetPassword from './pages/userauth/ResetPassword'
-import CareermapMain from './pages/careermap/CareermapMain' 
-import GameProfile from './pages/gameprofile/gameprofile'
-import UserProfile from './pages/userprofile/userprofile'
-import CodeEditorPage from './pages/codeEditor/CodeEditorPage'
-import ProtectedRoute from './components/common/ProtectedRoute'
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import LearnMainPage from './pages/learn/LearnMainPage'
->>>>>>> 99fa1242a3029b7753eee94f965a8443e64a8260
 import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from "./pages/learn/ChapterSelection";
 
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 function App() {
   return (
-<<<<<<< HEAD
-    <>
-      <ToastContainer />
-      <Routes>
-        {/* Public routes */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/verify-account" element={<EmailVerify />} />
-        <Route path="/email-verify" element={<EmailVerify />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-
-        <Route path="/caselog" element={<CaseLogMainPage />} />
-        <Route path="/caselog/details" element={<CaseLogPage />} />
-        <Route path="/careermaps-Main" element={<CareermapMain />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
-        <Route path="/weeklychallenges" element={<WeeklyChallenges />} />
-
-        {/* Protected routes */}
-        <Route path="/home" element={<Home />} />
-
-        <Route
-          path="/gamer-profile"
-          element={
-            <ProtectedRoute>
-              <GameProfile />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path="/user-profile" element={<UserProfile />} />
-
-        <Route
-          path="/solve/:problemId"
-          element={
-            <ProtectedRoute>
-              <CodeEditorPage />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route path="/learn" element={<LearnMainPage />} />
-
-        <Route path="/learn/:trackId" element={<ChapterSelectionPage />} />
-      </Routes>
-    </>
-  );
-=======
     <ThemeProvider>
       <UserProgressProvider>
-        <div>
-          <ToastContainer />
+        <ToastContainer />
         <Routes>
-          {/* Public routes */}
-          <Route path='/' element={<Landing />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/verify-account' element={<EmailVerify />} />
-          <Route path='/email-verify' element={<EmailVerify />} />
-          <Route path='/reset-password' element={<ResetPassword />} />
-          <Route path='/careermaps-Main'element={<CareermapMain/>}/>
-          
-          {/* Protected routes - require login + verified email */}
-          <Route path='/home' element={
-            // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
-              <Home />
-            // </ProtectedRoute>
-          } />
-          <Route path='/gamer-profile' element={
-            <ProtectedRoute>
-              <GameProfile />
-            </ProtectedRoute>
-          } />
-          <Route path='/user-profile' element={
-            // <ProtectedRoute>
-              <UserProfile />
-            // </ProtectedRoute>
-          } />
-          <Route path='/learn' element={
-            // <ProtectedRoute>
-              <LearnMainPage />
-            // </ProtectedRoute>
-          } />
-          <Route path='/code-editor/:problemId' element={
-            // <ProtectedRoute>
-              <CodeEditorPage />
-            // </ProtectedRoute>
-          } />
-          <Route path='/code-editor' element={
-            // <ProtectedRoute>
-              <CodeEditorPage />
-            // </ProtectedRoute>
-          } />
-          <Route path="/weeklychallenges" element={
-            <WeeklyChallenges />
-          } />
-          <Route path="/learn/:trackId" element={
-            // <ProtectedRoute>
-              <ChapterSelectionPage />
-            // </ProtectedRoute>
-          } />
+          {/* ── Public routes ───────────────────────────── */}
+          <Route path="/"                   element={<Landing />} />
+          <Route path="/login"              element={<Login />} />
+          <Route path="/verify-account"     element={<EmailVerify />} />
+          <Route path="/email-verify"       element={<EmailVerify />} />
+          <Route path="/reset-password"     element={<ResetPassword />} />
+          <Route path="/careermaps-Main"    element={<CareermapMain />} />
+          <Route path="/caselog"            element={<CaseLogMainPage />} />
+          <Route path="/caselog/details"    element={<CaseLogPage />} />
+          <Route path="/leaderboard"        element={<Leaderboard />} />
+          <Route path="/weeklychallenges"   element={<WeeklyChallenges />} />
+          <Route path="/learn"              element={<LearnMainPage />} />
+          <Route path="/learn/:trackId"     element={<ChapterSelectionPage />} />
 
+          {/* ── Protected routes ────────────────────────── */}
+          <Route path="/home"               element={<Home />} />
+
+          <Route path="/user-profile"       element={<UserProfile />} />
+
+          <Route
+            path="/gamer-profile"
+            element={
+              <ProtectedRoute>
+                <GameProfile />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/solve/:problemId"
+            element={
+              <ProtectedRoute>
+                <CodeEditorPage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/code-editor/:problemId" element={<CodeEditorPage />} />
+          <Route path="/code-editor"            element={<CodeEditorPage />} />
         </Routes>
-        </div>
       </UserProgressProvider>
     </ThemeProvider>
-  )
->>>>>>> 99fa1242a3029b7753eee94f965a8443e64a8260
+  );
 }
 
 export default App;
