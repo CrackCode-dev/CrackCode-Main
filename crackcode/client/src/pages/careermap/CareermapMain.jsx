@@ -28,7 +28,7 @@ function CareermapMain() {
   },[navigate]);
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white flex flex-col pt-18 ">
+    <div className="min-h-screen bg-(--bg) text-(--text) flex flex-col pt-18 ">
       {/*HQ Button */}
       <div className="absolute top-6 left-6 z-30">
     <HQBtn />
@@ -39,7 +39,7 @@ function CareermapMain() {
         <h1 className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
           Choose the best career path that suits you!
         </h1>
-        <p className="text-gray-400 text-lg md:text-xl">
+        <p className="text-(--muted) text-lg md:text-xl">
           We stand beside you through out your entire journey
         </p>
       </header>
@@ -61,7 +61,7 @@ function CareermapMain() {
                 >
                 {/* Top Gradient Section */}
                 <div
-                  className={`relative h-36 bg-gradient-to-br ${career.gradient} flex items-start justify-between p-5`}
+                  className={`relative h-36 bg-linear-to-br ${career.gradient} flex items-start justify-between p-5`}
                 >
 
                   {/* Image Icon */}
@@ -75,7 +75,7 @@ function CareermapMain() {
                     </div>
 
                     {/* Career Title */}
-                    <h3 className="text-white text-2xl font-bold leading-tight">
+                    <h3 className="text-(--text) text-2xl font-bold leading-tight">
                       {career.title}
                     </h3>
 
@@ -87,20 +87,20 @@ function CareermapMain() {
                 </div>
 
                   {/* Content Section */}
-                  <div className="bg-[#121212] p-6 flex flex-col relative h-[320px] ">
+                  <div className="bg-(--surface) p-6 flex flex-col relative h-[320px] ">
 
                       {/* Languages */}
                       <div className="mb-4">
                         <p className="text-sm whitespace-pre-wrap">
-                          <span className="text-white font-bold">Languages: </span>
-                          <span className="text-white font-bold">{career.languages}</span>
+                          <span className="text-(--text) font-bold">Languages: </span>
+                          <span className="text-(--text) font-bold">{career.languages}</span>
                         </p>
                       </div>
 
                       {/* Quiz Focus List*/}
                       <div className="mb-6 flex-1 overflow-y-auto">
-                        <p className="text-sm text-white font-bold mb-2">Quiz Focus:</p>
-                        <ul className="list-disc text-sm text-white pl-5 space-y-1.5">
+                        <p className="text-sm text-(--text) font-bold mb-2">Quiz Focus:</p>
+                        <ul className="list-disc text-sm text-(--text) pl-5 space-y-1.5">
                           {career.focus.map((item, index) => (
                             <li key={index}>{item}</li>
                           ))}
@@ -108,8 +108,8 @@ function CareermapMain() {
                       </div>
 
                       {/* Divider - Fixed at bottom */}
-                      <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 bg-[#121212]">
-                        <div className="border-t border-gray-700 pt-5">
+                      <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 bg-(--surface)">
+                        <div className="border-t border-(--border) pt-5">
                           {/* Difficulty Badge with Arrow */}
                           <div className="flex items-center justify-between">
                             <Badge
@@ -123,7 +123,7 @@ function CareermapMain() {
                             </Badge>
                             <ArrowRight
                               size={18}
-                              className="text-[#08C908] hover:text-white group-hover:translate-x-1 transition-all duration-300"
+                              className="text-(--brand) hover:text-(--text) group-hover:translate-x-1 transition-all duration-300"
                             />
 
                           </div>
@@ -137,7 +137,7 @@ function CareermapMain() {
                     {career.locked && (
                       <div className="absolute inset-0 bg-black/70  z-20 rounded-lg ">
                         <div className="absolute top-3 right-3 ">
-                          <Lock className=" w-7 h-7 text-gray-300 block" strokeWidth={1.5} />
+                          <Lock className=" w-7 h-7 text-(--muted) block" strokeWidth={1.5} />
 
                         </div>
                       </div>

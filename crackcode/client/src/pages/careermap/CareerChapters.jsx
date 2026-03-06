@@ -27,7 +27,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Data Structures & Algorithms',
             description: 'Arrays, linked lists, sorting, searching, Big O notation and dynamic programming.',
             questionCount: 21,
-            completed: 10,
+            completed: 5,
             total: 21,
             isUnlocked: true,
             Route: '',

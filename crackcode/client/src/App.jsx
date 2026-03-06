@@ -18,6 +18,7 @@ import LearnMainPage from './pages/learn/LearnMainPage'
 import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from './pages/learn/ChapterSelection'
 import CareerChapterSelectionPage from "./pages/careermap/CareerChapterSelection.jsx";
+import CareerQuizPage from "./pages/careermap/CareerQuizPage.jsx";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path='/email-verify' element={<EmailVerify />} />
           <Route path='/reset-password' element={<ResetPassword />} />
           <Route path='/careermap'element={<CareermapMain/>}/>
+          <Route path='/careermap/:careerId/quiz/:chapterId' element={<CareerQuizPage />} />
           
           {/* Protected routes - require login + verified email */}
           <Route path='/home' element={

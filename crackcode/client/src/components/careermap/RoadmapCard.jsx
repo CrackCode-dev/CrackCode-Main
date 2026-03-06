@@ -51,7 +51,7 @@ const RoadmapCard = ({
                     }
                 </div>
                 {title && (
-                    <h3 className="text-xl font-bold text-white">
+                    <h3 className="text-xl font-bold text-(--text)">
                         {title}
                     </h3>
                 )}
@@ -59,23 +59,23 @@ const RoadmapCard = ({
 
             {/* Description */}
             {description && (
-                <p className="text-sm text-gray-400 mb-4 leading-relaxed">
+                <p className="text-sm text-(--textSec) mb-4 leading-relaxed">
                     {description}
                 </p>
             )}
 
             {/* Divider + Action */}
-            <div className="border-t border-gray-600 pt-3">
+            <div className="border-t border-(--border) pt-3">
                 {isUnlocked ? (
                     <button
                         onClick={(e) => { e.stopPropagation(); onClick?.(); }}
-                        className="text-white text-xs font-bold uppercase tracking-widest
-                                   hover:text-green-400 transition-colors duration-200"
+                        className="text-(--text) text-xs font-bold uppercase tracking-widest
+                                   hover:text-(--brand) transition-colors duration-200"
                     >
                         Start Quiz
                     </button>
                 ) : (
-                    <Lock className="w-4 h-4 text-gray-600" />
+                    <Lock className="w-4 h-4 text-(--muted)" />
                 )}
             </div>
         </ContentCard>
