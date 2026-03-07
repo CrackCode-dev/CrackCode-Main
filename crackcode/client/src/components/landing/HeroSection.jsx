@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { Brain, Code, Zap, Users, ArrowDown } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
 import { cardHoverEffects, animationConfig } from './hoverEffects'
+import Button from '../ui/Button'
+import LetterGlitch from './LetterGlitch'
 
 export default function HeroSection() {
     const navigate = useNavigate()
@@ -22,8 +24,8 @@ export default function HeroSection() {
     return (
         <section style={sectionStyle} className='relative w-full min-h-screen flex flex-col items-center justify-center overflow-hidden py-12'>
             {/* Simple background blobs */}
-            <div className='absolute top-0 right-0 w-96 h-96 rounded-full opacity-10 blur-3xl pointer-events-none' style={{ background: vars.via }} />
-            <div className='absolute bottom-0 left-0 w-96 h-96 rounded-full opacity-10 blur-3xl pointer-events-none' style={{ background: vars.from }} />
+            
+            
 
             <div className='relative z-10 w-full max-w-4xl mx-auto px-6'>
                 {/* Main Title */}
@@ -59,21 +61,21 @@ export default function HeroSection() {
                     {features.map((feature, index) => {
                         const Icon = feature.icon
                         return (
-                                <motion.div
-                                    key={index}
-                                    className='flex items-center gap-2 px-4 py-2 rounded-full border shadow-md backdrop-blur cursor-pointer transition-all duration-300'
-                                    style={{
-                                        background: landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark,
-                                        borderColor: vars.rim
-                                    }}
-                                    whileHover={animationConfig.tagHover}
-                                    transition={animationConfig.cardHover}
-                                    onMouseEnter={(e) => cardHoverEffects.onTagHover(e.currentTarget, vars, landingTheme)}
-                                    onMouseLeave={(e) => cardHoverEffects.onTagLeave(e.currentTarget, vars, landingTheme)}
-                                >
-                                    <Icon className='w-4 h-4 transition-transform duration-300' style={{ color: vars.brand }} />
-                                    <span className='text-sm font-medium' style={{ color: vars.text }}>{feature.label}</span>
-                                </motion.div>
+                            <motion.div
+                                key={index}
+                                className='flex items-center gap-2 px-4 py-2 rounded-full border shadow-md backdrop-blur cursor-pointer transition-all duration-300'
+                                style={{
+                                    background: landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark,
+                                    borderColor: vars.rim
+                                }}
+                                whileHover={animationConfig.tagHover}
+                                transition={animationConfig.cardHover}
+                                onMouseEnter={(e) => cardHoverEffects.onTagHover(e.currentTarget, vars, landingTheme)}
+                                onMouseLeave={(e) => cardHoverEffects.onTagLeave(e.currentTarget, vars, landingTheme)}
+                            >
+                                <Icon className='w-4 h-4 transition-transform duration-300' style={{ color: vars.brand }} />
+                                <span className='text-sm font-medium' style={{ color: vars.text }}>{feature.label}</span>
+                            </motion.div>
                         )
                     })}
                 </motion.div>
@@ -85,7 +87,7 @@ export default function HeroSection() {
                     transition={{ duration: 0.8, delay: 0.3 }}
                     className='flex flex-col sm:flex-row gap-4 justify-center mb-16'
                 >
-                    <motion.button
+                    {/* <motion.button
                         onClick={() => navigate('/login')}
                         className='px-8 py-3 text-white font-semibold rounded-lg transition-all shadow-lg hover:shadow-2xl'
                         style={{
@@ -97,8 +99,13 @@ export default function HeroSection() {
                         transition={{ duration: 0.2 }}
                     >
                         Get Started
-                    </motion.button>
-                    <motion.button
+                    </motion.button> */}
+
+                    <Button onClick={() => navigate('/login')} variant='primary' size='xl' icon={Zap} iconPosition='right'>
+                        Get Started
+                    </Button>
+
+                    {/* <motion.button
                         onClick={() => navigate('/home')}
                         className='px-8 py-3 border-2 font-semibold rounded-lg transition-all shadow-md hover:shadow-xl backdrop-blur'
                         style={{ 
@@ -113,7 +120,11 @@ export default function HeroSection() {
                         onMouseLeave={(e) => cardHoverEffects.onButtonLeave(e.currentTarget, vars)}
                     >
                         Learn More
-                    </motion.button>
+                    </motion.button> */}
+
+                    <Button variant='secondary' size='xl' onClick={() => navigate('/home')} icon={Users} iconPosition='right' className='text-black'>
+                        Learn More
+                    </Button>
                 </motion.div>
 
                 {/* Scroll indicator */}

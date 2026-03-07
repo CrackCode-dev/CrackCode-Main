@@ -33,6 +33,27 @@ const THEME_VARS = {
     "--progressTrack": "#E8D0A0",
     "--challengeBg":   "#FFCE99",
     "--inviteBg":      "#FFCE99",
+
+    //Primary Btn
+    "--btn-p-from":   "#F97316",
+    "--btn-p-via":    "#EA6c00",
+    "--btn-p-to":     "#c2440e",
+    "--btn-p-border": "#9a3412",
+    "--btn-p-shadow": "rgba(154,52,18,1)",
+    "--btn-p-ring":   "#fb923c",
+
+    //Secondary Btn
+    "--btn-s-from":       "#FFFEF5",
+    "--btn-s-via":        "#FFF8DC",
+    "--btn-s-to":         "#F5EDB8",
+    "--btn-s-hover-from": "#FFFFFF",
+    "--btn-s-hover-via":  "#FFF8E0",
+    "--btn-s-hover-to":   "#F0E8A8",
+    "--btn-s-border":     "#f97316",
+    "--btn-s-text":       "#ea6c00",
+    "--btn-s-shadow":     "rgba(194,82,8,0.9)",
+    "--btn-s-inset-top":  "rgba(255,255,255,0.95)",
+    "--btn-s-ring":       "#fb923c",
   },
   cream: {
     "--bg":            "#FFF0D4",
@@ -50,6 +71,27 @@ const THEME_VARS = {
     "--progressTrack": "#DDB870",
     "--challengeBg":   "#FFD896",
     "--inviteBg":      "#FFC875",
+
+    //Primary Btn
+    "--btn-p-from":      "#f97316",
+    "--btn-p-via":       "#ea6c00",
+    "--btn-p-to":        "#c2440e",
+    "--btn-p-border":    "#9a3412",
+    "--btn-p-shadow":    "rgba(154,52,18,1)",
+    "--btn-p-ring":      "#fb923c",
+
+    //Secondary Btn
+    "--btn-s-from":       "#FFFDF1",
+    "--btn-s-via":        "#FFE8B8",
+    "--btn-s-to":         "#FFD896",
+    "--btn-s-hover-from": "#FFFFFF",
+    "--btn-s-hover-via":  "#FFE8C0",
+    "--btn-s-hover-to":   "#FFCF70",
+    "--btn-s-border":     "#f97316",
+    "--btn-s-text":       "#c2440e",
+    "--btn-s-shadow":     "rgba(194,82,8,0.9)",
+    "--btn-s-inset-top":  "rgba(255,255,255,0.9)",
+    "--btn-s-ring":       "#fb923c",
   },
   dark: {
     // Pure black & white theme - minimal, high contrast, clean
@@ -71,6 +113,27 @@ const THEME_VARS = {
     "--progressTrack": "#2A2A2A",      // Progress bar track
     "--challengeBg":   "#161616",      // Challenge card background
     "--inviteBg":      "#1A1A1A",      // Invite/notification background
+
+    //Primary Btn
+    "--btn-p-from":      "#FF9644",
+    "--btn-p-via":       "#e07320",
+    "--btn-p-to":        "#b85a10",
+    "--btn-p-border":    "#7c3a08",
+    "--btn-p-shadow":    "rgba(80,25,0,0.95)",
+    "--btn-p-ring":      "#FF9644",
+
+    //Secondary Btn
+    "--btn-s-from":       "#2A2010",        // dark warm cream top — same hue as #FFFEF5
+    "--btn-s-via":        "#201808",        // darker warm mid
+    "--btn-s-to":         "#170F04",        // darkest warm base
+    "--btn-s-hover-from": "#342816",        // lifted warm on hover
+    "--btn-s-hover-via":  "#281E0C",
+    "--btn-s-hover-to":   "#1E1408",
+    "--btn-s-border":     "#FF9644",
+    "--btn-s-text":       "#FF9644",
+    "--btn-s-shadow":     "rgba(194,82,8,0.8)",  // same orange shadow as light — just softer
+    "--btn-s-inset-top":  "rgba(255,255,255,0.13)",  // stronger highlight — dark bg needs more punch
+    "--btn-s-ring":       "#FF9644",
   },
   country: {
     // Warm dark theme - professional with warm brown undertones
@@ -92,6 +155,27 @@ const THEME_VARS = {
     "--progressTrack": "#4A2E14",
     "--challengeBg":   "#3E2510",
     "--inviteBg":      "#3E2510",
+
+    //Primary Btn
+    "--btn-p-from":      "#f97316",
+    "--btn-p-via":       "#ea6c00",
+    "--btn-p-to":        "#c2440e",
+    "--btn-p-border":    "#7c3a08",
+    "--btn-p-shadow":    "rgba(100,35,0,0.95)",
+    "--btn-p-ring":      "#FF9644",
+
+    //Secondary Btn
+    "--btn-s-from":       "#4A2E14",
+    "--btn-s-via":        "#3D2410",
+    "--btn-s-to":         "#2A1A09",
+    "--btn-s-hover-from": "#573515",
+    "--btn-s-hover-via":  "#4A2A12",
+    "--btn-s-hover-to":   "#341F0C",
+    "--btn-s-border":     "#FF9644",
+    "--btn-s-text":       "#FFCE99",
+    "--btn-s-shadow":     "rgba(194,82,8,0.9)",
+    "--btn-s-inset-top":  "rgba(255,255,255,0.08)",
+    "--btn-s-ring":       "#FF9644",
   },
   midnight: {
     // Deep dark theme - true black base with maximum contrast
@@ -113,6 +197,27 @@ const THEME_VARS = {
     "--progressTrack": "#1F2545",      // Progress bar
     "--challengeBg":   "#141A28",      // Challenge card
     "--inviteBg":      "#14192B",      // Invite card
+
+    //Primary Btn
+    "--btn-p-from":      "#FF9644",
+    "--btn-p-via":       "#e07320",
+    "--btn-p-to":        "#c05a0a",
+    "--btn-p-border":    "#6b3208",
+    "--btn-p-shadow":    "rgba(80,25,0,0.9)",
+    "--btn-p-ring":      "#FF9644",
+
+    //Secondary Btn
+    "--btn-s-from":       "#2D3B52",
+    "--btn-s-via":        "#1F2545",
+    "--btn-s-to":         "#14192B",
+    "--btn-s-hover-from": "#364560",
+    "--btn-s-hover-via":  "#2A3158",
+    "--btn-s-hover-to":   "#1F2545",
+    "--btn-s-border":     "#3A9AFF",
+    "--btn-s-text":       "#3A9AFF",
+    "--btn-s-shadow":     "#1C4D8D",
+    "--btn-s-inset-top":  "#134E8E",
+    "--btn-s-ring":       "#FF3E9B",
   },
 };
 

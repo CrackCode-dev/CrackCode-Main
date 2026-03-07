@@ -24,7 +24,7 @@ function Home() {
     <div className='min-h-screen flex flex-col' style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       <Header variant="default" />
       
-      <main className='flex-1 w-full flex flex-col'>
+      <main className='flex-1 w-full flex flex-col px-5'>
         {/* Top Section with Sidebars - Three Column Layout */}
         <div className='px-6 sm:px-10 py-10 flex-1 flex flex-col'>
           <div className='flex gap-6 pt-20 flex-1 items-stretch'>

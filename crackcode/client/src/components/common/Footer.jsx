@@ -8,6 +8,9 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 const Footer = ({ variant = "default" }) => {
     const { theme } = useTheme()
+    const darkThemes = ["dark", "country", "midnight"];
+    const activeLogo = darkThemes.includes(theme) ? logo_light : logo_dark;
+
     const baseStyles = "w-full flex justify-between items-center flex-shrink-0"
 
     const variants = {
@@ -39,7 +42,7 @@ const Footer = ({ variant = "default" }) => {
         {/* Logo */}
         <div className='cursor-pointer'>
             <img 
-                src={logo_light} 
+                src={activeLogo} 
                 alt="CrackCode Logo" 
                 onClick={handleLogoClick}
                 className='w-15 transition-transform hover:scale-105 duration-300'

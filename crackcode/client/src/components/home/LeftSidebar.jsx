@@ -1,45 +1,45 @@
 import { useState } from 'react'
 import { useTheme } from '../../context/theme/ThemeContext'
-import Card from '../ui/Card'
+import Button from '../ui/Button';
 import { FileUser, Medal, Footprints, Zap, Target, Award, Lightbulb, ArrowRight } from 'lucide-react';
 
 const menuItems = [
-    {
-        icon: FileUser,
-        title: 'Case Files',
-        description: 'Browse and select from active investigations'
-    },
-    {
-        icon: Medal,
-        title: 'Achievements',
-        description: 'Earn badges and unlock special rewards'
-    },
-    {
-        icon: Footprints,
-        title: 'Learning Path',
-        description: 'Follow guided tutorials and resources'
-    }
+  {
+    icon: FileUser,
+    title: 'Case Files',
+    description: 'Browse and select from active investigations'
+  },
+  {
+    icon: Medal,
+    title: 'Achievements',
+    description: 'Earn badges and unlock special rewards'
+  },
+  {
+    icon: Footprints,
+    title: 'Learning Path',
+    description: 'Follow guided tutorials and resources'
+  }
 ]
 
 const statsData = [
-    {
-        icon: Zap,
-        label: 'Current Streak',
-        value: '12 days',
-        color: '#FFE66D'
-    },
-    {
-        icon: Target,
-        label: 'Cases Solved',
-        value: '47',
-        color: '#FF6B6B'
-    },
-    {
-        icon: Award,
-        label: 'Badges Earned',
-        value: '18',
-        color: '#4ECDC4'
-    }
+  {
+    icon: Zap,
+    label: 'Current Streak',
+    value: '12 days',
+    color: '#FFE66D'
+  },
+  {
+    icon: Target,
+    label: 'Cases Solved',
+    value: '47',
+    color: '#FF6B6B'
+  },
+  {
+    icon: Award,
+    label: 'Badges Earned',
+    value: '18',
+    color: '#4ECDC4'
+  }
 ]
 
 function LeftSidebar() {
@@ -66,31 +66,31 @@ function LeftSidebar() {
         <p style={{ color: 'var(--textSec)' }} className='text-sm mb-6 leading-relaxed'>
           Welcome Detective! You've been recruited to solve the most challenging cases in the digital world. Each case tests your algorithmic thinking.
         </p>
-        
+
         <div className='flex flex-col space-y-3'>
-            {menuItems.map((item, index) => (
-                <div 
-                  key={index} 
-                  className='flex flex-row items-start gap-3 p-4 rounded-lg transition-all duration-300 cursor-pointer'
-                  style={{
-                    background: hoveredMenu === index ? 'rgba(255, 165, 0, 0.1)' : 'transparent',
-                    transform: hoveredMenu === index ? 'translateX(4px)' : 'translateX(0)'
-                  }}
-                  onMouseEnter={() => setHoveredMenu(index)}
-                  onMouseLeave={() => setHoveredMenu(null)}
-                >
-                    <div>
-                        <item.icon className='w-6 shrink-0 transition-transform duration-300' style={{ color: 'var(--brand)', transform: hoveredMenu === index ? 'scale(1.2) rotate(10deg)' : 'scale(1)' }} />
-                    </div>
-                    
-                    <div className='flex flex-col flex-1 min-w-0'>
-                        <h3 className='font-bold text-sm'>{item.title}</h3>
-                        <p className='text-xs mt-1 leading-relaxed' style={{ color: 'var(--textSec)' }}>
-                          {item.description}
-                        </p>
-                    </div>
-                </div>
-            ))}
+          {menuItems.map((item, index) => (
+            <div
+              key={index}
+              className='flex flex-row items-start gap-3 p-4 rounded-lg transition-all duration-300 cursor-pointer'
+              style={{
+                background: hoveredMenu === index ? 'rgba(255, 165, 0, 0.1)' : 'transparent',
+                transform: hoveredMenu === index ? 'translateX(4px)' : 'translateX(0)'
+              }}
+              onMouseEnter={() => setHoveredMenu(index)}
+              onMouseLeave={() => setHoveredMenu(null)}
+            >
+              <div>
+                <item.icon className='w-6 shrink-0 transition-transform duration-300' style={{ color: 'var(--brand)', transform: hoveredMenu === index ? 'scale(1.2) rotate(10deg)' : 'scale(1)' }} />
+              </div>
+
+              <div className='flex flex-col flex-1 min-w-0'>
+                <h3 className='font-bold text-sm'>{item.title}</h3>
+                <p className='text-xs mt-1 leading-relaxed' style={{ color: 'var(--textSec)' }}>
+                  {item.description}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -108,15 +108,15 @@ function LeftSidebar() {
           <Zap className='w-5 h-5 animate-pulse' style={{ color: 'var(--brand)' }} />
           Your Progress
         </h3>
-        
+
         <div className='space-y-4'>
           {statsData.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div 
-                key={index} 
+              <div
+                key={index}
                 className='flex items-center justify-between p-4 rounded-lg transition-all duration-300 cursor-pointer'
-                style={{ 
+                style={{
                   background: hoveredStat === index ? 'rgba(255, 165, 0, 0.12)' : 'rgba(255, 165, 0, 0.05)',
                   transform: hoveredStat === index ? 'scale(1.02)' : 'scale(1)'
                 }}
@@ -154,7 +154,7 @@ function LeftSidebar() {
         <p className='text-sm leading-relaxed mb-4' style={{ color: 'var(--textSec)' }}>
           Master arrays and linked lists first—most interview questions build on these fundamentals. Practice daily!
         </p>
-        <button
+        {/* <button
           className='w-full py-2 rounded-md text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2'
           style={{
             background: 'rgba(255, 165, 0, 0.1)',
@@ -172,7 +172,10 @@ function LeftSidebar() {
         >
           View More Tips
           <ArrowRight className='w-4 h-4 transition-transform group-hover:translate-x-1' />
-        </button>
+        </button> */}
+        <Button variant='secondary' size='md' icon={ArrowRight} iconPosition='right' fullWidth>
+          View More Tips
+        </Button>
       </div>
     </div>
   )

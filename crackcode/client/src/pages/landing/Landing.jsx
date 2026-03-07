@@ -6,6 +6,7 @@ import CareerMapSection from '../../components/landing/CareerMapSection'
 import WhyCrackCodeSection from '../../components/landing/WhyCrackCodeSection'
 import { LandingThemeProvider, useLandingTheme, resolveLandingVars } from './LandingThemeContext'
 import { useEffect } from 'react'
+import LetterGlitch from '../../components/landing/LetterGlitch'
 
 function LandingInner() {
   const { landingTheme, setLandingTheme } = useLandingTheme()

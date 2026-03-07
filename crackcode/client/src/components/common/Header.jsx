@@ -16,6 +16,9 @@ import { useState, useEffect } from 'react';
 
 const Header = ({ variant = "default" }) => {
     const { theme } = useTheme()
+    const darkThemes = ["dark", "country", "midnight"];
+    const activeLogo = darkThemes.includes(theme) ? logo_light : logo_dark;
+
     const [showGameProfileModal, setShowGameProfileModal] = useState(false);
     const [modalTimer, setModalTimer] = useState(null);
     const baseStyles = "fixed top-0 left-0 w-full flex justify-between items-center z-50";
@@ -100,7 +103,7 @@ const Header = ({ variant = "default" }) => {
                 {/* Logo */}
                 <div className='cursor-pointer' onClick={handleLogoClick}>
                     <img 
-                        src={logo_light} 
+                        src={activeLogo} 
                         alt="CrackCode Logo" 
                         className='w-16 sm:w-20 transition-transform hover:scale-105 duration-300'
                     />

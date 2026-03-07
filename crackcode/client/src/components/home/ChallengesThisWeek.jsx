@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
 import { Calendar, CheckCircle2, Clock, Flame, ArrowRight } from 'lucide-react';
 import Badge from '../ui/Badge';
+import Button from '../ui/Button';
 
 const WEEKLY_CHALLENGES = [
   {
@@ -35,7 +36,7 @@ const WEEKLY_CHALLENGES = [
     difficulty: 'hard',
     difficultyLabel: 'Hard',
     points: 400,
-    completed: 0,
+    completed: 2,
     total: 3,
     icon: '🏗️',
     color: '#95E1D3'
@@ -157,7 +158,7 @@ export default function ChallengesThisWeek() {
                   </div>
 
                   {/* Progress Bar */}
-                  <div className='mb-4'>
+                  <div className='mb-6'>
                     <div className='flex items-center justify-between mb-2'>
                       <span className='text-xs font-semibold uppercase' style={{ color: 'var(--textSec)' }}>
                         Progress
@@ -181,7 +182,7 @@ export default function ChallengesThisWeek() {
                   </div>
 
                   {/* Footer CTA */}
-                  <button
+                  {/* <button
                     onClick={() => setExpandedId(isExpanded ? null : challenge.id)}
                     className='w-full py-2 px-3 rounded-lg font-semibold transition-all flex items-center justify-between group/btn'
                     style={{
@@ -203,7 +204,10 @@ export default function ChallengesThisWeek() {
                         transform: hoveredId === challenge.id ? 'translateX(4px)' : 'translateX(0)'
                       }}
                     />
-                  </button>
+                  </button> */}
+                  <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right' fullWidth>
+                    {progress === 100 ? 'Completed!' : 'View Challenge'}
+                  </Button>
                 </div>
               </div>
             );
