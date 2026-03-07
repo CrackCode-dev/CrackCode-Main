@@ -13,25 +13,25 @@ export default function CarouselFeatures() {
       icon: Code,
       title: 'Code Challenges',
       description: 'Solve real-world coding problems with varying difficulty levels',
-      color: '#FF6B6B'
+      color: '#FB4141'
     },
     {
       icon: Trophy,
       title: 'Leaderboards',
       description: 'Compete with other developers and climb the global rankings',
-      color: '#4ECDC4'
+      color: '#0992C2'
     },
     {
       icon: Zap,
       title: 'Instant Feedback',
       description: 'Get real-time feedback and suggestions on your solutions',
-      color: '#FFE66D'
+      color: '#FFB33F'
     },
     {
       icon: Layers,
       title: 'Track Progress',
       description: 'Monitor your learning journey with detailed analytics',
-      color: '#95E1D3'
+      color: '#78C841'
     }
   ];
 
@@ -108,34 +108,34 @@ export default function CarouselFeatures() {
               x: { type: 'spring', stiffness: 400, damping: 40, duration: 0.3 },
               opacity: { duration: 0.25 }
             }}
-            className='absolute inset-0 flex items-center justify-center p-8 pb-20'
+            className='absolute inset-0 flex items-center justify-center p-8 pb-15'
           >
-            <div className='flex flex-col items-center text-center gap-5 max-w-sm'>
+            <div className='flex flex-col items-center text-center gap-3 max-w-sm'>
               {/* Icon - Enhanced */}
               <motion.div
-                className='p-4 rounded-full transition-all duration-300 shrink-0'
+                className='p-3 rounded-full transition-all duration-300 shrink-0'
                 style={{
                   background: `${Feature.color}20`,
                   color: Feature.color
                 }}
                 whileHover={{ scale: 1.2, rotate: 10 }}
               >
-                <IconComponent className='w-12 h-12' />
+                <IconComponent className='w-10 h-10' />
               </motion.div>
 
               {/* Content */}
               <div className='min-w-0'>
-                <h3 className='text-2xl font-bold mb-2 break-words' style={{ color: 'var(--text)' }}>
+                <h3 className='text-2xl font-bold mb-2 wrap-break-word' style={{ color: 'var(--text)' }}>
                   {Feature.title}
                 </h3>
-                <p style={{ color: 'var(--textSec)' }} className='text-sm leading-relaxed break-words'>
+                <p style={{ color: 'var(--textSec)' }} className='text-sm leading-relaxed wrap-break-word'>
                   {Feature.description}
                 </p>
               </div>
 
               {/* CTA Button - Premium */}
               <motion.button
-                className='mt-4 px-6 py-2 rounded-lg font-semibold text-sm transition-all duration-300 flex items-center gap-2 shrink-0'
+                className='mt-4 px-6 py-2 rounded-3xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 shrink-0'
                 style={{
                   background: Feature.color,
                   color: '#fff'

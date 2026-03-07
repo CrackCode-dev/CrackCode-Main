@@ -125,7 +125,7 @@ const THEME_VARS = {
     //Secondary Btn
     "--btn-s-from":       "#2A2010",        // dark warm cream top — same hue as #FFFEF5
     "--btn-s-via":        "#201808",        // darker warm mid
-    "--btn-s-to":         "#170F04",        // darkest warm base
+    "--btn-s-to":         "#1F1408",        // darkest warm base
     "--btn-s-hover-from": "#342816",        // lifted warm on hover
     "--btn-s-hover-via":  "#281E0C",
     "--btn-s-hover-to":   "#1E1408",

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
-import { Calendar, CheckCircle2, Clock, Flame, ArrowRight } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, Flame, ArrowRight, ChartColumnBig, Scissors, Pyramid, Cog } from 'lucide-react';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 
@@ -27,7 +27,7 @@ const WEEKLY_CHALLENGES = [
     completed: 1,
     total: 4,
     icon: '✂️',
-    color: '#4ECDC4'
+    color: '#FFB33F'
   },
   {
     id: 'wc-3',
@@ -39,7 +39,7 @@ const WEEKLY_CHALLENGES = [
     completed: 2,
     total: 3,
     icon: '🏗️',
-    color: '#95E1D3'
+    color: '#FF6B6B'
   },
   {
     id: 'wc-4',
@@ -51,7 +51,7 @@ const WEEKLY_CHALLENGES = [
     completed: 3,
     total: 6,
     icon: '⚙️',
-    color: '#FFD93D'
+    color: '#FFB33F'
   }
 ];
 
@@ -182,7 +182,7 @@ export default function ChallengesThisWeek() {
                   </div>
 
                   {/* Footer CTA */}
-                  {/* <button
+                  <button
                     onClick={() => setExpandedId(isExpanded ? null : challenge.id)}
                     className='w-full py-2 px-3 rounded-lg font-semibold transition-all flex items-center justify-between group/btn'
                     style={{
@@ -204,10 +204,10 @@ export default function ChallengesThisWeek() {
                         transform: hoveredId === challenge.id ? 'translateX(4px)' : 'translateX(0)'
                       }}
                     />
-                  </button> */}
-                  <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right' fullWidth>
+                  </button>
+                  {/* <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right' fullWidth>
                     {progress === 100 ? 'Completed!' : 'View Challenge'}
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             );

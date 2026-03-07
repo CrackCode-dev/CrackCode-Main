@@ -26,7 +26,7 @@ const statsData = [
     icon: Zap,
     label: 'Current Streak',
     value: '12 days',
-    color: '#FFE66D'
+    color: '#FFB33F'
   },
   {
     icon: Target,
@@ -148,7 +148,7 @@ function LeftSidebar() {
         }}
       >
         <h3 className='font-bold mb-3 text-lg flex items-center gap-2'>
-          <Lightbulb className='w-5 h-5' style={{ color: '#FFE66D' }} />
+          <Lightbulb className='w-5 h-5' style={{ color: '#FFB33F' }} />
           Quick Tip
         </h3>
         <p className='text-sm leading-relaxed mb-4' style={{ color: 'var(--textSec)' }}>

@@ -4,9 +4,9 @@ import HeroSection from '../../components/landing/HeroSection'
 import AITechSection from '../../components/landing/AITechSection'
 import CareerMapSection from '../../components/landing/CareerMapSection'
 import WhyCrackCodeSection from '../../components/landing/WhyCrackCodeSection'
+import LetterGlitch from '../../components/bgEffect/LetterGlitch'
 import { LandingThemeProvider, useLandingTheme, resolveLandingVars } from './LandingThemeContext'
 import { useEffect } from 'react'
-import LetterGlitch from '../../components/landing/LetterGlitch'
 
 function LandingInner() {
   const { landingTheme, setLandingTheme } = useLandingTheme()
@@ -17,20 +17,15 @@ function LandingInner() {
     window.scrollTo(0, 0)
   }, [])
 
-  const rootStyle = {
-    background: `linear-gradient(180deg, ${vars.from}, ${vars.via}, ${vars.to})`,
-    fontSize: 'clamp(16px, 1.6vw + 12px, 20px)'
-  }
-
-  const motionBg = {
-    background: `linear-gradient(135deg, ${vars.from}, ${vars.via}, ${vars.to})`,
-    backgroundSize: '200% 200%',
-  }
+  // Theme-aware glitch colors - vibrant in both modes
+  const glitchColors = landingTheme === 'light'
+    ? ['#ff6b35', '#f7c244', '#61b3dc', '#61dca3', '#e63946'] // vibrant for light mode
+    : ['#ff6b35', '#f7c244', '#61b3dc', '#61dca3', '#2b4539'] // vibrant for dark mode
 
   return (
-    <div className='relative w-full overflow-x-hidden min-h-screen' style={rootStyle}>
+    <div className='relative w-full overflow-x-hidden min-h-screen'>
       {/* Light/Dark toggle */}
-      <div className='fixed top-5 right-5 z-50'>
+      <div className='fixed top-5 right-5 z-100'>
         <button
           onClick={() => setLandingTheme(landingTheme === 'light' ? 'dark' : 'light')}
           aria-label='Toggle theme'
@@ -51,64 +46,20 @@ function LandingInner() {
         </button>
       </div>
 
-      {/* Animated gradient background */}
-      <motion.div
-        className='fixed inset-0 -z-10'
-        animate={{
-          backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'],
-        }}
-        transition={{
-          duration: 15,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-        style={motionBg}
-      />
-
-      {/* Ambient glowing orbs */}
-      <div className='fixed inset-0 -z-10 overflow-hidden pointer-events-none'>
-        <motion.div
-          className='absolute top-20 left-10 w-72 h-72 rounded-full blur-3xl opacity-10'
-          style={{ background: vars.orb }}
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
+      {/* LetterGlitch Background - Fixed behind everything */}
+      {/* <div className='fixed inset-0 z-0 w-screen h-screen'>
+        <LetterGlitch 
+          glitchColors={glitchColors}
+          glitchSpeed={100} 
+          smooth={true} 
+          outerVignette={false} 
+          centerVignette={true}
+          backgroundColor={vars.from}
         />
-        <motion.div
-          className='absolute bottom-32 right-20 w-96 h-96 rounded-full blur-3xl opacity-5'
-          style={{ background: vars.orb }}
-          animate={{
-            x: [0, -60, 0],
-            y: [0, 40, 0],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-        <motion.div
-          className='absolute top-1/2 right-1/3 w-80 h-80 rounded-full blur-3xl opacity-5'
-          style={{ background: vars.orb }}
-          animate={{
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
-      </div>
+      </div> */}
 
       {/* Content */}
-      <div className='relative z-10'>
+      <div className='relative z-[5]'>
         <HeroSection />
         <AITechSection />
         <CareerMapSection />

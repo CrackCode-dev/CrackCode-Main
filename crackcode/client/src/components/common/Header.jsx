@@ -73,10 +73,6 @@ const Header = ({ variant = "default" }) => {
         };
     }, [modalTimer]);
 
-    const handleAvatarClick = () => {
-        navigate('/user-profile');
-    }
-
     const headerStyle = variant === 'landing' 
         ? {} 
         : {

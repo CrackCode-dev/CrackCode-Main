@@ -71,18 +71,14 @@ export default function WhyCrackCodeSection() {
     }
 
     // Use theme background color
-    const sectionStyle = { background: vars.from }
+    const sectionStyle = { background: vars.to }
 
     // card background depends on theme but prefer resolved vars
     const cardBg = landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark
     const secondaryText = landingTheme === 'light' ? (vars.textSec || '#334155') : (vars.textSec || 'rgba(255,255,255,0.8)')
 
     return (
-        <section style={sectionStyle} className='relative w-full py-20 md:py-32 overflow-hidden'>
-            {/* Decorative background elements */}
-            <div className='absolute top-0 left-0 w-96 h-96 rounded-full filter blur-3xl opacity-10' style={{ background: vars.via }} />
-            <div className='absolute bottom-0 right-0 w-96 h-96 rounded-full filter blur-3xl opacity-10' style={{ background: vars.from }} />
-
+        <section className='relative w-full py-20 md:py-32 overflow-hidden' style={sectionStyle}>
             <div className='relative z-10 container mx-auto px-6 md:px-10'>
                 {/* Section Header */}
                 <motion.div

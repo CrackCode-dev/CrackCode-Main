@@ -6,6 +6,7 @@ const LetterGlitch = ({
   centerVignette = false,
   outerVignette = true,
   smooth = true,
+  backgroundColor = '#000000',
   codeKeywords = [
     // JavaScript/TypeScript
     'const', 'let', 'var', 'function', 'return', 'import', 'export', 'async', 'await', '=>', 'class', 'this', 'new', 'try', 'catch', 'throw', 'typeof', 'instanceof', 'Promise', 'fetch', 'then', 'finally', 'spread', 'map()', 'filter()', 'reduce()', 'forEach', 'Object', 'Array', 'JSON', 'module', 'require', 'default',
@@ -248,14 +249,28 @@ const LetterGlitch = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [glitchSpeed, smooth]);
 
+  // Determine vignette color based on background (light or dark)
+  const isLightBg = backgroundColor === '#ffffff' || backgroundColor === '#fff' || backgroundColor === 'white'
+  const vignetteColor = isLightBg ? '255,255,255' : '0,0,0'
+
   return (
-    <div className="relative w-full h-full bg-black overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden" style={{ backgroundColor }}>
       <canvas ref={canvasRef} className="block w-full h-full" />
       {outerVignette && (
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none bg-[radial-gradient(circle,_rgba(0,0,0,0)_60%,_rgba(0,0,0,1)_100%)]"></div>
+        <div 
+          className="absolute top-0 left-0 w-full h-full pointer-events-none"
+          style={{
+            background: `radial-gradient(circle, rgba(${vignetteColor},0) 60%, rgba(${vignetteColor},1) 100%)`
+          }}
+        />
       )}
       {centerVignette && (
-        <div className="absolute top-0 left-0 w-full h-full pointer-events-none bg-[radial-gradient(circle,_rgba(0,0,0,0.8)_0%,_rgba(0,0,0,0)_60%)]"></div>
+        <div 
+          className="absolute top-0 left-0 w-full h-full pointer-events-none"
+          style={{
+            background: `radial-gradient(circle, rgba(${vignetteColor},0.8) 0%, rgba(${vignetteColor},0) 60%)`
+          }}
+        />
       )}
     </div>
   );

@@ -22,25 +22,25 @@ const LandingThemeContext = createContext(null);
 // ─── Base palette presets ─────────────────────────────────────────────────────
 // Used as fallback if getLandingPalette() from ThemeContext is unavailable.
 const PRESETS = {
-  light: {
-    from:    "#FFFDF1",
-    via:     "#FFCE99",
-    to:      "#FFFFFF",
-    orb:     "rgba(255,150,68,0.06)",
-    text:    "#562F00",
-    textSec: "#7A4420",
-    brand:   "#FF9644",
-    rim:     "rgba(255,150,68,0.08)",
-  },
   dark: {
-    from:    "#0D0D0D",
-    via:     "#1F1408",
-    to:      "#1A1A1A",
-    orb:     "rgba(255,150,68,0.12)",
-    text:    "#F5F5F5",
-    textSec: "rgba(255,255,255,0.85)",
-    brand:   "#FF9644",
-    rim:     "rgba(255,150,68,0.06)",
+    from: "#0C0A09",       // warm charcoal (not pure black)
+    via:  "#C2763A",       // muted deep amber (blends into dark tones)
+    to:   "#110E0C",       // tinted near-black (keeps warmth at tail)
+    orb:  "rgba(194,118,58,0.10)",
+    text: "#F5F0EB",       // warm off-white (softer on dark bg)
+    textSec: "rgba(245,240,235,0.72)",
+    brand: "#E8863C",      // refined brand orange (less neon)
+    rim:  "rgba(194,118,58,0.06)",
+  },
+  light: {
+    from: "#FFFBF5",       // warm cream (not sterile white)
+    via:  "#FFDCB8",       // soft peach (gentle bridge to brand)
+    to:   "#FFF7EF",       // pale sand (warm tail)
+    orb:  "rgba(232,134,60,0.06)",
+    text: "#1A1410",       // warm near-black
+    textSec: "#5C4A3A",    // warm mid-brown (not cold grey)
+    brand: "#E8863C",      // same brand accent
+    rim:  "rgba(232,134,60,0.08)",
   },
 };
 

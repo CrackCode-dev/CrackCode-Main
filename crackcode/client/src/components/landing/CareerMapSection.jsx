@@ -75,10 +75,10 @@ export default function CareerMapSection() {
     const vars = resolveLandingVars(landingTheme)
 
     // Use theme background color
-    const sectionStyle = { background: vars.from }
+    const sectionStyle = { background: vars.via }
 
     return (
-        <section style={sectionStyle} className='relative w-full py-20 md:py-32 overflow-hidden'>
+        <section className='relative w-full py-20 md:py-32 overflow-hidden' style={sectionStyle}>
             {/* Background decoration */}
             <div className='absolute top-0 left-0 w-96 h-96 rounded-full opacity-8 blur-3xl' style={{ background: vars.via }} />
             <div className='absolute bottom-0 right-0 w-96 h-96 rounded-full opacity-8 blur-3xl' style={{ background: vars.from }} />
@@ -158,16 +158,12 @@ export default function CareerMapSection() {
                                 >
                                     📚
                                 </motion.div>
-
-                                {/* Decorative elements */}
-                                <div className='absolute top-4 right-4 w-32 h-32 bg-white/10 rounded-full blur-2xl' />
-                                <div className='absolute bottom-4 left-4 w-40 h-40 bg-white/10 rounded-full blur-2xl' />
                             </div>
                         </div>
                     </motion.div>
 
                     {/* Left column - Cards (right in layout) */}
-                    <motion.div className='flex flex-col gap-6 order-1 lg:order-2'>
+                    <motion.div className='flex flex-col gap-6 order-1 lg:order-2' >
                         <motion.div variants={fadeInUp}>
                             <h3 className='text-4xl md:text-5xl font-bold mb-4 leading-tight' style={{ color: vars.text }}>
                                 Your Career <br />
