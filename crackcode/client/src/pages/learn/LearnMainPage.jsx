@@ -1,12 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/common/Header';
-import LangCard from '../../components/learn/LangCard';
 import pythonIcon from '../../assets/icons/learn/python.png';
 import jsIcon from '../../assets/icons/learn/js.png';
 import javaIcon from '../../assets/icons/learn/java.png';
 import cppIcon from '../../assets/icons/learn/cpp.png';
 
-// Resolved version: use `route` navigation and `chapterCount` (keeps main branch behavior)
 const LearnMainPage = () => {
   const navigate = useNavigate();
 
@@ -14,76 +12,99 @@ const LearnMainPage = () => {
     {
       id: 'python',
       icon: pythonIcon,
-      title: 'The Legend of Python',
-      description:
-        'Join the Python Bureau and uncover hidden patterns in data! Learn to trace and decode algorithms, follow the clues within code, and reveal the secrets behind every function. Perfect for rookie detectives ready to sharpen their Python instincts.',
+      title: 'Python',
+      subtitle: 'The Legend of Python',
+      description: 'Become a Python detective and crack cases: From rookie investigator to master code breaker.',
       chapterCount: 4,
-      headerGradient: 'linear-gradient(to right, #1F3A5F, #FCD34D)',
+      bgColor: 'from-blue-500/10 to-yellow-500/10',
+      borderColor: 'border-blue-400/30',
+      badge: '⭐ Beginner Friendly',
       route: '/learn/python',
     },
     {
       id: 'javascript',
       icon: jsIcon,
-      title: 'Voyage of JavaScript',
-      titleColor: 'text-black',
-      description:
-        'Set sail into the JavaScript seas and plunder the secrets of the digital realm! Learn to track interactions, decipher cunning scripts, and uncover the logic behind ever-changing web pages. Perfect for sharp-eyed pirates ready to master the art of front-end exploration.',
+      title: 'JavaScript',
+      subtitle: 'Classified Operations',
+      description: 'Deploy classified applications as a Java spy: master OOP, Collections, and more to build unbreakable systems.',
       chapterCount: 4,
-      headerGradient: 'linear-gradient(to right, #FFB800, #FFF200)',
+      bgColor: 'from-yellow-500/10 to-orange-500/10',
+      borderColor: 'border-yellow-400/30',
+      badge: '⚡ Frontend Power',
       route: '/learn/javascript',
     },
     {
       id: 'java',
       icon: javaIcon,
-      title: 'Java: Classified Operations',
-      description:
-        'Step into the Java Task Force and investigate the foundations of digital infrastructure. Trace complex logic, decrypt object interactions, and reveal the secrets behind mission-critical backend systems. Perfect for elite agents sharpening their technical expertise.',
+      title: 'Java',
+      subtitle: 'Illegal Operations',
+      description: 'Plan the ultimate heist: Master OOP, Collections, and more techniques as a criminal mastermind building bulletproof systems.',
       chapterCount: 3,
-      headerGradient: 'linear-gradient(to right, #7F1D1D, #F87171)',
+      bgColor: 'from-red-500/10 to-orange-500/10',
+      borderColor: 'border-red-400/30',
+      badge: '🏗️ Enterprise Level',
       route: '/learn/java',
     },
     {
       id: 'cpp',
       icon: cppIcon,
-      title: 'C++: Ghosts in the System',
-      description:
-        'Slip past the firewalls and hunt the echoes hidden deep within the core. Dissect memory fragments, trace algorithmic signatures, and rebuild the logic powering high-performance systems. For hackers fluent in the language of machines.',
+      title: 'C++',
+      subtitle: 'Ghosts in the System',
+      description: 'Become a cyber sentinel: master systems programming, memory management, and exploit high performance hacking techniques.',
       chapterCount: 1,
-      headerGradient: 'linear-gradient(to right, #0F2027, #203A43, #2C5364)',
+      bgColor: 'from-slate-500/10 to-cyan-500/10',
+      borderColor: 'border-slate-400/30',
+      badge: '⚙️ Advanced',
       route: '/learn/cpp',
     },
   ];
 
   return (
-    <div className="h-screen flex flex-col justify-between bg-[#050505] text-white px-6 sm:px-10 py-6">
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       <Header variant="empty" />
 
-      <main className="mt-20 pb-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-10">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-5">Uncover the Mysteries of Programming</h1>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              Embark on your coding investigation with 200+ hours of interactive mystery cases and
-              programming puzzles paired with real-world missions.
-            </p>
-            <p className="text-gray-300 mt-4">
-              Crack the clues, uncover the logic, and solve the toughest code crimes — all for free!
+      <main className="flex-1 px-6 sm:px-10 py-10">
+        <div className="max-w-5xl mx-auto pt-12">
+          <div className="mb-16 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--text)' }}>
+              Choose Your Learning Path
+            </h1>
+            <p className="text-lg" style={{ color: 'var(--text-secondary)' }}>
+              Select a programming language and start solving interactive challenges
             </p>
           </div>
 
-          {/* Language Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
             {languagesData.map((lang) => (
-              <LangCard
+              <div
                 key={lang.id}
-                icon={<img src={lang.icon} className="w-10 h-10 object-contain" alt={lang.title} />}
-                title={lang.title}
-                titleColor={lang.titleColor}
-                description={lang.description}
-                chapterCount={lang.chapterCount}
-                headerGradient={lang.headerGradient}
                 onClick={() => navigate(lang.route)}
-              />
+                className={`group cursor-pointer rounded-xl border-2 ${lang.borderColor} 
+                  bg-gradient-to-br ${lang.bgColor} backdrop-blur-sm
+                  p-6 transition-all duration-300 hover:shadow-lg hover:scale-105`}
+                style={{ backgroundColor: 'var(--card-bg)' }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    <img src={lang.icon} alt={lang.title} className="w-12 h-12 object-contain" />
+                    <div>
+                      <h3 className="text-2xl font-bold">{lang.title}</h3>
+                      <p className="text-sm opacity-75">{lang.subtitle}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <p className="text-sm mb-4 line-clamp-2 opacity-90">{lang.description}</p>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: 'var(--badge-bg)', color: 'var(--badge-text)' }}>
+                    {lang.badge}
+                  </span>
+                  <button className="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                    Start →
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </div>
