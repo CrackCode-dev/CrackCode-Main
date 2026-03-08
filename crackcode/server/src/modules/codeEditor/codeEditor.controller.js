@@ -31,7 +31,7 @@ export const executeTestCases = async (req, res) => {
     // Execute test cases
     const results = await runTestCases(sourceCode, language, testCases);
 
-    // ── AI Error Analysis ────────────────────────────────────────────────────
+    //  AI Error Analysis 
     // attach a clean error type label to every failed result
     results.forEach(r => {
       if (r.status === 'failed') {
@@ -49,7 +49,7 @@ export const executeTestCases = async (req, res) => {
         previousErrors, // real history sent from the client
       });
     }
-    // ────────────────────────────────────────────────────────────────────────
+    // 
 
     const passedCount = results.filter(r => r.status === 'passed').length;
     const failedCount = results.filter(r => r.status === 'failed').length;
