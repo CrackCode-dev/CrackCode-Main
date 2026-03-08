@@ -1,12 +1,16 @@
-import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
+// import dotenv from "dotenv";
+// import path from "path";
+// import { fileURLToPath } from "url";
+// import paymentRoutes from "./src/routes/Payment.routes.js";
 
 
-// Load env variables from server/.env
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-dotenv.config({ path: path.join(__dirname, ".env") });
+// // Load env variables from server/.env
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+// dotenv.config({ path: path.join(__dirname, ".env") });
+
+import "dotenv/config";
+import paymentRoutes from "./src/routes/Payment.routes.js";
 
 import express from "express";
 import cors from "cors";
@@ -31,11 +35,18 @@ import shopRoutes from "./src/routes/Shop.routes.js";
 // Session cleanup utility
 import { cleanupExpiredSessions } from "./src/modules/session/session.service.js";
 
+
+
 // Initialize Express
 const app = express();
 
 // Database Connections
 connectDB(); // MongoDB
+
+
+//Stripe payments webhook
+app.use("/api/payments", paymentRoutes);
+
 
 // Middleware
 app.use(express.json());
@@ -140,3 +151,6 @@ const shutdown = async (signal) => {
 
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGINT", () => shutdown("SIGINT"));
+
+
+

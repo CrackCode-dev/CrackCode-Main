@@ -116,16 +116,19 @@
 
 
 
-// new updated code to centralize XP and users
+// --------------------- new updated code to centralize XP and users ---------------------------------------
 
 import mongoose from "mongoose";
 
 import ShopItem from "./ShopItem.model.js";
 import Inventory from "./Inventory.model.js";
 import Purchase from "./Purchase.model.js";
+import Stripe from "stripe";
 
 // Central XP/tokens spending service (single source of truth)
 import { spendTokens } from "../session/transaction.service.js";
+
+
 
 /**
  * Buy a shop item using XP (or free)
@@ -136,6 +139,7 @@ import { spendTokens } from "../session/transaction.service.js";
  * - writes purchase history
  * Uses a MongoDB transaction so it's all-or-nothing.
  */
+
 export const purchaseItemWithXP = async (userId, itemId) => {
   const session = await mongoose.startSession();
 
@@ -248,4 +252,65 @@ export const getMyInventory = async (userId, category) => {
     .sort({ createdAt: -1 });
 
   return inventory;
+};
+
+
+
+//-----------------------------Payment Gateway using stripe service -------------------------------------------------
+
+
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error("STRIPE_SECRET_KEY is not configured");
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+export const createCheckoutSession = async (userId, itemId) => {
+  const item = await ShopItem.findById(itemId);
+
+  if (!item || !item.isActive) {
+    throw new Error("Item not found or inactive");
+  }
+
+  if (!item.pricing || item.pricing.type !== "paid") {
+    throw new Error("This item is not available for paid checkout");
+  }
+
+  const amount = Number(item.pricing.amount || 0);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Invalid paid item price");
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    payment_method_types: ["card"],
+    client_reference_id: String(userId),
+    metadata: {
+      userId: String(userId),
+      itemId: String(item._id),
+    },
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: item.name,
+            description: item.description || undefined,
+            images: item.imageUrl ? [item.imageUrl] : [],
+          },
+          unit_amount: Math.round(amount * 100), // USD -> cents
+        },
+        quantity: 1,
+      },
+    ],
+    success_url: `${process.env.CLIENT_URL}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.CLIENT_URL}/shop/cancel`,
+  });
+
+  return {
+    success: true,
+    checkoutUrl: session.url,
+    sessionId: session.id,
+  };
 };

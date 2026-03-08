@@ -37,6 +37,53 @@ const run = async () => {
         isActive: true,
         pricing: { type: "xp", amount: 50 },
       },
+
+      {
+        name: "Pro Avatar Pack",
+        description: "Premium avatar pack for CrackCode users.",
+        category: "avatar",
+        pricing: {
+          type: "paid",
+          amount: 4.99,
+          currency: "USD",
+        },
+        imageUrl: "https://example.com/pro-avatar-pack.png",
+        metadata: {
+          rarity: "premium",
+        },
+        isActive: true,
+      },
+      {
+        name: "Dark Neon Theme",
+        description: "Premium neon theme for your CrackCode profile.",
+        category: "theme",
+        pricing: {
+          type: "paid",
+          amount: 2.99,
+          currency: "USD",
+        },
+        imageUrl: "https://example.com/dark-neon-theme.png",
+        metadata: {
+          themeKey: "dark_neon",
+        },
+        isActive: true,
+      },
+      
+      {
+        name: "Legend Badge",
+        description: "Exclusive paid badge for your profile.",
+        category: "badge",
+        pricing: {
+          type: "paid",
+          amount: 1.99,
+          currency: "USD",
+        },
+        imageUrl: "https://example.com/legend-badge.png",
+        metadata: {
+          badgeType: "legend",
+        },
+        isActive: true,
+      }
       
     ];
 

@@ -77,7 +77,10 @@ import {
   purchaseItemWithXP,
   getShopItems,
   getMyInventory,
+  createCheckoutSession
 } from "../modules/shop/Shop.service.js";
+
+
 
 /**
  * Helper: consistently extract userId from req.user
@@ -168,5 +171,29 @@ export const myInventory = async (req, res) => {
       success: false,
       message: error?.message || "Failed to fetch inventory",
     });
+  }
+};
+
+
+
+//-------------------------------Controller for payment gateway------------------------------------------------ 
+
+
+
+
+export const createCheckoutSessionController = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { itemId } = req.body;
+
+    if (!itemId) {
+      return res.status(400).json({ message: "itemId is required" });
+    }
+
+    const session = await createCheckoutSession(userId, itemId);
+
+    res.json(session);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 };
