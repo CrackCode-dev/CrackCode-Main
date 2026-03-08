@@ -16,53 +16,46 @@ const run = async () => {
 
     const items = [
       {
-        name: "Beginner Avatar",
+        name: "Cena",
         category: "avatar",
         isActive: true,
-        imageUrl: "/uploads/avatars/default.png",
+        imageUrl: "uploads/avatars/Cena.png",
         pricing: { type: "free", amount: 0 },
       },
 
       {
-        name: "Pro Avatar",
+        name: "Prime",
         category: "avatar",
         isActive: true,
-        imageUrl: "/uploads/avatars/pro.png",
+        imageUrl: "/uploads/avatars/Prime.png",
         pricing: { type: "xp", amount: 200 },
       },
 
       {
-        name: "Cool Title",
-        category: "title",
-        isActive: true,
-        pricing: { type: "xp", amount: 50 },
-      },
-
-      {
-        name: "Pro Avatar Pack",
-        description: "Premium avatar pack for CrackCode users.",
+        name: "Batman",
+        description: "Premium avatar",
         category: "avatar",
         pricing: {
           type: "paid",
           amount: 4.99,
           currency: "USD",
         },
-        imageUrl: "https://example.com/pro-avatar-pack.png",
+        imageUrl: "/upload/avatars/Batman.png",
         metadata: {
           rarity: "premium",
         },
         isActive: true,
       },
       {
-        name: "Dark Neon Theme",
-        description: "Premium neon theme for your CrackCode profile.",
-        category: "theme",
+        name: "Wizard",
+        description: "Premium avatar",
+        category: "avatar",
         pricing: {
           type: "paid",
           amount: 2.99,
           currency: "USD",
         },
-        imageUrl: "https://example.com/dark-neon-theme.png",
+        imageUrl: "/uploads/avatars/Wizard.png",
         metadata: {
           themeKey: "dark_neon",
         },

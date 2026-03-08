@@ -17,6 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import LearnMainPage from './pages/learn/LearnMainPage'
 import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from './pages/learn/ChapterSelection'
+import AvatarShop from "./pages/shop/AvatarShop";
 
 function App() {
   return (
@@ -71,6 +72,9 @@ function App() {
             // <ProtectedRoute>
               <ChapterSelectionPage />
             // </ProtectedRoute>
+          } />
+
+          <Route path="/shop/avatars" element={<AvatarShop />
           } />
 
         </Routes>
