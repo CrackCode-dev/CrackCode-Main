@@ -1,34 +1,10 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import ChapterCard from '../../components/learn/ChapterCard';
-import { RoadmapNode } from '../../components/ui/Roadmap'; 
 import Header from '../../components/common/Header';
-
-
 import PythonIcon from '../../assets/icons/learn/python.png';
 import JavaScriptIcon from '../../assets/icons/learn/js.png';
 import JavaIcon from '../../assets/icons/learn/java.png';
 import CppIcon from '../../assets/icons/learn/cpp.png';
-
-import PythonFundamentalsImg from '../../assets/icons/learn/chapters/python/py_ch1.png';
-import IntermediatePythonImg from '../../assets/icons/learn/chapters/python/py_ch2.png';
-import DataAnalysisImg from '../../assets/icons/learn/chapters/python/py_ch3.png';
-import WebDevDjangoImg from '../../assets/icons/learn/chapters/python/py_ch4.png';
-
-import JSFundamentalsImg from '../../assets/icons/learn/chapters/js/js_ch1.png';
-import DOMManipulationImg from '../../assets/icons/learn/chapters/js/js_ch2.png';
-import AsyncJSImg from '../../assets/icons/learn/chapters/js/js_ch3.png';
-import ReactBasicsImg from '../../assets/icons/learn/chapters/js/js_ch4.png';
-
-import JavaFundamentalsImg from '../../assets/icons/learn/chapters/java/java_ch1.png';
-import OOPJavaImg from '../../assets/icons/learn/chapters/java/java_ch2.png';
-import JavaCollectionsImg from '../../assets/icons/learn/chapters/java/java_ch3.png';
-import SpringBootImg from '../../assets/icons/learn/chapters/java/java_ch4.png';
-
-import CppFundamentalsImg from '../../assets/icons/learn/chapters/cpp/cpp_ch1.png';
-import PointersMemoryImg from '../../assets/icons/learn/chapters/cpp/cpp_ch2.png';
-import STLImg from '../../assets/icons/learn/chapters/cpp/cpp_ch3.png';
-import SystemsProgrammingImg from '../../assets/icons/learn/chapters/cpp/cpp_ch4.png';
 
 const LANGUAGE_META = {
   python: {
@@ -48,213 +24,200 @@ const LANGUAGE_META = {
     title: 'C++: Ghosts in the System',
   },
 };
-const CHAPTERS_DATA = {
-  python: [
-    {
-      id: 'python-fundamentals',
-      image: PythonFundamentalsImg,
-      title: 'Python Fundamentals',
-      description: 'Learn Programming fundamentals such as variables, control flow, and loops with basics of Python.',
-      difficulty: 'easy',
-      completed: 7,
-      total: 10,
-      status: 'In Progress',
-      route: '/learn/python/fundamentals',
-      questionId: 'py_fundamentals_001', // Link to MongoDB question
-    },
-    {
-      id: 'intermediate-python',
-      image: IntermediatePythonImg,
-      title: 'Intermediate Python',
-      description: 'Begin learning intermediate Python with data structures and object-oriented programming.',
-      difficulty: 'medium',
-      completed: 2,
-      total: 12,
-      status: 'To Begin',
-      route: '/learn/python/intermediate',
-    },
-    {
-      id: 'data-analysis',
-      image: DataAnalysisImg,
-      title: 'Data Analysis with Pandas',
-      description: 'Master data manipulation and analysis using Pandas library for real-world data projects.',
-      difficulty: 'medium',
-      completed: 0,
-      total: 8,
-      status: 'To Begin',
-      route: '/learn/python/data-analysis',
-    },
-    {
-      id: 'web-dev-django',
-      image: WebDevDjangoImg,
-      title: 'Web Development with Django',
-      description: 'Build full-stack web applications using Django framework and best practices.',
-      difficulty: 'hard',
-      completed: 0,
-      total: 15,
-      status: 'To Begin',
-      route: '/learn/python/django',
-    },
-  ],
-  
-  javascript: [
-    {
-      id: 'js-fundamentals',
-      image: JSFundamentalsImg,
-      title: 'JavaScript Fundamentals',
-      description: 'Learn the core concepts of JavaScript including variables, functions, and control structures.',
-      difficulty: 'easy',
-      completed: 2,
-      total: 10,
-      status: 'Completed',
-      route: '/learn/javascript/fundamentals',
-    },
-    {
-      id: 'dom-manipulation',
-      image: DOMManipulationImg,
-      title: 'DOM Manipulation',
-      description: 'Master the Document Object Model and learn to create interactive web pages.',
-      difficulty: 'easy',
-      completed: 3,
-      total: 10,
-      status: 'In Progress',
-      route: '/learn/javascript/dom',
-    },
-    {
-      id: 'async-js',
-      image: AsyncJSImg,
-      title: 'Asynchronous JavaScript',
-      description: 'Understand callbacks, promises, and async/await for handling asynchronous operations.',
-      difficulty: 'medium',
-      completed: 0,
-      total: 8,
-      status: 'To Begin',
-      route: '/learn/javascript/async',
-    },
-    {
-      id: 'react-basics',
-      image: ReactBasicsImg,
-      title: 'React Fundamentals',
-      description: 'Build modern user interfaces with React components, hooks, and state management.',
-      difficulty: 'hard',
-      completed: 0,
-      total: 12,
-      status: 'To Begin',
-      route: '/learn/javascript/react',
-    },
-  ],
-  
-  java: [
-    {
-      id: 'java-fundamentals',
-      image: JavaFundamentalsImg,
-      title: 'Java Fundamentals',
-      description: 'Start your Java journey with syntax, data types, and basic programming concepts.',
-      difficulty: 'easy',
-      completed: 0,
-      total: 10,
-      status: 'To Begin',
-      route: '/learn/java/fundamentals',
-    },
-    {
-      id: 'oop-java',
-      image: OOPJavaImg,
-      title: 'Object-Oriented Programming',
-      description: 'Master classes, objects, inheritance, polymorphism, and encapsulation in Java.',
-      difficulty: 'medium',
-      completed: 0,
-      total: 12,
-      status: 'To Begin',
-      route: '/learn/java/oop',
-    },
-    {
-      id: 'java-collections',
-      image: JavaCollectionsImg,
-      title: 'Java Collections Framework',
-      description: 'Learn to work with Lists, Sets, Maps, and other data structures efficiently.',
-      difficulty: 'medium',
-      completed: 0,
-      total: 8,
-      status: 'To Begin',
-      route: '/learn/java/collections',
-    },
-    {
-      id: 'spring-boot',
-      image: SpringBootImg,
-      title: 'Spring Boot Development',
-      description: 'Build enterprise-grade applications with Spring Boot framework and RESTful APIs.',
-      difficulty: 'hard',
-      completed: 0,
-      total: 15,
-      status: 'To Begin',
-      route: '/learn/java/spring-boot',
-    },
-  ],
-  
-  cpp: [
-    {
-      id: 'cpp-fundamentals',
-      image: CppFundamentalsImg,
-      title: 'C++ Fundamentals',
-      description: 'Learn C++ basics including syntax, variables, operators, and control structures.',
-      difficulty: 'easy',
-      completed: 0,
-      total: 10,
-      status: 'To Begin',
-      route: '/learn/cpp/fundamentals',
-    },
-    {
-      id: 'pointers-memory',
-      image: PointersMemoryImg,
-      title: 'Pointers & Memory Management',
-      description: 'Master pointers, references, dynamic memory allocation, and memory safety.',
-      difficulty: 'medium',
-      completed: 0,
-      total: 12,
-      status: 'To Begin',
-      route: '/learn/cpp/pointers',
-    },
-    {
-      id: 'stl',
-      image: STLImg,
-      title: 'Standard Template Library',
-      description: 'Explore STL containers, algorithms, and iterators for efficient programming.',
-      difficulty: 'medium',
-      completed: 0,
-      total: 8,
-      status: 'To Begin',
-      route: '/learn/cpp/stl',
-    },
-    {
-      id: 'systems-programming',
-      image: SystemsProgrammingImg,
-      title: 'Systems Programming',
-      description: 'Build low-level applications with file I/O, multithreading, and system calls.',
-      difficulty: 'hard',
-      completed: 0,
-      total: 15,
-      status: 'To Begin',
-      route: '/learn/cpp/systems',
-    },
-  ],
+
+const PYTHON_LEVELS = [
+  {
+    id: 'fundamentals',
+    title: 'Fundamentals',
+    description: 'Learn to investigate basic clues and patterns. Master variables, loops, and detective basics.',
+    icon: '🔍',
+    color: 'from-blue-500/10 to-cyan-500/10',
+    borderColor: 'border-blue-400/30',
+    badge: 'Rookie Detective',
+    problemCount: '10-15',
+  },
+  {
+    id: 'easy',
+    title: 'Easy',
+    description: 'Solve simple cases with basic detective techniques. String analysis and pattern recognition.',
+    icon: '📝',
+    color: 'from-emerald-500/10 to-green-500/10',
+    borderColor: 'border-emerald-400/30',
+    badge: 'Junior Detective',
+    problemCount: '10-15',
+  },
+  {
+    id: 'intermediate',
+    title: 'Intermediate',
+    description: 'Tackle complex investigations with advanced methods. Data structures and algorithm techniques.',
+    icon: '🧩',
+    color: 'from-yellow-500/10 to-orange-500/10',
+    borderColor: 'border-yellow-400/30',
+    badge: 'Senior Detective',
+    problemCount: '10-15',
+  },
+  {
+    id: 'hard',
+    title: 'Hard',
+    description: 'Master detective cases - the toughest mysteries to solve. Advanced algorithms and optimization.',
+    icon: '🏆',
+    color: 'from-red-500/10 to-pink-500/10',
+    borderColor: 'border-red-400/30',
+    badge: 'Master Detective',
+    problemCount: '10-15',
+  },
+];
+
+const JAVASCRIPT_LEVELS = [
+  {
+    id: 'fundamentals',
+    title: 'Fundamentals',
+    description: 'Learn to navigate the digital landscape. Master DOM basics and web fundamentals.',
+    icon: '🌐',
+    color: 'from-blue-500/10 to-cyan-500/10',
+    borderColor: 'border-blue-400/30',
+    badge: 'Novice Hacker',
+    problemCount: '10-15',
+  },
+  {
+    id: 'easy',
+    title: 'Easy',
+    description: 'Execute simple web infiltration techniques. Array methods and basic event handling.',
+    icon: '🔓',
+    color: 'from-emerald-500/10 to-green-500/10',
+    borderColor: 'border-emerald-400/30',
+    badge: 'Code Runner',
+    problemCount: '10-15',
+  },
+  {
+    id: 'intermediate',
+    title: 'Intermediate',
+    description: 'Master complex digital penetration methods. Async operations and advanced JS patterns.',
+    icon: '🎯',
+    color: 'from-yellow-500/10 to-orange-500/10',
+    borderColor: 'border-yellow-400/30',
+    badge: 'Elite Hacker',
+    problemCount: '10-15',
+  },
+  {
+    id: 'hard',
+    title: 'Hard',
+    description: 'Execute the ultimate web heist - complete system takeover. Advanced optimizations and system design.',
+    icon: '💣',
+    color: 'from-red-500/10 to-pink-500/10',
+    borderColor: 'border-red-400/30',
+    badge: 'Cyber Legend',
+    problemCount: '10-15',
+  },
+];
+
+const JAVA_LEVELS = [
+  {
+    id: 'fundamentals',
+    title: 'Fundamentals',
+    description: 'Study the heist blueprint - understand your target. Master OOP foundations and class design.',
+    icon: '📋',
+    color: 'from-blue-500/10 to-cyan-500/10',
+    borderColor: 'border-blue-400/30',
+    badge: 'Recruit',
+    problemCount: '10-15',
+  },
+  {
+    id: 'easy',
+    title: 'Easy',
+    description: 'Small jobs to build your criminal reputation. Collections and basic data structures.',
+    icon: '💰',
+    color: 'from-emerald-500/10 to-green-500/10',
+    borderColor: 'border-emerald-400/30',
+    badge: 'Apprentice Thief',
+    problemCount: '10-15',
+  },
+  {
+    id: 'intermediate',
+    title: 'Intermediate',
+    description: 'Complex heists requiring teamwork and planning. Design patterns and advanced structures.',
+    icon: '👥',
+    color: 'from-yellow-500/10 to-orange-500/10',
+    borderColor: 'border-yellow-400/30',
+    badge: 'Mastermind',
+    problemCount: '10-15',
+  },
+  {
+    id: 'hard',
+    title: 'Hard',
+    description: 'The ultimate score - the biggest heist of your career. System design and optimization mastery.',
+    icon: '💎',
+    color: 'from-red-500/10 to-pink-500/10',
+    borderColor: 'border-red-400/30',
+    badge: 'Crime Boss',
+    problemCount: '10-15',
+  },
+];
+
+const CPP_LEVELS = [
+  {
+    id: 'fundamentals',
+    title: 'Fundamentals',
+    description: 'Build your Fortress - Learn Defensive Coding. Master pointers and memory Fundamentals.',
+    icon: '🛡️',
+    color: 'from-blue-500/10 to-cyan-500/10',
+    borderColor: 'border-blue-400/30',
+    badge: 'Recruit Sentinel',
+    problemCount: '10-15',
+  },
+  {
+    id: 'easy',
+    title: 'Easy',
+    description: 'Stop Basic Cyber Threats with Simple Protocols. String Handling and simple Data Structures.',
+    icon: '🔒',
+    color: 'from-emerald-500/10 to-green-500/10',
+    borderColor: 'border-emerald-400/30',
+    badge: 'Guard',
+    problemCount: '10-15',
+  },
+  {
+    id: 'intermediate',
+    title: 'Intermediate',
+    description: 'Intercept Advanced Attacks with Sophisticated Methods. Advanced Memory Management and Algorithms.',
+    icon: '⚔️',
+    color: 'from-yellow-500/10 to-orange-500/10',
+    borderColor: 'border-yellow-400/30',
+    badge: 'Elite Sentinel',
+    problemCount: '10-15',
+  },
+  {
+    id: 'hard',
+    title: 'Hard',
+    description: 'Become a Master Sentinel & Defend against Elite Hackers. Performance optimization and system mastery.',
+    icon: '👑',
+    color: 'from-red-500/10 to-pink-500/10',
+    borderColor: 'border-red-400/30',
+    badge: 'Master Sentinel',
+    problemCount: '10-15',
+  },
+];
+
+const LANGUAGE_LEVELS = {
+  python: PYTHON_LEVELS,
+  javascript: JAVASCRIPT_LEVELS,
+  java: JAVA_LEVELS,
+  cpp: CPP_LEVELS,
 };
 
 const ChapterSelectionPage = () => {
-  const { trackId } = useParams(); 
+  const { trackId } = useParams();
   const navigate = useNavigate();
-  
+
   const languageMeta = LANGUAGE_META[trackId];
-  const chapters = CHAPTERS_DATA[trackId] || [];
-  
-  console.log('ChapterSelectionPage - trackId:', trackId, 'languageMeta:', languageMeta, 'chapters:', chapters);
-  
-  if (!languageMeta) {
+  const levels = LANGUAGE_LEVELS[trackId];
+
+  if (!languageMeta || !levels) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Language not found: {trackId}</h1>
-          <p className="text-gray-400 mb-6">Available: {Object.keys(LANGUAGE_META).join(', ')}</p>
-          <button onClick={() => navigate('/learn')} className="text-green-400 hover:underline">
+          <h1 className="text-2xl font-bold mb-4">Language not found: {trackId}</h1>
+          <p className="mb-6 opacity-75">Available: {Object.keys(LANGUAGE_LEVELS).join(', ')}</p>
+          <button onClick={() => navigate('/learn')} className="font-semibold hover:opacity-75">
             ← Back to Learn
           </button>
         </div>
@@ -262,66 +225,65 @@ const ChapterSelectionPage = () => {
     );
   }
 
-  // Handle chapter click - navigate to code editor with question ID or chapter route
-  const handleChapterClick = (chapter) => {
-    if (chapter.questionId) {
-      // Navigate to code editor with question ID - language is inferred from trackId
-      navigate(`/code-editor/${chapter.questionId}`, { state: { language: trackId } });
-    } else {
-      // Fallback to route if no questionId
-      navigate(chapter.route);
-    }
+  const handleDifficultyClick = (difficulty) => {
+    navigate(`/learn/${trackId}/${difficulty.id}`, { state: { difficulty, language: trackId } });
   };
 
   return (
-    <div className="min-h-screen bg-[#050505]">
-      <Header variant='empty'/>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
+      <Header variant="empty" />
 
-      <main className='pt-20 px-6 sm:px-10 py-6 pb-20'>
-        <div className="max-w-4xl mx-auto">
-
-          {/* Header */}
+      <main className="flex-1 px-6 sm:px-10 py-10">
+        <div className="max-w-5xl mx-auto pt-12">
           <div className="flex items-center gap-4 mb-12">
-            <img src={languageMeta.icon} alt={trackId} className="w-12 h-12 object-contain" />
-            <h1 className="text-3xl md:text-4xl font-bold text-white">
-              {languageMeta.title}
-            </h1>
+            <img src={languageMeta.icon} alt={trackId} className="w-14 h-14 object-contain" />
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold">{languageMeta.title}</h1>
+              <p className="opacity-75">Choose your challenge level</p>
+            </div>
           </div>
 
-          {/* Roadmap + Chapters */}
-          <div className="flex flex-col">
-            {chapters.map((chapter, index) => {
-              const progress = chapter.total > 0 ? (chapter.completed / chapter.total) * 100 : 0;
-
-              return (
-                <div key={chapter.id} className="flex gap-6 md:gap-10">
-                  
-                  {/* Roadmap Column */}
-                  <div className="hidden md:flex flex-col pt-2"> 
-                    {/* pt-2 ensures the circle aligns with the card's top section */}
-                    <RoadmapNode 
-                      progress={progress} 
-                      isLast={index === chapters.length - 1} 
-                    />
-                  </div>
-
-                  {/* Chapter Card Column */}
-                  <div className="flex-1 pb-10"> 
-                    {/* pb-10 controls the vertical distance between chapters */}
-                    <ChapterCard
-                      image={chapter.image}
-                      title={chapter.title}
-                      description={chapter.description}
-                      difficulty={chapter.difficulty}
-                      completed={chapter.completed}
-                      total={chapter.total}
-                      status={chapter.status}
-                      onClick={() => handleChapterClick(chapter)}
-                    />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {levels.map((difficulty) => (
+              <div
+                key={difficulty.id}
+                onClick={() => handleDifficultyClick(difficulty)}
+                className={`group cursor-pointer rounded-xl border-2 ${difficulty.borderColor}
+                  bg-linear-to-br ${difficulty.color} backdrop-blur-sm
+                  p-8 transition-all duration-300 hover:shadow-lg hover:scale-105`}
+                style={{ backgroundColor: 'var(--card-bg)' }}
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-5xl">{difficulty.icon}</span>
+                    <div>
+                      <h3 className="text-2xl font-bold">{difficulty.title}</h3>
+                      <p className="text-sm opacity-75">{difficulty.problemCount} problems</p>
+                    </div>
                   </div>
                 </div>
-              );
-            })}
+
+                <p className="text-sm mb-6 opacity-90">{difficulty.description}</p>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: 'var(--badge-bg)', color: 'var(--badge-text)' }}>
+                    {difficulty.badge}
+                  </span>
+                  <button className="text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity">
+                    Start →
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12">
+            <button
+              onClick={() => navigate('/learn')}
+              className="text-sm font-semibold opacity-75 hover:opacity-100 transition"
+            >
+              ← Back to Languages
+            </button>
           </div>
         </div>
       </main>
@@ -330,4 +292,3 @@ const ChapterSelectionPage = () => {
 };
 
 export default ChapterSelectionPage;
-export { CHAPTERS_DATA, LANGUAGE_META };
