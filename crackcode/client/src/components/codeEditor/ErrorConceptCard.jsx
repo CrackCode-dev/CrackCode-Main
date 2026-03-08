@@ -1,15 +1,5 @@
 import { useState } from 'react';
 
-
-
-//  Header: concept title (like  "Variable Definition")
-//   Body:   conceptLesson + fixDirection (only when expanded)
- 
-//   data comes from te  aiAnalysis field on the test result object
-//    { conceptTitle, conceptLesson, fixDirection }
- 
-
-
 const ErrorConceptCard = ({ conceptTitle, conceptLesson, fixDirection }) => {
   const [isOpen, setIsOpen] = useState(false);
 

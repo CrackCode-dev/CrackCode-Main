@@ -20,7 +20,7 @@ const EditorWrapper = () => {
       <div className="flex-1 min-h-0">
         <Editor
           height="100%"
-          language={language === 'python' ? 'python' : 'javascript'}
+          language={language === 'python' ? 'python' : language === 'cpp' ? 'cpp' : language === 'java' ? 'java' : 'javascript'}
           value={code}
           onChange={(val) => setCode(val || '')}
           onMount={(editor) => { editorRef.current = editor; }}

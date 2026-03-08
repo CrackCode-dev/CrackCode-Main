@@ -28,14 +28,14 @@ const TabBtn = ({ id, label, icon, active, onClick, badge }) => (
 
 // collapsible history card showing one past run
 const HistoryEntry = ({ entry, index }) => {
-  const [open, setOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
   const allPassed = entry.passed === entry.total;
   const statusColor = allPassed ? 'border-emerald-500/40 bg-emerald-900/10' : 'border-red-500/40 bg-red-900/10';
 
   return (
     <div className={`rounded-lg border ${statusColor} overflow-hidden`}>
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setIsOpen(wasOpen => !wasOpen)}
         className="w-full flex items-center justify-between px-3 py-2.5 text-left"
       >
         <div className="flex items-center gap-2 min-w-0">
@@ -50,7 +50,7 @@ const HistoryEntry = ({ entry, index }) => {
         <div className="flex items-center gap-2 shrink-0 ml-2">
           <span className="text-[10px] text-gray-600 font-mono">{entry.timestamp}</span>
           <svg
-            className={`w-3.5 h-3.5 text-gray-500 transition-transform ${open ? 'rotate-180' : ''}`}
+            className={`w-3.5 h-3.5 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
             fill="none" stroke="currentColor" viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -103,6 +103,8 @@ const ConsolePanel = () => {
   }, [isExecuting]);
 
   const errorCount = testResults.filter(r => r.status === 'failed').length;
+  const passCount = testResults.filter(r => r.status === 'passed').length;
+  const passPercentage = testResults.length > 0 ? (passCount / testResults.length) * 100 : 0;
   const historyCount = errorHistory.length;
   const allPassed = testResults.length > 0 && testResults.every(r => r.status === 'passed');
 
@@ -177,11 +179,11 @@ const ConsolePanel = () => {
                   <div className="flex-1 h-1.5 rounded-full bg-gray-800 overflow-hidden">
                     <div
                       className="h-full rounded-full bg-linear-to-r from-emerald-500 to-emerald-400 transition-all"
-                      style={{ width: `${(testResults.filter(r => r.status === 'passed').length / testResults.length) * 100}%` }}
+                      style={{ width: `${passPercentage}%` }}
                     />
                   </div>
                   <span className="text-xs font-mono text-gray-400 shrink-0">
-                    <span className="text-emerald-400 font-bold">{testResults.filter(r => r.status === 'passed').length}</span>
+                    <span className="text-emerald-400 font-bold">{passCount}</span>
                     /{testResults.length} passed
                   </span>
                 </div>
@@ -214,15 +216,15 @@ const ConsolePanel = () => {
 
                       {/* Show input/expected for all cases */}
                       {result.details?.input !== undefined && (
-                        <p className="text-[10px] text-gray-600 mt-1 font-mono truncate">Input: {result.details.input || '(none)'}</p>
+                        <p className="text-[10px] text-gray-600 mt-1 font-mono truncate">Input: {typeof result.details.input === 'object' ? JSON.stringify(result.details.input) : (result.details.input || '(none)')}</p>
                       )}
-                      {result.details?.expected && (
-                        <p className="text-[10px] text-gray-600 font-mono truncate">Expected: {result.details.expected}</p>
+                      {result.details?.expected != null && (
+                        <p className="text-[10px] text-gray-600 font-mono truncate">Expected: {typeof result.details.expected === 'object' ? JSON.stringify(result.details.expected) : result.details.expected}</p>
                       )}
 
                       {/* Show actual output for failed cases */}
                       {result.status === 'failed' && result.error && (
-                        <p className="text-[10px] text-red-400/80 font-mono mt-1 truncate">{result.error.split('\n')[0]}</p>
+                        <p className="text-[10px] text-red-400/80 font-mono mt-1 truncate">{String(result.error).split('\n')[0]}</p>
                       )}
 
                       {/* Time for passed cases */}
@@ -259,7 +261,7 @@ const ConsolePanel = () => {
               </div>
             )}
 
-            {/* ALL PASSED — success state */}
+            {/* ALL PASSED success*/}
             {!isExecuting && allPassed && (
               <div className="flex flex-col items-center justify-center py-10 gap-3 text-center">
                 <div className="text-5xl">🎉</div>
@@ -268,7 +270,7 @@ const ConsolePanel = () => {
               </div>
             )}
 
-            {/* FAILED — show only the primary error using the dedicated diagnosis view */}
+            {/* FAILED show only the primary error using the dedicated diagnosis view */}
             {!isExecuting && testResults.length > 0 && !allPassed && (() => {
               const firstFailed = testResults.find(r => r.status === 'failed');
               if (!firstFailed) return null;
@@ -277,7 +279,7 @@ const ConsolePanel = () => {
           </div>
         )}
 
-        {/* AI ASSISTANT  */}
+        {/* AI ASSISTANT*/}
         {activeRightTab === 'ai-assistant' && <AIAssistantChat />}
 
         {/*HISTORY  */}

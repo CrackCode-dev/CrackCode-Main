@@ -2,22 +2,23 @@ import React, { useRef, useEffect } from 'react';
 import { useEditor } from '../../context/codeEditor/EditorContext';
 
 const getAutoReply = (userMsg, testResults) => {
-  const lower = userMsg.toLowerCase();
+  const messageLower = userMsg.toLowerCase();
 
-  if (lower.includes('hint') || lower.includes('help')) {
-    return "🔍 Detective hint: focus on the edge cases — empty inputs and boundary values are where most suspects hide.";
+  if (messageLower.includes('hint') || messageLower.includes('help')) {
+    return "🔍 Detective hint: focus on the edge cases —> empty inputs and boundary values are where most suspects hide.";
   }
-  if (lower.includes('error') || lower.includes('fail')) {
+  if (messageLower.includes('error') || messageLower.includes('fail')) {
     const failed = testResults?.filter(r => r.status === 'failed') || [];
     if (failed.length > 0 && failed[0].error) {
-      return `🕵️ The evidence points here:\n\n\`\`\`\n${failed[0].error.slice(0, 280)}\n\`\`\`\n\nCheck the line number above carefully.`;
+      const errorMessage = failed[0].error.substring(0, 280);
+      return `🕵️ The evidence points here:\n\n\`\`\`\n${errorMessage}\n\`\`\`\n\nCheck the line number above carefully.`;
     }
     return "🕵️ No errors on record yet. Run your code first, then I can analyse the evidence.";
   }
-  if (lower.includes('time') || lower.includes('complexity') || lower.includes('big o')) {
+  if (messageLower.includes('time') || messageLower.includes('complexity') || messageLower.includes('big o')) {
     return "⏱ For optimal performance, aim for O(n) or O(n log n). Nested loops create O(n²) complexity — a red flag in most cases.";
   }
-  if (lower.includes('loop') || lower.includes('iterate')) {
+  if (messageLower.includes('loop') || messageLower.includes('iterate')) {
     return "🔄 Make sure your loop bounds are correct and you're not going off-index. Off-by-one errors are the most common crime scene.";
   }
   return "🤖 I'm analysing the case file… What specific part of the problem would you like me to investigate?";
@@ -42,12 +43,13 @@ const AIAssistantChat = () => {
     setAiInput('');
     setIsAiTyping(true);
 
-    // handle response delay
+    // Wait 0.9 to 1.5 seconds before showing AI response (feels more natural)
+    const randomDelay = 900 + Math.random() * 600;
     setTimeout(() => {
       const replyText = getAutoReply(text, testResults);
       setAiMessages(prev => [...prev, { role: 'assistant', text: replyText, id: Date.now() + 1 }]);
       setIsAiTyping(false);
-    }, 900 + Math.random() * 600);
+    }, randomDelay);
   };
 
   const handleKeyDown = (e) => {

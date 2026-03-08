@@ -71,7 +71,9 @@ const EditorToolbar = () => {
                        hover:border-gray-500 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
           >
             <option value="python">Python 3</option>
+            <option value="javascript">JavaScript</option>
             <option value="java">Java</option>
+            <option value="cpp">C++</option>
           </select>
 
           {/* Copy button */}

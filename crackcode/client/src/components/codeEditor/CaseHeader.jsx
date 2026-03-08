@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DIFF = {
+const DIFFICULTY_STYLES = {
   easy:         { label: 'Easy',         cls: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
   intermediate: { label: 'Intermediate', cls: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30' },
   hard:         { label: 'Hard',         cls: 'bg-red-500/15 text-red-400 border-red-500/30' },
@@ -8,7 +8,7 @@ const DIFF = {
 
 const CaseHeader = ({ caseNumber, difficulty }) => {
   const key = difficulty?.toLowerCase();
-  const diff = DIFF[key] || DIFF.intermediate;
+  const diff = DIFFICULTY_STYLES[key] || DIFFICULTY_STYLES.intermediate;
 
   return (
     <div className="flex items-center gap-2 flex-wrap">

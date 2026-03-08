@@ -1,14 +1,11 @@
 import { useState } from 'react';
 
-// shows a detailed error breakdown in the errror diagnosis tab
-// uses AI hints if available, otherwise falls back to built-in hints
-
 // built-in hints for each error type, shown when AI is off
-const FALLBACK = {
+const ERROR_HELP_MESSAGES = {
   'Wrong Answer': {
     whatWentWrong: 'Your code ran without errors but produced the wrong output. This usually means the logic or calculation produces a different value than intended.',
     steps: [
-      'Check what your code returns or prints — trace it step by step',
+      'Check what your code returns or prints, trace it step by step',
       'Verify any mathematical formulas or conditions in your logic',
       'Consider edge cases: what happens with 0, negatives, or empty input?',
     ],
@@ -16,13 +13,13 @@ const FALLBACK = {
   'Name Error': {
     whatWentWrong: 'A variable or function name was used that hasn\'t been defined at that point. Think of it like calling someone by a name they don\'t know yet.',
     steps: [
-      'Check for spelling mistakes in variable names — Python is case-sensitive',
+      'Check for spelling mistakes in variable names, Python is case-sensitive',
       'Make sure the variable is defined BEFORE the line where it\'s used',
       'Check if it\'s inside a function but was defined outside (or vice versa)',
     ],
   },
   'Index Error': {
-    whatWentWrong: 'You tried to access a position in a list or string that doesn\'t exist. If a list has 3 items, the valid positions are 0, 1, and 2 — not 3.',
+    whatWentWrong: 'You tried to access a position in a list or string that doesn\'t exist. If a list has 3 items, the valid positions are 0, 1, and 2  not 3.',
     steps: [
       'Print the length of your list/string and compare it to the index you\'re using',
       'Check if your loop goes one step too far (common off-by-one error)',
@@ -30,17 +27,17 @@ const FALLBACK = {
     ],
   },
   'Type Error': {
-    whatWentWrong: 'An operation was performed on data of the wrong type — like trying to add a number to a word. Python and JavaScript need matching types for many operations.',
+    whatWentWrong: 'An operation was performed on data of the wrong type  like trying to add a number to a word. Python and JavaScript need matching types for many operations.',
     steps: [
       'Print or check the type of the variable causing the error',
       'Look for places where you mix strings and numbers without converting',
-      'Check function arguments — are you passing the right types?',
+      'Check function arguments are you passing the right types?',
     ],
   },
   'Syntax Error': {
     whatWentWrong: 'The code structure is invalid and cannot be read. This is like a grammatical error in English — the sentence can\'t be understood.',
     steps: [
-      'Look at the line number in the error — check that line and the one above it',
+      'Look at the line number in the error check that line and the one above it',
       'Check for missing colons (:) after if/for/def/while',
       'Count your opening and closing brackets, parentheses, and quotes',
     ],
@@ -72,7 +69,7 @@ const FALLBACK = {
   'Compilation Error': {
     whatWentWrong: 'The code could not even be compiled — there is a structural error that stops the program before it runs.',
     steps: [
-      'Read the error message carefully — it usually points to the exact line',
+      'Read the error message carefully , it usually points to the exact line',
       'Check for missing semicolons, brackets, or type mismatches',
       'Make sure all function signatures and variable declarations are correct',
     ],
@@ -80,7 +77,7 @@ const FALLBACK = {
 };
 
 const getFallback = (errorType) =>
-  FALLBACK[errorType] || {
+  ERROR_HELP_MESSAGES[errorType] || {
     whatWentWrong: 'An unexpected error occurred while running your code.',
     steps: [
       'Read the error message carefully for clues',
@@ -111,25 +108,25 @@ const getStyle = (errorType) =>
 
 // small expandable card that teaches the concept behind the error
 const ConceptCard = ({ title, lesson }) => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   if (!title) return null;
 
   return (
     <div className="rounded-lg border border-amber-500/25 bg-amber-950/10 overflow-hidden">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => setIsOpen(wasOpen => !wasOpen)}
         className="w-full flex items-center justify-between px-3 py-2 text-left hover:bg-amber-900/15 transition-colors"
       >
         <div className="flex items-center gap-2">
           <span className="text-amber-400 text-xs">📖</span>
           <span className="text-amber-300 text-xs font-semibold">Concept: {title}</span>
         </div>
-        <svg className={`w-3 h-3 text-amber-500 transition-transform ${open ? 'rotate-180' : ''}`}
+        <svg className={`w-3 h-3 text-amber-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
-      {open && lesson && (
+      {isOpen && lesson && (
         <div className="px-3 pb-3 pt-1 border-t border-amber-500/15">
           <p className="text-xs text-amber-100/75 leading-relaxed">{lesson}</p>
         </div>
@@ -176,11 +173,11 @@ const ErrorDiagnosisView = ({ result }) => {
           <div className="grid grid-cols-2 divide-x divide-gray-700/50">
             <div className="p-2.5">
               <p className="text-[10px] text-gray-600 uppercase tracking-widest font-semibold mb-1.5">Expected</p>
-              <p className="text-sm font-mono text-emerald-400 font-bold">{result.expected}</p>
+              <p className="text-sm font-mono text-emerald-400 font-bold">{typeof result.expected === 'object' ? JSON.stringify(result.expected) : String(result.expected ?? '')}</p>
             </div>
             <div className="p-2.5">
               <p className="text-[10px] text-gray-600 uppercase tracking-widest font-semibold mb-1.5">Your Output</p>
-              <p className="text-sm font-mono text-red-400 font-bold">{result.actual || 'no output'}</p>
+              <p className="text-sm font-mono text-red-400 font-bold">{typeof result.actual === 'object' ? JSON.stringify(result.actual) : (result.actual || 'no output')}</p>
             </div>
           </div>
         </div>

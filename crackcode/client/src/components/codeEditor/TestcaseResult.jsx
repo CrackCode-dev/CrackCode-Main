@@ -1,6 +1,13 @@
 import React from 'react';
 import ErrorConceptCard from './ErrorConceptCard';
 
+// Safely convert any value (including objects) to a displayable string
+const toStr = (val) => {
+  if (val === null || val === undefined) return '';
+  if (typeof val === 'object') return JSON.stringify(val);
+  return String(val);
+};
+
 const TestCaseResult = ({ result }) => {
   const getStatusColor = () => {
     switch (result.status) {
@@ -58,15 +65,15 @@ const TestCaseResult = ({ result }) => {
         <div className="bg-[#1a1a1a] rounded p-3 mt-2 border border-red-500/30">
           <div className="text-red-400 text-xs font-semibold mb-1">ERROR:</div>
           <pre className="text-red-300 text-xs font-mono whitespace-pre-wrap overflow-x-auto">
-            {result.error}
+            {toStr(result.error)}
           </pre>
         </div>
       )}
 
       {result.status === 'passed' && result.details && (
         <div className="text-gray-400 text-xs mt-2 pl-8 space-y-1">
-          {result.details.input && <div>Input: {result.details.input}</div>}
-          {result.details.expected && <div>Expected: {result.details.expected}</div>}
+          {result.details.input != null && <div>Input: {toStr(result.details.input)}</div>}
+          {result.details.expected != null && <div>Expected: {toStr(result.details.expected)}</div>}
           {result.details.time && <div>Execution Time: {result.details.time}s</div>}
           {result.details.memory && <div>Memory: {result.details.memory}KB</div>}
         </div>
