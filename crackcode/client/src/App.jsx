@@ -18,6 +18,7 @@ import LearnMainPage from './pages/learn/LearnMainPage'
 import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from './pages/learn/ChapterSelection'
 import AvatarShop from "./pages/shop/AvatarShop";
+import Leaderboard from "./pages/leaderboard/leaderboardPage";
 
 function App() {
   return (
@@ -68,6 +69,11 @@ function App() {
           <Route path="/weeklychallenges" element={
             <WeeklyChallenges />
           } />
+          <Route path="/leaderboard" element={
+            // <ProtectedRoute> 
+              <Leaderboard />
+            // </ProtectedRoute>
+          } />
           <Route path="/learn/:trackId" element={
             // <ProtectedRoute>
               <ChapterSelectionPage />
@@ -85,5 +91,3 @@ function App() {
 }
 
 export default App;
-
-
