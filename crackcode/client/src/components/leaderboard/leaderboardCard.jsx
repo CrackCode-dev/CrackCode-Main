@@ -3,6 +3,22 @@
  * Uses CSS variables from ThemeContext — works with all themes (light/dark/cream/etc.)
  */
 
+// ADDED: renders image path as <img>, emoji as <span>
+const Avatar = ({ src }) => {
+  const isPath = src && (src.startsWith("/") || src.startsWith("http") || src.includes(".png") || src.includes(".jpg") || src.includes(".webp") || src.includes(".svg"));
+  if (isPath) {
+    return (
+      <img
+        src={src}
+        alt="avatar"
+        style={{ width: "72px", height: "72px", borderRadius: "50%", objectFit: "cover", display: "block", margin: "8px auto 0" }}
+        onError={(e) => { e.target.style.display = "none"; }}
+      />
+    );
+  }
+  return <span style={{ fontSize: "3rem", marginTop: 8, lineHeight: 1 }}>{src || "🕵️"}</span>;
+};
+
 const LeaderboardCard = ({ user, type }) => {
   const isGold   = type === "gold";
   const isSilver = type === "silver";
@@ -25,7 +41,6 @@ const LeaderboardCard = ({ user, type }) => {
     width:           "224px",
     gap:             "6px",
     border:          `1px solid ${accent.border}`,
-    // ✅ Theme-aware background and text
     background:      "var(--surface)",
     color:           "var(--text)",
     transition:      "transform 0.3s",
@@ -54,8 +69,8 @@ const LeaderboardCard = ({ user, type }) => {
         </span>
       )}
 
-      {/* Avatar */}
-      <span style={{ fontSize: "3rem", marginTop: 8, lineHeight: 1 }}>{user.avatar}</span>
+      {/* FIXED: was <span>{user.avatar}</span> which printed path as text */}
+      <Avatar src={user.avatar} />
 
       {/* Username */}
       <h3 style={{ fontFamily: "'Rajdhani', sans-serif", fontSize: "1.2rem", fontWeight: 700,

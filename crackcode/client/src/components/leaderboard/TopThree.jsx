@@ -1,5 +1,6 @@
 import LeaderboardCard from "./leaderboardCard";
 
+
 const TopThree = ({ users = [] }) => {
   if (users.length < 3) return null;
 
