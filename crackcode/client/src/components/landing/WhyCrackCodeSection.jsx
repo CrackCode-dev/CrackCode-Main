@@ -1,10 +1,12 @@
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { Gamepad2, Brain, Globe, Trophy, Zap, Users } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
 import { cardHoverEffects, animationConfig } from './hoverEffects'
 import Button from '../ui/Button'
 
 export default function WhyCrackCodeSection() {
+    const navigate = useNavigate()
     const { landingTheme } = useLandingTheme()
     const vars = resolveLandingVars(landingTheme)
 

@@ -18,13 +18,15 @@ import { getLandingPalette } from "../../context/theme/ThemeContext";
 // ============================================================
 
 const LandingThemeContext = createContext(null);
+const LANDING_THEME_STORAGE_KEY = "crackcode_landing_theme";
 
 // ─── Base palette presets ─────────────────────────────────────────────────────
 // Used as fallback if getLandingPalette() from ThemeContext is unavailable.
 const PRESETS = {
   dark: {
-    from: "#0C0A09",       // warm charcoal (not pure black)
+    from: "#0B0A08",       // warm charcoal (not pure black)
     via:  "#C2763A",       // muted deep amber (blends into dark tones)
+    via2: "#0E0C0A",      // very dark near-black (extra depth for dark mode)
     to:   "#110E0C",       // tinted near-black (keeps warmth at tail)
     orb:  "rgba(194,118,58,0.10)",
     text: "#F5F0EB",       // warm off-white (softer on dark bg)
@@ -33,8 +35,9 @@ const PRESETS = {
     rim:  "rgba(194,118,58,0.06)",
   },
   light: {
-    from: "#FFFBF5",       // warm cream (not sterile white)
+    from: "#FFFBF5",       // warm cream (not sterile white) 
     via:  "#FFDCB8",       // soft peach (gentle bridge to brand)
+    via2: "#FFF8F0",       // lighter peach (extra warmth for light bg)
     to:   "#FFF7EF",       // pale sand (warm tail)
     orb:  "rgba(232,134,60,0.06)",
     text: "#1A1410",       // warm near-black
@@ -95,7 +98,17 @@ const LANDING_BUTTON_VARS = {
 
 // ─── Provider ─────────────────────────────────────────────────────────────────
 export function LandingThemeProvider({ children, defaultTheme = "light" }) {
-  const [landingTheme, setLandingTheme] = useState(defaultTheme);
+  const [landingTheme, setLandingTheme] = useState(() => {
+    const savedLandingTheme = localStorage.getItem(LANDING_THEME_STORAGE_KEY);
+    if (savedLandingTheme === "light" || savedLandingTheme === "dark") {
+      return savedLandingTheme;
+    }
+
+    const globalTheme = localStorage.getItem("crackcode_theme");
+    return globalTheme === "dark" || globalTheme === "midnight" || globalTheme === "country"
+      ? "dark"
+      : defaultTheme;
+  });
   const wrapperRef = React.useRef(null);
 
   // Inject CSS variables onto the wrapper <div>, NOT onto :root.
@@ -128,6 +141,7 @@ export function LandingThemeProvider({ children, defaultTheme = "light" }) {
     });
 
     el.setAttribute("data-landing-theme", landingTheme);
+    localStorage.setItem(LANDING_THEME_STORAGE_KEY, landingTheme);
   }, [landingTheme]);
 
   return (

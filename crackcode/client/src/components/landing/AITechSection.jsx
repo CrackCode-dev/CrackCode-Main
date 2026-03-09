@@ -30,7 +30,7 @@ export default function AITechSection() {
     const vars = resolveLandingVars(landingTheme)
 
     // Use theme background color
-    const sectionStyle = { background: vars.from }
+    const sectionStyle = { background: vars.via }
 
     return (
 

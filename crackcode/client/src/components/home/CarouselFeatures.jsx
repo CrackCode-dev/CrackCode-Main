@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/theme/ThemeContext';
 import { Zap, Code, Trophy, Layers } from 'lucide-react';
+import Button from '../ui/Button';
 
 export default function CarouselFeatures() {
   useTheme() // Subscribe to theme changes for CSS variables
@@ -134,7 +135,7 @@ export default function CarouselFeatures() {
               </div>
 
               {/* CTA Button - Premium */}
-              <motion.button
+              {/* <motion.button
                 className='mt-4 px-6 py-2 rounded-3xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 shrink-0'
                 style={{
                   background: Feature.color,
@@ -147,7 +148,12 @@ export default function CarouselFeatures() {
                 <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
                 </svg>
-              </motion.button>
+              </motion.button> */}
+              <Button style={{
+                background: Feature.color,
+                borderColor: Feature.color}}>
+                Explore
+              </Button>
             </div>
           </motion.div>
         </AnimatePresence>

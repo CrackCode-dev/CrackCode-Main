@@ -75,7 +75,7 @@ export default function CareerMapSection() {
     const vars = resolveLandingVars(landingTheme)
 
     // Use theme background color
-    const sectionStyle = { background: vars.via }
+    const sectionStyle = { background: vars.via2 }
 
     return (
         <section className='relative w-full py-20 md:py-32 overflow-hidden' style={sectionStyle}>

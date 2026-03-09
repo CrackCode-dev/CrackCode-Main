@@ -182,7 +182,7 @@ export default function ChallengesThisWeek() {
                   </div>
 
                   {/* Footer CTA */}
-                  <button
+                  {/* <button
                     onClick={() => setExpandedId(isExpanded ? null : challenge.id)}
                     className='w-full py-2 px-3 rounded-lg font-semibold transition-all flex items-center justify-between group/btn'
                     style={{
@@ -204,10 +204,12 @@ export default function ChallengesThisWeek() {
                         transform: hoveredId === challenge.id ? 'translateX(4px)' : 'translateX(0)'
                       }}
                     />
-                  </button>
-                  {/* <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right' fullWidth>
+                  </button> */}
+                  <Button variant='primary' size='sm' icon={ArrowRight} iconPosition='right' fullWidth style={{
+                                                                                                          background: getProgressColor(progress),
+                                                                                                          borderColor: getProgressColor(progress)}}>
                     {progress === 100 ? 'Completed!' : 'View Challenge'}
-                  </Button> */}
+                  </Button>
                 </div>
               </div>
             );
