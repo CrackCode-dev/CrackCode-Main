@@ -4,6 +4,7 @@ import axios from "../../api/axios";
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import Button from "../../components/ui/Button";
+import ThemeSwitch from "../../components/common/ThemeSwitcher";
 
 const CaseLogMainPage = () => {
   const [cases, setCases] = useState([]);
@@ -36,8 +37,14 @@ const CaseLogMainPage = () => {
 
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
+      
       {/* Navbar */}
       <Header />
+
+      {/* Theme Switch Button */}
+      <div className="absolute top-6 right-10 z-50">
+        <ThemeSwitch />
+      </div>
 
       <main className="flex-1 px-10 pt-28 pb-16">
 
@@ -57,7 +64,7 @@ const CaseLogMainPage = () => {
           </p>
         </div>
 
-        {/* ❗ Empty State */}
+        {/* Empty State */}
         {cases.length === 0 && (
           <p className="text-center text-gray-500">
             No cases available right now.
@@ -105,6 +112,7 @@ const CaseLogMainPage = () => {
             </div>
           ))}
         </div>
+
       </main>
 
       <Footer />

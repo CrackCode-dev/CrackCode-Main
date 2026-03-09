@@ -11,39 +11,30 @@ import LeaderboardTable from "../../components/leaderboard/leaderboardTable";
 import Header from "../../components/common/Header";
 import Footer from "../../components/common/Footer";
 import Button from "../../components/ui/Button";
+import ThemeSwitch from "../../components/common/ThemeSwitcher";
 
 // Leaderboard page component
 const LeaderboardPage = () => {
 
-  // React router navigation
   const navigate = useNavigate();
 
-  // State variables
-  const [leaders, setLeaders] = useState([]);   // All leaderboard users
-  const [myRank,  setMyRank]  = useState(null); // Logged-in user's rank
-  const [loading, setLoading] = useState(true); // Loading indicator
-  const [error,   setError]   = useState(null); // Error message
-  const [filter,  setFilter]  = useState("all");// Leaderboard filter
+  const [leaders, setLeaders] = useState([]);
+  const [myRank, setMyRank] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [filter, setFilter] = useState("all");
 
-  /**
-   * Normalize backend player data
-   * This ensures consistent structure for UI components
-   */
   const normalize = (player, index) => ({
-    rank:           player.position        ?? index + 1,
-    name:           player.username        ?? "Unknown",
-    title:          player.rank            ?? "Rookie",
-    specialization: player.specialization  ?? "General",
-    points:         player.totalXP         ?? 0,
-    cases:          player.casesSolved     ?? 0,
-    streak:         player.streak          ?? 0,
-    avatar:         player.avatar          ?? "🕵️",
+    rank: player.position ?? index + 1,
+    name: player.username ?? "Unknown",
+    title: player.rank ?? "Rookie",
+    specialization: player.specialization ?? "General",
+    points: player.totalXP ?? 0,
+    cases: player.casesSolved ?? 0,
+    streak: player.streak ?? 0,
+    avatar: player.avatar ?? "🕵️",
   });
 
-  /**
-   * Load leaderboard data when page loads
-   * Also reload if filter changes
-   */
   useEffect(() => {
 
     const load = async () => {
@@ -51,14 +42,13 @@ const LeaderboardPage = () => {
       setError(null);
 
       try {
-        // Fetch leaderboard data
+
         const data = await fetchGlobalLeaderboard();
 
         if (data && data.length > 0) {
           setLeaders(data.map(normalize));
         }
 
-        // Fetch logged in user's rank
         try {
           const me = await fetchMyRank();
 
@@ -66,9 +56,7 @@ const LeaderboardPage = () => {
             setMyRank(me);
           }
 
-        } catch {
-          // User not logged in
-        }
+        } catch {}
 
       } catch (err) {
 
@@ -84,16 +72,14 @@ const LeaderboardPage = () => {
 
     load();
 
-  }, [filter]); // reload when filter changes
+  }, [filter]);
 
-  // Extract top 3 players
   const topThree = leaders.slice(0, 3);
 
-  // Leaderboard filter buttons
   const filterButtons = [
-    { label: "All Time", value: "all"     },
-    { label: "Monthly",  value: "monthly" },
-    { label: "Weekly",   value: "weekly"  },
+    { label: "All Time", value: "all" },
+    { label: "Monthly", value: "monthly" },
+    { label: "Weekly", value: "weekly" },
   ];
 
   return (
@@ -106,16 +92,14 @@ const LeaderboardPage = () => {
       }}
     >
 
-      {/* Google fonts for styling */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
-
-      {/* Top Navigation */}
       <Header />
 
-      {/* HQ button (Fixed under navbar) */}
+      {/* Theme Switch */}
+      <div className="absolute top-6 right-10 z-50">
+        <ThemeSwitch />
+      </div>
+
+      {/* HQ button */}
       <button
         onClick={() => navigate("/hq")}
         style={{
@@ -136,16 +120,13 @@ const LeaderboardPage = () => {
           cursor: "pointer",
           letterSpacing: "0.5px",
         }}
-        onMouseEnter={e => { e.currentTarget.style.background = "var(--brandSoft)"; }}
-        onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
       >
         🏠 HQ
       </button>
 
-      {/* Main content */}
       <main className="flex-1 px-10 pb-16 pt-24">
 
-        {/* Filter buttons (top-right) */}
+        {/* Filter buttons */}
         <div className="flex justify-end max-w-5xl mx-auto mb-8">
           <div className="flex gap-3">
             {filterButtons.map(({ label, value }) => (
@@ -160,21 +141,17 @@ const LeaderboardPage = () => {
           </div>
         </div>
 
-        {/* Page title */}
+        {/* Title */}
         <div className="text-center mb-12">
-          <h1
-            className="flex items-center justify-center gap-3 text-4xl font-bold tracking-wide"
-            style={{ fontFamily: "'Rajdhani', sans-serif" }}
-          >
+          <h1 className="text-4xl font-bold tracking-wide">
             🏆 Detective Hall of Fame
           </h1>
-
           <p className="text-[var(--muted)]">
             Top investigators in the Code Detectives agency
           </p>
         </div>
 
-        {/* Logged-in user's rank banner */}
+        {/* My Rank */}
         {myRank && (
           <div
             className="flex items-center justify-between rounded-xl px-6 py-4 mb-10 max-w-5xl mx-auto border"
@@ -184,79 +161,53 @@ const LeaderboardPage = () => {
             }}
           >
 
-            {/* User info */}
             <div className="flex items-center gap-3">
-
               <span className="text-2xl">
                 {myRank.avatar ?? "🕵️"}
               </span>
 
               <div>
-                <p className="text-xs text-[var(--muted)] uppercase tracking-widest mb-0.5">
+                <p className="text-xs text-[var(--muted)] uppercase">
                   Your Rank
                 </p>
 
-                <p
-                  className="font-semibold"
-                  style={{ fontFamily: "'Rajdhani', sans-serif" }}
-                >
+                <p className="font-semibold">
                   {myRank.username}
                 </p>
               </div>
-
             </div>
 
-            {/* Rank stats */}
             <div className="flex items-center gap-8 text-sm">
 
               <div className="text-center">
-                <p
-                  className="text-[var(--muted)]"
-                  style={{ fontFamily: "'Rajdhani', sans-serif" }}
-                >
+                <p className="text-[var(--muted)]">
                   #{myRank.position}
                 </p>
-
                 <p className="text-[var(--muted)]">Position</p>
               </div>
 
               <div className="text-center">
-                <p
-                  className="text-[var(--muted)] font-bold text-lg"
-                  style={{ fontFamily: "'Rajdhani', sans-serif" }}
-                >
+                <p className="text-[var(--muted)] font-bold text-lg">
                   {(myRank.totalXP ?? 0).toLocaleString()}
                 </p>
-
-                <p className="text-[var(--muted)] text-xs">
-                  Total XP
-                </p>
+                <p className="text-[var(--muted)] text-xs">Total XP</p>
               </div>
 
               <div className="text-center">
-                <p
-                  className="font-bold text-lg"
-                  style={{
-                    color: "var(--accent)",
-                    fontFamily: "'Rajdhani', sans-serif"
-                  }}
-                >
+                <p className="font-bold text-lg" style={{ color: "var(--accent)" }}>
                   🔥 {myRank.streak ?? 0}
                 </p>
-
-                <p className="text-[var(--muted)] mt-2 text-sm">
-                  Streak
-                </p>
+                <p className="text-[var(--muted)] text-sm">Streak</p>
               </div>
 
             </div>
+
           </div>
         )}
 
-        {/* Loading state */}
         {loading ? (
 
-          <div className="flex flex-col items-center justify-center py-24 gap-3">
+          <div className="flex flex-col items-center py-24">
             <span className="text-4xl animate-pulse">🔍</span>
             <p className="text-[var(--muted)] mt-2 text-sm">
               Investigating records…
@@ -265,8 +216,7 @@ const LeaderboardPage = () => {
 
         ) : error ? (
 
-          /* Error state */
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
+          <div className="flex flex-col items-center py-24 gap-4">
 
             <span className="text-4xl">⚠️</span>
 
@@ -282,8 +232,6 @@ const LeaderboardPage = () => {
                 border: "1px solid var(--brand)",
                 color: "var(--brand)",
                 background: "transparent",
-                fontSize: "14px",
-                fontWeight: "600",
                 cursor: "pointer",
               }}
             >
@@ -294,23 +242,19 @@ const LeaderboardPage = () => {
 
         ) : (
 
-          /* Leaderboard content */
           <div className="max-w-5xl mx-auto">
 
-            {/* Top 3 players */}
             <TopThree users={topThree} />
 
-            {/* Leaderboard table */}
             <LeaderboardTable data={leaders} />
 
-            {/* Back to top button */}
             <div className="flex justify-center mt-10">
               <Button
                 variant="outline"
                 onClick={() =>
                   window.scrollTo({
                     top: 0,
-                    behavior: "smooth"
+                    behavior: "smooth",
                   })
                 }
               >
@@ -323,7 +267,6 @@ const LeaderboardPage = () => {
 
       </main>
 
-      {/* Page footer */}
       <Footer />
 
     </div>
