@@ -16,7 +16,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import LearnMainPage from './pages/learn/LearnMainPage'
 import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
-import ChapterSelectionPage from './pages/learn/ChapterSelection'
+import ChapterSelectionPage from "./pages/learn/ChapterSelection";
+import Leaderboard from "./pages/leaderboard/leaderboardPage";
 import CareerChapterSelectionPage from "./pages/careermap/CareerChapterSelection.jsx";
 import CareerQuizPage from "./pages/careermap/CareerQuizPage.jsx";
 
@@ -35,6 +36,7 @@ function App() {
           <Route path='/reset-password' element={<ResetPassword />} />
           <Route path='/careermap'element={<CareermapMain/>}/>
           <Route path='/careermap/:careerId/quiz/:chapterId' element={<CareerQuizPage />} />
+          <Route path='/careermaps-Main' element={<CareermapMain />} />
           
           {/* Protected routes - require login + verified email */}
           <Route path='/home' element={
@@ -70,6 +72,11 @@ function App() {
           <Route path="/weeklychallenges" element={
             <WeeklyChallenges />
           } />
+          <Route path="/leaderboard" element={
+            // <ProtectedRoute> 
+              <Leaderboard />
+            // </ProtectedRoute>
+          } />
           <Route path="/learn/:trackId" element={
             // <ProtectedRoute>
               <ChapterSelectionPage />
@@ -89,5 +96,3 @@ function App() {
 }
 
 export default App;
-
-

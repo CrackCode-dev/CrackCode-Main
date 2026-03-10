@@ -30,14 +30,11 @@ export default function AITechSection() {
     const vars = resolveLandingVars(landingTheme)
 
     // Use theme background color
-    const sectionStyle = { background: vars.from }
+    const sectionStyle = { background: vars.via }
 
     return (
 
-        <section style={sectionStyle} className='relative w-full py-8 md:py-12 overflow-hidden'>
-            {/* Light background blobs */}
-            <div className='absolute top-0 right-0 w-80 h-80 rounded-full opacity-8 blur-3xl' style={{ background: vars.via }} />
-            <div className='absolute bottom-0 left-0 w-80 h-80 rounded-full opacity-8 blur-3xl' style={{ background: vars.from }} />
+        <section className='relative w-full py-8 md:py-20 overflow-hidden' style={sectionStyle}>
 
             <div className='relative z-10 container mx-auto px-6'>
                 {/* Section Title */}

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
-import { Clock, Zap, Target, Flame, AlertCircle } from 'lucide-react';
+import { Clock, Zap, Target, Flame, AlertCircle, Info } from 'lucide-react';
 import Badge from '../ui/Badge';
+import Button from '../ui/Button';
 
 // Utility function to format seconds to readable time format
 const formatTime = (seconds) => {
@@ -165,7 +166,7 @@ export default function DailyChallenge() {
 
       {/* Action Buttons */}
       <div className='flex gap-4 mb-5'>
-        <button
+        {/* <button
           className='flex-1 py-4 px-6 rounded-lg font-bold text-lg transition-all duration-300 flex items-center justify-center gap-2 hover:shadow-lg'
           style={{
             background: 'var(--brand)',
@@ -175,8 +176,11 @@ export default function DailyChallenge() {
         >
           <Target className='w-6 h-6' />
           Start Challenge
-        </button>
-        <button
+        </button> */}
+        <Button variant='primary' size='lg' icon={Target} fullWidth>
+          Start Challenge
+        </Button>
+        {/* <button
           className='flex-1 py-4 px-6 rounded-lg font-bold text-lg transition-all duration-300 hover:shadow-md'
           style={{
             background: 'rgba(255, 165, 0, 0.1)',
@@ -185,7 +189,10 @@ export default function DailyChallenge() {
           }}
         >
           Details
-        </button>
+        </button> */}
+        <Button variant='secondary' size='lg' icon={Info} fullWidth>
+          Details
+        </Button>
       </div>
 
       {/* Info Tip */}

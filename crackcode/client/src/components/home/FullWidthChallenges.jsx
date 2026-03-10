@@ -125,7 +125,7 @@ function FullWidthChallenges() {
                   <p className='text-xs' style={{ color: 'var(--textSec)' }}>Earn Points</p>
                   <p className='text-2xl font-bold' style={{ color: 'var(--brand)' }}>+{caseItem.points}</p>
                 </div>
-                <button 
+                {/* <button 
                   className='px-6 py-3 rounded-lg font-bold text-base transition-all duration-300 flex items-center gap-2 group/btn'
                   style={{
                     background: hoveredId === caseItem.id ? 'var(--brand)' : 'rgba(255, 165, 0, 0.1)',
@@ -135,7 +135,10 @@ function FullWidthChallenges() {
                 >
                   Start
                   <ArrowRight className='w-5 h-5 transition-transform group-hover/btn:translate-x-1' />
-                </button>
+                </button> */}
+                <Button variant='secondary' size='md' icon={ArrowRight} iconPosition='right'>
+                  Start
+                </Button>
               </div>
             </div>
           ))}
