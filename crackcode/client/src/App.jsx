@@ -29,6 +29,7 @@ function App() {
       <UserProgressProvider>
         <ToastContainer />
         <Routes>
+<<<<<<< HEAD
           {/* ── Public routes ───────────────────────────── */}
           <Route path="/"                   element={<Landing />} />
           <Route path="/login"              element={<Login />} />
@@ -42,6 +43,60 @@ function App() {
           <Route path="/weeklychallenges"   element={<WeeklyChallenges />} />
           <Route path="/learn"              element={<LearnMainPage />} />
           <Route path="/learn/:trackId"     element={<ChapterSelectionPage />} />
+=======
+          {/* Public routes */}
+          <Route path='/' element={<Landing />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/verify-account' element={<EmailVerify />} />
+          <Route path='/email-verify' element={<EmailVerify />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
+          <Route path='/careermaps-Main' element={<CareermapMain />} />
+          
+          {/* Protected routes - require login + verified email */}
+          <Route path='/home' element={
+            // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
+              <Home />
+            // </ProtectedRoute>
+          } />
+          <Route path='/gamer-profile' element={
+            <ProtectedRoute>
+              <GameProfile />
+            </ProtectedRoute>
+          } />
+          <Route path='/user-profile' element={
+            // <ProtectedRoute>
+              <UserProfile />
+            // </ProtectedRoute>
+          } />
+          <Route path='/learn' element={
+            // <ProtectedRoute>
+              <LearnMainPage />
+            // </ProtectedRoute>
+          } />
+          <Route path='/code-editor/:problemId' element={
+            // <ProtectedRoute>
+              <CodeEditorPage />
+            // </ProtectedRoute>
+          } />
+          <Route path='/code-editor' element={
+            // <ProtectedRoute>
+              <CodeEditorPage />
+            // </ProtectedRoute>
+          } />
+          <Route path="/weeklychallenges" element={
+            <WeeklyChallenges />
+          } />
+          <Route path="/leaderboard" element={
+            // <ProtectedRoute> 
+              <Leaderboard />
+            // </ProtectedRoute>
+          } />
+          <Route path="/learn/:trackId" element={
+            // <ProtectedRoute>
+              <ChapterSelectionPage />
+            // </ProtectedRoute>
+          } />
+>>>>>>> d2cb478399d0030ce0d86a1564ce4d82e8d6778a
 
           {/* ── Protected routes ────────────────────────── */}
           <Route path="/home"               element={<Home />} />

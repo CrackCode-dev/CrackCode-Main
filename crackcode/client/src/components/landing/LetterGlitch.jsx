@@ -249,16 +249,8 @@ const LetterGlitch = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [glitchSpeed, smooth]);
 
-  // Determine vignette color based on background brightness
-  const getBrightness = (hex) => {
-    const color = hex.replace('#', '')
-    const r = parseInt(color.substr(0, 2), 16)
-    const g = parseInt(color.substr(2, 2), 16)
-    const b = parseInt(color.substr(4, 2), 16)
-    return (r * 299 + g * 587 + b * 114) / 1000
-  }
-  
-  const isLightBg = getBrightness(backgroundColor) > 128
+  // Determine vignette color based on background (light or dark)
+  const isLightBg = backgroundColor === '#ffffff' || backgroundColor === '#fff' || backgroundColor === 'white'
   const vignetteColor = isLightBg ? '255,255,255' : '0,0,0'
 
   return (

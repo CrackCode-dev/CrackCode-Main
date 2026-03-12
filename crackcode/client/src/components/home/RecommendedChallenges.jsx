@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
 import { Sparkles, TrendingUp, Zap, Lock, ArrowRight } from 'lucide-react';
 import Badge from '../ui/Badge';
+import Button from '../ui/Button';
 
 const RECOMMENDED_CHALLENGES = [
   {
@@ -169,7 +170,7 @@ export default function RecommendedChallenges() {
                     <Lock className='w-3 h-3' />
                     {challenge.timeEstimate}
                   </div>
-                  <button
+                  {/* <button
                     onClick={(e) => toggleSaved(challenge.id, e)}
                     className='px-3 py-2 rounded-lg font-semibold transition-all flex items-center gap-2'
                     style={{
@@ -179,7 +180,10 @@ export default function RecommendedChallenges() {
                   >
                     Start
                     <ArrowRight className='w-3 h-3' />
-                  </button>
+                  </button> */}
+                  <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right'>
+                    Start Challenge
+                  </Button>
                 </div>
               </div>
 
@@ -196,7 +200,7 @@ export default function RecommendedChallenges() {
 
         {/* View All Button */}
         <div className='mt-8 text-center'>
-          <button
+          {/* <button
             className='px-8 py-3 rounded-lg font-semibold transition-all flex items-center gap-2 mx-auto'
             style={{
               background: 'rgba(255, 165, 0, 0.1)',
@@ -214,7 +218,10 @@ export default function RecommendedChallenges() {
           >
             View All Recommendations
             <ArrowRight className='w-4 h-4' />
-          </button>
+          </button> */}
+          <Button variant='primary' size='md' icon={ArrowRight} iconPosition='right'>
+            View All Recommendations
+          </Button>
         </div>
       </div>
     </div>

@@ -85,7 +85,7 @@ const LeaderboardPage = () => {
   return (
 
     <div
-      className="min-h-screen flex flex-col relative"
+      className="min-h-screen flex flex-col relative px-6 sm:px-10 py-6"
       style={{
         backgroundColor: "var(--bg)",
         color: "var(--text)",

@@ -24,14 +24,14 @@ function CareermapMain() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0B0B0B] text-white flex flex-col pt-[850px]  ">
+    <div className="h-screen bg-[#0B0B0B] text-white flex flex-col  ">
       {/*HQ Button */}
       <div className="absolute top-6 left-6 z-30">
     <HQBtn />
   </div>
 
       {/* Header Section */}
-      <header className="text-center px-8 py-12  mb-8">
+      <header className="text-center px-8 py-12  mt-20">
         <h1 className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
           Choose the best career path that suits you!
         </h1>
