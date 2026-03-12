@@ -16,7 +16,7 @@ function TopContentArea() {
               <Sparkles className='w-6 h-6' style={{ color: 'var(--brand)' }} />
               <span className='text-sm font-bold uppercase tracking-wide' style={{ color: 'var(--brand)' }}>Welcome Back</span>
             </div>
-            <h1 className='text-5xl font-bold mb-4'>Hello, Detective! 🔍</h1>
+            <h1 className='text-5xl font-bold mb-4'>Hello, Detective!</h1>
             <p style={{ color: 'var(--textSec)' }} className='text-lg max-w-lg leading-relaxed'>
               You're on a 5-day streak! Keep solving mysteries and climbing the leaderboard. Ready to uncover the next case?
             </p>

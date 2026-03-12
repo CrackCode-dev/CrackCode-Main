@@ -240,9 +240,10 @@ Production-ready structure
 
 import mongoose from "mongoose";
 import User from "../auth/User.model.js";
+import redisClient from "../leaderboard/redis.config.js"; // ← adjust path if needed
 
 /**
- * Transaction Service (MongoDB Only)
+ * Transaction Service (MongoDB + Redis Leaderboard Sync)
  * Handles atomic operations for XP, tokens, and shop purchases.
  */
 
@@ -279,6 +280,27 @@ const logTransaction = (userId, type, data) => {
 // ─────────────────────────────────────────────────────────────
 // XP AWARD
 // ─────────────────────────────────────────────────────────────
+// ─── Redis leaderboard sync helper ──────────────────────────
+const syncLeaderboard = async (username, totalXP) => {
+  try {
+    if (redisClient.isOpen) {
+      await redisClient.zAdd("global_leaderboard", {
+        score: totalXP,
+        value: username,
+      });
+    }
+  } catch (err) {
+    console.warn("⚠️ Redis leaderboard sync failed:", err.message);
+    // Non-fatal — MongoDB remains the source of truth
+  }
+};
+
+// ─── Public API ──────────────────────────────────────────────
+
+/**
+ * Award XP to a user (with automatic rank recalculation).
+ * Uses a MongoDB transaction for safety.
+ */
 export const awardXP = async (userId, amount, source = "unknown") => {
   const session = await mongoose.startSession();
 
@@ -295,6 +317,9 @@ export const awardXP = async (userId, amount, source = "unknown") => {
 
     await user.save({ session });
     await session.commitTransaction();
+
+    // ✅ Sync updated XP to Redis leaderboard
+    await syncLeaderboard(user.username, user.totalXP);
 
     logTransaction(userId, "XP_AWARD", {
       amount,
@@ -428,6 +453,9 @@ export const awardRewards = async (
     user.rank = newRank;
     await user.save();
   }
+
+  // ✅ Sync updated XP to Redis leaderboard
+  await syncLeaderboard(user.username, user.totalXP);
 
   logTransaction(userId, "REWARD_COMBINED", {
     xp,

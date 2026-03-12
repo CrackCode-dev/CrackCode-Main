@@ -33,7 +33,7 @@ function App() {
           <Route path='/verify-account' element={<EmailVerify />} />
           <Route path='/email-verify' element={<EmailVerify />} />
           <Route path='/reset-password' element={<ResetPassword />} />
-          <Route path='/careermaps-Main'element={<CareermapMain/>}/>
+          <Route path='/careermaps-Main' element={<CareermapMain />} />
           
           {/* Protected routes - require login + verified email */}
           <Route path='/home' element={
