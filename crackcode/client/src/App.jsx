@@ -29,79 +29,25 @@ function App() {
       <UserProgressProvider>
         <ToastContainer />
         <Routes>
-<<<<<<< HEAD
-          {/* ── Public routes ───────────────────────────── */}
-          <Route path="/"                   element={<Landing />} />
-          <Route path="/login"              element={<Login />} />
-          <Route path="/verify-account"     element={<EmailVerify />} />
-          <Route path="/email-verify"       element={<EmailVerify />} />
-          <Route path="/reset-password"     element={<ResetPassword />} />
-          <Route path="/careermaps-Main"    element={<CareermapMain />} />
-          <Route path="/caselog"            element={<CaseLogMainPage />} />
-          <Route path="/caselog/details"    element={<CaseLogPage />} />
-          <Route path="/leaderboard"        element={<Leaderboard />} />
-          <Route path="/weeklychallenges"   element={<WeeklyChallenges />} />
-          <Route path="/learn"              element={<LearnMainPage />} />
-          <Route path="/learn/:trackId"     element={<ChapterSelectionPage />} />
-=======
+
           {/* Public routes */}
-          <Route path='/' element={<Landing />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/verify-account' element={<EmailVerify />} />
-          <Route path='/email-verify' element={<EmailVerify />} />
-          <Route path='/reset-password' element={<ResetPassword />} />
-          <Route path='/careermaps-Main' element={<CareermapMain />} />
-          
-          {/* Protected routes - require login + verified email */}
-          <Route path='/home' element={
-            // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
-              <Home />
-            // </ProtectedRoute>
-          } />
-          <Route path='/gamer-profile' element={
-            <ProtectedRoute>
-              <GameProfile />
-            </ProtectedRoute>
-          } />
-          <Route path='/user-profile' element={
-            // <ProtectedRoute>
-              <UserProfile />
-            // </ProtectedRoute>
-          } />
-          <Route path='/learn' element={
-            // <ProtectedRoute>
-              <LearnMainPage />
-            // </ProtectedRoute>
-          } />
-          <Route path='/code-editor/:problemId' element={
-            // <ProtectedRoute>
-              <CodeEditorPage />
-            // </ProtectedRoute>
-          } />
-          <Route path='/code-editor' element={
-            // <ProtectedRoute>
-              <CodeEditorPage />
-            // </ProtectedRoute>
-          } />
-          <Route path="/weeklychallenges" element={
-            <WeeklyChallenges />
-          } />
-          <Route path="/leaderboard" element={
-            // <ProtectedRoute> 
-              <Leaderboard />
-            // </ProtectedRoute>
-          } />
-          <Route path="/learn/:trackId" element={
-            // <ProtectedRoute>
-              <ChapterSelectionPage />
-            // </ProtectedRoute>
-          } />
->>>>>>> d2cb478399d0030ce0d86a1564ce4d82e8d6778a
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/verify-account" element={<EmailVerify />} />
+          <Route path="/email-verify" element={<EmailVerify />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/careermaps-Main" element={<CareermapMain />} />
+          <Route path="/caselog" element={<CaseLogMainPage />} />
+          <Route path="/caselog/details" element={<CaseLogPage />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="/weeklychallenges" element={<WeeklyChallenges />} />
+          <Route path="/learn" element={<LearnMainPage />} />
+          <Route path="/learn/:trackId" element={<ChapterSelectionPage />} />
 
-          {/* ── Protected routes ────────────────────────── */}
-          <Route path="/home"               element={<Home />} />
+          {/* Protected routes */}
+          <Route path="/home" element={<Home />} />
 
-          <Route path="/user-profile"       element={<UserProfile />} />
+          <Route path="/user-profile" element={<UserProfile />} />
 
           <Route
             path="/gamer-profile"
@@ -122,7 +68,8 @@ function App() {
           />
 
           <Route path="/code-editor/:problemId" element={<CodeEditorPage />} />
-          <Route path="/code-editor"            element={<CodeEditorPage />} />
+          <Route path="/code-editor" element={<CodeEditorPage />} />
+
         </Routes>
       </UserProgressProvider>
     </ThemeProvider>
