@@ -1,4 +1,6 @@
 import { getQuestionsByDifficulty } from "./question.service.js";
+import { updateProgress } from "../progress/progress.service.js";
+
 
 export const getQuestions = async (req, res) => {
 
