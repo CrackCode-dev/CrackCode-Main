@@ -1,20 +1,25 @@
-import Question from "./Question.model.js";
-import { checkFillBlankAnswer } from "./answerChecker.js";
+import { getQuestionsByDifficulty } from "./question.service.js";
 
-export const checkAnswer = async (req, res) => {
+export const getQuestions = async (req, res) => {
 
-  const { questionId, answer } = req.body;
+  try {
 
-  const question = await Question.findById(questionId);
+    const { difficulty } = req.query;
 
-  if (!question) {
-    return res.status(404).json({ message: "Question not found" });
+    const questions = await getQuestionsByDifficulty(difficulty);
+
+    res.json({
+      success: true,
+      data: questions
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+
   }
-
-  const isCorrect = checkFillBlankAnswer(answer, question.answers);
-
-  res.json({
-    correct: isCorrect
-  });
 
 };
