@@ -241,7 +241,6 @@ Production-ready structure
 import mongoose from "mongoose";
 import User from "../auth/User.model.js";
 import redisClient from "../leaderboard/redis.config.js"; // ← adjust path if needed
-import redisClient from "../leaderboard/redis.config.js"; // ← adjust path if needed
 
 /**
  * Transaction Service (MongoDB + Redis Leaderboard Sync)
