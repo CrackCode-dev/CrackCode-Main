@@ -1,4 +1,108 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import { BrowserRouter, Routes, Route } from "react-router-dom";
+// import { ThemeProvider } from './context/theme/ThemeContext'
+// import { UserProgressProvider } from './context/userauth/UserProgressContext'
+// import './App.css'
+// import Home from './pages/home/Home'
+// import Landing from './pages/landing/Landing'
+// import EmailVerify from './pages/userauth/EmailVerify'
+// import Login from './pages/userauth/Login'
+// import ResetPassword from './pages/userauth/ResetPassword'
+// import CareermapMain from './pages/careermap/CareermapMain' 
+// import GameProfile from './pages/gameprofile/gameprofile'
+// import UserProfile from './pages/userprofile/userprofile'
+// import CodeEditorPage from './pages/codeEditor/CodeEditorPage'
+// import ProtectedRoute from './components/common/ProtectedRoute'
+// import { ToastContainer } from 'react-toastify';
+// import 'react-toastify/dist/ReactToastify.css';
+// import LearnMainPage from './pages/learn/LearnMainPage'
+// import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
+// import ChapterSelectionPage from './pages/learn/ChapterSelection'
+// import AvatarShop from "./pages/shop/AvatarShop";
+// import Leaderboard from "./pages/leaderboard/leaderboardPage";
+
+// function App() {
+//   return (
+//     <ThemeProvider>
+//       <UserProgressProvider>
+//         <div>
+//           <ToastContainer />
+//         <Routes>
+//           {/* Public routes */}
+//           <Route path='/' element={<Landing />} />
+//           <Route path='/login' element={<Login />} />
+//           <Route path='/verify-account' element={<EmailVerify />} />
+//           <Route path='/email-verify' element={<EmailVerify />} />
+//           <Route path='/reset-password' element={<ResetPassword />} />
+//           <Route path='/careermaps-Main' element={<CareermapMain />} />
+          
+//           {/* Protected routes - require login + verified email */}
+//           <Route path='/home' element={
+//             // <ProtectedRoute>   //temp unwrapped to bypass auth when navigating to home(dev stage)
+//               <Home />
+//             // </ProtectedRoute>
+//           } />
+//           <Route path='/gamer-profile' element={
+//             <ProtectedRoute>
+//               <GameProfile />
+//             </ProtectedRoute>
+//           } />
+//           <Route path='/user-profile' element={
+//             // <ProtectedRoute>
+//               <UserProfile />
+//             // </ProtectedRoute>
+//           } />
+//           <Route path='/learn' element={
+//             // <ProtectedRoute>
+//               <LearnMainPage />
+//             // </ProtectedRoute>
+//           } />
+//           <Route path='/code-editor/:problemId' element={
+//             // <ProtectedRoute>
+//               <CodeEditorPage />
+//             // </ProtectedRoute>
+//           } />
+//           <Route path='/code-editor' element={
+//             // <ProtectedRoute>
+//               <CodeEditorPage />
+//             // </ProtectedRoute>
+//           } />
+//           <Route path="/weeklychallenges" element={
+//             <WeeklyChallenges />
+//           } />
+//           <Route path="/leaderboard" element={
+//             // <ProtectedRoute> 
+//               <Leaderboard />
+//             // </ProtectedRoute>
+//           } />
+//           <Route path="/learn/:trackId" element={
+//             // <ProtectedRoute>
+//               <ChapterSelectionPage />
+//             // </ProtectedRoute>
+//           } />
+
+//           <Route path="/shop/avatars" element={<AvatarShop />
+//           } />
+
+//         </Routes>
+//         </div>
+//       </UserProgressProvider>
+//     </ThemeProvider>
+//   )
+// }
+
+// export default App;
+
+
+
+/* -----------------------------------------------------------------------------------------------------*/
+//Testing purpose!!! make sure remove the comments on the top after the testing is 100% done!!!!!
+/* ---------------------------------------------------------------------------------------------------------
+/* -----------------------------------------------------------------------------------------------------*/
+
+
+
+
+import { Routes, Route } from "react-router-dom";
 import { ThemeProvider } from './context/theme/ThemeContext'
 import { UserProgressProvider } from './context/userauth/UserProgressContext'
 import './App.css'
@@ -19,6 +123,9 @@ import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from './pages/learn/ChapterSelection'
 import AvatarShop from "./pages/shop/AvatarShop";
 import Leaderboard from "./pages/leaderboard/leaderboardPage";
+import DetectiveStore from "./pages/shop/DetectiveStore";
+
+
 
 function App() {
   return (
@@ -34,6 +141,8 @@ function App() {
           <Route path='/email-verify' element={<EmailVerify />} />
           <Route path='/reset-password' element={<ResetPassword />} />
           <Route path='/careermaps-Main' element={<CareermapMain />} />
+          <Route path="/store" element={<DetectiveStore />} />
+        
           
           {/* Protected routes - require login + verified email */}
           <Route path='/home' element={
@@ -91,3 +200,4 @@ function App() {
 }
 
 export default App;
+

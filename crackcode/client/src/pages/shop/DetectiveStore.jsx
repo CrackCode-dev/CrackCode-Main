@@ -3,19 +3,41 @@ import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
 
 export default function DetectiveStore() {
-
   const [items, setItems] = useState([]);
   const [category, setCategory] = useState("all");
 
   useEffect(() => {
     const fetchItems = async () => {
-      const res = await fetch("http://localhost:3000/shop/items");
-      const data = await res.json();
-      setItems(data);
+      try {
+        const res = await fetch("http://localhost:5050/api/shop/items");
+        const data = await res.json();
+        console.log("shop items response:", data);
+        setItems(Array.isArray(data) ? data : data.items || []);
+      } catch (error) {
+        console.error("Failed to fetch store items:", error);
+      }
     };
 
     fetchItems();
   }, []);
+
+  const handleBuy = async (itemId) => {
+    try {
+      const res = await fetch("http://localhost:5050/api/shop/purchase", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ itemId }),
+      });
+
+      const data = await res.json();
+      console.log("Purchase result:", data);
+    } catch (error) {
+      console.error("Purchase failed:", error);
+    }
+  };
 
   const filteredItems =
     category === "all"
@@ -24,17 +46,10 @@ export default function DetectiveStore() {
 
   return (
     <div className="flex min-h-screen bg-black text-white">
-
-      {/* Sidebar */}
       <StoreSidebar category={category} setCategory={setCategory} />
 
-      {/* Main content */}
       <div className="flex-1 p-10">
-
-        <h1 className="text-5xl font-bold mb-2">
-          Detective Store
-        </h1>
-
+        <h1 className="text-5xl font-bold mb-2">Detective Store</h1>
         <p className="text-gray-400 mb-10">
           Unlock exclusive avatars, themes, and titles to customize your detective profile
         </p>
@@ -43,10 +58,8 @@ export default function DetectiveStore() {
           {category === "all" ? "All Items" : category}
         </h2>
 
-        <StoreGrid items={filteredItems} />
-
+        <StoreGrid items={filteredItems} onBuy={handleBuy} />
       </div>
-
     </div>
   );
 }
