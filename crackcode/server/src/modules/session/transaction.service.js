@@ -277,6 +277,23 @@ const logTransaction = (userId, type, data) => {
   );
 };
 
+
+const syncLeaderboard = async (username, totalXP) => {
+  try {
+    if (redisClient.isOpen) {
+      await redisClient.zAdd("global_leaderboard", {
+        score: totalXP,
+        value: username,
+      });
+    }
+  } catch (err) {
+    console.warn("⚠️ Redis leaderboard sync failed:", err.message);
+    // Non-fatal — MongoDB remains the source of truth
+  }
+};
+
+
+
 // ─── Public API ──────────────────────────────────────────────
 
 /**
@@ -483,3 +500,4 @@ export default {
   getBalance,
   calculateRank,
 };
+
