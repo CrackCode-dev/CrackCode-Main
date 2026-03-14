@@ -9,7 +9,8 @@ const CodeEditorContent = () => {
   const { problemId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { error, setLanguage } = useProblemData(problemId);
+  const preloadedQuestion = location.state?.question || null;
+  const { error, setLanguage } = useProblemData(problemId, preloadedQuestion);
 
   useEffect(() => {
     if (location.state?.language) {
