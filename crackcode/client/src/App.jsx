@@ -19,6 +19,8 @@ import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from "./pages/learn/ChapterSelection";
 import Leaderboard from "./pages/leaderboard/leaderboardPage";
 
+import QuestionListPage from './pages/learn/SubChapterSelection'
+
 function App() {
   return (
     <ThemeProvider>
@@ -32,7 +34,11 @@ function App() {
           <Route path='/verify-account' element={<EmailVerify />} />
           <Route path='/email-verify' element={<EmailVerify />} />
           <Route path='/reset-password' element={<ResetPassword />} />
+
           <Route path='/careermaps-Main' element={<CareermapMain />} />
+
+          <Route path='/careermap' element={<CareermapMain/>}/>
+
           
           {/* Protected routes - require login + verified email */}
           <Route path='/home' element={
@@ -76,6 +82,11 @@ function App() {
           <Route path="/learn/:trackId" element={
             // <ProtectedRoute>
               <ChapterSelectionPage />
+            // </ProtectedRoute>
+          } />
+          <Route path="/learn/:trackId/:difficultyId" element={
+            // <ProtectedRoute>
+              <QuestionListPage />
             // </ProtectedRoute>
           } />
 

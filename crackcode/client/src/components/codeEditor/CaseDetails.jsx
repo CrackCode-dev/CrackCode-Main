@@ -40,10 +40,10 @@ const CaseDetails = () => {
 
       {/* Scrollable body */}
       <div className="px-5 py-5 space-y-6">
-        {/* Description */}
-        <p className="text-gray-400 text-sm leading-relaxed">
+        {/* Description with newline support */}
+        <div className="text-gray-400 text-sm leading-relaxed whitespace-pre-line">
           {currentProblem.description}
-        </p>
+        </div>
 
         <ObjectivesList objectives={currentProblem.objectives} />
 

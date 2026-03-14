@@ -42,12 +42,31 @@ export const useCodeExecution = () => {
     }
 
     try {
-      // send up to 3 test cases (Judge0 free tier limit)
-      const transformedTestCases = testCases.slice(0, 3).map(tc => ({
+      // Filter out invalid test cases (missing input or expected_output)
+      const validTestCases = testCases.filter(tc => 
+        tc.input && (tc.expected_output !== null && tc.expected_output !== undefined || tc.expectedOutput !== null && tc.expectedOutput !== undefined)
+      );
+
+      if (validTestCases.length === 0) {
+        alert('No valid test cases available for this problem');
+        setIsExecuting(false);
+        return;
+      }
+
+      if (validTestCases.length === 1) {
+        alert('Warning: Only 1 valid test case found. Consider adding more test cases.');
+      }
+
+      // Take up to 3 test cases, but minimum 2 (or all if less than 2 available)
+      const testCasesToRun = validTestCases.slice(0, Math.min(3, validTestCases.length));
+
+      const transformedTestCases = testCasesToRun.map(tc => ({
         input: tc.input,
-        expectedOutput: tc.expected_output || tc.expectedOutput,
+        expectedOutput: tc.expected_output !== undefined ? tc.expected_output : tc.expectedOutput,
         setup: tc.setup || ''
       }));
+
+      console.log(`Running ${transformedTestCases.length} test cases:`, transformedTestCases);
 
       // call the backend with all test cases
       const result = await submitCodeToJudge0(code, language, transformedTestCases, previousErrors);
