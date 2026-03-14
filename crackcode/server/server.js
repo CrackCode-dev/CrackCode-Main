@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createClient } from "redis";
 
 // Load .env
 const __filename = fileURLToPath(import.meta.url);
@@ -31,46 +30,43 @@ const app = express();
 // Database
 connectDB();
 
-//Redis
-try {
-  await redisClient.connect();
-  console.log('✅ Redis Connected'); // Optional, because redis.config.js has ready listener
-} catch (err) {
-  console.warn('⚠️ Redis not connected:', err.message);
-}
+// Redis
+redisClient
+  .connect()
+  .then(() => console.log('✅ Redis Connected'))
+  .catch((err) =>
+    console.warn('⚠️ Redis Connection Error (running without cache):', err.message)
+  );
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174','http://localhost:5177'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5177',
+    ],
+    credentials: true,
+  })
+);
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
-
-app.use('/api/leaderboard', leaderboardRoutes);
-
-// Health check
-
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/learn', learnRoutes);
 app.use('/api/gameprofile', gameProfileRoutes);
-app.use('/api/game-profile', gameProfileRoutes);   // alias so both paths work
-
-// Session management routes
+app.use('/api/game-profile', gameProfileRoutes);
 app.use('/api/session', sessionRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/rewards', rewardsRoutes);
-
-// Code Editor routes
 app.use('/api/codeEditor', codeEditorRoutes);
 
-// ─── Health checks ───────────────────────────────────────────
+// Health check
 app.get('/', (_req, res) => {
   res.send('CrackCode Backend API is Running!');
 });
@@ -80,38 +76,12 @@ app.use((err, _req, res, _next) => {
   console.error('Global Error:', err);
   res.status(err.status || 500).json({
     success: false,
-    message: err.message || 'Internal server error'
+    message: err.message || 'Internal server error',
   });
 });
 
-// Start
+// Start server
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
-
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
-
-    console.log(`🚀 Server started on http://localhost:${PORT}`);
-
-    // Clean up expired/inactive sessions every hour
-    setInterval(async () => {
-        try {
-            const count = await cleanupExpiredSessions();
-            if (count > 0) {
-                console.log(`[CRON] Cleaned ${count} expired session(s)`);
-            }
-        } catch (err) {
-            console.error('[CRON] Session cleanup error:', err.message);
-        }
-    }, 60 * 60 * 1000); // every hour
-});
-
-// ─── Graceful shutdown ───────────────────────────────────────
-const shutdown = async (signal) => {
-    console.log(`${signal} received. Closing connections...`);
-    process.exit(0);
-};
-
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
-(feat: integrate AI aggent into code execution flow and add rate limiting)

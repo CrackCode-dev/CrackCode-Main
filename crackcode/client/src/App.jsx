@@ -20,6 +20,7 @@ import ChapterSelectionPage from "./pages/learn/ChapterSelection";
 import Leaderboard from "./pages/leaderboard/leaderboardPage";
 
 import QuestionListPage from './pages/learn/SubChapterSelection'
+import LeaderboardPage from './pages/leaderboard/leaderboardPage'
 
 function App() {
   return (
@@ -87,6 +88,11 @@ function App() {
           <Route path="/learn/:trackId/:difficultyId" element={
             // <ProtectedRoute>
               <QuestionListPage />
+            // </ProtectedRoute>
+          } />
+          <Route path="/leaderboard" element={
+            // <ProtectedRoute>
+              <LeaderboardPage />
             // </ProtectedRoute>
           } />
 
