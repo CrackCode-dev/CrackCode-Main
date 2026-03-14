@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { createClient } from "redis";
 
 // Load .env
 const __filename = fileURLToPath(import.meta.url);
@@ -26,15 +25,21 @@ import shopRoutes from './src/modules/shop/routes.js';
 import rewardsRoutes from './src/modules/rewards/routes.js';
 import codeEditorRoutes from './src/modules/codeEditor/routes.js';
 
+// ✅ Career Map Questions Route
+import questionRoutes from './src/modules/Career Map/questions/question.routes.js';
+
+// ✅ Career Map Progress Route  (ADD THIS)
+import progressRoutes from './src/modules/Career Map/progress/progress.routes.js';
+
 const app = express();
 
 // Database
 connectDB();
 
-//Redis
+// Redis
 try {
   await redisClient.connect();
-  console.log('✅ Redis Connected'); // Optional, because redis.config.js has ready listener
+  console.log('✅ Redis Connected');
 } catch (err) {
   console.warn('⚠️ Redis not connected:', err.message);
 }
@@ -44,38 +49,44 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174','http://localhost:5177'],
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:5177'
+  ],
   credentials: true
 }));
 
-// Routes
+// ─── Routes ───────────────────────────────────────────
+
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
 
 app.use('/api/leaderboard', leaderboardRoutes);
-
-// Health check
-
-app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/learn', learnRoutes);
-app.use('/api/gameprofile', gameProfileRoutes);
-app.use('/api/game-profile', gameProfileRoutes);   // alias so both paths work
 
-// Session management routes
+app.use('/api/gameprofile', gameProfileRoutes);
+app.use('/api/game-profile', gameProfileRoutes); // alias
+
 app.use('/api/session', sessionRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/rewards', rewardsRoutes);
-
-// Code Editor routes
 app.use('/api/codeEditor', codeEditorRoutes);
 
-// ─── Health checks ───────────────────────────────────────────
+// ✅ Career Map Questions API
+app.use('/api/questions', questionRoutes);
+
+// ✅ Career Map Progress API  (ADD THIS)
+app.use('/api/progress', progressRoutes);
+// ─── Health Check ─────────────────────────────────────
+
 app.get('/', (_req, res) => {
   res.send('CrackCode Backend API is Running!');
 });
 
-// Global error handler
+// ─── Global Error Handler ─────────────────────────────
+
 app.use((err, _req, res, _next) => {
   console.error('Global Error:', err);
   res.status(err.status || 500).json({
@@ -84,8 +95,10 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-// Start
+// ─── Start Server ─────────────────────────────────────
+
 const PORT = process.env.PORT || 5050;
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
