@@ -15,6 +15,7 @@ export const EditorProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('python');
+  const [languageLocked, setLanguageLocked] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [testResults, setTestResults] = useState([]);
   const [showClue, setShowClue] = useState(false);
@@ -40,6 +41,7 @@ export const EditorProvider = ({ children }) => {
     loading, setLoading,
     code, setCode,
     language, setLanguage,
+    languageLocked, setLanguageLocked,
     isExecuting, setIsExecuting,
     testResults, setTestResults,
     showClue, setShowClue,

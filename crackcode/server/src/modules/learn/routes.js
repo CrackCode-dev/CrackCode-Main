@@ -5,6 +5,7 @@ import {
   getQuestionById, 
   getQuestionByIdAndLanguage,
   getCollectionQuestions,
+  getDailyChallenge,
   createQuestion,
   updateQuestion,
   deleteQuestion
@@ -16,6 +17,7 @@ const router = express.Router();
 // Question routes
 router.get("/questions", getAllQuestions);
 router.get("/questions/by-collection", getCollectionQuestions);
+router.get("/daily-challenge", getDailyChallenge);
 router.get("/questions/:id", getQuestionById);
 router.get("/questions/:id/:language", getQuestionByIdAndLanguage);
 router.post("/questions", userAuth, createQuestion);

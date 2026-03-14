@@ -10,13 +10,14 @@ const CodeEditorContent = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const preloadedQuestion = location.state?.question || null;
-  const { error, setLanguage } = useProblemData(problemId, preloadedQuestion);
+  const { error, setLanguage, setLanguageLocked } = useProblemData(problemId, preloadedQuestion);
 
   useEffect(() => {
     if (location.state?.language) {
       setLanguage(location.state.language);
+      setLanguageLocked(true);  // Lock the language when pre-selected
     }
-  }, [location.state, setLanguage]);
+  }, [location.state, setLanguage, setLanguageLocked]);
 
   if (error) return (
     <div className="h-screen flex items-center justify-center bg-[#0a0a0a]">

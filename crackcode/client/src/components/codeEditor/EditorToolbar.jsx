@@ -5,7 +5,7 @@ import { useCodeExecution } from '../../features/codeEditor/hooks/useCodeExecuti
 const EditorToolbar = () => {
   const {
     language, setLanguage, isExecuting, currentProblem,
-    code, setCode, attemptCount,
+    code, setCode, attemptCount, languageLocked,
   } = useEditor();
   const { executeCode } = useCodeExecution();
   const [copyFeedback, setCopyFeedback] = useState(false);
@@ -67,8 +67,13 @@ const EditorToolbar = () => {
           <select
             value={language}
             onChange={handleLanguageChange}
-            className="bg-[#252525] text-gray-300 text-xs px-2 py-1.5 rounded border border-gray-700
-                       hover:border-gray-500 focus:outline-none focus:border-cyan-500 transition-colors cursor-pointer"
+            disabled={languageLocked}
+            className={`bg-[#252525] text-xs px-2 py-1.5 rounded border
+                       ${languageLocked 
+                         ? 'text-gray-500 border-gray-700 cursor-not-allowed opacity-60' 
+                         : 'text-gray-300 border-gray-700 hover:border-gray-500 cursor-pointer'
+                       } focus:outline-none focus:border-cyan-500 transition-colors`}
+            title={languageLocked ? 'Language is locked for this challenge' : 'Select language'}
           >
             <option value="python">Python 3</option>
             <option value="javascript">JavaScript</option>
