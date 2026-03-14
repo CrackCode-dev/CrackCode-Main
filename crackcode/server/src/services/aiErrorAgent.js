@@ -12,8 +12,11 @@ const getGeminiModel = () => {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
+    console.error('❌ GEMINI_API_KEY is missing from .env file!');
     throw new Error('GEMINI_API_KEY is missing from .env file');
   }
+
+  console.log(`✓ GEMINI_API_KEY found (length: ${apiKey.length} chars)`);
 
   const genAI = new GoogleGenerativeAI(apiKey);
   geminiModel = genAI.getGenerativeModel({
@@ -25,6 +28,7 @@ const getGeminiModel = () => {
     },
   });
 
+  console.log('✓ Gemini model initialized successfully');
   return geminiModel;
 };
 
@@ -32,28 +36,47 @@ const getGeminiModel = () => {
 export const classifyErrorType = (testResult) => {
   const errorMsg = testResult.error || '';
 
-  if (errorMsg.includes('SyntaxError'))      return 'SyntaxError';
-  if (errorMsg.includes('NameError'))        return 'NameError';
-  if (errorMsg.includes('TypeError'))        return 'TypeError';
-  if (errorMsg.includes('IndexError'))       return 'IndexError';
-  if (errorMsg.includes('ZeroDivision'))     return 'ZeroDivisionError';
-  if (errorMsg.includes('IndentationError')) return 'IndentationError';
-  if (errorMsg.includes('ValueError'))       return 'ValueError';
-  if (errorMsg.includes('AttributeError'))   return 'AttributeError';
-  if (testResult.message?.includes('Compilation')) return 'CompilationError';
-  if (testResult.status === 'failed' && !errorMsg)  return 'WrongAnswer';
+  if (errorMsg.includes('SyntaxError'))      return 'Syntax Error';
+  if (errorMsg.includes('NameError'))        return 'Name Error';
+  if (errorMsg.includes('TypeError'))        return 'Type Error';
+  if (errorMsg.includes('IndexError'))       return 'Index Error';
+  if (errorMsg.includes('ZeroDivision'))     return 'Zero Division Error';
+  if (errorMsg.includes('IndentationError')) return 'Indentation Error';
+  if (errorMsg.includes('ValueError'))       return 'Value Error';
+  if (errorMsg.includes('AttributeError'))   return 'Attribute Error';
+  if (errorMsg.includes('ImportError'))      return 'Import Error';
+  if (testResult.message?.includes('Compilation')) return 'Compilation Error';
+  if (testResult.status === 'failed' && !errorMsg)  return 'Wrong Answer';
 
-  return 'RuntimeError';
+  return 'Runtime Error';
 };
 
 // pull the JSON from Gemini's reply (it sometimes wraps it in a code block)
 const safeParseJSON = (rawText) => {
   try {
-    // find the JSON object inside the text
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) return null;
-    return JSON.parse(jsonMatch[0]);
+    // first try direct JSON parse
+    return JSON.parse(rawText);
   } catch {
+    // try to find JSON inside code blocks
+    const jsonBlockMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/);
+    if (jsonBlockMatch) {
+      try {
+        return JSON.parse(jsonBlockMatch[1]);
+      } catch {
+        console.log('Failed to parse JSON from code block');
+      }
+    }
+    
+    // try to find JSON object in the text
+    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch {
+        console.log('Failed to parse JSON object from text');
+      }
+    }
+    
     return null;
   }
 };
@@ -62,12 +85,17 @@ const safeParseJSON = (rawText) => {
 export const analyseError = async ({ code, language, testResult, previousErrors = [] }) => {
 
   // skip if AI is turned off in .env
-  if (process.env.ENABLE_AI_AGENT !== 'true') {
+  const aiEnabled = process.env.ENABLE_AI_AGENT === 'true';
+  console.log(`AI Agent Status: ENABLE_AI_AGENT=${process.env.ENABLE_AI_AGENT}, Enabled=${aiEnabled}`);
+  
+  if (!aiEnabled) {
+    console.log('AI Agent: disabled in .env (ENABLE_AI_AGENT !== "true")');
     return null;
   }
 
   // only run for failed tests
   if (testResult.status !== 'failed') {
+    console.log('AI Agent: skipping non-failed test');
     return null;
   }
 
@@ -99,27 +127,34 @@ export const analyseError = async ({ code, language, testResult, previousErrors 
       previousErrors,
     });
 
-    console.log(`AI Agent: asking Gemini about ${errorType} in ${language}...`);
+    console.log(`AI Agent: calling Gemini for ${errorType} in ${language}...`);
     const response = await model.generateContent(prompt);
     const rawText  = response.response.text();
+
+    console.log(`AI Agent: Gemini response length: ${rawText.length} chars`);
+    console.log(`AI Agent: Raw response (first 200 chars): ${rawText.substring(0, 200)}`);
 
     // parse the JSON that Gemini returned
     const analysis = safeParseJSON(rawText);
 
     if (!analysis) {
-      console.warn('AI Agent: could not read Gemini reply, using built-in hints');
+      console.warn(`AI Agent: Failed to parse JSON from Gemini response for ${errorType}`);
+      console.warn(`AI Agent: Raw text: ${rawText.substring(0, 500)}`);
       return null;
     }
 
+    console.log(`AI Agent: Successfully parsed analysis for ${errorType}`);
+    
     // save so the same error doesn't need another API call
     saveToCache(cacheKey, analysis);
-    console.log(`AI Agent: done for ${errorType}`);
+    console.log(`AI Agent: Cached result for ${errorType}`);
 
     return analysis;
 
   } catch (error) {
     // if Gemini fails, the app still works — just without AI hints
     console.error('AI Agent error (app still works):', error.message);
+    console.error('AI Agent stack:', error.stack);
     return null;
   }
 };

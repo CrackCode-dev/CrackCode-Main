@@ -25,3 +25,19 @@ export const saveToCache = (key, value) => {
   }
   cache.set(key, value);
 };
+
+// clear all cached results (useful for testing)
+export const clearCache = () => {
+  console.log(`🗑️  Clearing AI error cache (was ${cache.size} items)`);
+  cache.clear();
+  console.log(`✓ Cache cleared`);
+};
+
+// get cache stats
+export const getCacheStats = () => {
+  return {
+    size: cache.size,
+    maxSize: MAX_CACHE_SIZE,
+    isFull: cache.size >= MAX_CACHE_SIZE,
+  };
+};
