@@ -1,5 +1,6 @@
 import UserProgress from "./UserProgress.model.js";
 import Question from "./Question.model.js";
+import User from "../auth/User.model.js";
 
 // Get user's progress on all questions
 export const getUserProgress = async (req, res) => {
@@ -19,6 +20,9 @@ export const updateProgress = async (req, res) => {
     const userId = req.userId;
     const { questionId, status } = req.body;
 
+    // detect previous state to know if this is a new completion
+    const existing = await UserProgress.findOne({ userId, questionId });
+
     const progress = await UserProgress.findOneAndUpdate(
       { userId, questionId },
       {
@@ -28,6 +32,26 @@ export const updateProgress = async (req, res) => {
       },
       { upsert: true, new: true }
     );
+
+    // If newly completed, increment aggregated counters on User doc
+    if (status === "completed" && (!existing || existing.status !== "completed")) {
+      try {
+        const updatedUser = await User.findByIdAndUpdate(
+          userId,
+          { $inc: { casesSolved: 1 }, $set: { lastActive: new Date() } },
+          { new: true }
+        ).select("casesSolved currentStreak achievements");
+
+        return res.status(200).json({ progress, userStats: {
+          casesSolved: updatedUser?.casesSolved ?? 0,
+          currentStreak: updatedUser?.currentStreak ?? 0,
+          badgesEarned: Array.isArray(updatedUser?.achievements) ? updatedUser.achievements.length : 0
+        }});
+      } catch (err) {
+        console.error("Failed updating aggregated user stats:", err);
+        return res.status(200).json({ progress });
+      }
+    }
 
     return res.status(200).json(progress);
   } catch (error) {

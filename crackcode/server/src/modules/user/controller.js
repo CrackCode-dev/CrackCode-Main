@@ -25,6 +25,7 @@ export const getUserData = async (req, res) => {
           casesSolved: req.user.casesSolved || 0,
           currentStreak: req.user.currentStreak || 0,
           totalXP: req.user.totalXP || 0,
+          achievements: Array.isArray(req.user.achievements) ? req.user.achievements : [],
         },
       });
     }
@@ -56,6 +57,27 @@ export const getUserData = async (req, res) => {
         casesSolved: user.casesSolved || 0,
         currentStreak: user.currentStreak || 0,
         totalXP: user.totalXP || 0,
+        achievements: Array.isArray(user.achievements) ? user.achievements : [],
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getProgressSummary = async (req, res) => {
+  try {
+    // If auth middleware populated req.user, use it; otherwise fetch by req.userId
+    const user = req.user ? req.user : await User.findById(req.userId).select('casesSolved currentStreak achievements');
+
+    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+
+    return res.json({
+      success: true,
+      data: {
+        casesSolved: user.casesSolved || 0,
+        currentStreak: user.currentStreak || 0,
+        badgesEarned: Array.isArray(user.achievements) ? user.achievements.length : 0,
       },
     });
   } catch (error) {
