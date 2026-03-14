@@ -1,6 +1,6 @@
 import Question from "./Question.model.js";
 
-// Get all questions by difficulty
+// Get questions by difficulty
 export const getQuestionsByDifficulty = async (difficulty) => {
   const questions = await Question.find({ difficulty });
   return questions;

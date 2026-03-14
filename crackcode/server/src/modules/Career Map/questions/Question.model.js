@@ -15,6 +15,7 @@ const questionSchema = new mongoose.Schema(
     difficulty: {
       type: String,
       enum: ["Easy", "Medium", "Hard"],
+      required: true,
     },
 
     type: {
@@ -35,8 +36,7 @@ const questionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ FIX
-const Question =
-  mongoose.models.Question || mongoose.model("Question", questionSchema);
+// Connect to MLEngineerQ collection
+const Question = mongoose.models.MLEngineerQ || mongoose.model("MLEngineerQ", questionSchema, "MLEngineerQ");
 
 export default Question;

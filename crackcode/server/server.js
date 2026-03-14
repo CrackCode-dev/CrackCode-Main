@@ -26,7 +26,10 @@ import rewardsRoutes from './src/modules/rewards/routes.js';
 import codeEditorRoutes from './src/modules/codeEditor/routes.js';
 
 // ✅ Career Map Questions Route
-import questionRoutes from './src/modules/career Map/questions/question.routes.js';
+import questionRoutes from './src/modules/Career Map/questions/question.routes.js';
+
+// ✅ Career Map Progress Route  (ADD THIS)
+import progressRoutes from './src/modules/Career Map/progress/progress.routes.js';
 
 const app = express();
 
@@ -74,6 +77,8 @@ app.use('/api/codeEditor', codeEditorRoutes);
 // ✅ Career Map Questions API
 app.use('/api/questions', questionRoutes);
 
+// ✅ Career Map Progress API  (ADD THIS)
+app.use('/api/progress', progressRoutes);
 // ─── Health Check ─────────────────────────────────────
 
 app.get('/', (_req, res) => {

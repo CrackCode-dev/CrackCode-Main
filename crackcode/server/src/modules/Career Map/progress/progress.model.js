@@ -4,7 +4,8 @@ const progressSchema = new mongoose.Schema({
 
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
+    ref: "User",
+    required: true
   },
 
   career: {
@@ -40,8 +41,13 @@ const progressSchema = new mongoose.Schema({
   hardCompleted: {
     type: Boolean,
     default: false
+  },
+
+  totalQuestions: {
+    type: Number,
+    default: 60
   }
 
-});
+}, { timestamps: true });
 
 export default mongoose.model("Progress", progressSchema);
