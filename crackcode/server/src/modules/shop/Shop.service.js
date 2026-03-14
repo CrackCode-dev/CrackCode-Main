@@ -333,7 +333,7 @@ import Stripe from "stripe";
 import ShopItem from "./ShopItem.model.js";
 import Inventory from "./Inventory.model.js";
 import Purchase from "./Purchase.model.js";
-import { spendTokens } from "../session/transaction.service.js";
+import { spendXp } from "../session/transaction.service.js";
 
 // ------------------------------------------------------------
 // Stripe helper
@@ -378,7 +378,7 @@ export const purchaseItemWithXP = async (userId, itemId) => {
       }
 
       // 2) Spend XP atomically
-      const spendResult = await spendTokens({
+      const spendResult = await spendXp({
         userId,
         amount: priceXP,
         reason: `shop_purchase:${String(item._id)}`,
@@ -413,7 +413,7 @@ export const purchaseItemWithXP = async (userId, itemId) => {
             itemId,
             itemName: item.name,
             price: priceXP,
-            tokensAfterPurchase: remainingXP ?? null,
+            xpAfterPurchase: remainingXP ?? null,
           },
         ],
         { session }
@@ -520,7 +520,7 @@ export const createCheckoutSession = async (userId, itemId) => {
     
   return {
     success: true,
-    checkoutUrl: session.url,
+    url: session.url,
     sessionId: session.id,
   };
 };

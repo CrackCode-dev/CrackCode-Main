@@ -378,17 +378,17 @@ export const awardTokens = async (userId, amount, source = "unknown") => {
 // SPEND XP (for shop purchases)
 // Supports both call styles
 // ─────────────────────────────────────────────────────────────
-export const spendTokens = async (...args) => {
+export const spendXp = async (...args) => {
   let userId;
   let amount;
   let reason;
   let session;
 
-  // Object style: spendTokens({ userId, amount, reason, session })
+  // Object style: spendXp({ userId, amount, reason, session })
   if (typeof args[0] === "object") {
     ({ userId, amount, reason, session } = args[0]);
   } else {
-    // Positional style: spendTokens(userId, amount)
+    // Positional style: spendXp(userId, amount)
     userId = args[0];
     amount = args[1];
   }
@@ -495,7 +495,7 @@ export const getBalance = async (userId) => {
 export default {
   awardXP,
   awardTokens,
-  spendTokens,
+  spendXp,
   awardRewards,
   getBalance,
   calculateRank,

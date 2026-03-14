@@ -19,68 +19,88 @@ const run = async () => {
         name: "Cena",
         category: "avatar",
         isActive: true,
-        imageUrl: "uploads/avatars/Cena.png",
-        pricing: { type: "free", amount: 0 },
+        imageUrl: "/uploads/avatars/Cena.png",
+        pricing: { type: "xp", amount: 50 },
       },
 
+
+      {
+        name: "Detective",
+        category: "avatar",
+        isActive: true,
+        imageUrl: "/uploads/avatars/Detective.png",
+        purchasing: {type: "xp", amount: 70},
+      },
+      
       {
         name: "Prime",
         category: "avatar",
         isActive: true,
         imageUrl: "/uploads/avatars/Prime.png",
-        pricing: { type: "xp", amount: 200 },
+        pricing: { type: "xp", amount: 100 },
       },
 
       {
         name: "Batman",
         description: "Premium avatar",
         category: "avatar",
-        pricing: {
-          type: "paid",
-          amount: 4.99,
-          currency: "USD",
-        },
-        imageUrl: "/upload/avatars/Batman.png",
+        pricing: { type: "paid", amount: 4.98, currency: "USD" },
+        imageUrl: "/uploads/avatars/Batman.png",
         metadata: {
           rarity: "premium",
         },
         isActive: true,
       },
+
+      {
+        name: "Superman",
+        description: "Premium avatar",
+        category: "avatar",
+        pricing: { type: "paid", amount: 4.98, currency: "USD" },
+        imageUrl: "/uploads/avatars/Superman.jpg",
+        metadata: {
+          rarity: "premium",
+        },
+        isActive: true,
+      },
+
       {
         name: "Wizard",
         description: "Premium avatar",
         category: "avatar",
-        pricing: {
-          type: "paid",
-          amount: 2.99,
-          currency: "USD",
-        },
+        pricing: { type: "xp", amount: 250 },
         imageUrl: "/uploads/avatars/Wizard.png",
         metadata: {
           themeKey: "dark_neon",
         },
         isActive: true,
       },
-      
+
       {
-        name: "Legend Badge",
-        description: "Exclusive paid badge for your profile.",
-        category: "badge",
-        pricing: {
-          type: "paid",
-          amount: 1.99,
-          currency: "USD",
+        name: "Steve",
+        description: "Premium avatar",
+        category: "avatar",
+        pricing: { type: "paid", amount: 4.98, currency: "USD" },
+        imageUrl: "/uploads/avatars/Steve.jpg",
+        metadata: {
+          rarity: "premium",
         },
-        imageUrl: "https://example.com/legend-badge.png",
+        isActive: true,
+      },
+
+      {
+        name: "The North",
+        description: "Exclusive badge for your profile.",
+        category: "badge",
+        pricing: { type: "paid", amount: 6.66, currency: "USD" },
+        imageUrl: "/uploads/avatars/North.jpg",
         metadata: {
           badgeType: "legend",
         },
         isActive: true,
-      }
-      
+      },
     ];
 
-    // avoid duplicates by name
     for (const item of items) {
       await ShopItem.updateOne(
         { name: item.name },
