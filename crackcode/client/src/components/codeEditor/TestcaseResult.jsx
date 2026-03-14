@@ -1,4 +1,12 @@
 import React from 'react';
+import ErrorConceptCard from './ErrorConceptCard';
+
+// Safely convert any value (including objects) to a displayable string
+const toStr = (val) => {
+  if (val === null || val === undefined) return '';
+  if (typeof val === 'object') return JSON.stringify(val);
+  return String(val);
+};
 
 const TestCaseResult = ({ result }) => {
   const getStatusColor = () => {
@@ -57,24 +65,63 @@ const TestCaseResult = ({ result }) => {
         <div className="bg-[#1a1a1a] rounded p-3 mt-2 border border-red-500/30">
           <div className="text-red-400 text-xs font-semibold mb-1">ERROR:</div>
           <pre className="text-red-300 text-xs font-mono whitespace-pre-wrap overflow-x-auto">
-            {result.error}
+            {toStr(result.error)}
           </pre>
         </div>
       )}
 
       {result.status === 'passed' && result.details && (
         <div className="text-gray-400 text-xs mt-2 pl-8 space-y-1">
-          {result.details.input && <div>Input: {result.details.input}</div>}
-          {result.details.expected && <div>Expected: {result.details.expected}</div>}
+          {result.details.input != null && <div>Input: {toStr(result.details.input)}</div>}
+          {result.details.expected != null && <div>Expected: {toStr(result.details.expected)}</div>}
           {result.details.time && <div>Execution Time: {result.details.time}s</div>}
           {result.details.memory && <div>Memory: {result.details.memory}KB</div>}
         </div>
       )}
 
-      {result.status === 'failed' && result.aiSuggestion && (
+      {result.status === 'failed' && result.aiAnalysis ? (
+        /* Ai powered analysis when ai is working  */
+        <div className="mt-3 space-y-2">
+
+          {/* Simplified plain english message */}
+          {result.aiAnalysis.simplifiedMessage && (
+            <div className="bg-blue-900/20 border border-blue-500/30 rounded p-3">
+              <div className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                </svg>
+                <p className="text-blue-100 text-xs leading-relaxed">
+                  {result.aiAnalysis.simplifiedMessage}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Detective narrative */}
+          {result.aiAnalysis.detectiveNarrative && (
+            <div className="bg-[#1e1a2e] border border-purple-500/25 rounded p-3">
+              <div className="text-purple-400 text-[10px] font-semibold uppercase tracking-wide mb-1">
+                Case Analysis
+              </div>
+              <p className="text-purple-100/80 text-xs italic leading-relaxed">
+                "{result.aiAnalysis.detectiveNarrative}"
+              </p>
+            </div>
+          )}
+
+          {/* Concept lesson card */}
+          <ErrorConceptCard
+            conceptTitle={result.aiAnalysis.conceptTitle}
+            conceptLesson={result.aiAnalysis.conceptLesson}
+            fixDirection={result.aiAnalysis.fixDirection}
+          />
+        </div>
+
+      ) : result.status === 'failed' && result.aiSuggestion ? (
+        /*  Fallback: when AI is disabled */
         <div className="bg-cyan-900/20 border border-cyan-500/30 rounded p-3 mt-3">
           <div className="flex items-start gap-2">
-            <svg className="w-5 h-5 text-cyan-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
               <path fillRule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clipRule="evenodd" />
             </svg>
@@ -84,7 +131,7 @@ const TestCaseResult = ({ result }) => {
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 };
