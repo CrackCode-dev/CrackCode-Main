@@ -3,7 +3,8 @@ import rateLimit from 'express-rate-limit';
 import {
   executeTestCases,
   runCode,
-  getSupportedLanguages
+  getSupportedLanguages,
+  clearAICache
 } from './codeEditor.controller.js';
 
 const router = express.Router();
@@ -25,5 +26,8 @@ router.post('/run', runCode);
 
 // Get supported languages
 router.get('/languages', getSupportedLanguages);
+
+// Clear AI error cache (for debugging/testing)
+router.post('/clear-ai-cache', clearAICache);
 
 export default router;

@@ -79,6 +79,11 @@ export const runTestCases = async (sourceCode, language, testCases) => {
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i];
 
+    // Skip test cases with missing input or expected output
+    if (!testCase.input || testCase.expectedOutput === null || testCase.expectedOutput === undefined) {
+      continue;
+    }
+
     try {
       // Serialize the input to a JSON string for stdin so any language can parse it
       const stdinPayload = typeof testCase.input === 'string'

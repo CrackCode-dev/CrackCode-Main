@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Question from "./Question.model.js";
 
 // Get all questions with filtering
@@ -172,6 +173,48 @@ export const deleteQuestion = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Question deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Fetch questions from a dynamically-named collection 
+export const getCollectionQuestions = async (req, res) => {
+  try {
+    const { language, difficulty } = req.query;
+
+    if (!language || !difficulty) {
+      return res.status(400).json({
+        success: false,
+        message: "language and difficulty query parameters are required",
+      });
+    }
+
+    const langMap = { python: "Python", javascript: "Javascript", java: "Java", cpp: "Cpp" };
+    const diffMap = { fundamentals: "Fundamentals", easy: "Easy", intermediate: "Medium", hard: "Hard" };
+
+    const langKey = language.toLowerCase();
+    const diffKey = difficulty.toLowerCase();
+
+    if (!langMap[langKey] || !diffMap[diffKey]) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid language '${language}' or difficulty '${difficulty}'`,
+      });
+    }
+
+    const collectionName = `learn${langMap[langKey]}${diffMap[diffKey]}Q`;
+    const questions = await mongoose.connection.db.collection(collectionName).find({}).limit(15).toArray();
+
+    return res.status(200).json({
+      success: true,
+      count: questions.length,
+      collectionName,
+      data: questions,
     });
   } catch (error) {
     return res.status(500).json({

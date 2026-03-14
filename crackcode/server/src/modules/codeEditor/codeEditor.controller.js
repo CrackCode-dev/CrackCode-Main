@@ -1,5 +1,6 @@
 import { runTestCases, executeCode, getLanguageId } from './codeEditor.service.js';
 import { analyseError, classifyErrorType } from '../../services/aiErrorAgent.js';
+import { clearCache, getCacheStats } from '../../services/errorCache.js';
 
 // Run test cases for a submission
 export const executeTestCases = async (req, res) => {
@@ -124,6 +125,27 @@ export const getSupportedLanguages = async (req, res) => {
     return res.status(200).json({
       success: true,
       data: languages
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// Clear AI error cache (for testing/debugging)
+export const clearAICache = async (req, res) => {
+  try {
+    const statsBefore = getCacheStats();
+    clearCache();
+    const statsAfter = getCacheStats();
+    
+    return res.status(200).json({
+      success: true,
+      message: 'AI error cache cleared',
+      before: statsBefore,
+      after: statsAfter
     });
   } catch (error) {
     return res.status(500).json({
