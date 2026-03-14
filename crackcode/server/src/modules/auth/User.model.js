@@ -57,6 +57,24 @@ const userSchema = new mongoose.Schema(
       securityAlerts: { type: Boolean, default: true },
     },
 
+    equippedAvatarItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ShopItem",
+      default: null,
+    },
+    
+    equippedThemeItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ShopItem",
+      default: null,
+    },
+    
+    equippedTitleItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ShopItem",
+      default: null,
+    },
+
     // ACHIEVEMENTS
     achievements: [
       {
@@ -69,6 +87,8 @@ const userSchema = new mongoose.Schema(
     ],
   },
   { timestamps: true }
+
+  
 );
 
 export default mongoose.model("User", userSchema);

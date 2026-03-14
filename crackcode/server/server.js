@@ -229,6 +229,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectDB from "./src/config/db.js";
 import redisClient from "./src/modules/leaderboard/redis.config.js";
+import { stripeWebhookController } from "./src/controllers/Shop.controller.js";
 
 // Routes
 import paymentRoutes from "./src/routes/Payment.routes.js";
@@ -262,6 +263,12 @@ try {
 
 // Stripe payments webhook route must come before express.json()
 app.use("/api/payments", paymentRoutes);
+
+app.post(
+  "/api/shop/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhookController
+);
 
 // Middleware
 app.use(express.json());

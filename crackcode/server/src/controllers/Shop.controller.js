@@ -1,85 +1,24 @@
-// // import User from "../modules/auth/User.model.js";
-// import { purchaseItemWithXP, getShopItems, getMyInventory } from "../modules/shop/Shop.service.js";
 
 
-// /**
-//  * POST /api/shop/purchase
-//  * Body: { itemId }
-//  */
-// export const purchaseItem = async (req, res) => {
-//   try {
 
-//     //new 2 consoles for test authMiddleware connection for auth.user
-//     // console.log("AUTH HEADER:", req.headers.authorization);
-//     // console.log("REQ.USER:", req.user);
-//     const userId = req.user?.id || req.user?._id;
 
-//     if (!userId) {
-//       return res.status(401).json({ success: false, message: "Unauthorized" });
-//     }
+import Stripe from "stripe";
 
-//     const { itemId } = req.body;
+const getStripe = () => {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not configured");
+  }
 
-//     if (!itemId) {
-//       return res.status(400).json({ success: false, message: "itemId is required" });
-//     }
-
-//     const result = await purchaseItemWithXP(userId, itemId);
-//     return res.json(result);
-//   } catch (error) {
-//     console.error("Purchase error:", error);
-//     return res.status(400).json({ success: false, message: error.message || "Purchase failed" });
-//   }
-// };
-
-// /**
-//  * GET /api/shop/items?category=avatar|theme|title|all
-//  */
-// export const listItems = async (req, res) => {
-//   try {
-//     const { category } = req.query;
-//     const items = await getShopItems(category);
-
-//     return res.json({ success: true, items });
-//   } catch (error) {
-//     console.error("List items error:", error);
-//     return res.status(500).json({ success: false, message: error.message || "Failed to fetch items" });
-//   }
-// };
-
-// /**
-//  * GET /api/shop/inventory?category=avatar|theme|title|all
-//  * Requires auth
-//  */
-// export const myInventory = async (req, res) => {
-//   try {
-//     const userId = req.user?.id || req.user?._id;
-
-//     if (!userId) {
-//       return res.status(401).json({ success: false, message: "Unauthorized" });
-//     }
-
-//     const { category } = req.query;
-//     const items = await getMyInventory(userId, category);
-
-//     return res.json({ success: true, items });
-//   } catch (error) {
-//     console.error("Inventory error:", error);
-//     return res.status(500).json({ success: false, message: error.message || "Failed to fetch inventory" });
-//   }
-// };
-
-//-----------------------------------------------------------------------------------------------------
-
-// new version with ._id checkings 
+  return new Stripe(process.env.STRIPE_SECRET_KEY);
+};
 
 import {
   purchaseItemWithXP,
   getShopItems,
   getMyInventory,
-  createCheckoutSession
+  createCheckoutSession,
+  finalizePaidPurchase,
 } from "../modules/shop/Shop.service.js";
-
 
 
 /**
@@ -195,5 +134,55 @@ export const createCheckoutSessionController = async (req, res) => {
     res.json(session);
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+export const stripeWebhookController = async (req, res) => {
+  const signature = req.headers["stripe-signature"];
+
+  let event;
+
+  try {
+    const stripe = getStripe();
+
+    event = stripe.webhooks.constructEvent(
+      req.body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET
+    );
+  } catch (err) {
+    console.error("Webhook signature verification failed:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object;
+
+      const userId = session.metadata?.userId;
+      const itemId = session.metadata?.itemId;
+      const stripeSessionId = session.id;
+
+      if (!userId || !itemId) {
+        return res.status(400).json({
+          success: false,
+          message: "Missing userId or itemId in Stripe metadata",
+        });
+      }
+
+      await finalizePaidPurchase({
+        userId,
+        itemId,
+        stripeSessionId,
+      });
+    }
+
+    return res.status(200).json({ received: true });
+  } catch (err) {
+    console.error("Stripe webhook processing failed:", err);
+    return res.status(500).json({
+      success: false,
+      message: err.message || "Webhook processing failed",
+    });
   }
 };

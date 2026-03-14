@@ -1,11 +1,25 @@
 import { useEffect, useState } from "react";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
+import Toast from "../common/Toast";
 
 export default function DetectiveStore() {
 
   const [items, setItems] = useState([]);
   const [category, setCategory] = useState("all");
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success",
+  });
+
+  const showToast = (message, type = "success") => {
+    setToast({
+      show: true,
+      message,
+      type,
+    });
+  };
 
   useEffect(() => {
     const fetchItems = async () => {

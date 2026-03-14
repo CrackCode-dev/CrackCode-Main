@@ -15,6 +15,7 @@ const run = async () => {
     console.log("✅ Mongo connected");
 
     const items = [
+
       {
         name: "Cena",
         category: "avatar",
@@ -23,15 +24,14 @@ const run = async () => {
         pricing: { type: "xp", amount: 50 },
       },
 
-
       {
         name: "Detective",
         category: "avatar",
         isActive: true,
         imageUrl: "/uploads/avatars/Detective.png",
-        purchasing: {type: "xp", amount: 70},
+        pricing: { type: "xp", amount: 140 },
       },
-      
+
       {
         name: "Prime",
         category: "avatar",
@@ -91,7 +91,7 @@ const run = async () => {
       {
         name: "The North",
         description: "Exclusive badge for your profile.",
-        category: "badge",
+        category: "avatar",
         pricing: { type: "paid", amount: 6.66, currency: "USD" },
         imageUrl: "/uploads/avatars/North.jpg",
         metadata: {
