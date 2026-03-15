@@ -99,20 +99,6 @@ const THEME_VARS = {
     "--shadow": "0 8px 24px rgba(0,0,0,0.8)",     // Deep shadows
     "--shadowBrand": "0 8px 24px rgba(255,150,68,0.25)",  // Orange glow
 
- 
-    "--bg":            "#0D0D0D",      
-    "--surface":       "#1A1A1A",      
-    "--surface2":      "#252525",    
-    "--brand":         "#FF9644",      
-    "--brandSoft":     "#1F1408",      
-    "--brandInk":      "#FFE5CC",      
-    "--text":          "#F5F5F5",      
-    "--textSec":       "#E0E0E0",      
-    "--muted":         "#A0A0A0",      
-    "--border":        "#333333",      
-    "--shadow":        "0 8px 24px rgba(0,0,0,0.8)",     // Deep shadows
-    "--shadowBrand":   "0 8px 24px rgba(255,150,68,0.25)",  // Orange glow
-
     "--progressTrack": "#2A2A2A",      // Progress bar track
     "--challengeBg": "#161616",      // Challenge card background
     "--inviteBg": "#1A1A1A",      // Invite/notification background
@@ -156,19 +142,6 @@ const THEME_VARS = {
     "--border": "#4A2E14",
     "--shadow": "0 2px 12px rgba(0,0,0,0.4)",
     "--shadowBrand": "0 4px 20px rgba(255,150,68,0.2)",
-
-    "--bg":            "#1C1007",
-    "--surface":       "#2A1A09",
-    "--surface2":      "#341F0C",
-    "--brand":         "#FF9644",
-    "--brandSoft":     "#3D2010",
-    "--brandInk":      "#FFCE99",
-    "--text":          "#F2DFC0",
-    "--textSec":       "#D4B890",
-    "--muted":         "#9A7055",
-    "--border":        "#4A2E14",
-    "--shadow":        "0 2px 12px rgba(0,0,0,0.4)",
-    "--shadowBrand":   "0 4px 20px rgba(255,150,68,0.2)",
 
     "--progressTrack": "#4A2E14",
     "--challengeBg": "#3E2510",
@@ -237,24 +210,6 @@ const THEME_VARS = {
     "--btn-s-shadow": "#1C4D8D",
     "--btn-s-inset-top": "#134E8E",
     "--btn-s-ring": "#FF3E9B",
-
-
-    "--bg":            "#0A0E17",      
-    "--surface":       "#14192B",      
-    "--surface2":      "#1F2545",    
-    "--brand":         "#FF9644",      
-    "--brandSoft":     "#1F1408",      
-    "--brandInk":      "#FFE5CC",      
-    "--text":          "#F0F4F8",      
-    "--textSec":       "#D6DCE4",      
-    "--muted":         "#8B92A4",      
-    "--border":        "#2D3B52",     
-    "--shadow":        "0 8px 24px rgba(0,0,0,0.7)",     
-    "--shadowBrand":   "0 12px 32px rgba(255,150,68,0.2)",  // Orange glow
-    "--progressTrack": "#1F2545",     
-    "--challengeBg":   "#141A28",      
-    "--inviteBg":      "#14192B",      
-
   },
 };
 
