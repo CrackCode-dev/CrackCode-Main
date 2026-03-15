@@ -267,3 +267,36 @@ export const getDailyChallenge = async (req, res) => {
     });
   }
 };
+
+// Fetch an arbitrary challenge collection by name (e.g., 'challengePythonQ')
+export const getChallengesCollection = async (req, res) => {
+  try {
+    const { collection } = req.query;
+
+    const collectionName = collection || 'challengePythonQ';
+
+    // Basic validation: collection name should be a non-empty string
+    if (typeof collectionName !== 'string' || collectionName.trim() === '') {
+      return res.status(400).json({ success: false, message: 'Invalid collection name' });
+    }
+
+    const items = await mongoose.connection.db.collection(collectionName).find({}).toArray();
+
+    return res.status(200).json({ success: true, count: items.length, collectionName, data: items });
+  } catch (error) {
+    console.error('❌ getChallengesCollection error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Shortcut endpoint specifically for weekly challenges (Javascript collection)
+export const getWeeklyChallenge = async (_req, res) => {
+  try {
+    const collectionName = 'challengeJavascriptQ';
+    const items = await mongoose.connection.db.collection(collectionName).find({}).toArray();
+    return res.status(200).json({ success: true, count: items.length, collectionName, data: items });
+  } catch (error) {
+    console.error('❌ getWeeklyChallenge error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
