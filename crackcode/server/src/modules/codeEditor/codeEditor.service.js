@@ -41,6 +41,36 @@ export const submitCodeToJudge0 = async (sourceCode, languageId, stdin = "") => 
   }
 };
 
+// Wrap user code with a stdin→function→stdout harness for interpreted languages
+const wrapWithHarness = (sourceCode, language, stdinPayload) => {
+  if (language === 'python') {
+    // Only inject the harness if the code has a `def solve(` signature
+    // and doesn't already read from stdin
+    if (sourceCode.includes('def solve(') && !sourceCode.includes('sys.stdin') && !sourceCode.includes('input()')) {
+      return sourceCode + `
+import json as _json, sys as _sys
+_data = _json.load(_sys.stdin)
+if isinstance(_data, dict):
+    _result = solve(**_data)
+elif isinstance(_data, list):
+    _result = solve(*_data)
+else:
+    _result = solve(_data)
+print(_result)
+`;
+    }
+  } else if (language === 'javascript') {
+    if (sourceCode.includes('function solve(') && !sourceCode.includes('process.stdin') && !sourceCode.includes('readline')) {
+      return sourceCode + `
+const _data = JSON.parse(${JSON.stringify(stdinPayload)});
+const _result = Array.isArray(_data) ? solve(..._data) : solve(...Object.values(_data));
+console.log(_result);
+`;
+    }
+  }
+  return sourceCode;
+};
+
 // Run test cases and return results
 export const runTestCases = async (sourceCode, language, testCases) => {
   const languageId = getLanguageId(language);
@@ -48,78 +78,60 @@ export const runTestCases = async (sourceCode, language, testCases) => {
 
   for (let i = 0; i < testCases.length; i++) {
     const testCase = testCases[i];
-    
+
+    // Skip test cases with missing input or expected output
+    if (!testCase.input || testCase.expectedOutput === null || testCase.expectedOutput === undefined) {
+      continue;
+    }
+
     try {
-      // Create test wrapper code based on language
-      let testCode = '';
-      
-      if (language === 'python') {
-        testCode = `
-${sourceCode}
+      // Serialize the input to a JSON string for stdin so any language can parse it
+      const stdinPayload = typeof testCase.input === 'string'
+        ? testCase.input
+        : JSON.stringify(testCase.input);
 
-# Parse input
-numbers = list(map(int, "${testCase.input}".split()))
-num1, num2 = numbers[0], numbers[1]
+      // Wrap with harness if the code looks like a function-only implementation
+      const codeToRun = wrapWithHarness(sourceCode, language, stdinPayload);
 
-# Call the function and print result
-solution = Solution()
-result = solution.addTwoNumbers(num1, num2)
-print(result)
-`;
-      } else if (language === 'javascript') {
-        testCode = `
-${sourceCode}
+      const result = await submitCodeToJudge0(codeToRun, languageId, stdinPayload);
 
-// Parse input
-const numbers = "${testCase.input}".split(' ').map(Number);
-const [num1, num2] = numbers;
+      // Normalize expected output to a trimmed string for comparison
+      const expectedStr = testCase.expectedOutput !== undefined && testCase.expectedOutput !== null
+        ? String(testCase.expectedOutput).trim()
+        : '';
 
-// Call the function and print result
-const solution = new Solution();
-const result = solution.addTwoNumbers(num1, num2);
-console.log(result);
-`;
-      } else {
-        // For other languages, just append the code with stdin
-        testCode = sourceCode;
-      }
-      
-      const result = await submitCodeToJudge0(
-        testCode,
-        languageId,
-        testCase.input || ""
-      );
+      const actualStr = result.stdout ? result.stdout.trim() : '';
 
       let testResult;
 
-      if (result.stdout && result.stdout.trim() === (testCase.expectedOutput || '').trim()) {
-        testResult = {
-          testNumber: i + 1,
-          status: 'passed',
-          message: `Test Case ${i + 1} Passed`,
-          input: testCase.input,
-          expected: testCase.expectedOutput,
-          actual: result.stdout.trim(),
-          time: result.time || 0,
-          memory: result.memory || 0
-        };
-      } else if (result.stderr) {
-        testResult = {
-          testNumber: i + 1,
-          status: 'failed',
-          message: `Test Case ${i + 1} Failed - Runtime Error`,
-          error: result.stderr,
-          input: testCase.input,
-          expected: testCase.expectedOutput
-        };
-      } else if (result.compile_output) {
+      if (result.compile_output && !result.stdout) {
         testResult = {
           testNumber: i + 1,
           status: 'failed',
           message: `Test Case ${i + 1} Failed - Compilation Error`,
           error: result.compile_output,
           input: testCase.input,
-          expected: testCase.expectedOutput
+          expected: expectedStr,
+        };
+      } else if (result.stderr && !result.stdout) {
+        testResult = {
+          testNumber: i + 1,
+          status: 'failed',
+          message: `Test Case ${i + 1} Failed - Runtime Error`,
+          error: result.stderr,
+          input: testCase.input,
+          expected: expectedStr,
+        };
+      } else if (actualStr === expectedStr) {
+        testResult = {
+          testNumber: i + 1,
+          status: 'passed',
+          message: `Test Case ${i + 1} Passed`,
+          input: testCase.input,
+          expected: expectedStr,
+          actual: actualStr,
+          time: result.time || 0,
+          memory: result.memory || 0,
         };
       } else {
         testResult = {
@@ -127,8 +139,8 @@ console.log(result);
           status: 'failed',
           message: `Test Case ${i + 1} Failed - Wrong Answer`,
           input: testCase.input,
-          expected: testCase.expectedOutput,
-          actual: result.stdout ? result.stdout.trim() : 'No output'
+          expected: expectedStr,
+          actual: actualStr || 'No output',
         };
       }
 
@@ -140,7 +152,7 @@ console.log(result);
         message: `Test Case ${i + 1} Failed - API Error`,
         error: error.message,
         input: testCase.input,
-        expected: testCase.expectedOutput
+        expected: testCase.expectedOutput,
       });
     }
   }

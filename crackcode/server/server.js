@@ -260,6 +260,12 @@ try {
 } catch (err) {
   console.warn("⚠️ Redis not connected:", err.message);
 }
+redisClient
+  .connect()
+  .then(() => console.log('✅ Redis Connected'))
+  .catch((err) =>
+    console.warn('⚠️ Redis Connection Error (running without cache):', err.message)
+  );
 
 // Stripe payments webhook route must come before express.json()
 app.use("/api/payments", paymentRoutes);
@@ -332,7 +338,7 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-// Start
+// Start server
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
   console.log(`🚀 Server started on http://localhost:${PORT}`);

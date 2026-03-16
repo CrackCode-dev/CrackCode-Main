@@ -1,3 +1,4 @@
+
 import { useTheme } from '../../context/theme/ThemeContext'
 import Header from '../../components/common/Header'
 import Footer from '../../components/common/Footer'
@@ -12,7 +13,10 @@ import RecommendedChallenges from '../../components/home/RecommendedChallenges'
 import StreakCalendar from '../../components/home/StreakCalendar'
 
 function Home() {
+
   useTheme()
+
+
 
   return (
     <div className='min-h-screen flex flex-col' style={{ background: 'var(--bg)', color: 'var(--text)' }}>

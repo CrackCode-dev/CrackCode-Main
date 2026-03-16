@@ -1,21 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-
-// ============================================================
-// THEME SYSTEM - Single Source of Truth
-// ============================================================
-// This file defines ALL theme colors and injects them into the DOM.
-// CSS variables are injected via JavaScript, NOT defined in CSS files.
-// 
-// theme.css only provides basic fallback values (overridden immediately).
-// To update colors: edit THEME_VARS below.
-// ============================================================
-
 const ThemeContext = createContext(null);
 
 export const THEMES = ["light", "cream", "dark", "country", "midnight"];
 
-// SINGLE SOURCE OF TRUTH FOR ALL THEME COLORS
-// When you need to change a color, update it here only
 const THEME_VARS = {
   light: {
     "--bg": "#FFFDF1",
@@ -94,6 +81,7 @@ const THEME_VARS = {
     "--btn-s-ring": "#fb923c",
   },
   dark: {
+
     // Pure black & white theme - minimal, high contrast, clean
     // Base: True black background
     // Accents: Bright white text + orange brand
@@ -110,6 +98,21 @@ const THEME_VARS = {
     "--border": "#333333",      // Dark borders with visibility
     "--shadow": "0 8px 24px rgba(0,0,0,0.8)",     // Deep shadows
     "--shadowBrand": "0 8px 24px rgba(255,150,68,0.25)",  // Orange glow
+
+ 
+    "--bg":            "#0D0D0D",      
+    "--surface":       "#1A1A1A",      
+    "--surface2":      "#252525",    
+    "--brand":         "#FF9644",      
+    "--brandSoft":     "#1F1408",      
+    "--brandInk":      "#FFE5CC",      
+    "--text":          "#F5F5F5",      
+    "--textSec":       "#E0E0E0",      
+    "--muted":         "#A0A0A0",      
+    "--border":        "#333333",      
+    "--shadow":        "0 8px 24px rgba(0,0,0,0.8)",     // Deep shadows
+    "--shadowBrand":   "0 8px 24px rgba(255,150,68,0.25)",  // Orange glow
+
     "--progressTrack": "#2A2A2A",      // Progress bar track
     "--challengeBg": "#161616",      // Challenge card background
     "--inviteBg": "#1A1A1A",      // Invite/notification background
@@ -136,6 +139,7 @@ const THEME_VARS = {
     "--btn-s-ring": "#FF9644",
   },
   country: {
+
     // Warm dark theme - professional with warm brown undertones
     // Base: Warm dark browns
     // Accents: Orange brand color maintains warmth
@@ -152,6 +156,20 @@ const THEME_VARS = {
     "--border": "#4A2E14",
     "--shadow": "0 2px 12px rgba(0,0,0,0.4)",
     "--shadowBrand": "0 4px 20px rgba(255,150,68,0.2)",
+
+    "--bg":            "#1C1007",
+    "--surface":       "#2A1A09",
+    "--surface2":      "#341F0C",
+    "--brand":         "#FF9644",
+    "--brandSoft":     "#3D2010",
+    "--brandInk":      "#FFCE99",
+    "--text":          "#F2DFC0",
+    "--textSec":       "#D4B890",
+    "--muted":         "#9A7055",
+    "--border":        "#4A2E14",
+    "--shadow":        "0 2px 12px rgba(0,0,0,0.4)",
+    "--shadowBrand":   "0 4px 20px rgba(255,150,68,0.2)",
+
     "--progressTrack": "#4A2E14",
     "--challengeBg": "#3E2510",
     "--inviteBg": "#3E2510",
@@ -178,6 +196,7 @@ const THEME_VARS = {
     "--btn-s-ring": "#FF9644",
   },
   midnight: {
+
     // Deep dark theme - true black base with maximum contrast
     // Base: Pure black for OLED/eye comfort
     // Accents: Bright orange for strong visibility
@@ -218,6 +237,24 @@ const THEME_VARS = {
     "--btn-s-shadow": "#1C4D8D",
     "--btn-s-inset-top": "#134E8E",
     "--btn-s-ring": "#FF3E9B",
+
+
+    "--bg":            "#0A0E17",      
+    "--surface":       "#14192B",      
+    "--surface2":      "#1F2545",    
+    "--brand":         "#FF9644",      
+    "--brandSoft":     "#1F1408",      
+    "--brandInk":      "#FFE5CC",      
+    "--text":          "#F0F4F8",      
+    "--textSec":       "#D6DCE4",      
+    "--muted":         "#8B92A4",      
+    "--border":        "#2D3B52",     
+    "--shadow":        "0 8px 24px rgba(0,0,0,0.7)",     
+    "--shadowBrand":   "0 12px 32px rgba(255,150,68,0.2)",  // Orange glow
+    "--progressTrack": "#1F2545",     
+    "--challengeBg":   "#141A28",      
+    "--inviteBg":      "#14192B",      
+
   },
 };
 
@@ -250,10 +287,7 @@ export function useTheme() {
   return ctx;
 }
 
-// Map the global theme variables into a compact landing palette the landing
-// components can consume. This keeps the single source-of-truth in ThemeContext
-// while allowing landing UI to request a small set of colors (`from`, `via`,
-// `to`, `brand`, `text`, `textSec`, `rim`, `orb`) for gradients and accents.
+
 export function getLandingPalette(themeKey = 'light') {
   const vars = THEME_VARS[themeKey] || THEME_VARS['dark'];
 
