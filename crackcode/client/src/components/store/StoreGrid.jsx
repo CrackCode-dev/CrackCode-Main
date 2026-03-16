@@ -24,6 +24,9 @@
 //     </div>
 //   );
 // }
+
+
+
 import StoreItemCard from "./StoreItemCard";
 
 export default function StoreGrid({
