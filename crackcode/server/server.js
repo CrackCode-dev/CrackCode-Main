@@ -25,10 +25,8 @@ import shopRoutes from './src/modules/shop/routes.js';
 import rewardsRoutes from './src/modules/rewards/routes.js';
 import codeEditorRoutes from './src/modules/codeEditor/routes.js';
 
-// ✅ Career Map Questions Route
+// Career Map Routes
 import questionRoutes from './src/modules/Career Map/questions/question.routes.js';
-
-// ✅ Career Map Progress Route  (ADD THIS)
 import progressRoutes from './src/modules/Career Map/progress/progress.routes.js';
 
 const app = express();
@@ -37,32 +35,33 @@ const app = express();
 connectDB();
 
 // Redis
-try {
-  await redisClient.connect();
-  console.log('✅ Redis Connected');
-} catch (err) {
-  console.warn('⚠️ Redis not connected:', err.message);
-}
+redisClient
+  .connect()
+  .then(() => console.log('✅ Redis Connected'))
+  .catch((err) =>
+    console.warn('⚠️ Redis Connection Error (running without cache):', err.message)
+  );
 
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:5177'
-  ],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:5177',
+    ],
+    credentials: true,
+  })
+);
 
 // ─── Routes ───────────────────────────────────────────
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
-
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/learn', learnRoutes);
 
@@ -74,13 +73,11 @@ app.use('/api/shop', shopRoutes);
 app.use('/api/rewards', rewardsRoutes);
 app.use('/api/codeEditor', codeEditorRoutes);
 
-// ✅ Career Map Questions API
+// Career Map APIs
 app.use('/api/questions', questionRoutes);
-
-// ✅ Career Map Progress API  (ADD THIS)
 app.use('/api/progress', progressRoutes);
-// ─── Health Check ─────────────────────────────────────
 
+// Health check
 app.get('/', (_req, res) => {
   res.send('CrackCode Backend API is Running!');
 });
@@ -91,7 +88,7 @@ app.use((err, _req, res, _next) => {
   console.error('Global Error:', err);
   res.status(err.status || 500).json({
     success: false,
-    message: err.message || 'Internal server error'
+    message: err.message || 'Internal server error',
   });
 });
 

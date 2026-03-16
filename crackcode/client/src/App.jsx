@@ -22,12 +22,14 @@ import Leaderboard from "./pages/leaderboard/leaderboardPage";
 import LearnMainPage from "./pages/learn/LearnMainPage";
 import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from "./pages/learn/ChapterSelection";
+import QuestionListPage from "./pages/learn/SubChapterSelection";
 
 function App() {
   return (
     <ThemeProvider>
       <UserProgressProvider>
         <ToastContainer />
+
         <Routes>
 
           {/* Public routes */}
@@ -36,13 +38,19 @@ function App() {
           <Route path="/verify-account" element={<EmailVerify />} />
           <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+
           <Route path="/careermaps-Main" element={<CareermapMain />} />
+          <Route path="/careermap" element={<CareermapMain />} />
+
           <Route path="/caselog" element={<CaseLogMainPage />} />
           <Route path="/caselog/details" element={<CaseLogPage />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
+
           <Route path="/weeklychallenges" element={<WeeklyChallenges />} />
+          <Route path="/leaderboard" element={<Leaderboard />} />
+
           <Route path="/learn" element={<LearnMainPage />} />
           <Route path="/learn/:trackId" element={<ChapterSelectionPage />} />
+          <Route path="/learn/:trackId/:difficultyId" element={<QuestionListPage />} />
 
           {/* Protected routes */}
           <Route path="/home" element={<Home />} />
