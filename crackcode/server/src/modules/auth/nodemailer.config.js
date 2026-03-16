@@ -31,9 +31,9 @@ console.log(
 // Verify SMTP
 transporter.verify((error) => {
   if (error) {
-    console.error("❌ SMTP verification failed:", error.message);
+    console.error("SMTP verification failed:", error.message);
   } else {
-    console.log("✅ SMTP ready to send emails");
+    console.log("SMTP ready to send emails");
   }
 });
 

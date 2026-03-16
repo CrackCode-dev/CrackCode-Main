@@ -7,7 +7,7 @@ import CrackcodeLogo from "../../assets/logo/crackcode_logo.svg";
 const NAV_TABS = [
   { to: "/home",        label: "Learn"       },
   { to: "/caselog",     label: "Case List"   },
-  { to: "/careermap",   label: "Career Maps" },
+  { to: "/careermaps-Main",   label: "Career Maps" },
   { to: "/leaderboard", label: "Leaderboard" },
   { to: "/shop",        label: "Store"       },
 ];

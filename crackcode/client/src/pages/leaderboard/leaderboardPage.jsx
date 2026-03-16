@@ -99,51 +99,19 @@ const LeaderboardPage = () => {
   return (
 
     <div
-      className="min-h-screen flex flex-col relative"
+      className="min-h-screen flex flex-col relative px-6 sm:px-10 py-6"
       style={{
         backgroundColor: "var(--bg)",
         color: "var(--text)",
       }}
     >
 
-      {/* Google fonts for styling */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
+      <Header variant="empty"/>
 
-      {/* Top Navigation */}
-      <Header />
-
-      {/* HQ button (Fixed under navbar) */}
-      <button
-        onClick={() => navigate("/hq")}
-        style={{
-          position: "fixed",
-          top: "80px",
-          left: "20px",
-          zIndex: 50,
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          padding: "8px 14px",
-          borderRadius: "10px",
-          border: "1.5px solid var(--brand)",
-          background: "transparent",
-          color: "var(--brand)",
-          fontSize: "13px",
-          fontWeight: "700",
-          cursor: "pointer",
-          letterSpacing: "0.5px",
-        }}
-        onMouseEnter={e => { e.currentTarget.style.background = "var(--brandSoft)"; }}
-        onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-      >
-        🏠 HQ
-      </button>
+      
 
       {/* Main content */}
-      <main className="flex-1 px-10 pb-16 pt-24">
+      <main className="flex-1 px-10 pb-16 mt-20">
 
         {/* Filter buttons (top-right) */}
         <div className="flex justify-end max-w-5xl mx-auto mb-8">
@@ -322,9 +290,6 @@ const LeaderboardPage = () => {
         )}
 
       </main>
-
-      {/* Page footer */}
-      <Footer />
 
     </div>
   );

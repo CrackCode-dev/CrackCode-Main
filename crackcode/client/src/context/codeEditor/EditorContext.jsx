@@ -15,28 +15,42 @@ export const EditorProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [code, setCode] = useState('');
   const [language, setLanguage] = useState('python');
+  const [languageLocked, setLanguageLocked] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [testResults, setTestResults] = useState([]);
   const [showClue, setShowClue] = useState(false);
-  
-  // ✅ CHANGED: Default tab is now 'ai-assistant' instead of 'error-log'
-  const [activeTab, setActiveTab] = useState('ai-assistant');
-  
+
+  // Leftpanel subtabs (kept for backward compat)
+  const [activeTab, setActiveTab] = useState('error-diagnosis');
+
+  // Right-panel analysis tabs: error-diagnosi ai-assistant  history
+  const [activeRightTab, setActiveRightTab] = useState('test-cases');
+
+  // Error run history each entry 
+  const [errorHistory, setErrorHistory] = useState([]);
+
+  // Attempt counter incremented after every execution
+  const [attemptCount, setAttemptCount] = useState(0);
+
   const [aiMessages, setAiMessages] = useState([]);
   const [aiInput, setAiInput] = useState('');
   const [isAiTyping, setIsAiTyping] = useState(false);
 
   const value = {
-    currentProblem, setCurrentProblem, 
+    currentProblem, setCurrentProblem,
     loading, setLoading,
-    code, setCode, 
+    code, setCode,
     language, setLanguage,
-    isExecuting, setIsExecuting, 
+    languageLocked, setLanguageLocked,
+    isExecuting, setIsExecuting,
     testResults, setTestResults,
-    showClue, setShowClue, 
+    showClue, setShowClue,
     activeTab, setActiveTab,
-    aiMessages, setAiMessages, 
-    aiInput, setAiInput, 
+    activeRightTab, setActiveRightTab,
+    errorHistory, setErrorHistory,
+    attemptCount, setAttemptCount,
+    aiMessages, setAiMessages,
+    aiInput, setAiInput,
     isAiTyping, setIsAiTyping,
   };
 

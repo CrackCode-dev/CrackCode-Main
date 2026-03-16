@@ -1,28 +1,24 @@
 import { createClient } from 'redis';
 
 /**
- * Real Redis Client Configuration
+ * Redis Client Configuration
+ * Connects using environment variables with sensible fallbacks.
  */
 const redisClient = createClient({
     socket: {
         host: process.env.REDIS_HOST || '127.0.0.1',
-        port: process.env.REDIS_PORT || 6379
+        port: process.env.REDIS_PORT || 6379,
     },
-    password: process.env.REDIS_PASSWORD || undefined
+    password: process.env.REDIS_PASSWORD || undefined,
 });
 
-// Event Listeners for debugging and monitoring
 redisClient.on('error', (err) => {
-    console.error('❌ Redis Client Error:', err);
-});
-
-redisClient.on('connect', () => {
-    console.log('✅ Redis Client Connecting...');
+    console.error('Redis Client Error:', err);
 });
 
 redisClient.on('ready', () => {
-    console.log('🚀 Redis Client Ready');
+    console.log('Redis Connected');
 });
 
-// Note: Connection is handled in server.js using redisClient.connect()
+// Note: Connection is initiated in server.js via redisClient.connect()
 export default redisClient;
