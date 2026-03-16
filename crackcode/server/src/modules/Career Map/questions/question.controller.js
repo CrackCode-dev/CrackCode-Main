@@ -1,11 +1,12 @@
 import { 
   getQuestionsByDifficulty, 
   getQuestionById,
-  getQuestionsByCategoryAndDifficulty
+  getQuestionsByCategoryAndDifficulty,
+  getAllQuestions
 } from "./question.service.js";
-import { updateProgress } from "../progress/progress.service.js";
-//                           ☝️ "../" goes UP to "Career Map" folder
-//                              then "/progress/" goes INTO progress folder
+
+// Valid career paths
+const VALID_CAREERS = ["MLEngineer", "DataScientist", "SoftwareEngineer"];
 
 // Helper function to check answers
 const checkAnswer = (userAnswer, correctAnswer, type) => {
@@ -20,12 +21,28 @@ const checkAnswer = (userAnswer, correctAnswer, type) => {
 };
 
 // Get questions
-// GET /api/questions?difficulty=Easy
-// GET /api/questions?difficulty=Easy&category=Machine Learning
+// GET /api/questions?career=MLEngineer&difficulty=Easy
+// GET /api/questions?career=DataScientist&difficulty=Medium&category=Data Science
 export const getQuestions = async (req, res) => {
   try {
-    const { difficulty, category } = req.query;
+    const { career, difficulty, category } = req.query;
 
+    // Validate career
+    if (!career) {
+      return res.status(400).json({
+        success: false,
+        message: "Career is required (MLEngineer, DataScientist, or SoftwareEngineer)"
+      });
+    }
+
+    if (!VALID_CAREERS.includes(career)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid career. Valid options: ${VALID_CAREERS.join(", ")}`
+      });
+    }
+
+    // Validate difficulty
     if (!difficulty) {
       return res.status(400).json({
         success: false,
@@ -36,13 +53,15 @@ export const getQuestions = async (req, res) => {
     let questions;
 
     if (category) {
-      questions = await getQuestionsByCategoryAndDifficulty(category, difficulty);
+      questions = await getQuestionsByCategoryAndDifficulty(career, category, difficulty);
     } else {
-      questions = await getQuestionsByDifficulty(difficulty);
+      questions = await getQuestionsByDifficulty(career, difficulty);
     }
 
     res.json({
       success: true,
+      career,
+      difficulty,
       count: questions.length,
       data: questions
     });
@@ -57,20 +76,27 @@ export const getQuestions = async (req, res) => {
 
 // Submit answer
 // POST /api/questions/submit
-// Body: { questionId, answer }
+// Body: { career, questionId, answer }
 export const submitAnswer = async (req, res) => {
   try {
-    const { questionId, answer } = req.body;
-    const userId = req.user?.id;
+    const { career, questionId, answer } = req.body;
 
-    if (!questionId || !answer) {
+    // Validate inputs
+    if (!career || !questionId || !answer) {
       return res.status(400).json({
         success: false,
-        message: "questionId and answer are required"
+        message: "career, questionId, and answer are required"
       });
     }
 
-    const question = await getQuestionById(questionId);
+    if (!VALID_CAREERS.includes(career)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid career. Valid options: ${VALID_CAREERS.join(", ")}`
+      });
+    }
+
+    const question = await getQuestionById(career, questionId);
 
     if (!question) {
       return res.status(404).json({
@@ -80,10 +106,6 @@ export const submitAnswer = async (req, res) => {
     }
 
     const isCorrect = checkAnswer(answer, question.correctAnswer, question.type);
-
-    if (userId) {
-      await updateProgress(userId, question.difficulty, isCorrect);
-    }
 
     res.json({
       success: true,
@@ -100,11 +122,27 @@ export const submitAnswer = async (req, res) => {
 };
 
 // Get single question
-// GET /api/questions/:id
+// GET /api/questions/:id?career=MLEngineer
 export const getQuestion = async (req, res) => {
   try {
     const { id } = req.params;
-    const question = await getQuestionById(id);
+    const { career } = req.query;
+
+    if (!career) {
+      return res.status(400).json({
+        success: false,
+        message: "Career is required"
+      });
+    }
+
+    if (!VALID_CAREERS.includes(career)) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid career. Valid options: ${VALID_CAREERS.join(", ")}`
+      });
+    }
+
+    const question = await getQuestionById(career, id);
 
     if (!question) {
       return res.status(404).json({
@@ -124,4 +162,32 @@ export const getQuestion = async (req, res) => {
       message: error.message
     });
   }
+};
+
+// Get available careers
+// GET /api/questions/careers
+export const getCareers = async (req, res) => {
+  res.json({
+    success: true,
+    data: [
+      {
+        id: "MLEngineer",
+        name: "ML Engineer",
+        chapters: 4,
+        totalQuestions: 60
+      },
+      {
+        id: "DataScientist",
+        name: "Data Scientist",
+        chapters: 4,
+        totalQuestions: 60
+      },
+      {
+        id: "SoftwareEngineer",
+        name: "Software Engineer",
+        chapters: 4,
+        totalQuestions: 60
+      }
+    ]
+  });
 };

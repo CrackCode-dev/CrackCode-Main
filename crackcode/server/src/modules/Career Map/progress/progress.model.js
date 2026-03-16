@@ -10,7 +10,8 @@ const progressSchema = new mongoose.Schema({
 
   career: {
     type: String,
-    default: "ML Engineer"
+    enum: ["MLEngineer", "DataScientist", "SoftwareEngineer"],
+    required: true
   },
 
   easyScore: {
@@ -49,5 +50,8 @@ const progressSchema = new mongoose.Schema({
   }
 
 }, { timestamps: true });
+
+// Compound index for unique user-career combination
+progressSchema.index({ userId: 1, career: 1 }, { unique: true });
 
 export default mongoose.model("Progress", progressSchema);
