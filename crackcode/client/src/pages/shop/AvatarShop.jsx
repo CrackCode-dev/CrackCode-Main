@@ -1,7 +1,8 @@
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5050/api";
+const API_BASE_URL = "http://localhost:5051/api";
 
 const AvatarShop = () => {
   const [avatars, setAvatars] = useState([]);
@@ -13,25 +14,25 @@ const AvatarShop = () => {
   useEffect(() => {
     loadAvatarShop();
   }, []);
+  
+  const getToken = () => localStorage.getItem("accessToken");
 
-  const getToken = () => localStorage.getItem("token");
-
-  const getAuthHeaders = () => ({
-    Authorization: `Bearer ${getToken()}`,
-  });
+  const getAuthHeaders = () => {
+    const token = getToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
 
   const loadAvatarShop = async () => {
     try {
       setLoading(true);
       setError("");
-  
+
       const avatarsRes = await axios.get(
         `${API_BASE_URL}/shop/items?category=avatar`
       );
-  
-      console.log("Avatar API response:", avatarsRes.data);
+
       setAvatars(avatarsRes.data.items || []);
-  
+
       const token = getToken();
       if (token) {
         try {
@@ -41,7 +42,7 @@ const AvatarShop = () => {
               headers: getAuthHeaders(),
             }
           );
-  
+
           setInventory(inventoryRes.data.items || []);
         } catch (inventoryErr) {
           console.error("Failed to load inventory:", inventoryErr);
@@ -65,6 +66,12 @@ const AvatarShop = () => {
 
   const buyAvatar = async (avatar) => {
     try {
+      const token = getToken();
+      if (!token) {
+        setError("Please login first");
+        return;
+      }
+
       setBuyingId(avatar._id);
       setError("");
 
@@ -122,9 +129,9 @@ const AvatarShop = () => {
                 className="border p-4 rounded-xl text-center shadow bg-white"
               >
                 <img
-                src={`http://localhost:5050${avatar.imageUrl}`}
-                alt={avatar.name}
-                className="w-24 h-24 mx-auto mb-3 rounded-full object-cover"
+                  src={`http://localhost:5051${avatar.imageUrl}`}
+                  alt={avatar.name}
+                  className="w-24 h-24 mx-auto mb-3 rounded-full object-cover"
                 />
 
                 <h3 className="font-semibold text-lg">{avatar.name}</h3>
@@ -136,8 +143,8 @@ const AvatarShop = () => {
                 <p className="text-sm text-gray-500 mb-3">
                   {avatar.pricing.type === "paid"
                     ? `$${avatar.pricing.amount}`
-                    : avatar.pricing.type === "xp"
-                    ? `${avatar.pricing.amount} XP`
+                    : avatar.pricing.type === "tokens"
+                    ? `${avatar.pricing.amount} Tokens`
                     : "Free"}
                 </p>
 

@@ -1,4 +1,3 @@
-
 import { useEffect, useMemo, useState } from "react";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
@@ -18,8 +17,10 @@ export default function DetectiveStore() {
   const [equippedItemId, setEquippedItemId] = useState(null);
 
   const [username, setUsername] = useState("User");
-  const [xpRemaining, setXpRemaining] = useState(0);
+  const [tokensRemaining, setTokensRemaining] = useState(0);
   const [profileImage, setProfileImage] = useState("/placeholder.png");
+
+  const getToken = () => localStorage.getItem("accessToken");
 
   const [toast, setToast] = useState({
     show: false,
@@ -47,7 +48,9 @@ export default function DetectiveStore() {
     try {
       const res = await fetch("http://localhost:5051/api/profile", {
         method: "GET",
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
       });
 
       const data = await res.json();
@@ -61,7 +64,7 @@ export default function DetectiveStore() {
         data;
 
       setUsername(user?.username || user?.name || "User");
-      setXpRemaining(user?.xp ?? user?.totalXP ?? user?.totalXp ?? 0);
+      setTokensRemaining(user?.tokens ?? 0);
 
       const avatarSrc =
         user?.equippedAvatarItemId?.imageUrl ||
@@ -72,7 +75,7 @@ export default function DetectiveStore() {
     } catch (error) {
       console.error("Failed to load profile:", error);
       setUsername("User");
-      setXpRemaining(0);
+      setTokensRemaining(0);
       setProfileImage("/placeholder.png");
     }
   };
@@ -81,7 +84,9 @@ export default function DetectiveStore() {
     try {
       const res = await fetch("http://localhost:5051/api/shop/inventory", {
         method: "GET",
-        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${getToken()}`,
+        },
       });
 
       const data = await res.json();
@@ -140,7 +145,7 @@ export default function DetectiveStore() {
     }
   }, [category]);
 
-  const handleBuyXP = async (itemId) => {
+  const handleBuyTokens = async (itemId) => {
     try {
       setBuyingItemId(itemId);
 
@@ -148,8 +153,8 @@ export default function DetectiveStore() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
         },
-        credentials: "include",
         body: JSON.stringify({ itemId }),
       });
 
@@ -163,7 +168,7 @@ export default function DetectiveStore() {
         showToast(data.message || "Purchase failed", "error");
       }
     } catch (error) {
-      console.error("XP purchase failed:", error);
+      console.error("Token purchase failed:", error);
       showToast("Purchase failed", "error");
     } finally {
       setBuyingItemId(null);
@@ -178,8 +183,8 @@ export default function DetectiveStore() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
         },
-        credentials: "include",
         body: JSON.stringify({ itemId }),
       });
 
@@ -207,8 +212,8 @@ export default function DetectiveStore() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${getToken()}`,
         },
-        credentials: "include",
         body: JSON.stringify({
           itemId: item._id,
           category: item.category,
@@ -280,7 +285,9 @@ export default function DetectiveStore() {
 
           <div className="leading-tight">
             <p className="text-sm font-semibold">{username}</p>
-            <p className="text-xs font-medium text-green-400">{xpRemaining} XP</p>
+            <p className="text-xs font-medium text-green-400">
+              {tokensRemaining} Tokens
+            </p>
           </div>
         </div>
       </div>
@@ -316,7 +323,7 @@ export default function DetectiveStore() {
           {!loading && !inventoryLoading && displayedItems.length > 0 && (
             <StoreGrid
               items={displayedItems}
-              onBuyXP={category === "inventory" ? undefined : handleBuyXP}
+              onBuyXP={category === "inventory" ? undefined : handleBuyTokens}
               onBuyPaid={category === "inventory" ? undefined : handleBuyPaid}
               buyingItemId={buyingItemId}
               isInventoryView={category === "inventory"}
