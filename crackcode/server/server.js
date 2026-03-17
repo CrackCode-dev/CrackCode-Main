@@ -25,6 +25,10 @@ import shopRoutes from './src/modules/shop/routes.js';
 import rewardsRoutes from './src/modules/rewards/routes.js';
 import codeEditorRoutes from './src/modules/codeEditor/routes.js';
 
+// Career Map Routes
+import questionRoutes from './src/modules/Career Map/questions/question.routes.js';
+import progressRoutes from './src/modules/Career Map/progress/progress.routes.js';
+
 const app = express();
 
 // Database
@@ -53,25 +57,33 @@ app.use(
   })
 );
 
-// Routes
+// ─── Routes ───────────────────────────────────────────
+
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/learn', learnRoutes);
+
 app.use('/api/gameprofile', gameProfileRoutes);
-app.use('/api/game-profile', gameProfileRoutes);
+app.use('/api/game-profile', gameProfileRoutes); // alias
+
 app.use('/api/session', sessionRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/rewards', rewardsRoutes);
 app.use('/api/codeEditor', codeEditorRoutes);
+
+// Career Map APIs
+app.use('/api/questions', questionRoutes);
+app.use('/api/progress', progressRoutes);
 
 // Health check
 app.get('/', (_req, res) => {
   res.send('CrackCode Backend API is Running!');
 });
 
-// Global error handler
+// ─── Global Error Handler ─────────────────────────────
+
 app.use((err, _req, res, _next) => {
   console.error('Global Error:', err);
   res.status(err.status || 500).json({
@@ -80,8 +92,10 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-// Start server
+// ─── Start Server ─────────────────────────────────────
+
 const PORT = process.env.PORT || 5050;
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
