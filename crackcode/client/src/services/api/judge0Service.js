@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5051';
 
 // send code + test cases to the backend and get results back
 export const submitCodeToJudge0 = async (code, language, testCases, previousErrors = []) => {

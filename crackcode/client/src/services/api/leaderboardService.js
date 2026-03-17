@@ -6,8 +6,8 @@
 // =============================================================================
 
 // Retrieve the API base URL from environment variables (Vite-style).
-// Falls back to localhost:5050 for local development if not set.
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+// Falls back to localhost:5051 for local development if not set.
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5051";
 
 // =============================================================================
 // Leaderboard API Functions

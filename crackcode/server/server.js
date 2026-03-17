@@ -24,6 +24,7 @@ import sessionRoutes from './src/modules/session/routes.js';
 import shopRoutes from './src/modules/shop/routes.js';
 import rewardsRoutes from './src/modules/rewards/routes.js';
 import codeEditorRoutes from './src/modules/codeEditor/routes.js';
+import { initializeSessionModule } from './src/modules/session/session.service.js';
 
 // Career Map Routes
 import questionRoutes from './src/modules/Career Map/questions/question.routes.js';
@@ -34,13 +35,26 @@ const app = express();
 // Database
 connectDB();
 
-// Redis
-redisClient
-  .connect()
-  .then(() => console.log('✅ Redis Connected'))
-  .catch((err) =>
-    console.warn('⚠️ Redis Connection Error (running without cache):', err.message)
-  );
+// Redis: connect before starting the HTTP server.
+// If Redis connection fails at startup we log a clear error and exit the process.
+// Feature flag: allow disabling Redis cache in environments where Redis is optional.
+const ENABLE_SESSION_CACHE = (process.env.ENABLE_SESSION_CACHE ?? 'true').toString().toLowerCase() !== 'false';
+
+const connectRedisOrExit = async () => {
+  if (!ENABLE_SESSION_CACHE) {
+    console.log('⚠️ Redis cache is disabled via ENABLE_SESSION_CACHE=false');
+    return;
+  }
+
+  try {
+    await redisClient.connect();
+    console.log('✅ Redis Connected');
+  } catch (err) {
+    console.error('❌ Redis Connection Error - cannot start server:', err?.message || err);
+    // Exit so the platform (or developer) notices the misconfiguration immediately.
+    process.exit(1);
+  }
+};
 
 // Middleware
 app.use(express.json());
@@ -49,6 +63,10 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3001',
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:5177',

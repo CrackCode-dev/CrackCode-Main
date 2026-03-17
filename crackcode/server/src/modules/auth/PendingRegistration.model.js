@@ -7,7 +7,7 @@ const pendingRegistrationSchema = new mongoose.Schema(
     password: { type: String, required: true }, // hashed password
     acceptedTC: { type: Boolean, required: true, default: false },
     otp: { type: String, default: "" },
-    otpExpireAt: { type: Number, default: 0 },
+    otpExpireAt: { type: Date, default: null }, // ✅ FIX: Changed from Number to Date
   },
   { timestamps: true }
 );
