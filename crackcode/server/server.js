@@ -6,6 +6,9 @@ import connectDB from "./src/config/db.js";
 import redisClient from "./src/modules/leaderboard/redis.config.js";
 import { stripeWebhookController } from "./src/controllers/Shop.controller.js";
 
+import path from "path";
+import { fileURLToPath } from "url";
+
 // Routes
 import paymentRoutes from "./src/routes/Payment.routes.js";
 import shopRoutes from "./src/routes/Shop.routes.js";
@@ -28,6 +31,9 @@ import questionRoutes from "./src/modules/Career Map/questions/question.routes.j
 import progressRoutes from "./src/modules/Career Map/progress/progress.routes.js";
 
 const app = express();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Database
 connectDB();
@@ -58,6 +64,8 @@ const connectRedisOrExit = async () => {
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 const allowedOrigins = [
   "http://localhost:3000",

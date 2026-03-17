@@ -1,4 +1,5 @@
 
+
 // import Card from "../ui/Card";
 // import Button from "../ui/Button";
 
@@ -12,15 +13,14 @@
 //   equippingItemId,
 //   equippedItemId,
 // }) {
-//   const imagePath = item.imageUrl || item.image || "";
-//   const normalizedImagePath = imagePath.startsWith("/upload/")
-//     ? imagePath.replace("/upload/", "/uploads/")
-//     : imagePath;
+//   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
 
-//   const imageSrc = normalizedImagePath
-//     ? normalizedImagePath.startsWith("http")
-//       ? normalizedImagePath
-//       : `http://localhost:5050${normalizedImagePath}`
+//   const imagePath = item.imageUrl || item.image || "";
+
+//   const imageSrc = imagePath
+//     ? imagePath.startsWith("http")
+//       ? imagePath
+//       : `${API_BASE_URL}${imagePath}`
 //     : "/placeholder.png";
 
 //   const pricingType = item.pricing?.type;
@@ -124,7 +124,6 @@
 // }
 
 
-
 import Card from "../ui/Card";
 import Button from "../ui/Button";
 
@@ -140,12 +139,16 @@ export default function StoreItemCard({
 }) {
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
 
-  const imagePath = item.imageUrl || item.image || "";
+  const rawImagePath = item.imageUrl || item.image || "";
 
-  const imageSrc = imagePath
-    ? imagePath.startsWith("http")
-      ? imagePath
-      : `${API_BASE_URL}${imagePath}`
+  const normalizedImagePath = rawImagePath.startsWith("/upload/")
+    ? rawImagePath.replace("/upload/", "/uploads/")
+    : rawImagePath;
+
+  const imageSrc = normalizedImagePath
+    ? normalizedImagePath.startsWith("http")
+      ? normalizedImagePath
+      : `${API_BASE_URL}${normalizedImagePath}`
     : "/placeholder.png";
 
   const pricingType = item.pricing?.type;
@@ -210,6 +213,7 @@ export default function StoreItemCard({
           alt={item.name}
           className="h-24 object-contain"
           onError={(e) => {
+            e.currentTarget.onerror = null;
             e.currentTarget.src = "/placeholder.png";
           }}
         />
@@ -224,19 +228,13 @@ export default function StoreItemCard({
           {item.name}
         </h3>
 
-        <div className="text-green-500 text-sm mt-2">
-          ★★★★☆
-        </div>
+        <div className="text-green-500 text-sm mt-2">★★★★☆</div>
 
         <div className="flex justify-between items-center mt-4">
           {!isInventoryView ? (
-            <span className="text-green-400 font-semibold">
-              {displayPrice}
-            </span>
+            <span className="text-green-400 font-semibold">{displayPrice}</span>
           ) : (
-            <span className="text-sm text-gray-400">
-              Owned
-            </span>
+            <span className="text-sm text-gray-400">Owned</span>
           )}
 
           <Button onClick={buttonAction} disabled={isDisabled} size="sm">
