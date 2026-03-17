@@ -1,7 +1,7 @@
 // src/api/leaderboard.js
 // This is the file imported by leaderboardPage.jsx
 
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5051";
 
 /**
  * Fetch top 10 global leaderboard
