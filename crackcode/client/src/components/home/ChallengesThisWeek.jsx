@@ -1,57 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
-import { Calendar, CheckCircle2, Clock, Flame, ArrowRight } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, Flame, ArrowRight, ChartColumnBig, Scissors, Pyramid, Cog } from 'lucide-react';
 import Badge from '../ui/Badge';
+import Button from '../ui/Button';
+import { useNavigate } from 'react-router-dom'
+import { fetchWeeklyChallenges, transformProblemData } from '../../services/api/questionService'
 
-const WEEKLY_CHALLENGES = [
-  {
-    id: 'wc-1',
-    title: 'The Sorting Showdown',
-    description: 'Solve 5 different sorting challenges this week',
-    difficulty: 'hard',
-    difficultyLabel: 'Hard',
-    points: 500,
-    completed: 2,
-    total: 5,
-    icon: '📊',
-    color: '#FF6B6B'
-  },
-  {
-    id: 'wc-2',
-    title: 'String Manipulation Master',
-    description: 'Complete 4 string-based coding problems',
-    difficulty: 'medium',
-    difficultyLabel: 'Medium',
-    points: 350,
-    completed: 1,
-    total: 4,
-    icon: '✂️',
-    color: '#4ECDC4'
-  },
-  {
-    id: 'wc-3',
-    title: 'Data Structure Domination',
-    description: 'Solve problems using various data structures',
-    difficulty: 'hard',
-    difficultyLabel: 'Hard',
-    points: 400,
-    completed: 0,
-    total: 3,
-    icon: '🏗️',
-    color: '#95E1D3'
-  },
-  {
-    id: 'wc-4',
-    title: 'Algorithm Mastery',
-    description: 'Implement 6 fundamental algorithms',
-    difficulty: 'medium',
-    difficultyLabel: 'Medium',
-    points: 300,
-    completed: 3,
-    total: 6,
-    icon: '⚙️',
-    color: '#FFD93D'
-  }
+const PLACEHOLDER = [
+  { id: 'wc-1', title: 'The Sorting Showdown', description: 'Solve 5 different sorting challenges this week', difficulty: 'Hard', points: 500, completed: 2, total: 5, icon: '📊', color: '#FF6B6B' },
+  { id: 'wc-2', title: 'String Manipulation Master', description: 'Complete 4 string-based coding problems', difficulty: 'Medium', points: 350, completed: 1, total: 4, icon: '✂️', color: '#FFB33F' },
+  { id: 'wc-3', title: 'Data Structure Domination', description: 'Solve problems using various data structures', difficulty: 'Hard', points: 400, completed: 2, total: 3, icon: '🏗️', color: '#FF6B6B' },
+  { id: 'wc-4', title: 'Algorithm Mastery', description: 'Implement 6 fundamental algorithms', difficulty: 'Medium', points: 300, completed: 3, total: 6, icon: '⚙️', color: '#FFB33F' }
 ];
 
 // Helper functions for progress calculation
@@ -70,6 +29,59 @@ export default function ChallengesThisWeek() {
   const { theme } = useTheme();
   const [hoveredId, setHoveredId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
+  const [cards, setCards] = useState(PLACEHOLDER);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        setLoading(true); setError(null);
+        const items = await fetchWeeklyChallenges();
+        console.log('weekly items', items);
+        if (!items || items.length === 0) return;
+
+        // select up to 4 distinct items and map to card shape
+        const selected = [];
+        const used = new Set();
+        for (const it of items) {
+          const id = it.problemId || it._id || JSON.stringify(it);
+          if (used.has(id)) continue;
+          used.add(id);
+          const t = transformProblemData(it, 'javascript');
+          const rawDiff = (it.difficulty || t.difficulty || 'medium').toString().toLowerCase();
+          const difficultyLabel = rawDiff.charAt(0).toUpperCase() + rawDiff.slice(1);
+          selected.push({
+            id: t.problemId || id,
+            title: t.title || it.original?.title || `Weekly ${used.size}`,
+            description: t.description || it.original?.description || '',
+            difficulty: difficultyLabel,
+            difficultyLabel: difficultyLabel,
+            points: t.variant?.points || t.points || 300,
+            completed: it.completed || 0,
+            total: it.total || 1,
+            icon: '📊',
+            color: '#FF6B6B',
+            raw: it,
+            transformed: t,
+          });
+          if (selected.length >= 4) break;
+        }
+
+        if (mounted && selected.length) setCards(selected);
+      } catch (err) {
+        console.error('Failed to fetch weekly challenges', err);
+        setError(err.message || 'Failed to load weekly challenges');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+    return () => { mounted = false }
+  }, [])
 
   return (
     <div className='w-full' style={{ color: 'var(--text)' }}>
@@ -89,14 +101,15 @@ export default function ChallengesThisWeek() {
               5 days remaining
             </p>
             <p className='text-2xl font-bold' style={{ color: 'var(--brand)' }}>
-              {WEEKLY_CHALLENGES.reduce((acc, c) => acc + c.completed, 0)}/{WEEKLY_CHALLENGES.reduce((acc, c) => acc + c.total, 0)}
+              {cards.reduce((acc, c) => acc + (c.completed || 0), 0)}/{cards.reduce((acc, c) => acc + (c.total || 0), 0)}
             </p>
           </div>
         </div>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-          {WEEKLY_CHALLENGES.map((challenge) => {
-            const progress = getProgressPercentage(challenge.completed, challenge.total);
+          {loading && <div className='text-sm text-gray-300'>Loading challenges…</div>}
+          {!loading && cards.map((challenge) => {
+            const progress = getProgressPercentage(challenge.completed || 0, challenge.total || 1);
             const isExpanded = expandedId === challenge.id;
 
             return (
@@ -110,21 +123,28 @@ export default function ChallengesThisWeek() {
                   border: '2px solid var(--border)',
                   boxShadow:
                     hoveredId === challenge.id
-                      ? `0 12px 32px ${challenge.color}30`
+                      ? `0 12px 32px ${challenge.color || '#FF6B6B'}30`
                       : 'none',
-                  borderColor: hoveredId === challenge.id ? challenge.color : 'var(--border)',
+                  borderColor: hoveredId === challenge.id ? (challenge.color || '#FF6B6B') : 'var(--border)',
                   transform: hoveredId === challenge.id ? 'translateY(-4px)' : 'translateY(0)'
+                }}
+                onClick={() => {
+                  if (challenge.raw) {
+                    const targetId = challenge.transformed?.problemId || challenge.id
+                    navigate(`/code-editor/${targetId}`, { state: { question: challenge.raw, language: 'javascript' } })
+                  }
                 }}
               >
                 <div className='p-6'>
                   {/* Header */}
                   <div className='flex items-start justify-between mb-4'>
                     <div className='flex items-start gap-3 flex-1'>
-                      <span className='text-3xl'>{challenge.icon}</span>
+                      <span className='text-3xl'>{challenge.icon || '📊'}</span>
                       <div className='flex-1 min-w-0'>
                         <h3 className='text-lg font-bold mb-1'>{challenge.title}</h3>
-                        <p style={{ color: 'var(--textSec)' }} className='text-sm leading-relaxed'>
-                          {challenge.description}
+                        {/* Only show minimal meta on card. Full problem visible in editor. */}
+                        <p style={{ color: 'var(--textSec)' }} className='text-xs'>
+                          {challenge.completed}/{challenge.total} progress
                         </p>
                       </div>
                     </div>
@@ -140,16 +160,16 @@ export default function ChallengesThisWeek() {
                   <div className='flex flex-wrap gap-2 mb-4'>
                     <Badge
                       type='difficulty'
-                      difficulty={challenge.difficulty}
+                      difficulty={challenge.difficulty?.toLowerCase()}
                       size='sm'
                     >
-                      {challenge.difficultyLabel}
+                      {challenge.difficultyLabel || challenge.difficulty}
                     </Badge>
                     <div
                       className='px-2 py-1 rounded text-xs font-bold'
                       style={{
-                        background: `${challenge.color}20`,
-                        color: challenge.color
+                        background: `${challenge.color || '#FF6B6B'}20`,
+                        color: challenge.color || '#FF6B6B'
                       }}
                     >
                       +{challenge.points} pts
@@ -157,7 +177,7 @@ export default function ChallengesThisWeek() {
                   </div>
 
                   {/* Progress Bar */}
-                  <div className='mb-4'>
+                  <div className='mb-6'>
                     <div className='flex items-center justify-between mb-2'>
                       <span className='text-xs font-semibold uppercase' style={{ color: 'var(--textSec)' }}>
                         Progress
@@ -180,30 +200,11 @@ export default function ChallengesThisWeek() {
                     </div>
                   </div>
 
-                  {/* Footer CTA */}
-                  <button
-                    onClick={() => setExpandedId(isExpanded ? null : challenge.id)}
-                    className='w-full py-2 px-3 rounded-lg font-semibold transition-all flex items-center justify-between group/btn'
-                    style={{
-                      background:
-                        hoveredId === challenge.id
-                          ? challenge.color
-                          : `${challenge.color}15`,
-                      color:
-                        hoveredId === challenge.id
-                          ? 'white'
-                          : challenge.color,
-                      border: `1px solid ${challenge.color}40`
-                    }}
-                  >
-                    <span>{progress === 100 ? 'Completed!' : 'View Challenge'}</span>
-                    <ArrowRight
-                      className='w-4 h-4 transition-transform'
-                      style={{
-                        transform: hoveredId === challenge.id ? 'translateX(4px)' : 'translateX(0)'
-                      }}
-                    />
-                  </button>
+                  <Button variant='primary' size='sm' icon={ArrowRight} iconPosition='right' fullWidth style={{
+                                                                                                           background: getProgressColor(progress),
+                                                                                                           borderColor: getProgressColor(progress)}}>
+                    {progress === 100 ? 'Completed!' : 'View Challenge'}
+                  </Button>
                 </div>
               </div>
             );
@@ -226,7 +227,7 @@ export default function ChallengesThisWeek() {
               className='text-3xl font-bold'
               style={{ color: 'var(--brand)' }}
             >
-              +{WEEKLY_CHALLENGES.reduce((acc, c) => acc + c.points, 0)}
+              +{cards.reduce((acc, c) => acc + (c.points || 0), 0)}
             </p>
           </div>
 
@@ -244,7 +245,7 @@ export default function ChallengesThisWeek() {
               className='text-3xl font-bold'
               style={{ color: '#52C882' }}
             >
-              {WEEKLY_CHALLENGES.filter((c) => c.completed === c.total).length}/{WEEKLY_CHALLENGES.length}
+              {cards.filter((c) => (c.completed || 0) === (c.total || 0)).length}/{cards.length}
             </p>
           </div>
 

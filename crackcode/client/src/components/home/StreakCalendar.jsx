@@ -1,83 +1,192 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
 import { Calendar, Zap, TrendingUp } from 'lucide-react';
+import axios from 'axios';
+import { AppContent } from '../../context/userauth/authenticationContext';
 
 export default function StreakCalendar() {
   const { theme } = useTheme();
   const [hoveredDate, setHoveredDate] = useState(null);
 
-  // Mock activity data for the last 12 weeks
-  const activityData = useMemo(() => {
-    const data = {};
-    const today = new Date();
-    
-    // Generate activity for the last 84 days
-    // 1 = completed a question, 0 = no activity
-    for (let i = 0; i < 84; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      
-      // 70% chance of having completed a question
-      data[dateStr] = Math.random() > 0.3 ? 1 : 0;
-    }
-    
-    return data;
+  // Activity data (fetched from server, cached to localStorage and refreshed every 24 hours)
+  const { backendUrl } = useContext(AppContent);
+  const [activityData, setActivityData] = useState({});
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [yearsList, setYearsList] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const LOCAL_KEY = `userActivityData_v1_${selectedYear}`;
+    const LOCAL_AT = `userActivityFetchedAt_v1_${selectedYear}`;
+    const fetchIfNeeded = async () => {
+      try {
+        const fetchedAt = localStorage.getItem(LOCAL_AT);
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+
+        if (fetchedAt && now - Number(fetchedAt) < oneDay) {
+          const cached = localStorage.getItem(LOCAL_KEY);
+          if (cached) {
+            if (!mounted) return;
+            setActivityData(JSON.parse(cached));
+            return;
+          }
+        }
+
+        // fetch from backend for selected year (startDate..endDate)
+        const year = selectedYear;
+        const start = new Date(year, 0, 1);
+        const end = new Date(year, 11, 31, 23, 59, 59, 999);
+        const url = `${backendUrl}/api/user/activity?startDate=${encodeURIComponent(start.toISOString())}&endDate=${encodeURIComponent(end.toISOString())}`;
+        const { data } = await axios.get(url, { withCredentials: true, timeout: 10000 });
+        if (data && data.success && mounted) {
+          setActivityData(data.data.activity || {});
+          localStorage.setItem(LOCAL_KEY, JSON.stringify(data.data.activity || {}));
+          localStorage.setItem(LOCAL_AT, String(Date.now()));
+        }
+      } catch (err) {
+        // if fetch fails, fall back to any cached data or leave empty
+        const cached = localStorage.getItem(LOCAL_KEY);
+        if (cached && mounted) setActivityData(JSON.parse(cached));
+      }
+    };
+
+    fetchIfNeeded();
+
+    // Set a timer to refresh after 24 hours
+    const refreshTimer = setInterval(() => {
+      fetchIfNeeded();
+    }, 24 * 60 * 60 * 1000);
+
+    return () => {
+      mounted = false;
+      clearInterval(refreshTimer);
+    };
+  }, [backendUrl, selectedYear]);
+
+  // Prepare years list (current year down to earliest 2018 or 5 years back)
+  useEffect(() => {
+    const current = new Date().getFullYear();
+    const minYear = Math.max(2018, current - 6);
+    const arr = [];
+    for (let y = current; y >= minYear; y--) arr.push(y);
+    setYearsList(arr);
+    // ensure selectedYear is valid
+    setSelectedYear((s) => (s ? s : current));
   }, []);
 
-  const weeks = useMemo(() => {
-    const monthsData = {};
-    const today = new Date();
-    
-    // Generate data for last 12 weeks (roughly 3 months)
-    for (let i = 0; i < 84; i++) {
-      const date = new Date(today);
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0];
-      const monthKey = date.toISOString().slice(0, 7); // YYYY-MM
-      
-      if (!monthsData[monthKey]) {
-        monthsData[monthKey] = [];
+  // Fetch progress-summary (casesSolved, currentStreak) to populate stats
+  const [progressSummary, setProgressSummary] = useState(null);
+  useEffect(() => {
+    let mounted = true;
+    const fetchSummary = async () => {
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/user/progress-summary`, { withCredentials: true, timeout: 6000 });
+        if (data && data.success && mounted) setProgressSummary(data.data);
+      } catch (err) {
+        // ignore
       }
-      monthsData[monthKey].push({
-        date,
-        dateStr,
-        activity: activityData[dateStr] || 0
-      });
-    }
-    
-    // Sort by month (newest first)
-    const sortedMonths = Object.keys(monthsData).sort().reverse();
-    
-    // Group into weeks for each month
+    };
+    fetchSummary();
+    return () => { mounted = false };
+  }, [backendUrl]);
+
+  // Build months Jan..Dec for the selectedYear using activityData
+  const weeks = useMemo(() => {
     const result = {};
-    sortedMonths.forEach((monthKey) => {
-      const daysInMonth = monthsData[monthKey];
-      const weeks = [];
+    const year = selectedYear;
+
+    for (let month = 0; month < 12; month++) {
+      const first = new Date(year, month, 1);
+      const last = new Date(year, month + 1, 0);
+      const daysInMonth = last.getDate();
+
+      const monthWeeks = [];
       let currentWeek = [];
-      
-      daysInMonth.forEach((day, index) => {
-        currentWeek.push(day);
-        if (currentWeek.length === 7 || index === daysInMonth.length - 1) {
-          weeks.push(currentWeek);
+
+      // Pad leading empty days to align weekdays if desired (we'll still present weeks as arrays)
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(year, month, d);
+        const dateStr = date.toISOString().split('T')[0];
+        currentWeek.push({ date, dateStr, activity: activityData[dateStr] || 0 });
+        if (currentWeek.length === 7) {
+          monthWeeks.push(currentWeek);
           currentWeek = [];
         }
-      });
-      
-      result[monthKey] = weeks;
-    });
-    
+      }
+      if (currentWeek.length > 0) monthWeeks.push(currentWeek);
+
+      const key = `${String(year)}-${String(month + 1).padStart(2, '0')}`;
+      result[key] = monthWeeks;
+    }
+
     return result;
-  }, [activityData]);
+  }, [activityData, selectedYear]);
 
   const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
-  const stats = {
-    currentStreak: 7,
-    longestStreak: 23,
-    totalContributions: Object.values(activityData).filter(v => v > 0).length,
-    completionRate: '85%'
-  };
+  // Derive stats: prefer server-provided summary for current streak; compute longest streak from activity data
+  const stats = useMemo(() => {
+    const daysWindow = 84;
+    const contributions = Object.values(activityData || {}).filter(v => v > 0).length;
+
+    // compute longest consecutive streak from activity map
+    const dates = Object.keys(activityData || {}).sort(); // ascending
+    let longest = 0;
+    let current = 0;
+    let prevDate = null;
+
+    for (const d of dates) {
+      const val = activityData[d] || 0;
+      if (val > 0) {
+        if (prevDate) {
+          const pd = new Date(prevDate);
+          const cd = new Date(d);
+          const diffDays = Math.round((cd - pd) / (1000 * 60 * 60 * 24));
+          if (diffDays === 1) {
+            current += 1;
+          } else {
+            current = 1;
+          }
+        } else {
+          current = 1;
+        }
+        if (current > longest) longest = current;
+      } else {
+        current = 0;
+      }
+      prevDate = d;
+    }
+
+    // compute current streak: prefer server value if present
+    const serverStreak = progressSummary?.currentStreak;
+
+    // fallback compute current streak by checking trailing consecutive days from today
+    let trailing = 0;
+    try {
+      const today = new Date();
+      for (let i = 0; i < daysWindow; i++) {
+        const d = new Date(today);
+        d.setDate(d.getDate() - i);
+        const key = d.toISOString().split('T')[0];
+        if ((activityData && activityData[key]) > 0) trailing += 1;
+        else break;
+      }
+    } catch (e) {
+      trailing = 0;
+    }
+
+    const currentStreak = typeof serverStreak === 'number' ? serverStreak : trailing;
+    const completionRate = daysWindow > 0 ? `${Math.round((contributions / daysWindow) * 100)}%` : '0%';
+
+    return {
+      currentStreak: currentStreak || 0,
+      longestStreak: longest || 0,
+      totalContributions: contributions,
+      completionRate,
+    };
+  }, [activityData, progressSummary]);
 
   const getActivityColor = (completed) => {
     return completed === 1 ? 'var(--brand)' : '#f0f0f0';
@@ -98,8 +207,22 @@ export default function StreakCalendar() {
               Your Activity
             </h2>
             <p style={{ color: 'var(--textSec)' }} className='text-sm'>
-              Last 12 weeks of your coding consistency
+              Last 12 months of your coding consistency
             </p>
+          </div>
+          <div className='flex items-center gap-2'>
+            <label htmlFor='year-select' className='sr-only'>Select year</label>
+            <select
+              id='year-select'
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
+              className='bg-transparent border rounded px-2 py-1 text-sm'
+              aria-label='Select year'
+            >
+              {yearsList.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
           </div>
         </div>
 

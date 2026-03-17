@@ -1,14 +1,17 @@
 import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { Gamepad2, Brain, Globe, Trophy, Zap, Users } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
 import { cardHoverEffects, animationConfig } from './hoverEffects'
+import Button from '../ui/Button'
 
 export default function WhyCrackCodeSection() {
+    const navigate = useNavigate()
     const { landingTheme } = useLandingTheme()
     const vars = resolveLandingVars(landingTheme)
 
     const hexToRgba = (hex, alpha = 1) => {
-        const h = hex.replace('#','')
+        const h = hex.replace('#', '')
         const bigint = parseInt(h, 16)
         const r = (bigint >> 16) & 255
         const g = (bigint >> 8) & 255
@@ -70,18 +73,14 @@ export default function WhyCrackCodeSection() {
     }
 
     // Use theme background color
-    const sectionStyle = { background: vars.from }
+    const sectionStyle = { background: vars.to }
 
     // card background depends on theme but prefer resolved vars
     const cardBg = landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark
     const secondaryText = landingTheme === 'light' ? (vars.textSec || '#334155') : (vars.textSec || 'rgba(255,255,255,0.8)')
 
     return (
-        <section style={sectionStyle} className='relative w-full py-20 md:py-32 overflow-hidden'>
-            {/* Decorative background elements */}
-            <div className='absolute top-0 left-0 w-96 h-96 rounded-full filter blur-3xl opacity-10' style={{ background: vars.via }} />
-            <div className='absolute bottom-0 right-0 w-96 h-96 rounded-full filter blur-3xl opacity-10' style={{ background: vars.from }} />
-
+        <section className='relative w-full py-20 md:py-32 overflow-hidden' style={sectionStyle}>
             <div className='relative z-10 container mx-auto px-6 md:px-10'>
                 {/* Section Header */}
                 <motion.div
@@ -135,12 +134,12 @@ export default function WhyCrackCodeSection() {
                                 whileHover={{ y: -10, scale: 1.02 }}
                                 transition={{ duration: 0.3 }}
                             >
-                                <div className='absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-400' style={{ background: `linear-gradient(135deg, ${hexToRgba(vars.via,0.15)}, ${hexToRgba(vars.from,0.08)})` }} />
+                                <div className='absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-400' style={{ background: `linear-gradient(135deg, ${hexToRgba(vars.via, 0.15)}, ${hexToRgba(vars.from, 0.08)})` }} />
 
                                 <div className='relative p-8 rounded-2xl border transition-all duration-300 h-full flex flex-col justify-between group shadow-md hover:shadow-2xl' style={{ background: cardBg, borderColor: vars.rim || (landingTheme === 'light' ? '#E6E6E6' : 'rgba(255,255,255,0.06)') }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = vars.brand; e.currentTarget.style.background = landingTheme === 'light' ? 'rgba(255,200,124,0.12)' : 'rgba(255,150,68,0.15)'; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = vars.rim || (landingTheme === 'light' ? '#E6E6E6' : 'rgba(255,255,255,0.06)'); e.currentTarget.style.background = cardBg; }}>
                                     {/* Icon container + Content */}
                                     <div>
-                                        <div className='w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:shadow-xl transition-all duration-300' style={{ background: `linear-gradient(135deg, ${hexToRgba(vars.via,0.15)}, ${hexToRgba(vars.from,0.1)})` }}>
+                                        <div className='w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:shadow-xl transition-all duration-300' style={{ background: `linear-gradient(135deg, ${hexToRgba(vars.via, 0.15)}, ${hexToRgba(vars.from, 0.1)})` }}>
                                             <Icon className='w-8 h-8 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300' style={{ color: vars.brand }} />
                                         </div>
 
@@ -161,23 +160,20 @@ export default function WhyCrackCodeSection() {
                 </motion.div>
 
                 {/* Bottom CTA */}
-                    <motion.div
-                        className='mt-20 text-center'
-                        variants={fadeInUp}
-                        initial='hidden'
-                        whileInView='visible'
-                        viewport={{ once: true, amount: 0.5 }}
-                    >
-                        <p className='mb-8 text-lg' style={{ color: secondaryText }}>
-                            Ready to become a Code Detective?
-                        </p>
-                        <button
-                            className='px-10 py-4 font-bold rounded-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1'
-                            style={{ background: `linear-gradient(90deg, ${vars.btnStart}, ${vars.btnEnd})`, color: vars.btnText }}
-                        >
-                            Start Your Investigation
-                        </button>
-                    </motion.div>
+                <motion.div
+                    className='mt-20 text-center'
+                    variants={fadeInUp}
+                    initial='hidden'
+                    whileInView='visible'
+                    viewport={{ once: true, amount: 0.5 }}
+                >
+                    <p className='mb-8 text-lg' style={{ color: secondaryText }}>
+                        Ready to become a Code Detective?
+                    </p>
+                    <Button onClick={() => navigate('/login')} variant='primary' size='xl' icon={Zap} iconPosition='right'>
+                        Start Your Investigation
+                    </Button>
+                </motion.div>
             </div>
         </section>
     )

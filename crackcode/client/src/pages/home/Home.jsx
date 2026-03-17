@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+
 import { useTheme } from '../../context/theme/ThemeContext'
 import Header from '../../components/common/Header'
 import Footer from '../../components/common/Footer'
@@ -13,27 +13,25 @@ import RecommendedChallenges from '../../components/home/RecommendedChallenges'
 import StreakCalendar from '../../components/home/StreakCalendar'
 
 function Home() {
-  const { theme, setTheme } = useTheme()
 
-  // Set light theme by default on home page (only on mount)
-  useEffect(() => {
-    setTheme('light')
-  }, [])
+  useTheme()
+
+
 
   return (
     <div className='min-h-screen flex flex-col' style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       <Header variant="default" />
-      
-      <main className='flex-1 w-full flex flex-col'>
+
+      <main className='flex-1 w-full flex flex-col px-5'>
         {/* Top Section with Sidebars - Three Column Layout */}
         <div className='px-6 sm:px-10 py-10 flex-1 flex flex-col'>
           <div className='flex gap-6 pt-20 flex-1 items-stretch'>
             {/* Left Sidebar */}
             <LeftSidebar />
-            
+
             {/* Center Content Area */}
             <TopContentArea />
-            
+
             {/* Right Sidebar - Profile & Leaderboard */}
             <div className='w-80 shrink-0 space-y-4 flex flex-col'>
               <ProfileCard />

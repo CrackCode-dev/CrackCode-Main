@@ -1,5 +1,16 @@
-import sessionService from "./session.service.js";
+import {
+  invalidateSession,
+  invalidateAllUserSessions,
+  getUserSessions,
+  refreshAccessToken,
+} from "./session.service.js";
 import { getBalance } from "./transaction.service.js";
+
+// ─── Helper: validate sessionId format (should be 64 hex chars) ────
+const isValidSessionId = (id) => {
+  if (!id || typeof id !== 'string') return false;
+  return /^[a-f0-9]{64}$/.test(id);
+};
 
 // ─── Cookie config ───────────────────────────────────────────
 const isProduction = () => process.env.NODE_ENV === "production";
@@ -54,7 +65,7 @@ export const refreshToken = async (req, res) => {
       });
     }
 
-    const result = await sessionService.refreshAccessToken(token);
+    const result = await refreshAccessToken(token);
 
     if (!result.success) {
       clearSessionCookies(res);
@@ -84,8 +95,17 @@ export const refreshToken = async (req, res) => {
  */
 export const logout = async (req, res) => {
   try {
+    // Validate sessionId format for security
+    if (req.sessionId && !isValidSessionId(req.sessionId)) {
+      console.warn('[Session] Invalid sessionId format detected in logout:', req.sessionId.substring(0, 20));
+      return res.status(400).json({
+        success: false,
+        message: "Invalid session format",
+      });
+    }
+
     if (req.sessionId) {
-      await sessionService.invalidateSession(req.sessionId);
+      await invalidateSession(req.sessionId);
     }
 
     clearSessionCookies(res);
@@ -106,7 +126,7 @@ export const logout = async (req, res) => {
  */
 export const logoutAll = async (req, res) => {
   try {
-    const count = await sessionService.invalidateAllUserSessions(req.userId);
+    const count = await invalidateAllUserSessions(req.userId);
 
     clearSessionCookies(res);
 
@@ -129,7 +149,7 @@ export const logoutAll = async (req, res) => {
  */
 export const getSessions = async (req, res) => {
   try {
-    const sessions = await sessionService.getUserSessions(req.userId);
+    const sessions = await getUserSessions(req.userId);
 
     const mapped = sessions.map((s) => ({
       id: s.sessionId,
@@ -157,6 +177,14 @@ export const revokeSession = async (req, res) => {
   try {
     const { sessionId } = req.params;
 
+    // Validate sessionId format
+    if (!isValidSessionId(sessionId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid session ID format",
+      });
+    }
+
     if (sessionId === req.sessionId) {
       return res.status(400).json({
         success: false,
@@ -165,7 +193,7 @@ export const revokeSession = async (req, res) => {
     }
 
     // Make sure the target session belongs to this user
-    const sessions = await sessionService.getUserSessions(req.userId);
+    const sessions = await getUserSessions(req.userId);
     const target = sessions.find((s) => s.sessionId === sessionId);
 
     if (!target) {
@@ -175,7 +203,7 @@ export const revokeSession = async (req, res) => {
       });
     }
 
-    await sessionService.invalidateSession(sessionId);
+    await invalidateSession(sessionId);
 
     return res.json({ success: true, message: "Session revoked" });
   } catch (error) {

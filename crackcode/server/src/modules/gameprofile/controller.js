@@ -4,6 +4,9 @@ import User from "../auth/User.model.js";
 
 export const UpdateGameProfile = async (req, res) => {
     try {
+        console.log('UpdateGameProfile called - userId:', req.userId);
+        console.log('UpdateGameProfile body:', req.body);
+
         const { username, avatar, avatarType } = req.body;
 
         //Validation
@@ -56,8 +59,8 @@ export const UpdateGameProfile = async (req, res) => {
         console.error('Profile update error : ', error);
         res.status(500).json({
             success: false,
-            message: 'Server error ',
-            error: error.meassage
+            message: 'Server error',
+            error: error.message
         });
 
     }

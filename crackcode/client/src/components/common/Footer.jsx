@@ -1,10 +1,16 @@
 import React from 'react'
+// import logo from "../../assets/logo/crackcode_logo.svg"
+import logo_light from "../../assets/logo/logo_light.png";
+import logo_dark from  "../../assets/logo/logo_dark.png";
 import { useTheme } from '../../context/theme/ThemeContext'
 import logo from "../../assets/logo/crackcode_logo.svg"
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 
 const Footer = ({ variant = "default" }) => {
     const { theme } = useTheme()
+    const darkThemes = ["dark", "country", "midnight"];
+    const activeLogo = darkThemes.includes(theme) ? logo_light : logo_dark;
+
     const baseStyles = "w-full flex justify-between items-center flex-shrink-0"
 
     const variants = {
@@ -36,7 +42,7 @@ const Footer = ({ variant = "default" }) => {
         {/* Logo */}
         <div className='cursor-pointer'>
             <img 
-                src={logo} 
+                src={activeLogo} 
                 alt="CrackCode Logo" 
                 onClick={handleLogoClick}
                 className='w-15 transition-transform hover:scale-105 duration-300'

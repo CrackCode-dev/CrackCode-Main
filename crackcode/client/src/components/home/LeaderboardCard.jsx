@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
 import { Trophy, TrendingUp, ExternalLink } from 'lucide-react';
+import Button from '../ui/Button';
 
 export default function LeaderboardCard() {
   const { theme } = useTheme();
@@ -109,7 +110,7 @@ export default function LeaderboardCard() {
       </div>
 
       {/* View Full Leaderboard Link */}
-      <button
+      {/* <button
         className='w-full mt-4 py-2 rounded-md text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 hover:gap-3'
         style={{
           background: 'rgba(255, 165, 0, 0.1)',
@@ -121,7 +122,10 @@ export default function LeaderboardCard() {
       >
         View Full Leaderboard
         <ExternalLink className='w-4 h-4' />
-      </button>
+      </button> */}
+      <Button variant='secondary' size='sm' icon={ExternalLink} iconPosition='right' className='mt-4' fullWidth>
+        View Full Leaderboard
+      </Button>
     </div>
   );
 }

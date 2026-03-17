@@ -151,6 +151,13 @@ function EmailVerify() {
       const { data } = await axios.post(`${backendUrl}/api/auth/verify-account`, payload);
 
       if (data?.success) {
+        // store access token if returned
+        if (data.accessToken) {
+          try {
+            localStorage.setItem('accessToken', data.accessToken);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+          } catch (e) {}
+        }
         toast.success(data.message || "Email verified successfully!");
         // User is now authenticated by the backend
         setIsLoggedIn(true);

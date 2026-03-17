@@ -35,7 +35,7 @@ function CareermapMain() {
   </div>
 
       {/* Header Section */}
-      <header className="text-center px-8 py-12  mb-8">
+      <header className="text-center px-8 py-12  mt-20">
         <h1 className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
           Choose the best career path that suits you!
         </h1>
@@ -56,8 +56,12 @@ function CareermapMain() {
                 hoverEffect={!career.locked ? "lift" : "none"}
                 clickable={!career.locked}
                 onClick={() => handleCareerSelect(career)}
-                className={`relative overflow-hidden min-h-full flex flex-col transition-all duration-300 rounded-xl ${!career.locked ? "hover:border-gray-700 cursor-pointer" : "cursor-not-allowed"
+                className={`relative overflow-hidden min-h-full flex flex-col transition-all duration-300 rounded-xl ${!career.locked ? "cursor-pointer" : "cursor-not-allowed"
                   }`}
+                style={{
+                  border: `1px solid var(--border)`,
+                  backgroundColor: 'var(--surface)'
+                }}
                 >
                 {/* Top Gradient Section */}
                 <div
@@ -80,7 +84,7 @@ function CareermapMain() {
                     </h3>
 
                     {/* Level */}
-                    <span className="absolute bottom-1 right-3 text-black font-extrabold">
+                    <span className="absolute bottom-1 right-3 font-extrabold" style={{ color: 'var(--brandInk)' }}>
                       {career.level}
                     </span>
                   </div>

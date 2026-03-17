@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Question from "./Question.model.js";
 
 // Get all questions with filtering
@@ -178,5 +179,124 @@ export const deleteQuestion = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+// Fetch questions from a dynamically-named collection 
+export const getCollectionQuestions = async (req, res) => {
+  try {
+    const { language, difficulty } = req.query;
+
+    if (!language || !difficulty) {
+      return res.status(400).json({
+        success: false,
+        message: "language and difficulty query parameters are required",
+      });
+    }
+
+    const langMap = { python: "Python", javascript: "Javascript", java: "Java", cpp: "Cpp" };
+    const diffMap = { fundamentals: "Fundamentals", easy: "Easy", intermediate: "Medium", hard: "Hard" };
+
+    const langKey = language.toLowerCase();
+    const diffKey = difficulty.toLowerCase();
+
+    if (!langMap[langKey] || !diffMap[diffKey]) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid language '${language}' or difficulty '${difficulty}'`,
+      });
+    }
+
+    const collectionName = `learn${langMap[langKey]}${diffMap[diffKey]}Q`;
+    const questions = await mongoose.connection.db.collection(collectionName).find({}).limit(15).toArray();
+
+    return res.status(200).json({
+      success: true,
+      count: questions.length,
+      collectionName,
+      data: questions,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Get daily challenge (rotates every 24 hours using day-based seed)
+export const getDailyChallenge = async (req, res) => {
+  try {
+    // Query the challengeJavaQ collection directly
+    const collection = mongoose.connection.db.collection('challengeJavaQ');
+    const challenges = await collection.find({}).toArray();
+
+    if (!challenges || challenges.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No challenges available",
+      });
+    }
+
+    // Use today's date as a seed for deterministic daily rotation
+    const today = new Date();
+    const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+    const index = daysSinceEpoch % challenges.length;
+
+    const dailyQuestion = challenges[index];
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        problemId: dailyQuestion.problemId,
+        title: dailyQuestion.original.title,
+        description: dailyQuestion.original.description,
+        difficulty: dailyQuestion.difficulty,
+        topic: dailyQuestion.topic,
+        examples: dailyQuestion.examples,
+        constraints: dailyQuestion.constraints,
+        test_cases: dailyQuestion.test_cases,
+        variants: dailyQuestion.variants,
+      },
+    });
+  } catch (error) {
+    console.error("❌ getDailyChallenge error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Fetch an arbitrary challenge collection by name (e.g., 'challengePythonQ')
+export const getChallengesCollection = async (req, res) => {
+  try {
+    const { collection } = req.query;
+
+    const collectionName = collection || 'challengePythonQ';
+
+    // Basic validation: collection name should be a non-empty string
+    if (typeof collectionName !== 'string' || collectionName.trim() === '') {
+      return res.status(400).json({ success: false, message: 'Invalid collection name' });
+    }
+
+    const items = await mongoose.connection.db.collection(collectionName).find({}).toArray();
+
+    return res.status(200).json({ success: true, count: items.length, collectionName, data: items });
+  } catch (error) {
+    console.error('❌ getChallengesCollection error:', error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// Shortcut endpoint specifically for weekly challenges (Javascript collection)
+export const getWeeklyChallenge = async (_req, res) => {
+  try {
+    const collectionName = 'challengeJavascriptQ';
+    const items = await mongoose.connection.db.collection(collectionName).find({}).toArray();
+    return res.status(200).json({ success: true, count: items.length, collectionName, data: items });
+  } catch (error) {
+    console.error('❌ getWeeklyChallenge error:', error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
