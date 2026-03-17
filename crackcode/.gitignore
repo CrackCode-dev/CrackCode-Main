@@ -3,6 +3,7 @@ node_modules/
 client/node_modules/
 server/node_modules/
 
+
 # Environment secrets (Crucial for security!)
 .env
 .env.local
@@ -16,8 +17,8 @@ server/node_modules/
 Thumbs.db
 
 # Build folders
-frontend/build/
-frontend/dist/
+client/build/
+client/dist/
 
 # Debug logs
 npm-debug.log*

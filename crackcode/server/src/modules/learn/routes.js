@@ -11,6 +11,7 @@ import {
   deleteQuestion
 } from "./question.controller.js";
 import { getUserProgress, updateProgress, getRoadmap } from "./progress.controller.js";
+import { getChallengesCollection, getWeeklyChallenge } from "./question.controller.js";
 
 const router = express.Router();
 
@@ -33,5 +34,8 @@ router.get("/roadmap", userAuth, getRoadmap);
 
 // Test route
 router.get("/test", (_req, res) => res.send("learn routes working"));
+// Fetch challenge collection (e.g., challengePythonQ)
+router.get("/challenges", getChallengesCollection);
+router.get("/weeklychallenge", getWeeklyChallenge);
 
 export default router;

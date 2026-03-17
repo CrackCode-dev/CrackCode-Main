@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:5050/api/learn';
+const API_HOST = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5051';
+const API_BASE_URL = `${API_HOST}/api/learn`;
 
 // Fetch questions from a language+difficulty specific collection
 // e.g. fetchLearnQuestions('python', 'fundamentals') → learnPythonFundamentalsQ
@@ -88,6 +89,30 @@ export const fetchProblemByLanguage = async (id, language) => {
     return result.data || result;
   } catch (error) {
     throw new Error(error.message || 'Failed to load problem with language variant');
+  }
+};
+
+// fetch an entire challenge collection (e.g., 'challengePythonQ')
+export const fetchChallengeCollection = async (collectionName = 'challengePythonQ') => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/challenges?collection=${encodeURIComponent(collectionName)}`);
+    if (!response.ok) throw new Error(`Failed to fetch collection: ${response.statusText}`);
+    const result = await response.json();
+    return result.data || [];
+  } catch (err) {
+    throw new Error(err.message || 'Failed to fetch challenge collection');
+  }
+};
+
+// fetch weekly challenges (Javascript collection)
+export const fetchWeeklyChallenges = async () => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/weeklychallenge`);
+    if (!response.ok) throw new Error(`Failed to fetch weekly challenges: ${response.statusText}`);
+    const result = await response.json();
+    return result.data || [];
+  } catch (err) {
+    throw new Error(err.message || 'Failed to fetch weekly challenges');
   }
 };
 

@@ -228,6 +228,14 @@ const Login = () => {
         });
 
         if (data?.success) {
+          // Store the access token if returned from backend
+          if (data.accessToken) {
+            try {
+              localStorage.setItem('accessToken', data.accessToken);
+              axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+            } catch (e) {}
+          }
+          
           setIsLoggedIn(true);
           await getUserData();
 

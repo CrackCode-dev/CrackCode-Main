@@ -17,6 +17,7 @@ export {
   invalidateAllUserSessions,
   getUserSessions,
   cleanupExpiredSessions,
+  initializeSessionModule,
 } from "./session.service.js";
 export {
   awardXP,
@@ -32,3 +33,4 @@ export {
   accessCookieOptions,
   refreshCookieOptions,
 } from "./session.controller.js";
+export { checkRedisHealth } from "./redis.session.js";
