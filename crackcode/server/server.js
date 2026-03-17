@@ -24,6 +24,7 @@ import sessionRoutes from './src/modules/session/routes.js';
 import shopRoutes from './src/modules/shop/routes.js';
 import rewardsRoutes from './src/modules/rewards/routes.js';
 import codeEditorRoutes from './src/modules/codeEditor/routes.js';
+import { initializeSessionModule } from './src/modules/session/session.service.js';
 
 // Career Map Routes
 import questionRoutes from './src/modules/Career Map/questions/question.routes.js';
@@ -48,6 +49,10 @@ app.use(cookieParser());
 app.use(
   cors({
     origin: [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+      'http://localhost:3001',
+      'http://127.0.0.1:3001',
       'http://localhost:5173',
       'http://localhost:5174',
       'http://localhost:5177',
