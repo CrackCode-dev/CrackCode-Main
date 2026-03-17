@@ -1,19 +1,26 @@
 /* react hooks imported below */
+import { motion } from 'framer-motion'
 import HeroSection from '../../components/landing/HeroSection'
 import AITechSection from '../../components/landing/AITechSection'
 import CareerMapSection from '../../components/landing/CareerMapSection'
 import WhyCrackCodeSection from '../../components/landing/WhyCrackCodeSection'
 import LetterGlitch from '../../components/bgEffect/LetterGlitch'
-import { LandingThemeProvider, useLandingTheme } from './LandingThemeContext'
+import { LandingThemeProvider, useLandingTheme, resolveLandingVars } from './LandingThemeContext'
 import { useEffect } from 'react'
 
 function LandingInner() {
   const { landingTheme, setLandingTheme } = useLandingTheme()
+  const vars = resolveLandingVars(landingTheme)
 
   useEffect(() => {
     // Ensure page starts at the very top
     window.scrollTo(0, 0)
   }, [])
+
+  // Theme-aware glitch colors - vibrant in both modes
+  const glitchColors = landingTheme === 'light'
+    ? ['#ff6b35', '#f7c244', '#61b3dc', '#61dca3', '#e63946'] // vibrant for light mode
+    : ['#ff6b35', '#f7c244', '#61b3dc', '#61dca3', '#2b4539'] // vibrant for dark mode
 
   return (
     <div className='relative w-full overflow-x-hidden min-h-screen'>
@@ -39,8 +46,20 @@ function LandingInner() {
         </button>
       </div>
 
+      {/* LetterGlitch Background - Fixed behind everything */}
+      {/* <div className='fixed inset-0 z-0 w-screen h-screen'>
+        <LetterGlitch 
+          glitchColors={glitchColors}
+          glitchSpeed={100} 
+          smooth={true} 
+          outerVignette={false} 
+          centerVignette={true}
+          backgroundColor={vars.from}
+        />
+      </div> */}
+
       {/* Content */}
-      <div className='relative z-5'>
+      <div className='relative z-[5]'>
         <HeroSection />
         <AITechSection />
         <CareerMapSection />

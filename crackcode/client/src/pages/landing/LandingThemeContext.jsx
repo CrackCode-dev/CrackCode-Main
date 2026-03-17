@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useEffect, useState } from "react";
 import tinycolor from "tinycolor2";
 import { getLandingPalette } from "../../context/theme/ThemeContext";
@@ -176,7 +175,6 @@ export function resolveLandingVars(themeKey) {
   try {
     const global = getLandingPalette?.(themeKey);
     if (global) base = { ...base, ...global };
-  // eslint-disable-next-line no-unused-vars
   } catch (_) {
     // ThemeContext helper unavailable — keep local preset
   }
