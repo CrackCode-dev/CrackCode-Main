@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:5050/api/learn';
+const API_HOST = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5051';
+const API_BASE_URL = `${API_HOST}/api/learn`;
 
 // Fetch questions from a language+difficulty specific collection
 // e.g. fetchLearnQuestions('python', 'fundamentals') → learnPythonFundamentalsQ
