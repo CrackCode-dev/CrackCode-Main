@@ -37,9 +37,8 @@ connectDB();
 // Redis
 redisClient
   .connect()
-  .then(() => console.log('✅ Redis Connected'))
   .catch((err) =>
-    console.warn('⚠️ Redis Connection Error (running without cache):', err.message)
+    console.warn('Redis Connection Error (running without cache):', err.message)
   );
 
 // Middleware
@@ -97,5 +96,5 @@ app.use((err, _req, res, _next) => {
 const PORT = process.env.PORT || 5050;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });

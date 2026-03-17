@@ -20,7 +20,7 @@ const seedLeaderboard = async () => {
     const users = await User.find({ username: { $exists: true, $ne: null } });
     
     if (users.length === 0) {
-      console.log("⚠️ No users found in MongoDB to seed.");
+      console.log("No users found in MongoDB to seed.");
       process.exit(0);
     }
 
@@ -38,10 +38,10 @@ const seedLeaderboard = async () => {
 
     await pipeline.exec();
 
-    console.log("✅ Leaderboard seeded to Redis successfully!");
+    console.log("Leaderboard seeded to Redis successfully!");
     process.exit(0);
   } catch (error) {
-    console.error("❌ Error seeding leaderboard:", error);
+    console.error("Error seeding leaderboard:", error);
     process.exit(1);
   }
 };
