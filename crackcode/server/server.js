@@ -26,6 +26,10 @@ import rewardsRoutes from './src/modules/rewards/routes.js';
 import codeEditorRoutes from './src/modules/codeEditor/routes.js';
 import { initializeSessionModule } from './src/modules/session/session.service.js';
 
+// Career Map Routes
+import questionRoutes from './src/modules/Career Map/questions/question.routes.js';
+import progressRoutes from './src/modules/Career Map/progress/progress.routes.js';
+
 const app = express();
 
 // Database
@@ -71,43 +75,33 @@ app.use(
   })
 );
 
-// Routes
+// ─── Routes ───────────────────────────────────────────
+
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/profile', profileRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 app.use('/api/learn', learnRoutes);
+
 app.use('/api/gameprofile', gameProfileRoutes);
-app.use('/api/game-profile', gameProfileRoutes);
+app.use('/api/game-profile', gameProfileRoutes); // alias
+
 app.use('/api/session', sessionRoutes);
 app.use('/api/shop', shopRoutes);
 app.use('/api/rewards', rewardsRoutes);
 app.use('/api/codeEditor', codeEditorRoutes);
+
+// Career Map APIs
+app.use('/api/questions', questionRoutes);
+app.use('/api/progress', progressRoutes);
 
 // Health check
 app.get('/', (_req, res) => {
   res.send('CrackCode Backend API is Running!');
 });
 
-// Redis health endpoint: returns PONG when Redis is reachable.
-app.get('/health/redis', async (_req, res) => {
-  try {
-    if (!ENABLE_SESSION_CACHE) {
-      return res.json({ success: true, message: 'Redis cache disabled by configuration' });
-    }
+// ─── Global Error Handler ─────────────────────────────
 
-    if (!redisClient || !redisClient.isOpen) {
-      return res.status(503).json({ success: false, message: 'Redis not connected' });
-    }
-
-    const pong = await redisClient.ping();
-    return res.json({ success: true, message: pong });
-  } catch (err) {
-    return res.status(503).json({ success: false, message: 'Redis ping failed', error: err?.message || err });
-  }
-});
-
-// Global error handler
 app.use((err, _req, res, _next) => {
   console.error('Global Error:', err);
   res.status(err.status || 500).json({
@@ -116,18 +110,10 @@ app.use((err, _req, res, _next) => {
   });
 });
 
-// Start server after Redis is connected
+// ─── Start Server ─────────────────────────────────────
+
 const PORT = process.env.PORT || 5050;
-const start = async () => {
-  await connectRedisOrExit();
-  
-  // Initialize session module and check Redis health
-  const sessionInitResult = await initializeSessionModule();
-  console.log(`[Session] ${sessionInitResult.message}`);
 
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-  });
-};
-
-start();
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});

@@ -1,5 +1,4 @@
 # Dependency folders (Massive files we don't need on GitHub)
-node_modules/
 client/node_modules/
 server/node_modules/
 
