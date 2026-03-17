@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import { motion } from 'framer-motion'
 import { AlertCircle, MessageSquare, Clock, BarChart3 } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
@@ -82,7 +83,7 @@ export default function AITechSection() {
                                     onMouseLeave={(e) => cardHoverEffects.onCardLeave(e.currentTarget, vars, landingTheme === 'light' ? vars.cardBgLight : vars.cardBgDark, landingTheme)}
                                 >
                                     <div className='flex items-start gap-4'>
-                                        <Icon className='w-6 h-6 flex-shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12' style={{ color: vars.brand }} />
+                                        <Icon className='w-6 h-6 shrink-0 mt-1 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12' style={{ color: vars.brand }} />
                                         <div>
                                             <h3 className='font-bold mb-2 transition-colors duration-300' style={{ color: vars.text }}>
                                                 {feature.title}
