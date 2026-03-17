@@ -11,6 +11,17 @@ export const AppContextProvider = (props) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [userData, setUserData] = useState(false) // Fixed typo from userDate
 
+    // Helper function to set authorization header from stored token
+    const setAuthHeader = () => {
+        const storedToken = typeof window !== 'undefined' && localStorage.getItem('accessToken');
+        if (storedToken) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
+            return true;
+        }
+        delete axios.defaults.headers.common['Authorization'];
+        return false;
+    };
+
     // Function to check auth status and get user data
     const getAuthState = async () => {
         try {
@@ -26,6 +37,8 @@ export const AppContextProvider = (props) => {
         } catch (error) {
             // Silent fail - user is simply not logged in or backend unavailable
             // This allows the app to render even if backend is down
+            setIsLoggedIn(false)
+            setUserData(false)
         }
     }
 
@@ -41,19 +54,22 @@ export const AppContextProvider = (props) => {
             }
         } catch (error) {
             // Silent fail - expected when not logged in or backend unavailable
+            setUserData(false)
         }
     }
 
-    // Run whenever the app loads
+    // Run whenever the app loads - ensure auth state is restored from localStorage
     useEffect(() => {
-        getAuthState();
+        setAuthHeader();  // First, restore auth header from localStorage
+        getAuthState();   // Then check auth status
     }, [])
 
     const value = {
         backendUrl,
         isLoggedIn, setIsLoggedIn,
         userData, setUserData,
-        getUserData
+        getUserData,
+        setAuthHeader
     }
 
     return (

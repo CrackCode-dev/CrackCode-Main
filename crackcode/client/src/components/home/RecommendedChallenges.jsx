@@ -1,55 +1,69 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
 import { Sparkles, TrendingUp, Zap, Lock, ArrowRight } from 'lucide-react';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
+import { useNavigate } from 'react-router-dom'
+import { fetchChallengeCollection, transformProblemData } from '../../services/api/questionService'
 
-const RECOMMENDED_CHALLENGES = [
-  {
-    id: 'rec-1',
-    title: 'Two Sum Problem',
-    description: 'Find two numbers that add up to a target value. Perfect for mastering hash maps!',
-    difficulty: 'easy',
-    difficultyLabel: 'Easy',
-    points: 100,
-    category: 'Arrays',
-    matchScore: 95,
-    reason: 'You just solved a similar problem - keep momentum!',
-    timeEstimate: '10 min',
-    icon: '🎯'
-  },
-  {
-    id: 'rec-2',
-    title: 'Binary Tree Level Order Traversal',
-    description: 'Traverse a binary tree and return values level by level.',
-    difficulty: 'medium',
-    difficultyLabel: 'Medium',
-    points: 150,
-    category: 'Trees',
-    matchScore: 88,
-    reason: 'Next logical step in your learning path',
-    timeEstimate: '20 min',
-    icon: '🌳'
-  },
-  {
-    id: 'rec-3',
-    title: 'Longest Common Subsequence',
-    description: 'Dynamic programming classic - find LCS of two strings efficiently.',
-    difficulty: 'hard',
-    difficultyLabel: 'Hard',
-    points: 250,
-    category: 'Dynamic Programming',
-    matchScore: 82,
-    reason: 'Challenge recommended to improve weak areas',
-    timeEstimate: '30 min',
-    icon: '📈'
-  }
+const PLACEHOLDER = [
+  { id: 'rec-1', title: 'Two Sum Problem', difficulty: 'Easy', points: 100, category: 'Arrays', matchScore: 95, timeEstimate: '10 min', icon: '🎯' },
+  { id: 'rec-2', title: 'Binary Tree Level Order Traversal', difficulty: 'Medium', points: 150, category: 'Trees', matchScore: 88, timeEstimate: '20 min', icon: '🌳' },
+  { id: 'rec-3', title: 'Longest Common Subsequence', difficulty: 'Hard', points: 250, category: 'Dynamic Programming', matchScore: 82, timeEstimate: '30 min', icon: '📈' }
 ];
 
 export default function RecommendedChallenges() {
   const { theme } = useTheme();
   const [hoveredId, setHoveredId] = useState(null);
   const [savedIds, setSavedIds] = useState(new Set());
+  const [cards, setCards] = useState(PLACEHOLDER);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      try {
+        setLoading(true); setError(null);
+        const items = await fetchChallengeCollection('challengeCppQ');
+        if (!items || items.length === 0) return;
+
+        // pick up to 3 distinct items
+        const selected = [];
+        const used = new Set();
+        for (const it of items) {
+          const id = it.problemId || it._id || JSON.stringify(it);
+          if (used.has(id)) continue;
+          used.add(id);
+          const t = transformProblemData(it, 'cpp');
+          selected.push({
+            id: t.problemId || id,
+            title: t.title || it.original?.title || 'Challenge',
+            // keep minimal meta on card only
+            difficulty: (it.difficulty || t.difficulty || 'medium').toString(),
+            points: t.variant?.points || t.points || 100,
+            category: t.topic || it.topic || 'General',
+            matchScore: it.matchScore || Math.max(70, 80 - selected.length * 4),
+            timeEstimate: it.timeEstimate || '10-20 min',
+            raw: it,
+            transformed: t,
+          });
+          if (selected.length >= 3) break;
+        }
+
+        if (mounted && selected.length) setCards(selected);
+      } catch (err) {
+        console.error('Failed to load recommended challenges', err);
+        setError(err.message || 'Failed to load recommendations');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    load();
+    return () => { mounted = false }
+  }, [])
 
   const toggleSaved = (id, e) => {
     e.stopPropagation();
@@ -82,7 +96,8 @@ export default function RecommendedChallenges() {
         </div>
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-          {RECOMMENDED_CHALLENGES.map((challenge, index) => (
+          {loading && <div className='text-sm text-gray-300'>Loading recommendations…</div>}
+          {!loading && cards.map((challenge, index) => (
             <div
               key={challenge.id}
               onMouseEnter={() => setHoveredId(challenge.id)}
@@ -98,51 +113,31 @@ export default function RecommendedChallenges() {
                 transform: hoveredId === challenge.id ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)'
               }}
             >
-              {/* Match Score Badge */}
-              <div
-                className='absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1'
-                style={{
-                  background: challenge.matchScore >= 90 ? 'rgba(76, 175, 80, 0.2)' : 'rgba(255, 152, 0, 0.2)',
-                  color: challenge.matchScore >= 90 ? '#4CAF50' : '#FF9800'
-                }}
-              >
-                {challenge.matchScore >= 90 ? '✨' : '⭐'} {challenge.matchScore}% match
-              </div>
+              {/* match score removed per request */}
 
               <div className='p-6'>
                 {/* Icon and Title */}
                 <div className='flex items-start gap-3 mb-3'>
                   <span className='text-3xl'>{challenge.icon}</span>
                   <div className='flex-1 min-w-0'>
-                    <h3 className='text-lg font-bold mb-1'>{challenge.title}</h3>
+                    <h3 className='text-lg font-bold mb-1 line-clamp-1'>{challenge.title}</h3>
                   </div>
                 </div>
 
-                {/* Description */}
-                <p style={{ color: 'var(--textSec)' }} className='text-sm mb-4 line-clamp-2'>
-                  {challenge.description}
-                </p>
-
-                {/* Reason Chip */}
-                <div
-                  className='px-3 py-2 rounded-md mb-4 text-xs font-medium flex items-start gap-2'
-                  style={{
-                    background: 'rgba(255, 165, 0, 0.08)',
-                    color: 'var(--text)'
-                  }}
-                >
-                  <Zap className='w-3 h-3 shrink-0 mt-0.5' style={{ color: 'var(--brand)' }} />
-                  <span>{challenge.reason}</span>
+                {/* Minimal meta only */}
+                <div className='flex items-center gap-3 mb-3 text-xs' style={{ color: 'var(--textSec)' }}>
+                  <div className='px-2 py-1 rounded text-xs font-semibold' style={{ background: 'rgba(255,255,255,0.03)' }}>{challenge.category}</div>
+                  <div className='px-2 py-1 rounded text-xs' style={{ background: 'rgba(255,255,255,0.03)' }}>{challenge.timeEstimate}</div>
                 </div>
 
                 {/* Badges */}
                 <div className='flex flex-wrap gap-2 mb-5'>
                   <Badge
                     type='difficulty'
-                    difficulty={challenge.difficulty}
+                    difficulty={challenge.difficulty?.toLowerCase()}
                     size='sm'
                   >
-                    {challenge.difficultyLabel}
+                    {challenge.difficulty}
                   </Badge>
                   <div
                     className='px-2 py-1 rounded text-xs font-bold'
@@ -164,24 +159,13 @@ export default function RecommendedChallenges() {
                   </div>
                 </div>
 
-                {/* Meta Info */}
+                {/* Meta Info + CTA */}
                 <div className='flex items-center justify-between pt-4 border-t' style={{ borderColor: 'var(--border)' }}>
                   <div className='flex items-center gap-2 text-xs' style={{ color: 'var(--textSec)' }}>
                     <Lock className='w-3 h-3' />
                     {challenge.timeEstimate}
                   </div>
-                  {/* <button
-                    onClick={(e) => toggleSaved(challenge.id, e)}
-                    className='px-3 py-2 rounded-lg font-semibold transition-all flex items-center gap-2'
-                    style={{
-                      background: hoveredId === challenge.id ? 'var(--brand)' : 'rgba(255, 165, 0, 0.1)',
-                      color: hoveredId === challenge.id ? 'white' : 'var(--brand)'
-                    }}
-                  >
-                    Start
-                    <ArrowRight className='w-3 h-3' />
-                  </button> */}
-                  <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right'>
+                  <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right' onClick={(e) => { e.stopPropagation(); if (challenge.raw) navigate(`/code-editor/${challenge.id}`, { state: { question: challenge.raw, language: 'cpp' } }) }}>
                     Start Challenge
                   </Button>
                 </div>
