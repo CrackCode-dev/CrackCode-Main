@@ -11,7 +11,7 @@ function Navbar() {
   const NAV_TABS = [
     { to: "/learn", label: "Learn" },
     { to: "/caselog", label: "Case Log" },
-    { to: "/careermaps-Main", label: "Career Maps" },
+    { to: "/careermap", label: "Career Maps" },
     { to: "/leaderboard", label: "Leaderboard" },
     { to: "/shop", label: "Store" },
   ]

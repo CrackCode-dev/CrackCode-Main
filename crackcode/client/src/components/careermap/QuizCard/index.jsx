@@ -5,15 +5,18 @@ import AnswerOptions from "./AnswerOptions";
 import AnswerInput from "./AnswerInput";
 
 export default function QuizCard({ variant = "mcq", question, index, isLast = false, onNext }) {
-  const [selected,  setSelected]  = useState(null);
+  const [selected, setSelected] = useState(null);
   const [fillValue, setFillValue] = useState("");
-  const [revealed,  setRevealed]  = useState(false);
+  const [revealed, setRevealed] = useState(false);
 
   if (!question) return null;
 
-  const checkFill     = (val) => val.trim().toLowerCase() === question.answer?.trim().toLowerCase();
+  const checkFill = (val) => {
+    const answers = question.answer?.split(",").map(a => a.trim().toLowerCase()) || [];
+    return answers.includes(val.trim().toLowerCase());
+  };
   const fillIsCorrect = revealed && checkFill(fillValue);
-  const canReveal     = fillValue.trim().length > 0;
+  const canReveal = fillValue.trim().length > 0;
 
   const handleSelectMCQ = (idx) => {
     if (revealed) return;
@@ -55,7 +58,7 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
       bordered
       className="w-full"
       title={`Question ${index}`}
-     >
+    >
       <p className="text-(--textSec) text-sm leading-relaxed mb-4">
         {renderQuestion(question.question)}
       </p>
@@ -78,29 +81,29 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
           correctAnswer={question.answer}
         />
       )}
-     
-        <div className = " mt-10">
-          {variant === "mcq" && (
-            <Button variant="primary" size="lg" fullWidth disabled={!revealed} onClick={handleNext}>
-              {isLast ? "Finish Quiz" : "Next Question >"}
-            </Button>
-          )}
 
-          {variant === "fill" && !revealed && (
-            <Button variant="primary" size="lg" fullWidth disabled={!canReveal} onClick={handleRevealFill}>
-              Check Answer
-            </Button>
-          )}
+      <div className=" mt-10">
+        {variant === "mcq" && (
+          <Button variant="primary" size="lg" fullWidth disabled={!revealed} onClick={handleNext}>
+            {isLast ? "Finish Quiz" : "Next Question >"}
+          </Button>
+        )}
 
-          {variant === "fill" && revealed && (
-            <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
-          
-              {isLast ? "Finish Quiz" : "Next Question >"}
-            </Button>
-          )}
-        </div>
-      
-    
+        {variant === "fill" && !revealed && (
+          <Button variant="primary" size="lg" fullWidth disabled={!canReveal} onClick={handleRevealFill}>
+            Check Answer
+          </Button>
+        )}
+
+        {variant === "fill" && revealed && (
+          <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
+
+            {isLast ? "Finish Quiz" : "Next Question >"}
+          </Button>
+        )}
+      </div>
+
+
     </ContentCard>
   );
 }

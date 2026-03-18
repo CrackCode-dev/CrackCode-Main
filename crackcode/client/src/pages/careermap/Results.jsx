@@ -1,7 +1,35 @@
 import HQBtn from "../../components/common/HQBtn";
 import Button from "../../components/ui/Button";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getChapterByCareerId } from "./CareerChapters";
 
-export default function ResultsPage({ score, total, title, subtitle, onRestart }) {
+export default function ResultsPage({ score, total, title, subtitle, careerId, currentChapterId, onRestart }) {
+  const navigate = useNavigate();
+  const [nextChapter, setNextChapter] = useState(null);
+
+  useEffect(() => {
+    const chapters = getChapterByCareerId(careerId);
+    const currentIndex = chapters.findIndex((c) => c.id === currentChapterId);
+    const nextIndex = currentIndex + 1;
+    const currentPassed = localStorage.getItem(`${careerId}_${currentChapterId}_passed`) === "true";
+    if (currentPassed && nextIndex < chapters.length) {
+      setNextChapter(chapters[nextIndex]);
+    } else {
+      setNextChapter(null);
+    }
+  }, [careerId, currentChapterId]);
+
+  const handleNextClick = () => {
+    navigate(`/careermap/${careerId}/quiz/${nextChapter.id}`, {
+      state: {
+        title,
+        subtitle: nextChapter.title,
+        categories: nextChapter.categories,
+        careerId,
+      },
+    });
+  };
   return (
     <div className="min-h-screen bg-(--bg) flex flex-col items-center px-6 py-8">
 
@@ -31,8 +59,8 @@ export default function ResultsPage({ score, total, title, subtitle, onRestart }
             {score === total
               ? "Perfect Score ! 🎉"
               : score >= total / 2
-              ? "Well Done!"
-              : "Keep Practicing!"}
+                ? "Well Done!"
+                : "Keep Practicing!"}
           </h2>
           <p className="text-(--muted) text-base">
             You answered{" "}
@@ -56,13 +84,28 @@ export default function ResultsPage({ score, total, title, subtitle, onRestart }
           </div>
         </div>
 
+        {nextChapter && (
+          <div className="w-full bg-green-950/60 border border-green-500 rounded-2xl px-6 py-4 text-center">
+            <p className="text-green-400 font-semibold">Chapter unlocked!</p>
+          </div>
+        )}
         <div className="flex gap-4 w-full">
-          <Button variant="outline" size="lg" fullWidth onClick={onRestart} >
+          <Button variant="outline" size="lg" fullWidth onClick={onRestart}>
             Try Again
           </Button>
-          <Button variant="primary" size="lg" fullWidth>
-            Next
-          </Button>
+
+          {score < 8 ? (
+            // Low score — show Back to Chapters
+            <Button variant="outline" size="lg" fullWidth onClick={() => navigate(`/careermap/${careerId}`)}>
+              Back to Chapters
+            </Button>
+          ) : nextChapter ? (
+            // Passed + next chapter unlocked — show Next Chapter
+            <Button variant="primary" size="lg" fullWidth onClick={handleNextClick}>
+              Next Chapter
+            </Button>
+          ) : null}
+
         </div>
 
       </div>

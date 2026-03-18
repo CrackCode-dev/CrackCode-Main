@@ -1,12 +1,13 @@
+
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { RoadmapNode } from "../../components/ui/Roadmap";
 import RoadmapCard from "../../components/careermap/RoadmapCard";
 import Header from '../../components/common/Header';
-import { getChapterByCareerId } from "./careerChapters";
+import { getChapterByCareerId } from "./CareerChapters";
 
 //map of URL career IDs to readable career titles
 const CAREER_TITLES = {
-    'Software-Developer': 'Software Developer',
+    'Software-Engineer': 'Software Engineer',
     'ML-Engineer': 'ML Engineer',
     'Data-Scientist': 'Data Scientist',
 };
@@ -20,7 +21,15 @@ const CareerChapterSelectionPage = () => {
     // Otherwise fallback to title from CAREER_TITLES object.
     const title = state?.title || CAREER_TITLES[careerId];
 
-    const chapters = getChapterByCareerId(careerId);
+    const baseChapters = getChapterByCareerId(careerId);
+
+    const chapters = baseChapters.map((chapter, index) => {
+        if (index === 0) return { ...chapter, isUnlocked: true };
+        const prevChapter = baseChapters[index - 1];
+        const prevPassed = localStorage.getItem(`${careerId}_${prevChapter.id}_passed`) === "true";
+        return { ...chapter, isUnlocked: prevPassed };
+    });
+
 
     //If no chpater found for this carrerId
     if (!chapters.length) {
@@ -32,7 +41,7 @@ const CareerChapterSelectionPage = () => {
                     </h1>
                     {/* Button to navigate back to career maps main page */}
                     <button
-                        onClick={() => navigate('/careermaps-Main')}
+                        onClick={() => navigate('/careermap')}
                         className="text-(--brand) hover:underline"
                     >
                         ← Back
@@ -50,7 +59,8 @@ const CareerChapterSelectionPage = () => {
             state: {
                 title,
                 subtitle: chapter.title,
-                questions: chapter.questions,
+                categories: chapter.categories,
+                careerId,
             },
         });
     };
@@ -77,10 +87,8 @@ const CareerChapterSelectionPage = () => {
 
                     {/* Roadmap List */}
                     <div className="flex flex-col">
-                        {chapters.map((chapter, index) => {
-                            const progress = chapter.total > 0
-                                ? (chapter.completed / chapter.total) * 100
-                                : 0;
+                        {chapters.map((chapter) => {
+                            const progress = localStorage.getItem(`${careerId}_${chapter.id}_passed`) === "true" ? 100 : 0;
 
                             return (
                                 <div key={chapter.id} className="flex gap-6 md:gap-10">

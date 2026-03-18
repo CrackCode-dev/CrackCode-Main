@@ -1,12 +1,12 @@
 import Progress from "./progress.model.js";
 
 // Update progress when user answers a question
-export const updateProgress = async (userId, difficulty, correct) => {
-  let progress = await Progress.findOne({ userId });
+export const updateProgress = async (userId,career, difficulty, correct) => {
+  let progress = await Progress.findOne({ userId, career });
 
   // Create new progress if doesn't exist
   if (!progress) {
-    progress = await Progress.create({ userId });
+    progress = await Progress.create({ userId, career });
   }
 
   // Only update if answer is correct
@@ -38,11 +38,11 @@ export const updateProgress = async (userId, difficulty, correct) => {
 };
 
 // Get user progress
-export const getProgressByUserId = async (userId) => {
-  let progress = await Progress.findOne({ userId });
+export const getProgressByUserId = async (userId, career) => {
+  let progress = await Progress.findOne({ userId , career });
   
   if (!progress) {
-    progress = await Progress.create({ userId });
+    progress = await Progress.create({ userId, career });
   }
   
   return progress;

@@ -8,161 +8,137 @@ import systemDesign from "../../assets/icons/careermap/softwareDeveloper/SD_ch4.
 const CAREER_CHAPTERS_DATA = {
 
     //Software developer
-    'Software-Developer': [
+    'Software-Engineer': [
         {
-            id: 'programming-fundamentals',
+            id: 'oop',
             icon: programmingFund,
-            title: 'Programming Fundamentals',
-            description: 'Core programming concepts, design patterns, SOLID principles and clean code.',
-            questionCount: 9,
-            completed: 9,
-            total: 9,
-            isUnlocked: true,
-            Route: '',
+            title: 'Object Oriented Programming',
+            description: 'Core programming concepts, design patterns, languages and frameworks.',
+            categories:["General Programming","Languages and Frameworks"],
+            questionCount: 15,
+            
         },
 
         {
-            id: 'data-structures-algorithms',
+            id: 'dsa',
             icon: dataStructures,
             title: 'Data Structures & Algorithms',
             description: 'Arrays, linked lists, sorting, searching, Big O notation and dynamic programming.',
-            questionCount: 21,
-            completed: 5,
-            total: 21,
-            isUnlocked: true,
-            Route: '',
+            categories:["Data Structures","Algorithms"],
+            questionCount: 15,
+          
         },
 
 
         {
-            id: 'languages-databases',
+            id: 'web-security',
             icon: databases,
-            title: 'Languages & Databases',
-            description: 'Programming languages, frameworks,joins, normalization and ORMs.',
-            questionCount: 20,
-            completed: 0,
-            total: 20,
-            isUnlocked: false,
-            Route: '',
+            title: 'Web Development & Security',
+            description: 'Web fundamentals, HTTP, REST APIs and security best practices.',
+            categories:["Web Development","Security"],
+            questionCount: 15,
+            
         },
 
 
         {
-            id: 'testing-system-design',
+            id: 'devops-system-design',
             icon: systemDesign,
-            title: 'Testing & System Design',
-            description: 'Unit testing, load testing, debugging, scalability and system architecture.',
-            questionCount: 34,
-            completed: 0,
-            total: 34,
-            isUnlocked: false,
-            Route: '',
+            title: 'Devops & System Design',
+            description: 'Scalability, CI/CD pipelines, system architecture and DevOps practices.',
+            categories:["System Design","DevOps"],
+            questionCount:15,
+            
         },
     ],
 
     //ML Engineer
     'ML-Engineer': [
         {
-            id: '',
+            id: 'ml-fundamentals',
             icon: '',
-            title: '',
-            description: '',
-            questionCount: '',
-            completed: '',
-            total: '',
-            isUnlocked: '',
-            Route: '',
+            title: 'Machine Learning Fundamentals',
+            description: 'Core ML concepts, supervised and unsupervised learning.',
+            categories : ['Machine Learning'],
+            questionCount: 15,
+            
         },
 
         {
-            id: '',
+            id: 'deep-learning',
             icon: '',
-            title: '',
-            description: '',
-            questionCount: '',
-            completed: '',
-            total: '',
-            isUnlocked: '',
-            Route: '',
+            title: 'Deep Learning & Neural Networks',
+            description: 'Neural networks, CNNs, RNNs, transformers and training techniques.',
+            categories:['Deep Learning'],
+            questionCount:15,
+            
         },
 
 
         {
-            id: '',
+            id: 'mlops',
             icon: '',
-            title: '',
-            description: '',
-            questionCount: '',
-            completed: '',
-            total: '',
-            isUnlocked: '',
-            Route: '',
+            title: 'MLOps & Deployment',
+            description: 'Model deployment, version control, data pipelines and DevOps for ML.',
+            categories: ['Devops','Version Control','Data Engineering'],
+            questionCount: 15,
+            
         },
 
 
         {
-            id: '',
+            id: 'ml-system-design',
             icon: '',
-            title: '',
-            description: '',
-            questionCount: '',
-            completed: '',
-            total: '',
-            isUnlocked: '',
-            Route: '',
+            title: 'ML System Design',
+            description: 'Algorithm selection, scalable ML system architecture and design patterns.',
+            categories: ['System Design','Algorithms'],
+            questionCount: 15,
+            
         },
     ],
 
     //Data Scientist
     'Data-Scientist': [
         {
-            id: '',
+            id: 'data-science-statistics',
             icon: '',
-            title: '',
-            description: '',
-            questionCount: '',
-            completed: '',
-            total: '',
-            isUnlocked: '',
-            Route: '',
+            title: 'Data Science & Statistics',
+            description: 'Statistical analysis, probability, hypothesis testing and data science fundamentals.',
+            categories: ['Data Science'],
+            questionCount: 15,
+            
         },
-
+    
         {
-            id: '',
+            id: 'ml-for-data-science',
             icon: '',
-            title: '',
-            description: '',
-            questionCount: '',
-            completed: '',
-            total: '',
-            isUnlocked: '',
-            Route: '',
+            title: 'Machine Learning for Data Science',
+            description: 'Applying ML algorithms to data science problems and feature engineering.',
+            categories: ['Machine Learning'],
+            questionCount: 15,
+            
         },
 
 
         {
-            id: '',
+            id: 'database-management',
             icon: '',
-            title: '',
-            description: '',
-            questionCount: '',
-            completed: '',
-            total: '',
-            isUnlocked: '',
-            Route: '',
+            title: 'Database & Data Management',
+            description: 'SQL, database design, data warehousing and full-stack data management.',
+            categories: ['Database and SQL','Database Systems','Full-stack'],
+            questionCount: 15,
+            
         },
 
 
         {
-            id: '',
+            id: 'data-Engineering',
             icon: '',
-            title: '',
-            description: '',
-            questionCount: '',
-            completed: '',
-            total: '',
-            isUnlocked: '',
-            Route: '',
+            title: 'Data Engineering & Infrastructure',
+            description: 'Data pipelines, distributed systems, networking and low-level systems.',
+            categories: ['Data Engineering', 'Distributed Systems', 'Back-end', 'Networking', 'Low-level Systems'],
+            questionCount: 15,
+            
         },
     ],
 

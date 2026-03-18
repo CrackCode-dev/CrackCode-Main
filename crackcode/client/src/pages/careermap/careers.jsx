@@ -9,8 +9,8 @@ import dataAnalyst from "../../assets/icons/careermap/dataAnalyst.png";
 
 export const careers = [
     {
-        id: "Software-Developer",
-        title: "Software Developer",
+        id: "Software-Engineer",
+        title: "Software Engineer",
         level: "General",
         gradient: "from-[#1C29E4] to-[#0BADED]",
         languages: "Python/Java/ C++/JavaScript",
@@ -24,26 +24,26 @@ export const careers = [
     {
         id: "ML-Engineer",
         title: "ML Engineer",
-        level: "",
+        level: "Advanced",
         gradient: "from-[#FF0004] to-[#DE4E00]",
-        languages: "",
-        focus: ["", "", ""],
+        languages: "Python / TensorFlow / PyTorch",
+        focus: ["Machine Learning fundamentals", "Deep Learning & Neural Networks", "MLOps & Model Deployment","ML System Design"],
         difficulty: "hard",
         locked: false,
-        category: "",
+        category: "ml",
         icon :mobileAppDeveloper,
     },
 
     {
         id: "Data-Scientist",
         title: "Data Scientist",
-        level: "",
+        level: "Intermediate",
         gradient: "from-[#FFA807] to-[#FFEA00]",
-        languages: "",
-        focus: ["", "", "", "", "",],
+        languages: "Python / R / SQL",
+        focus: ["Data Science & Statistics", "Machine Learning for Data Science", "Database & Data Management", "Data Engineering & Infrastructure"],
         difficulty: "medium",
         locked: false,
-        category: "",
+        category: "data",
         icon : dataAnalyst,
     },
 

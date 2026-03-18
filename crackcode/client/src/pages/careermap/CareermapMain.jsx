@@ -28,7 +28,7 @@ function CareermapMain() {
   },[navigate]);
 
   return (
-    <div className="min-h-screen bg-(--bg) text-(--text) flex flex-col pt-18 ">
+    <div className="min-h-screen bg-(--bg) text-(--text) flex flex-col pt-8 ">
       {/*HQ Button */}
       <div className="absolute top-6 left-6 z-30">
     <HQBtn />
