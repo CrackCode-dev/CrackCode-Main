@@ -1,27 +1,33 @@
-import express from "express";
-import userAuth from "../auth/middleware.js";
-import {
-  getShopItems,
-  purchaseItem,
-  getUserPurchases,
-  createShopItem,
-} from "./shop.controller.js";
+// import express from "express";
+// import userAuth from "../auth/middleware.js";
 
-const router = express.Router();
 
-// Public
-router.get("/items", getShopItems);
+// import {
+//   getShopItems,
+//   purchaseItem,
+//   getUserPurchases,
+//   createShopItem,
+//   getMyInventory   
+// } from "./shop.controller.js";
 
-// Protected
-router.post("/purchase", userAuth, purchaseItem);
-router.get("/purchases", userAuth, getUserPurchases);
+// const router = express.Router();
 
-// Admin (TODO: add admin-role check middleware)
-router.post("/items", userAuth, createShopItem);
+// // Public
+// router.get("/items", getShopItems);
 
-// Health check
-router.get("/test", (_req, res) =>
-  res.json({ success: true, message: "Shop routes working" })
-);
+// // Protected
+// router.post("/purchase", userAuth, purchaseItem);
+// router.get("/purchases", userAuth, getUserPurchases);
 
-export default router;
+// // Admin (TODO: add admin-role check middleware)
+// router.post("/items", userAuth, createShopItem);
+
+// // Health check
+// router.get("/test", (_req, res) =>
+//   res.json({ success: true, message: "Shop routes working" })
+// );
+
+// // GET user inventory
+// router.get("/inventory", userAuth, getMyInventory);;
+
+// export default router;

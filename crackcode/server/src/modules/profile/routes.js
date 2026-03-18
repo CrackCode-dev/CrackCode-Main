@@ -10,6 +10,9 @@ import {
 import userAuth from "../auth/middleware.js";
 import uploadAvatarMulter from "./multer.config.js";
 
+import { equipItem } from "./controller.js";
+import authMiddleware from "../auth/middleware.js";
+
 const router = express.Router();
 
 // ═════════════════════════════════════════════════════════════
@@ -32,5 +35,8 @@ router.put("/email/configure", userAuth, configureEmailSettings);
 
 // Test route
 router.get("/test", (_req, res) => res.send("✅ Profile routes working"));
+
+
+router.post("/equip-item", authMiddleware, equipItem);
 
 export default router;

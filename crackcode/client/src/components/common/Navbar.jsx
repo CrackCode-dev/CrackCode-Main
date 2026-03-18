@@ -13,7 +13,7 @@ function Navbar() {
     { to: "/caselog", label: "Case Log" },
     { to: "/careermaps-Main", label: "Career Maps" },
     { to: "/leaderboard", label: "Leaderboard" },
-    { to: "/shop", label: "Store" },
+    { to: "/store", label: "Store" },
   ]
 
   return (

@@ -176,6 +176,25 @@ const userSchema = new mongoose.Schema(
       },
     },
 
+    equippedAvatarItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ShopItem",
+      default: null,
+    },
+    
+    equippedThemeItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ShopItem",
+      default: null,
+    },
+    
+    equippedTitleItemId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ShopItem",
+      default: null,
+    },
+
+    // ACHIEVEMENTS
     profileVisibility: {
       type: String,
       enum: ["public", "private"],
@@ -205,9 +224,9 @@ const userSchema = new mongoose.Schema(
       min: 0,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
+
+
 );
 
 // ═══════════════════════════════════════════════════════════

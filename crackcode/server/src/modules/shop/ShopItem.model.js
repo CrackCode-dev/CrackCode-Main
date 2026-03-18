@@ -1,5 +1,42 @@
+// This is for defining what items are in the store to the database...
+
+
+
 import mongoose from "mongoose";
 
+/**
+ * Pricing Sub-Schema
+ * Handles free, xp-based, and paid items
+ */
+
+const pricingSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ["free", "xp", "paid"],
+      required: true,
+    },
+
+    amount: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
+    currency: {
+      type: String,
+      enum: ["USD", "XP"],
+      default: "USD",
+    },
+
+
+  },
+  { _id: false } // Prevents creating separate _id for pricing object
+);
+
+/**
+ * Main Shop Item Schema
+ */
 const shopItemSchema = new mongoose.Schema(
   {
     name: {
@@ -15,22 +52,20 @@ const shopItemSchema = new mongoose.Schema(
 
     category: {
       type: String,
-      enum: ["avatar", "theme", "boost", "badge", "other"],
+      enum: ["avatar", "theme", "boost", "badge", "bundle", "other"],
       default: "other",
     },
 
-    price: {
-      type: Number,
+    pricing: {
+      type: pricingSchema,
       required: true,
-      min: 0,
     },
 
     imageUrl: {
       type: String,
-      default: "",
+      required: true,
     },
 
-    // Optional: item data (e.g. avatar URL, theme CSS, boost multiplier)
     metadata: {
       type: mongoose.Schema.Types.Mixed,
       default: {},
@@ -44,4 +79,47 @@ const shopItemSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("ShopItem", shopItemSchema);
+/** 2026/02/22 
+ * Validation:
+ * Ensure xp and paid items have amount > 0
+ */
+
+shopItemSchema.pre("validate", function (next) {
+
+  if(!this.pricing) return next(new Error ("Price is required"));
+
+  if (this.pricing.type === "free") {
+    this.pricing.amount = 0;
+    this.pricing.currency = "XP";
+  }
+
+  if (this.pricing.type === "xp"){
+    this.pricing.currency = "XP";
+  }
+
+  if (this.pricing.type === "paid"){
+    this.pricing.currency = "USD";
+  }
+
+
+  if (this.pricing.type !== "free" &&
+    (!this.pricing.amount || this.pricing.amount <= 0)
+  ) {
+    return next(
+      new Error("Amount must be greater than 0 for xp or paid items")
+    );
+  }
+
+  next();
+});
+
+
+/**
+ * Indexes for performance
+ */
+shopItemSchema.index({ category: 1, isActive: 1 });
+
+
+
+const shopItem = mongoose.models.ShopItem ||  mongoose.model("ShopItem", shopItemSchema);
+export default shopItem;
