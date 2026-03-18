@@ -1,4 +1,3 @@
-import HQBtn from "../../components/common/HQBtn";
 import Button from "../../components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -38,10 +37,10 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
     <div className="min-h-screen bg-(--bg) flex flex-col items-center px-6 py-8">
 
       <div className="w-full max-w-5xl flex justify-between items-center mb-16">
-        <HQBtn />
+        
       </div>
 
-      <div className="w-full max-w-5xl mb-12">
+      <div className="w-full max-w-5xl text-center mb-12">
         <h1 className="text-3xl font-extrabold text-(--text) tracking-tight leading-tight">
           {title}
         </h1>
@@ -92,7 +91,7 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
         </div>
 
         {/* Show unlock if next chapter is available */}
-        {nextChapter && (
+        {nextChapter && score >= 8 && (
           <div className="w-full bg-green-950/60 border border-green-500 rounded-2xl px-6 py-4 text-center">
             <p className="text-green-400 font-semibold">Chapter unlocked!</p>
           </div>
@@ -110,7 +109,7 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
           ) : nextChapter ? (
             // Passed + next chapter unlocked — show Next Chapter
             <Button variant="primary" size="lg" fullWidth onClick={handleNextClick}>
-              Next Chapter
+              Next 
             </Button>
           ) : null}
 

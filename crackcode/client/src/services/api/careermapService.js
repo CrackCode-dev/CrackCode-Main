@@ -1,5 +1,11 @@
 const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
 
+// Attach JWT token to requests if available
+const authHeader = () => {
+    const token = localStorage.getItem('accessToken');
+    return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
 export const toBackendCareerId = (frontendId) => {
 
     // Convert frontend career ID to backend format
@@ -16,7 +22,7 @@ export const toBackendCareerId = (frontendId) => {
 const fetchByCategory = async (career, difficulty, category) => {
     const res = await fetch(
         `${BASE_URL}/questions?career=${career}&difficulty=${difficulty}&category=${encodeURIComponent(category)}`,
-        { credentials: 'include' }
+        { credentials: 'include', headers: authHeader() }
     );
     const data = await res.json();
     if (!data.success) throw new Error(data.message);
@@ -33,17 +39,12 @@ export const fetchChapterQuestions = async (careerId, categories) => {
         const results = await Promise.all(
             categories.map((category) => fetchByCategory(career, difficulty, category))
         );
-        // Select up to 5 questions per difficulty
-        const perCategory = Math.ceil(5/categories.length);
-        const flat = results
-        .map(r => r.slice(0, perCategory)) // Take only needed questions per category
-        .flat()
-        .slice(0, 5);
-
+        // Take ALL questions for this difficulty across all categories
+        const flat = results.flat();
         allQuestions.push(...flat);
     }
 
-    return allQuestions; // 15 total
+    return allQuestions;
 };
 
 // Submit user's answer for a question
@@ -65,23 +66,23 @@ export const fetchProgress = async (careerId) => {
     const career = toBackendCareerId(careerId);
     const res = await fetch(`${BASE_URL}/progress?career=${career}`, {
         credentials: "include",
+        headers: { ...authHeader() },
     });
     const data = await res.json();
     if (!data.success) throw new Error(data.message);
     return data.data; // { easyScore, mediumScore, hardScore, easyCompleted, mediumCompleted, hardCompleted }
 };
 
-// POST /api/progress/update  { career, difficulty, correct }
-// Update progress after answering a question
-export const updateProgress = async (careerId,difficulty, correct) => {
+//Send full chapter scores when user finishes a chapter
+export const updateProgress = async (careerId, chapterId, easyScore, mediumScore, hardScore, passed) => {
     const career = toBackendCareerId(careerId);
     const res = await fetch(`${BASE_URL}/progress/update`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader() },
         credentials: "include",
-        body: JSON.stringify({ career, difficulty, correct }),
+        body: JSON.stringify({ career, chapterId, easyScore, mediumScore, hardScore, passed }),
     });
     const data = await res.json();
     if (!data.success) throw new Error(data.message);
     return data.data;
-  };
+};

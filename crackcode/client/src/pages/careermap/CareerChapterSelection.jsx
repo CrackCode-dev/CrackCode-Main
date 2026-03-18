@@ -1,9 +1,10 @@
-
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { RoadmapNode } from "../../components/ui/Roadmap";
 import RoadmapCard from "../../components/careermap/RoadmapCard";
 import Header from '../../components/common/Header';
 import { getChapterByCareerId } from "./CareerChapters";
+import { fetchProgress } from "../../services/api/careermapService";
 
 //map of URL career IDs to readable career titles
 const CAREER_TITLES = {
@@ -23,14 +24,32 @@ const CareerChapterSelectionPage = () => {
 
     const baseChapters = getChapterByCareerId(careerId);
 
-    // Lock/unlock chapters based on previous chapter completion in localStorage
-    const chapters = baseChapters.map((chapter, index) => {
-        if (index === 0) return { ...chapter, isUnlocked: true };/ First chapter always unlocked
-        const prevChapter = baseChapters[index - 1];
-        const prevPassed = localStorage.getItem(`${careerId}_${prevChapter.id}_passed`) === "true";
-        return { ...chapter, isUnlocked: prevPassed };
-    });
+    const [passedChapters, setPassedChapters] = useState({});
 
+    useEffect(() => {
+        fetchProgress(careerId)
+            .then((progress) => {
+                setPassedChapters({
+                    0: true,
+                    1: progress.easyCompleted,
+                    2: progress.mediumCompleted,
+                    3: progress.hardCompleted,
+                });
+            })
+            .catch(() => {
+                const fallback = {};
+                baseChapters.forEach((ch, i) => {
+                    fallback[i] = localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true";
+                });
+                setPassedChapters(fallback);
+            });
+    }, [careerId]);
+
+    // Lock/unlock chapters based on previous chapter completion in localStorage
+    const chapters = baseChapters.map((chapter, index) => ({
+        ...chapter,
+        isUnlocked: index === 0 ? true : !!passedChapters[index],
+    }));
 
     //If no chpater found for this carrerId
     if (!chapters.length) {
@@ -89,8 +108,8 @@ const CareerChapterSelectionPage = () => {
 
                     {/* Roadmap List */}
                     <div className="flex flex-col">
-                        {chapters.map((chapter) => {
-                            const progress = localStorage.getItem(`${careerId}_${chapter.id}_passed`) === "true" ? 100 : 0;
+                        {chapters.map((chapter, index) => {
+                            const progress = !!passedChapters[index] ? 100 : 0;
 
                             return (
                                 <div key={chapter.id} className="flex gap-6 md:gap-10">

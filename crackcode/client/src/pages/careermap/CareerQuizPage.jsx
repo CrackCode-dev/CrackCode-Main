@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import QuizCard from "../../components/careermap/QuizCard";
 import ResultsPage from "./Results";
 import Header from "../../components/common/Header";
 import ProgressBar from "../../components/ui/ProgressBar";
-import { fetchChapterQuestions } from "../../services/api/careermapService";
-import { getChapterByCareerId } from "./CareerChapters";
+import { fetchChapterQuestions, updateProgress } from "../../services/api/careermapService";
+
 
 // Convert raw API question to the format QuizCard expects
 const mapQuestion = (q) => {
@@ -45,6 +45,12 @@ export default function CareerQuizPage() {
     const [score, setScore] = useState(0);
     const [finished, setFinished] = useState(false);
 
+    //Track correct answers per difficulty
+    const progressSentRef = useRef(false);
+    const [easyCorrect, setEasyCorrect] = useState(0);
+    const [mediumCorrect, setMediumCorrect] = useState(0);
+    const [hardCorrect, setHardCorrect] = useState(0);
+
     const total = questions.length;
     const current = questions[currentQ];
 
@@ -56,6 +62,10 @@ export default function CareerQuizPage() {
         setFinished(false);
         setLoading(true);
         setQuestions([]);
+        progressSentRef.current = false;
+        setEasyCorrect(0);
+        setMediumCorrect(0);
+        setHardCorrect(0);
         fetchChapterQuestions(careerId, categories)
             .then((qs) => setQuestions(qs.map(mapQuestion)))
             .catch((err) => setError(err.message))
@@ -93,17 +103,36 @@ export default function CareerQuizPage() {
     );
 
     const handleNext = ({ correct }) => {
-        const newScore = correct ? score + 1 : score;
         if (correct) setScore((s) => s + 1);
 
+        let newEasy = easyCorrect;
+        let newMedium = mediumCorrect;
+        let newHard = hardCorrect;
+
+        if (correct) {
+            if (current.difficulty === "Easy") { newEasy = easyCorrect + 1; setEasyCorrect(newEasy); }
+            else if (current.difficulty === "Medium") { newMedium = mediumCorrect + 1; setMediumCorrect(newMedium); }
+            else if (current.difficulty === "Hard") { newHard = hardCorrect + 1; setHardCorrect(newHard); }
+        }
+
         if (currentQ + 1 >= total) {
-            // Save pass to localStorage if score is 8 or above out of 15
-            if (newScore >= 8) {
+            const passed = (newEasy + newMedium + newHard) >= 8;
+
+            console.log("Quiz finished:", { careerId, chapterId, newEasy, newMedium, newHard, passed });
+
+            if (!progressSentRef.current) {
+                progressSentRef.current = true;
+                updateProgress(careerId, chapterId, newEasy, newMedium, newHard, passed)
+                    .then((res) => console.log("✅ Progress saved:", res))
+                    .catch((err) => console.error("❌ Progress update failed:", err));
+            }
+
+            if (passed) {
                 localStorage.setItem(`${careerId}_${chapterId}_passed`, "true");
             }
-            setFinished(true); // always show results
+            setFinished(true);
         } else {
-            setCurrentQ((q) => q + 1);// Move to next question
+            setCurrentQ((q) => q + 1);
         }
     };
 
@@ -112,6 +141,10 @@ export default function CareerQuizPage() {
         setCurrentQ(0);
         setScore(0);
         setFinished(false);
+        progressSentRef.current = false;
+        setEasyCorrect(0);
+        setMediumCorrect(0);
+        setHardCorrect(0);
     };
 
     // Show results page when all questions are answered
