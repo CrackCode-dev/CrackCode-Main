@@ -65,7 +65,7 @@ const RoadmapCard = ({
             )}
 
             {/* Divider + Action */}
-            <div className="border-t border-(--border) pt-3">
+            <div className="border-t border-(--text) pt-3 ">
                 {isUnlocked ? (
                     <button
                         onClick={(e) => { e.stopPropagation(); onClick?.(); }}

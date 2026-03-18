@@ -23,8 +23,9 @@ const CareerChapterSelectionPage = () => {
 
     const baseChapters = getChapterByCareerId(careerId);
 
+    // Lock/unlock chapters based on previous chapter completion in localStorage
     const chapters = baseChapters.map((chapter, index) => {
-        if (index === 0) return { ...chapter, isUnlocked: true };
+        if (index === 0) return { ...chapter, isUnlocked: true };/ First chapter always unlocked
         const prevChapter = baseChapters[index - 1];
         const prevPassed = localStorage.getItem(`${careerId}_${prevChapter.id}_passed`) === "true";
         return { ...chapter, isUnlocked: prevPassed };
@@ -52,6 +53,7 @@ const CareerChapterSelectionPage = () => {
     }
 
 
+    // Navigate to quiz only if chapter is unlocked
     const handleChapterClick = (chapter) => {
         if (!chapter.isUnlocked) return;
 

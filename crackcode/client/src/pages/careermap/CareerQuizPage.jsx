@@ -5,13 +5,16 @@ import ResultsPage from "./Results";
 import Header from "../../components/common/Header";
 import ProgressBar from "../../components/ui/ProgressBar";
 import { fetchChapterQuestions } from "../../services/api/careermapService";
+import { getChapterByCareerId } from "./CareerChapters";
 
+// Convert raw API question to the format QuizCard expects
 const mapQuestion = (q) => {
 
     if (q.type === "mcq") {
         return {
             ...q,
             type: "mcq",
+            // Find index of correct option to use for answer checking
             correct: q.options.findIndex(
                 opt => opt.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase()
             ),
@@ -20,7 +23,7 @@ const mapQuestion = (q) => {
     return {
         ...q,
         type: "fill",
-        answer: q.correctAnswer,
+        answer: q.answer || q.correctAnswer || "",
     };
 };
 
@@ -29,6 +32,8 @@ export default function CareerQuizPage() {
 
     const { careerId, chapterId } = useParams();
     const navigate = useNavigate();
+
+    // Get quiz info passed from chapter selection page
     const title = state?.title || "Career Assessment";
     const subtitle = state?.subtitle || "Test your knowledge and track your progress on your career path.";
     const categories = state?.categories || [];
@@ -43,19 +48,28 @@ export default function CareerQuizPage() {
     const total = questions.length;
     const current = questions[currentQ];
 
+    // Fetch questions whenever career or chapter changes, and reset all state
     useEffect(() => {
+
+        setCurrentQ(0);
+        setScore(0);
+        setFinished(false);
+        setLoading(true);
+        setQuestions([]);
         fetchChapterQuestions(careerId, categories)
             .then((qs) => setQuestions(qs.map(mapQuestion)))
             .catch((err) => setError(err.message))
             .finally(() => setLoading(false));
     }, [careerId, chapterId]);
 
+    // Show loading spinner while questions are being fetched
     if (loading) return (
         <div className="min-h-screen bg-(--bg) flex items-center justify-center">
             <p className="text-(--muted) text-lg animate-pulse">Loading questions...</p>
         </div>
     );
 
+    // Show error message if fetch fails
     if (error) return (
         <div className="min-h-screen bg-(--bg) flex items-center justify-center flex-col gap-4">
             <p className="text-red-500">{error}</p>
@@ -71,25 +85,36 @@ export default function CareerQuizPage() {
         </div>
     );
 
+    // Guard against current being undefined during chapter transition
+    if (!current && !loading) return (
+        <div className="min-h-screen bg-(--bg) flex items-center justify-center">
+            <p className="text-(--muted) text-lg animate-pulse">Loading questions...</p>
+        </div>
+    );
+
     const handleNext = ({ correct }) => {
         const newScore = correct ? score + 1 : score;
         if (correct) setScore((s) => s + 1);
+
         if (currentQ + 1 >= total) {
+            // Save pass to localStorage if score is 8 or above out of 15
             if (newScore >= 8) {
                 localStorage.setItem(`${careerId}_${chapterId}_passed`, "true");
             }
-            setFinished(true);
+            setFinished(true); // always show results
         } else {
-            setCurrentQ((q) => q + 1);
+            setCurrentQ((q) => q + 1);// Move to next question
         }
     };
 
+    // Reset quiz to try again from the beginning
     const handleRestart = () => {
         setCurrentQ(0);
         setScore(0);
         setFinished(false);
     };
 
+    // Show results page when all questions are answered
     if (finished) {
         return (
             <ResultsPage
@@ -125,6 +150,7 @@ export default function CareerQuizPage() {
                 </div>
             </div>
 
+            {/* Chapter title and subtitle */}
             <div className="w-full max-w-5xl mb-12">
                 <h1 className="text-3xl font-extrabold text-(--text) tracking-tight leading-tight">
                     {title}
@@ -134,6 +160,7 @@ export default function CareerQuizPage() {
                 </p>
             </div>
 
+            {/* QuizCard re-mounts fresh on every new question, resetting all input state */}
             <div className="w-full max-w-3xl">
                 <QuizCard
                     key={currentQ}

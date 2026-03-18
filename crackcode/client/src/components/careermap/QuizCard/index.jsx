@@ -4,31 +4,48 @@ import Button from "../../ui/Button";
 import AnswerOptions from "./AnswerOptions";
 import AnswerInput from "./AnswerInput";
 
+// State for selected MCQ option, fill input value, and reveal status
 export default function QuizCard({ variant = "mcq", question, index, isLast = false, onNext }) {
   const [selected, setSelected] = useState(null);
   const [fillValue, setFillValue] = useState("");
   const [revealed, setRevealed] = useState(false);
 
+
   if (!question) return null;
 
+  // Check if fill-in answer is correct
   const checkFill = (val) => {
+    const normalized = val.trim().toLowerCase();
     const answers = question.answer?.split(",").map(a => a.trim().toLowerCase()) || [];
-    return answers.includes(val.trim().toLowerCase());
+
+    return answers.some(ans => {
+      // Exact match
+      if (ans === normalized) return true;
+
+      // If correct answer is two words, accept either word
+      const words = ans.split(/\s+/);
+      if (words.length === 2 && words.includes(normalized)) return true;
+
+      return false;
+    });
   };
   const fillIsCorrect = revealed && checkFill(fillValue);
   const canReveal = fillValue.trim().length > 0;
 
+  // Handle MCQ option selection
   const handleSelectMCQ = (idx) => {
     if (revealed) return;
     setSelected(idx);
     setRevealed(true);
   };
 
+  // Handle checking fill-in answer
   const handleRevealFill = () => {
     if (revealed || !fillValue.trim()) return;
     setRevealed(true);
   };
 
+  // Move to next question and report correctness
   const handleNext = () => {
     const correct = variant === "mcq"
       ? selected === question.correct
@@ -36,6 +53,7 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
     onNext?.({ correct });
   };
 
+  // Renders question text and formats blank (___) if present
   const renderQuestion = (text) => {
     if (!text?.includes("___")) return text;
     const [before, after] = text.split("___");
@@ -63,6 +81,7 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
         {renderQuestion(question.question)}
       </p>
 
+      {/* Multiple Choice Options */}
       {variant === "mcq" && (
         <AnswerOptions
           question={question}
@@ -72,6 +91,7 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
         />
       )}
 
+      {/* Fill-in-the-blank input */}
       {variant === "fill" && (
         <AnswerInput
           value={fillValue}
@@ -83,18 +103,21 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
       )}
 
       <div className=" mt-10">
+        {/* MCQ Next button */}
         {variant === "mcq" && (
           <Button variant="primary" size="lg" fullWidth disabled={!revealed} onClick={handleNext}>
             {isLast ? "Finish Quiz" : "Next Question >"}
           </Button>
         )}
 
+        {/* Fill: Check answer */}
         {variant === "fill" && !revealed && (
           <Button variant="primary" size="lg" fullWidth disabled={!canReveal} onClick={handleRevealFill}>
             Check Answer
           </Button>
         )}
 
+        {/* Fill: Next after reveal */}
         {variant === "fill" && revealed && (
           <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
 

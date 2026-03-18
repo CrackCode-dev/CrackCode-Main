@@ -1,10 +1,10 @@
 //contains all the career information
-import softwareDeveloper from "../../assets/icons/careermap/softwareDeveloper.png";
-import mobileAppDeveloper from "../../assets/icons/careermap/mobileAppDeveloper.png";
+import softwareEngineer from "../../assets/icons/careermap/softwareEngineer.png";
+import MLEngineer from "../../assets/icons/careermap/MLEngineer.png";
 import webDeveloper from "../../assets/icons/careermap/webDeveloper.png";
 import backendDeveloper from "../../assets/icons/careermap/backendDeveloper.png";
 import gameDeveloper from "../../assets/icons/careermap/gameDeveloper.png";
-import dataAnalyst from "../../assets/icons/careermap/dataAnalyst.png";
+import dataScientist from "../../assets/icons/careermap/dataScientist.png";
 
 
 export const careers = [
@@ -18,7 +18,7 @@ export const careers = [
         difficulty: "easy",
         locked: false,
         category: "software",
-        icon : softwareDeveloper,
+        icon : softwareEngineer,
     },
 
     {
@@ -31,7 +31,7 @@ export const careers = [
         difficulty: "hard",
         locked: false,
         category: "ml",
-        icon :mobileAppDeveloper,
+        icon : MLEngineer,
     },
 
     {
@@ -44,7 +44,7 @@ export const careers = [
         difficulty: "medium",
         locked: false,
         category: "data",
-        icon : dataAnalyst,
+        icon : dataScientist,
     },
 
     {
