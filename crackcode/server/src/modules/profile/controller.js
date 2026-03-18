@@ -1,4 +1,5 @@
 import User from "../auth/User.model.js";
+import Inventory from "../shop/Inventory.model.js";
 
 // ═════════════════════════════════════════════════════════════
 // Get logged-in user profile
@@ -258,6 +259,124 @@ export const configureEmailSettings = async (req, res) => {
     return res.status(500).json({ 
       success: false, 
       message: error.message 
+    });
+  }
+};
+
+// ═════════════════════════════════════════════════════════════
+// Equipping avatar as profile picture store --> my inventory
+// ═════════════════════════════════════════════════════════════
+
+
+// import Inventory from "../shop/Inventory.model.js";
+
+// export const equipItem = async (req, res) => {
+//   try {
+//     const userId = req.user._id;
+//     const { itemId, category } = req.body;
+
+//     if (!itemId || !category) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "itemId and category are required",
+//       });
+//     }
+
+//     // check ownership
+//     const owned = await Inventory.findOne({
+//       userId,
+//       itemId,
+//     });
+
+//     if (!owned) {
+//       return res.status(403).json({
+//         success: false,
+//         message: "Item not owned",
+//       });
+//     }
+
+//     const update = {};
+
+//     if (category === "avatar") {
+//       update.equippedAvatarItemId = itemId;
+//     }
+
+//     if (category === "theme") {
+//       update.equippedThemeItemId = itemId;
+//     }
+
+//     if (category === "title") {
+//       update.equippedTitleItemId = itemId;
+//     }
+
+//     await User.findByIdAndUpdate(userId, update);
+
+//     res.json({
+//       success: true,
+//       message: "Item equipped",
+//     });
+//   } catch (error) {
+//     console.error("Equip item error:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to equip item",
+//     });
+//   }
+// };
+
+
+
+
+export const equipItem = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { itemId, category } = req.body;
+
+    if (!itemId || !category) {
+      return res.status(400).json({
+        success: false,
+        message: "itemId and category are required",
+      });
+    }
+
+    const owned = await Inventory.findOne({
+      userId,
+      itemId,
+    });
+
+    if (!owned) {
+      return res.status(403).json({
+        success: false,
+        message: "Item not owned",
+      });
+    }
+
+    const update = {};
+
+    if (category === "avatar") {
+      update.equippedAvatarItemId = itemId;
+    }
+
+    if (category === "theme") {
+      update.equippedThemeItemId = itemId;
+    }
+
+    if (category === "title") {
+      update.equippedTitleItemId = itemId;
+    }
+
+    await User.findByIdAndUpdate(userId, update);
+
+    res.json({
+      success: true,
+      message: "Item equipped",
+    });
+
+  } catch (error) {
+    console.error("Equip item error:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || "Failed to equip item",
     });
   }
 };

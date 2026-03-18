@@ -23,6 +23,8 @@ import LearnMainPage from "./pages/learn/LearnMainPage";
 import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from "./pages/learn/ChapterSelection";
 import QuestionListPage from "./pages/learn/SubChapterSelection";
+import DetectiveStore from "./pages/shop/DetectiveStore";
+
 import CareerChapterSelectionPage from "./pages/careermap/CareerChapterSelection.jsx";
 import CareerQuizPage from "./pages/careermap/CareerQuizPage.jsx";
 
@@ -53,6 +55,8 @@ function App() {
           <Route path="/learn" element={<LearnMainPage />} />
           <Route path="/learn/:trackId" element={<ChapterSelectionPage />} />
           <Route path="/learn/:trackId/:difficultyId" element={<QuestionListPage />} />
+
+          <Route path="/store" element={<DetectiveStore />} />
 
           {/* Protected routes */}
           <Route path="/home" element={<Home />} />
@@ -92,3 +96,4 @@ function App() {
 }
 
 export default App;
+

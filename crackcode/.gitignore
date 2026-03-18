@@ -1,6 +1,7 @@
 # Dependency folders (Massive files we don't need on GitHub)
 client/node_modules/
 server/node_modules/
+node_modules/
 
 # Environment secrets (Crucial for security!)
 .env
