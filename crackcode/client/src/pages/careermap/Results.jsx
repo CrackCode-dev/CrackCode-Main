@@ -6,6 +6,7 @@ import { getChapterByCareerId } from "./CareerChapters";
 export default function ResultsPage({ score, total, title, subtitle, careerId, currentChapterId, onRestart }) {
   const navigate = useNavigate();
   const [nextChapter, setNextChapter] = useState(null);
+  const [loaded, setLoaded] = useState(false);
 
   // Check if current chapter is passed and if a next chapter exists
   useEffect(() => {
@@ -20,7 +21,10 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
     } else {
       setNextChapter(null);
     }
+    setLoaded(true);
   }, [careerId, currentChapterId]);
+
+  const isLastChapter = loaded && !nextChapter && score >= 8;
 
   // Navigate to next chapter
   const handleNextClick = () => {
@@ -36,15 +40,13 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
   return (
     <div className="min-h-screen bg-(--bg) flex flex-col items-center px-6 py-8">
 
-      <div className="w-full max-w-5xl flex justify-between items-center mb-16">
-        
-      </div>
+      
 
-      <div className="w-full max-w-5xl text-center mb-12">
-        <h1 className="text-3xl font-extrabold text-(--text) tracking-tight leading-tight">
+      <div className="w-full max-w-5xl text-center mb-4">
+        <h1 className="text-4xl font-extrabold text-(--text) tracking-tight leading-tight">
           {title}
         </h1>
-        <p className="text-(--muted) text-base mt-2 font-medium">
+        <p className="text-(--muted) text-xl mt-2 font-medium">
           {subtitle}
         </p>
       </div>
@@ -96,6 +98,20 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
             <p className="text-green-400 font-semibold">Chapter unlocked!</p>
           </div>
         )}
+
+        {/* Show completion message if last chapter is passed */}
+        {isLastChapter && (
+          <div className="w-full bg-green-950/40 border border-green-500 rounded-2xl px-6 py-6 flex flex-col items-center gap-2 text-center">
+            <div className="text-4xl">🎉</div>
+            <p className="text-green-400 text-xl font-extrabold">Career Path Completed!</p>
+            <p className="text-(--muted) text-sm">
+              You've successfully completed all chapters in the{" "}
+              <span className="text-green-400 font-semibold">{title}</span> career path.
+              Stay focused and never give up!
+            </p>
+          </div>
+        )}
+
         <div className="flex gap-4 w-full">
           <Button variant="outline" size="lg" fullWidth onClick={onRestart}>
             Try Again
@@ -109,10 +125,14 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
           ) : nextChapter ? (
             // Passed + next chapter unlocked — show Next Chapter
             <Button variant="primary" size="lg" fullWidth onClick={handleNextClick}>
-              Next 
+              Next
             </Button>
-          ) : null}
-
+          ) : (
+            // Last chapter passed — go back to career map
+            <Button variant="primary" size="lg" fullWidth onClick={() => navigate(`/careermap`)}>
+              Back to Career Map
+            </Button>
+          )}
         </div>
 
       </div>

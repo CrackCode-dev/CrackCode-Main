@@ -24,7 +24,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Object Oriented Programming',
             description: 'Core programming concepts, design patterns, languages and frameworks.',
             categories:["General Programming","Languages and Frameworks"],
-            questionCount: 15,
+          
             
         },
 
@@ -34,7 +34,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Data Structures & Algorithms',
             description: 'Arrays, linked lists, sorting, searching, Big O notation and dynamic programming.',
             categories:["Data Structures","Algorithms"],
-            questionCount: 15,
+           
           
         },
 
@@ -45,7 +45,6 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Web Development & Security',
             description: 'Web fundamentals, HTTP, REST APIs and security best practices.',
             categories:["Web Development","Security"],
-            questionCount: 15,
             
         },
 
@@ -56,7 +55,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Devops & System Design',
             description: 'Scalability, CI/CD pipelines, system architecture and DevOps practices.',
             categories:["System Design","DevOps"],
-            questionCount:15,
+           
             
         },
     ],
@@ -69,7 +68,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Machine Learning Fundamentals',
             description: 'Core ML concepts, supervised and unsupervised learning.',
             categories : ['Machine Learning'],
-            questionCount: 15,
+          
             
         },
 
@@ -79,7 +78,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Deep Learning & Neural Networks',
             description: 'Neural networks, CNNs, RNNs, transformers and training techniques.',
             categories:['Deep Learning'],
-            questionCount:15,
+           
             
         },
 
@@ -90,7 +89,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'MLOps & Deployment',
             description: 'Model deployment, version control, data pipelines and DevOps for ML.',
             categories: ['Devops','Version Control','Data Engineering'],
-            questionCount: 15,
+            
             
         },
 
@@ -101,7 +100,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'ML System Design',
             description: 'Algorithm selection, scalable ML system architecture and design patterns.',
             categories: ['System Design','Algorithms'],
-            questionCount: 15,
+           
             
         },
     ],
@@ -114,7 +113,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Data Science & Statistics',
             description: 'Statistical analysis, probability, hypothesis testing and data science fundamentals.',
             categories: ['Data Science'],
-            questionCount: 15,
+            
             
         },
     
@@ -124,7 +123,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Machine Learning for Data Science',
             description: 'Applying ML algorithms to data science problems and feature engineering.',
             categories: ['Machine Learning'],
-            questionCount: 15,
+           
             
         },
 
@@ -135,7 +134,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Database & Data Management',
             description: 'SQL, database design, data warehousing and full-stack data management.',
             categories: ['Database and SQL','Database Systems','Full-stack'],
-            questionCount: 15,
+           
             
         },
 
@@ -146,7 +145,7 @@ const CAREER_CHAPTERS_DATA = {
             title: 'Data Engineering & Infrastructure',
             description: 'Data pipelines, distributed systems, networking and low-level systems.',
             categories: ['Data Engineering', 'Distributed Systems', 'Back-end', 'Networking', 'Low-level Systems'],
-            questionCount: 15,
+           
             
         },
     ],

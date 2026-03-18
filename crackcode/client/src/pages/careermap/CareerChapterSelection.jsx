@@ -4,7 +4,7 @@ import { RoadmapNode } from "../../components/ui/Roadmap";
 import RoadmapCard from "../../components/careermap/RoadmapCard";
 import Header from '../../components/common/Header';
 import { getChapterByCareerId } from "./CareerChapters";
-import { fetchProgress } from "../../services/api/careermapService";
+import { fetchProgress, fetchChapterQuestionCount } from "../../services/api/careermapService";
 
 //map of URL career IDs to readable career titles
 const CAREER_TITLES = {
@@ -25,30 +25,61 @@ const CareerChapterSelectionPage = () => {
     const baseChapters = getChapterByCareerId(careerId);
 
     const [passedChapters, setPassedChapters] = useState({});
+    const [chapterScores, setChapterScores] = useState({});
+    const [questionCounts, setQuestionCounts] = useState({});
 
     useEffect(() => {
+        // Fetch progress from DB for this career
         fetchProgress(careerId)
             .then((progress) => {
-                setPassedChapters({
-                    0: true,
-                    1: progress.easyCompleted,
-                    2: progress.mediumCompleted,
-                    3: progress.hardCompleted,
-                });
+                const passedMap = {};// chapterId → passed (bool)
+                const scoreMap = {}; // chapterId → total score (number)
+
+                // Map each chapter's passed status and total score from DB
+                if (progress.chapters?.length > 0) {
+                    progress.chapters.forEach((ch) => {
+                        passedMap[ch.chapterId] = ch.passed;
+                        scoreMap[ch.chapterId] = ch.easyScore + ch.mediumScore + ch.hardScore;
+                    });
+                } else {
+                    // No DB data — fall back to localStorage
+                    baseChapters.forEach((ch) => {
+                        passedMap[ch.id] =
+                            localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true" ||
+                            localStorage.getItem(`${careerId}_${ch.id}_completed`) === "true";
+                    });
+                }
+
+                setPassedChapters(passedMap);
+                setChapterScores(scoreMap);
             })
             .catch(() => {
+                // DB fetch failed — fall back to localStorage for all chapters
                 const fallback = {};
-                baseChapters.forEach((ch, i) => {
-                    fallback[i] = localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true";
+                baseChapters.forEach((ch) => {
+                    fallback[ch.id] =
+                        localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true" ||
+                        localStorage.getItem(`${careerId}_${ch.id}_completed`) === "true";
                 });
                 setPassedChapters(fallback);
             });
+
+        // Fetch live question counts per chapter from the API
+        // and update state as each resolves independently
+        baseChapters.forEach((chapter) => {
+            fetchChapterQuestionCount(careerId, chapter.categories)
+                .then((count) => {
+                    setQuestionCounts((prev) => ({ ...prev, [chapter.id]: count }));
+                })
+                .catch(() => { });
+        });
+
     }, [careerId]);
 
     // Lock/unlock chapters based on previous chapter completion in localStorage
     const chapters = baseChapters.map((chapter, index) => ({
         ...chapter,
-        isUnlocked: index === 0 ? true : !!passedChapters[index],
+        isUnlocked: index === 0 ? true : !!passedChapters[baseChapters[index - 1].id],
     }));
 
     //If no chpater found for this carrerId
@@ -109,7 +140,11 @@ const CareerChapterSelectionPage = () => {
                     {/* Roadmap List */}
                     <div className="flex flex-col">
                         {chapters.map((chapter, index) => {
-                            const progress = !!passedChapters[index] ? 100 : 0;
+                            const totalQ = questionCounts[chapter.id] || 15;
+                            const score = chapterScores[chapter.id] || 0;
+                            const progress = passedChapters[chapter.id]
+                                ? 100
+                                : Math.round((score / totalQ) * 100);
 
                             return (
                                 <div key={chapter.id} className="flex gap-6 md:gap-10">
@@ -129,7 +164,7 @@ const CareerChapterSelectionPage = () => {
                                             icon={chapter.icon}
                                             title={chapter.title}
                                             description={chapter.description}
-                                            questionCount={chapter.questionCount}
+                                            questionCount={questionCounts[chapter.id] ?? "..."}
                                             isUnlocked={chapter.isUnlocked}
                                             onClick={() => handleChapterClick(chapter)}
                                         />
