@@ -1,5 +1,6 @@
 import Card from "../ui/Card";
 import Button from "../ui/Button";
+import {CirclePoundSterling, CircleDollarSign} from "lucide-react";
 
 export default function StoreItemCard({
   item,
@@ -41,11 +42,23 @@ export default function StoreItemCard({
 
   if (!isInventoryView) {
     if (pricingType === "tokens") {
-      displayPrice = `${amount} Tokens`;
+      
+      displayPrice = (
+        <div className="flex flex-row items-center gap-1.5 text-green-400 font-semibold"> 
+        {amount} <CirclePoundSterling/>
+        </div> 
+      );
+
       buttonLabel = loading ? "Buying..." : "Buy";
       buttonAction = () => onBuyXP?.(item._id);
     } else if (pricingType === "paid") {
-      displayPrice = `${currency === "USD" ? "$" : ""}${amount}`;
+
+      displayPrice = (
+        <div className="flex flex-row items-center gap-1.5 text-green-400 font-semibold"> 
+        <CircleDollarSign/> {amount}
+        </div>
+      );
+
       buttonLabel = loading ? "Redirecting..." : "Buy with Card";
       buttonAction = () => onBuyPaid?.(item._id);
     } else if (pricingType === "free") {
