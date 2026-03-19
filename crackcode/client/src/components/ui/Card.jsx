@@ -50,10 +50,10 @@ const ContentCard = ({
   
   // Variant styles
   const variants = {
-    default: 'bg-white text-white',
-    outlined: 'bg-transparent text-white border-1',
-    elevated: 'bg-white',
-    flat: 'bg-[#121212]',
+    default: 'bg-(--surface) text-(--text)',
+    outlined: 'bg-transparent text-(--text) border',
+    elevated: 'bg-(--surface) text-(--text)',
+    flat: 'bg-(--surface2) text-(--text)',
   };
   
   // Padding sizes
@@ -93,7 +93,7 @@ const ContentCard = ({
     // Only apply padding if no headerContent (headerContent needs edge-to-edge)
     headerContent ? '' : paddings[padding],
     shadows[shadow],
-    bordered && 'border border-[#444040]',
+    bordered && 'border border-(--border)',
     interactiveStyles,
     'relative overflow-hidden group', // Added 'group' for hover effect
     className
@@ -108,7 +108,7 @@ const ContentCard = ({
       {/* Hover overlay effect - slides from left to right (Landing page only) */}
       {hoverEffect === 'slide' && (
         <div 
-          className="absolute inset-0 bg-[#44404050] bg-opacity-20 transition-all duration-500 ease-out -translate-x-full group-hover:translate-x-0 rounded-lg"
+          className="absolute inset-0 bg-(--border)/30 transition-all duration-500 ease-out -translate-x-full group-hover:translate-x-0 rounded-lg"
           style={{
             pointerEvents: 'none',
             zIndex: 0
@@ -181,12 +181,12 @@ const ContentCard = ({
           {(title || subtitle) && (
             <div className="mb-5">
               {title && (
-                <h3 className="text-xl font-bold text-white mb-2 group-hover:text-orange-400 transition-colors duration-300">
+                <h3 className="text-xl font-bold text-(--text) mb-2 group-hover:text-(--brand) transition-colors duration-300">
                   {title}
                 </h3>
               )}
               {subtitle && (
-                <p className="text-sm text-gray-300">
+                <p className="text-sm text-(--textSec)">
                   {subtitle}
                 </p>
               )}
@@ -195,7 +195,7 @@ const ContentCard = ({
           
           {/* Description */}
           {description && (
-            <div className="text-gray-400 mb-3">
+            <div className="text-(--muted) mb-3">
               {description}
             </div>
           )}

@@ -8,7 +8,6 @@
     "dev": "nodemon server.js",
     "seed:questions": "node seeds/seedQuestion.js",
     "seed:shop": "node seeds/seedShopItems.js"
-
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

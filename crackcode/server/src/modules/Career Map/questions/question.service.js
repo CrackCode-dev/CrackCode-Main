@@ -28,6 +28,15 @@ export const getQuestionsByCategoryAndDifficulty = async (career, category, diff
   return questions;
 };
 
+// Count total questions across multiple categories for all 3 difficulties
+export const countQuestionsByCategories = async (career, categories) => {
+  const Question = getQuestionModel(career);
+  const count = await Question.countDocuments({
+    category: { $in: categories },
+  });
+  return count;
+}; 
+
 // Get all questions for a career
 export const getAllQuestions = async (career) => {
   const Question = getQuestionModel(career);
