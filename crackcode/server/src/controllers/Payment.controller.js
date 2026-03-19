@@ -200,6 +200,7 @@
 
 import Stripe from "stripe";
 import Inventory from "../modules/shop/Inventory.model.js";
+import Purchase from "../modules/shop/Purchase.model.js";
 import ShopItem from "../modules/shop/ShopItem.model.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
@@ -256,6 +257,19 @@ export const verifyStripeSession = async (req, res) => {
         itemId,
         category: item.category,
       });
+
+      const existingPurchase = await Purchase.findOne({ stripeSessionId: session_id });
+      if (!existingPurchase) {
+        await Purchase.create({
+          userId,
+          itemId,
+          itemName: item.name,
+          price: Number(item.pricing?.amount || 0),
+          stripeSessionId: session_id,
+          paymentMethod: "stripe",
+          currency: "usd",
+        });
+      }
     }
 
     return res.status(200).json({

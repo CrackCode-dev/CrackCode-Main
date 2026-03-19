@@ -695,8 +695,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
 import Toast from "../../components/common/Toast";
-import HQBtn from "../../components/common/HQBtn";
-import BackBtn from "../../components/common/BackBtn";
+import Header from "../../components/common/Header";
+import Footer from "../../components/common/Footer";
 import { useTheme } from "../../context/theme/ThemeContext";
 
 export default function DetectiveStore() {
@@ -739,16 +739,9 @@ export default function DetectiveStore() {
       ? "bg-[#08142b] text-white"
       : "bg-black text-white";
 
-  const chipClass = isLightFamily
-    ? "border-gray-200 bg-white"
-    : "border-gray-700 bg-[#111827]";
-
   const titleClass = isLightFamily ? "text-gray-900" : "text-white";
   const subTextClass = isLightFamily ? "text-gray-500" : "text-gray-400";
   const tokenClass = isLightFamily ? "text-green-600" : "text-green-400";
-  const avatarBorderClass = isLightFamily
-    ? "border-gray-300"
-    : "border-gray-600";
 
   const getToken = () => localStorage.getItem("accessToken");
 
@@ -1117,48 +1110,30 @@ export default function DetectiveStore() {
       : `${category.charAt(0).toUpperCase() + category.slice(1)} Items`;
 
   return (
-    <div className={`min-h-screen ${pageClass}`}>
-      <Toast
-        show={toast.show}
-        message={toast.message}
-        type={toast.type}
-        onClose={() => setToast((prev) => ({ ...prev, show: false }))}
-      />
-
-      <div className="flex items-center justify-between px-10 py-6">
-        <div className="flex items-center gap-4">
-          <HQBtn />
-          <BackBtn />
-        </div>
-
-        <div
-          className={`flex items-center gap-3 rounded-full border px-4 py-2 shadow-sm ${chipClass}`}
-        >
-          <img
-            src={profileImage}
-            alt={username}
-            className={`h-10 w-10 rounded-full object-cover border ${avatarBorderClass}`}
-            onError={(e) => {
-              e.currentTarget.src = "/placeholder.png";
-            }}
-          />
-
-          <div className="leading-tight">
-            <p className={`text-sm font-semibold ${titleClass}`}>{username}</p>
-            <p className={`text-xs font-medium ${tokenClass}`}>
-              {tokensRemaining} Tokens
-            </p>
-          </div>
-        </div>
+    <div className={`min-h-screen flex flex-col ${pageClass}`}>
+      <div className="fixed top-6 right-6 z-[200] pointer-events-none">
+        <Toast
+          show={toast.show}
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast((prev) => ({ ...prev, show: false }))}
+        />
       </div>
 
-      <div className="flex">
+      <Header />
+
+      <div className="flex flex-1 pt-20">
         <StoreSidebar category={category} setCategory={setCategory} />
 
         <div className="flex-1 p-10">
-          <h1 className={`mb-2 text-3xl font-bold ${titleClass}`}>
-            Detective Store
-          </h1>
+          <div className="flex items-center justify-between mb-2">
+            <h1 className={`text-3xl font-bold ${titleClass}`}>
+              Detective Store
+            </h1>
+            <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${tokenClass} ${isLightFamily ? "border-green-300 bg-green-50" : "border-green-800 bg-green-950/40"}`}>
+              {tokensRemaining} Tokens
+            </span>
+          </div>
           <p className={`mb-10 ${subTextClass}`}>
             Unlock exclusive avatars, themes, and titles to customize your
             detective profile
@@ -1199,6 +1174,8 @@ export default function DetectiveStore() {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }
