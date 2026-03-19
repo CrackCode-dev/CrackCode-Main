@@ -407,7 +407,7 @@ export const spendXp = async (...args) => {
       $inc: { xp: -amount },
       $set: { lastActive: new Date() },
     },
-    { new: true, session }
+    { returnDocument: "after", session }
   );
 
   if (!user) {
@@ -441,7 +441,7 @@ export const awardRewards = async (
       $inc: { xp, totalXP: xp, tokens },
       $set: { lastActive: new Date() },
     },
-    { new: true }
+    { returnDocument: "after" }
   );
 
   if (!user) throw new Error("User not found");

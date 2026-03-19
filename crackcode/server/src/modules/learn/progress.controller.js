@@ -30,7 +30,7 @@ export const updateProgress = async (req, res) => {
         $inc: { attempts: 1 },
         ...(status === "completed" && { completedAt: new Date() }),
       },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: "after" }
     );
 
     // If newly completed, increment aggregated counters on User doc
@@ -39,7 +39,7 @@ export const updateProgress = async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(
           userId,
           { $inc: { casesSolved: 1 }, $set: { lastActive: new Date() } },
-          { new: true }
+          { returnDocument: "after" }
         ).select("casesSolved currentStreak achievements");
 
         return res.status(200).json({ progress, userStats: {

@@ -234,8 +234,8 @@ const userSchema = new mongoose.Schema(
 // ═══════════════════════════════════════════════════════════
 
 // Frequently queried fields
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
+// email and username have `unique: true` at the field level —
+// avoid duplicate schema-level index declarations.
 
 // Leaderboard queries
 userSchema.index({ rank: 1, totalXP: -1 });

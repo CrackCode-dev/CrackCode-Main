@@ -72,7 +72,7 @@ export const updateChapterProgress = async (userId, career, chapterId, easyScore
         hardCompleted: totals.hardCompleted,
       }
     },
-    { new: true }
+    { returnDocument: "after" }
   );
 
   return progress;
@@ -102,7 +102,7 @@ export const resetProgress = async (userId, career) => {
       mediumCompleted: false,
       hardCompleted: false,
     },
-    { new: true, upsert: true }
+    { returnDocument: "after", upsert: true }
   );
 
   return progress;
