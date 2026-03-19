@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { Button } from "./ui/button.jsx"
 import DotBackground from "./ui/dot-background.jsx"
 import { Linkedin, Instagram, ChevronDown, HelpCircle, Rocket, Heart, Github, Mail, MessageSquare, ExternalLink, Sparkles } from "lucide-react"
-import logo from "../assets/CrackCode-Logo.png"
+import logo from "../assets/logo.png"
 
 export default function ContactSection() {
   const [openFaq, setOpenFaq] = useState(null)
@@ -132,7 +132,7 @@ export default function ContactSection() {
               
               <div className="space-y-3">
                 <a 
-                  href="https://www.linkedin.com/in/crack-code-619461396" 
+                  href="https://www.linkedin.com/company/crackcode/?viewAsMember=true" 
                   target="_blank" 
                   rel="noopener noreferrer" 
                   className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl hover:bg-blue-500/10 border border-transparent hover:border-blue-500/30 transition-all duration-300 group"
