@@ -25,6 +25,8 @@ import ChapterSelectionPage from "./pages/learn/ChapterSelection";
 import QuestionListPage from "./pages/learn/SubChapterSelection";
 import DetectiveStore from "./pages/shop/DetectiveStore";
 
+import CareerChapterSelectionPage from "./pages/careermap/CareerChapterSelection.jsx";
+import CareerQuizPage from "./pages/careermap/CareerQuizPage.jsx";
 
 function App() {
   return (
@@ -41,8 +43,8 @@ function App() {
           <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="/reset-password" element={<ResetPassword />} />
 
-          <Route path="/careermaps-Main" element={<CareermapMain />} />
-          <Route path="/careermap" element={<CareermapMain />} />
+          <Route path='/careermap' element={<CareermapMain />} />
+          <Route path='/careermap/:careerId/quiz/:chapterId' element={<CareerQuizPage />} />
 
           <Route path="/caselog" element={<CaseLogMainPage />} />
           <Route path="/caselog/details" element={<CaseLogPage />} />
@@ -70,6 +72,11 @@ function App() {
             }
           />
 
+          <Route path="/careermap/:careerId" element={
+            // <ProtectedRoute>
+            <CareerChapterSelectionPage />
+            // </ProtectedRoute>
+          } />
           <Route
             path="/solve/:problemId"
             element={

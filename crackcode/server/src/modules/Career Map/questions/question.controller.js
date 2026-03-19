@@ -2,7 +2,8 @@ import {
   getQuestionsByDifficulty, 
   getQuestionById,
   getQuestionsByCategoryAndDifficulty,
-  getAllQuestions
+  getAllQuestions,
+  countQuestionsByCategories
 } from "./question.service.js";
 
 // Valid career paths
@@ -190,4 +191,25 @@ export const getCareers = async (req, res) => {
       }
     ]
   });
+};
+
+// GET /api/questions/count?career=SoftwareEngineer&categories=Algorithms,Data Structures
+export const getQuestionCount = async (req, res) => {
+  try {
+    const { career, categories } = req.query;
+
+    if (!career || !categories) {
+      return res.status(400).json({ success: false, message: "career and categories are required" });
+    }
+    if (!VALID_CAREERS.includes(career)) {
+      return res.status(400).json({ success: false, message: `Invalid career` });
+    }
+
+    const categoryList = categories.split(",").map(c => c.trim());
+    const count = await countQuestionsByCategories(career, categoryList);
+
+    res.json({ success: true, count });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };

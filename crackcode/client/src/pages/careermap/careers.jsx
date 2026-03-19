@@ -1,50 +1,50 @@
 //contains all the career information
-import softwareDeveloper from "../../assets/icons/softwareDeveloper.png";
-import mobileAppDeveloper from "../../assets/icons/mobileAppDeveloper.png";
-import webDeveloper from "../../assets/icons/webDeveloper.png";
-import backendDeveloper from "../../assets/icons/backendDeveloper.png";
-import gameDeveloper from "../../assets/icons/gameDeveloper.png";
-import dataAnalyst from "../../assets/icons/dataAnalyst.png";
+import softwareEngineer from "../../assets/icons/careermap/softwareEngineer.png";
+import MLEngineer from "../../assets/icons/careermap/MLEngineer.png";
+import webDeveloper from "../../assets/icons/careermap/webDeveloper.png";
+import backendDeveloper from "../../assets/icons/careermap/backendDeveloper.png";
+import gameDeveloper from "../../assets/icons/careermap/gameDeveloper.png";
+import dataScientist from "../../assets/icons/careermap/dataScientist.png";
 
 
 export const careers = [
     {
-        id: "Software-developer",
-        title: "Software Developer",
+        id: "Software-Engineer",
+        title: "Software Engineer",
         level: "General",
         gradient: "from-[#1C29E4] to-[#0BADED]",
         languages: "Python/Java/ C++/JavaScript",
-        focus: ["Variables, loops, conditionals", "Data structures", "Basic algorithms", "Debugging logic",],
+        focus: ["Core programming concepts", "Data structures and algorithms", "Databases", "System Design and Testing",],
         difficulty: "easy",
         locked: false,
         category: "software",
-        icon : softwareDeveloper,
+        icon : softwareEngineer,
     },
 
     {
-        id: "mobile-app-developer",
-        title: "Mobile App Developer",
-        level: "Fundamentals",
+        id: "ML-Engineer",
+        title: "ML Engineer",
+        level: "Advanced",
         gradient: "from-[#FF0004] to-[#DE4E00]",
-        languages: "Java (Android Basics)",
-        focus: ["Java OOP fundamentals", "Activity lifecycle concepts (basic)", "Logic building"],
-        difficulty: "easy",
-        locked: true,
-        category: "mobile",
-        icon :mobileAppDeveloper,
+        languages: "Python / TensorFlow / PyTorch",
+        focus: ["Machine Learning fundamentals", "Deep Learning & Neural Networks", "MLOps & Model Deployment","ML System Design"],
+        difficulty: "hard",
+        locked: false,
+        category: "ml",
+        icon : MLEngineer,
     },
 
     {
-        id: "web-developer",
-        title: "Web Developer",
-        level: "Frontend + Backend Basics",
+        id: "Data-Scientist",
+        title: "Data Scientist",
+        level: "Intermediate",
         gradient: "from-[#FFA807] to-[#FFEA00]",
-        languages: "JavaScript (Primary)",
-        focus: ["JS Fundamentals", "DOM Basics", "Functions, Events", "JSON", "Basic API concepts",],
+        languages: "Python / R / SQL",
+        focus: ["Data Science & Statistics", "Machine Learning for Data Science", "Database & Data Management", "Data Engineering & Infrastructure"],
         difficulty: "medium",
         locked: false,
-        category: "web",
-        icon : webDeveloper,
+        category: "data",
+        icon : dataScientist,
     },
 
     {
@@ -68,23 +68,23 @@ export const careers = [
         languages: "C/C++",
         focus: ["Memory Basics", "Performance thinking", "C/C++ syntax", "Basic loops/ physics logic"],
         difficulty: "hard",
-        locked: false,
+        locked: true,
         category: "gaming",
         icon : gameDeveloper,
 
     },
 
-    {
-        id: "data-analyst",
-        title: "Data Analyst",
-        level: "Beginner Level",
-        gradient: "from-[#502B00] to-[#8A5A00]",
-        languages: "Python",
-        focus: ["Python Basics", "Working with lists, dictionaries", "Simple data manipulation", "Logical thinking"],
-        difficulty: "hard",
+     {
+        id: "web-developer",
+        title: "Web Developer",
+        level: "Frontend + Backend Basics",
+        gradient: "from-[#FFA807] to-[#FFEA00]",
+        languages: "JavaScript (Primary)",
+        focus: ["JS Fundamentals", "DOM Basics", "Functions, Events", "JSON", "Basic API concepts",],
+        difficulty: "medium",
         locked: true,
-        category: "data",
-        icon : dataAnalyst,
+        category: "web",
+        icon : webDeveloper,
     },
 ];
 
