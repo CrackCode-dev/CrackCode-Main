@@ -1,5 +1,32 @@
-export const RoadmapNode = ({ progress, isLast }) => {
+export const RoadmapNode = ({ progress, isLast, isUnlocked, variant = 'progress' }) => {
   const isCompleted = progress === 100;
+
+//If the roadmap variant is career
+  if (variant === 'career') {
+    return (
+      <div className="flex flex-col items-center w-10 h-full">
+
+        {/* Circle — green border always, dot only when unlocked */}
+        <div className="w-12 h-12 shrink-0 rounded-full border-2 border-green-500 flex items-center justify-center">
+          {isUnlocked && (
+            <div className={`w-7 h-7 rounded-full shadow-[0_0_10px_#22c55e] transition-all duration-500
+                ${isCompleted ? 'bg-green-500' : 'bg-green-500/50 animate-pulse'}`}
+            />
+          )}
+        </div>
+
+        {/* Line — shows the progress */}
+        {!isLast && (
+          <div className="w-0.5 bg-gray-800 relative my-1" style={{ height: '100px' }}>
+            <div
+              className="absolute top-0 left-0 w-full bg-green-500 transition-all duration-700 ease-in-out"
+              style={{ height: `${progress}%` }}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center w-10 h-full">
@@ -16,16 +43,16 @@ export const RoadmapNode = ({ progress, isLast }) => {
             strokeWidth="3"
             strokeLinecap="round"
             strokeDasharray="75.4"
-            style={{ 
+            style={{
               strokeDashoffset: 75.4 - (progress / 100) * 75.4,
-              transition: 'stroke-dashoffset 0.5s ease-in-out' 
+              transition: 'stroke-dashoffset 0.5s ease-in-out'
             }}
           />
         </svg>
         {progress > 0 && (
-          <div 
+          <div
             className={`absolute inset-0 m-auto w-3 h-3 rounded-full shadow-[0_0_10px_#22c55e] transition-all duration-500
-              ${isCompleted ? 'bg-green-500' : 'bg-green-500/50 animate-pulse'}`} 
+              ${isCompleted ? 'bg-green-500' : 'bg-green-500/50 animate-pulse'}`}
           />
         )}
       </div>
@@ -33,7 +60,7 @@ export const RoadmapNode = ({ progress, isLast }) => {
       {/* Connecting Line - Fills the remaining vertical space */}
       {!isLast && (
         <div className="w-0.5 flex-1 bg-gray-800 relative my-1">
-          <div 
+          <div
             className="absolute top-0 left-0 w-full bg-green-500 transition-all duration-700 ease-in-out"
             style={{ height: `${progress}%` }}
           />
@@ -51,12 +78,12 @@ const Roadmap = ({ chapters, onChapterClick }) => {
         const progress = chapter.total > 0 ? (chapter.completed / chapter.total) * 100 : 0;
         return (
           <div key={chapter.id} className="flex gap-8 md:gap-12">
-            <RoadmapNode 
-              progress={progress} 
-              isLast={index === chapters.length - 1} 
+            <RoadmapNode
+              progress={progress}
+              isLast={index === chapters.length - 1}
             />
             <div className="flex-1 pb-10">
-               {/* This can be rendered via children or a prop */}
+              {/* This can be rendered via children or a prop */}
             </div>
           </div>
         );
