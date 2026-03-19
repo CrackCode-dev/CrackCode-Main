@@ -339,7 +339,7 @@
 //   );
 // }
 
-//--------------------------------------------------------------------------------------------------
+// --------------------------------------------------------------------------------------------------
 
 // import { useEffect, useMemo, useState } from "react";
 // import StoreGrid from "../../components/store/StoreGrid";
@@ -690,8 +690,8 @@
 
 
 //--------------------------------------------------------------------------------------------------
-
 import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
 import Toast from "../../components/common/Toast";
@@ -721,10 +721,13 @@ export default function DetectiveStore() {
   });
 
   const { theme } = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5051";
 
   const isLightFamily = ["light", "cream", "country"].includes(theme);
-  const isDarkFamily = ["dark", "midnight"].includes(theme);
-  
+
   const pageClass =
     theme === "light"
       ? "bg-gray-50 text-gray-900"
@@ -735,15 +738,17 @@ export default function DetectiveStore() {
       : theme === "midnight"
       ? "bg-[#08142b] text-white"
       : "bg-black text-white";
-  
+
   const chipClass = isLightFamily
     ? "border-gray-200 bg-white"
     : "border-gray-700 bg-[#111827]";
-  
+
   const titleClass = isLightFamily ? "text-gray-900" : "text-white";
   const subTextClass = isLightFamily ? "text-gray-500" : "text-gray-400";
   const tokenClass = isLightFamily ? "text-green-600" : "text-green-400";
-  const avatarBorderClass = isLightFamily ? "border-gray-300" : "border-gray-600";
+  const avatarBorderClass = isLightFamily
+    ? "border-gray-300"
+    : "border-gray-600";
 
   const getToken = () => localStorage.getItem("accessToken");
 
@@ -758,19 +763,28 @@ export default function DetectiveStore() {
   const normalizeImageUrl = (src) => {
     if (!src) return "/placeholder.png";
     if (src.startsWith("http")) return src;
-    if (src.startsWith("/uploads")) return `http://localhost:5051${src}`;
+    if (src.startsWith("/uploads")) return `${API_BASE_URL}${src}`;
     if (src.startsWith("/src")) return src;
     return src;
   };
 
   const loadProfile = async () => {
     try {
-      const res = await fetch("http://localhost:5051/api/profile", {
+      const res = await fetch(`${API_BASE_URL}/api/profile`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
       });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Profile API error:", text);
+        setUsername("User");
+        setTokensRemaining(0);
+        setProfileImage("/placeholder.png");
+        return;
+      }
 
       const data = await res.json();
 
@@ -786,6 +800,7 @@ export default function DetectiveStore() {
 
       const avatarSrc =
         user?.equippedAvatarItemId?.imageUrl ||
+        user?.equippedAvatar?.imageUrl ||
         user?.avatar ||
         "/placeholder.png";
 
@@ -800,50 +815,156 @@ export default function DetectiveStore() {
 
   const loadInventory = async () => {
     try {
-      const res = await fetch("http://localhost:5051/api/shop/inventory", {
+      const res = await fetch(`${API_BASE_URL}/api/shop/inventory`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${getToken()}`,
         },
       });
 
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Inventory API error:", text);
+        setInventoryItems([]);
+        setOwnedItemIds(new Set());
+        return;
+      }
+
       const data = await res.json();
-      const inventory = Array.isArray(data) ? data : data.items || [];
+
+      const inventory = Array.isArray(data)
+        ? data
+        : data?.inventory || data?.items || [];
 
       setInventoryItems(inventory);
 
       const ids = new Set(
-        inventory.map((inv) => String(inv.itemId?._id || inv.itemId || inv._id))
+        inventory
+          .map((inv) =>
+            String(
+              inv?.itemId?._id ||
+                inv?.item?._id ||
+                inv?.itemId ||
+                inv?.item ||
+                inv?._id
+            )
+          )
+          .filter(Boolean)
       );
 
       setOwnedItemIds(ids);
+
+      const equipped = inventory.find(
+        (inv) => inv?.isEquipped === true || inv?.equipped === true
+      );
+
+      setEquippedItemId(
+        equipped?.itemId?._id ||
+          equipped?.item?._id ||
+          equipped?.itemId ||
+          equipped?.item ||
+          null
+      );
     } catch (error) {
       console.error("Failed to load inventory:", error);
+      setInventoryItems([]);
+      setOwnedItemIds(new Set());
+    }
+  };
+
+  const loadItems = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch(`${API_BASE_URL}/api/shop/items`);
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Store items API error:", text);
+        showToast("Failed to load store items", "error");
+        return;
+      }
+
+      const data = await res.json();
+      setItems(Array.isArray(data) ? data : data?.items || []);
+    } catch (error) {
+      console.error("Failed to fetch store items:", error);
+      showToast("Failed to load store items", "error");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        setLoading(true);
-
-        const res = await fetch("http://localhost:5051/api/shop/items");
-        const data = await res.json();
-
-        setItems(Array.isArray(data) ? data : data.items || []);
-      } catch (error) {
-        console.error("Failed to fetch store items:", error);
-        showToast("Failed to load store items", "error");
-      } finally {
-        setLoading(false);
-      }
+    const initialLoad = async () => {
+      await Promise.all([loadItems(), loadInventory(), loadProfile()]);
     };
 
-    fetchItems();
-    loadInventory();
-    loadProfile();
+    initialLoad();
   }, []);
-
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const payment = params.get("payment");
+    const sessionId = params.get("session_id");
+  
+    const refreshAfterStripe = async () => {
+      try {
+        if (payment === "success" && sessionId) {
+          const res = await fetch(
+            `${API_BASE_URL}/api/payment/verify-session?session_id=${sessionId}`,
+            {
+              method: "GET",
+              credentials: "include",
+              headers: {
+                Authorization: `Bearer ${getToken()}`,
+              },
+            }
+          );
+  
+          const rawText = await res.text();
+          let data = null;
+  
+          try {
+            data = rawText ? JSON.parse(rawText) : null;
+          } catch {
+            console.error("Verify session returned non-JSON:", rawText);
+          }
+  
+          if (!res.ok) {
+            console.error("Verify session API error status:", res.status);
+            console.error("Verify session API error body:", data || rawText);
+            showToast(
+              data?.message || "Failed to verify payment session",
+              "error"
+            );
+            return;
+          }
+  
+          await Promise.all([loadInventory(), loadProfile(), loadItems()]);
+  
+          showToast(
+            data?.message || "Payment successful! Inventory updated.",
+            "success"
+          );
+  
+          navigate("/store", { replace: true });
+        } else if (payment === "success") {
+          await Promise.all([loadInventory(), loadProfile(), loadItems()]);
+          showToast("Payment successful! Inventory refreshed.", "success");
+          navigate("/store", { replace: true });
+        } else if (payment === "cancelled") {
+          showToast("Payment was cancelled.", "error");
+          navigate("/store", { replace: true });
+        }
+      } catch (error) {
+        console.error("Stripe verify failed:", error);
+        showToast("Failed to verify payment session", "error");
+      }
+    };
+  
+    refreshAfterStripe();
+  }, [location.search, navigate]);
+  
   useEffect(() => {
     if (category === "inventory") {
       const fetchInventoryTab = async () => {
@@ -867,7 +988,7 @@ export default function DetectiveStore() {
     try {
       setBuyingItemId(itemId);
 
-      const res = await fetch("http://localhost:5051/api/shop/purchase", {
+      const res = await fetch(`${API_BASE_URL}/api/shop/purchase`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -876,14 +997,19 @@ export default function DetectiveStore() {
         body: JSON.stringify({ itemId }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
 
-      if (data.success) {
-        showToast("Successful! Item purchased", "success");
-        await loadInventory();
-        await loadProfile();
+      if (!res.ok) {
+        console.error("Token purchase API error:", data);
+        showToast(data?.message || "Purchase failed", "error");
+        return;
+      }
+
+      if (data?.success) {
+        showToast(data.message || "Successful! Item purchased", "success");
+        await Promise.all([loadInventory(), loadProfile(), loadItems()]);
       } else {
-        showToast(data.message || "Purchase failed", "error");
+        showToast(data?.message || "Purchase failed", "error");
       }
     } catch (error) {
       console.error("Token purchase failed:", error);
@@ -897,7 +1023,7 @@ export default function DetectiveStore() {
     try {
       setBuyingItemId(itemId);
 
-      const res = await fetch("http://localhost:5051/api/shop/checkout", {
+      const res = await fetch(`${API_BASE_URL}/api/shop/checkout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -906,13 +1032,19 @@ export default function DetectiveStore() {
         body: JSON.stringify({ itemId }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        console.error("Stripe checkout API error:", data);
+        showToast(data?.message || "Stripe checkout failed", "error");
+        return;
+      }
 
       if (data?.url) {
         showToast("Redirecting to payment...", "success");
         window.location.href = data.url;
       } else {
-        showToast(data.message || "Stripe checkout failed", "error");
+        showToast(data?.message || "Stripe checkout failed", "error");
       }
     } catch (error) {
       console.error("Stripe checkout failed:", error);
@@ -926,7 +1058,7 @@ export default function DetectiveStore() {
     try {
       setEquippingItemId(item._id);
 
-      const res = await fetch("http://localhost:5051/api/profile/equip-item", {
+      const res = await fetch(`${API_BASE_URL}/api/profile/equip-item`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -938,14 +1070,20 @@ export default function DetectiveStore() {
         }),
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => null);
 
-      if (data.success) {
+      if (!res.ok) {
+        console.error("Equip API error:", data);
+        showToast(data?.message || "Failed to equip item", "error");
+        return;
+      }
+
+      if (data?.success) {
         setEquippedItemId(item._id);
-        showToast("Item equipped successfully!", "success");
+        showToast(data.message || "Item equipped successfully!", "success");
         await loadProfile();
       } else {
-        showToast(data.message || "Failed to equip item", "error");
+        showToast(data?.message || "Failed to equip item", "error");
       }
     } catch (error) {
       console.error("Equip failed:", error);
@@ -957,7 +1095,9 @@ export default function DetectiveStore() {
 
   const displayedItems = useMemo(() => {
     if (category === "inventory") {
-      return inventoryItems.map((inv) => inv.itemId || inv);
+      return inventoryItems
+        .map((inv) => inv?.itemId || inv?.item || inv)
+        .filter(Boolean);
     }
 
     if (category === "all") {
