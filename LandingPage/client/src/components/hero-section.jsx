@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Button } from "./ui/button.jsx"
 import DotBackground from "./ui/dot-background.jsx"
 import { ChevronDown, Code2, Sparkles, BookOpen, Trophy } from "lucide-react"
-import logo from "../assets/logo.png"
+import logo from "../assets/CrackCode-Logo.png"
 
 export default function HeroSection() {
   const [isScrolled, setIsScrolled] = useState(false)
