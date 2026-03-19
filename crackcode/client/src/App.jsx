@@ -17,7 +17,6 @@ import UserProfile from "./pages/userprofile/UserProfile";
 import CodeEditorPage from "./pages/codeEditor/CodeEditorPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import CaseLogMainPage from "./pages/caselog/CaseLogMainPage";
-import CaseLogPage from "./pages/caselog/CaseLogPage";
 import Leaderboard from "./pages/leaderboard/leaderboardPage";
 import LearnMainPage from "./pages/learn/LearnMainPage";
 import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
@@ -47,7 +46,6 @@ function App() {
           <Route path='/careermap/:careerId/quiz/:chapterId' element={<CareerQuizPage />} />
 
           <Route path="/caselog" element={<CaseLogMainPage />} />
-          <Route path="/caselog/details" element={<CaseLogPage />} />
 
           <Route path="/weeklychallenges" element={<WeeklyChallenges />} />
           <Route path="/leaderboard" element={<Leaderboard />} />

@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
 import connectDB from "./src/config/db.js";
 import redisClient from "./src/modules/leaderboard/redis.config.js";
 import { stripeWebhookController } from "./src/controllers/Shop.controller.js";
@@ -115,6 +116,18 @@ app.use("/api/codeEditor", codeEditorRoutes);
 // Career Map APIs
 app.use("/api/questions", questionRoutes);
 app.use("/api/progress", progressRoutes);
+
+// CaseLog API - Direct collection fetch
+app.get("/api/caseLog", async (_req, res) => {
+  try {
+    const collectionName = "caseLog";
+    const items = await mongoose.connection.db.collection(collectionName).find({}).toArray();
+    return res.status(200).json({ success: true, count: items.length, collectionName, data: items });
+  } catch (error) {
+    console.error("❌ caseLog fetch error:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // Health check
 app.get("/", (_req, res) => {
