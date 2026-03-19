@@ -116,7 +116,8 @@ export default function CareerQuizPage() {
         }
 
         if (currentQ + 1 >= total) {
-            const passed = (newEasy + newMedium + newHard) >= 8;
+            // Require more than 12 correct answers (i.e., at least 13) to pass and unlock next chapter
+            const passed = (newEasy + newMedium + newHard) > 12;
 
             console.log("Quiz finished:", { careerId, chapterId, newEasy, newMedium, newHard, passed });
 

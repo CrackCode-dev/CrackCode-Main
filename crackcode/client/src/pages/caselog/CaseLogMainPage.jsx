@@ -7,12 +7,13 @@ import Button from '../../components/ui/Button';
 import { ArrowRight, AlertCircle } from 'lucide-react';
 import Header from '../../components/common/Header';
 
-// Initial placeholders for 4 cases
+// Initial placeholders for 4 cases (preserve difficulty keys for selection
+// but avoid showing dummy labels; real label comes from fetched schema)
 const initialCases = [
-  { difficulty: 'easy', difficultyLabel: 'Easy' },
-  { difficulty: 'medium', difficultyLabel: 'Medium' },
-  { difficulty: 'hard', difficultyLabel: 'Hard' },
-  { difficulty: 'medium', difficultyLabel: 'Medium' },
+  { difficulty: 'easy', difficultyLabel: null },
+  { difficulty: 'medium', difficultyLabel: null },
+  { difficulty: 'hard', difficultyLabel: null },
+  { difficulty: 'medium', difficultyLabel: null },
 ];
 
 const CaseLogMainPage = () => {
@@ -155,11 +156,11 @@ const CaseLogMainPage = () => {
                     if (caseItem.raw && (caseItem.transformed?.problemId || caseItem.id)) {
                       const targetId = caseItem.transformed?.problemId || caseItem.id;
                       navigate(`/code-editor/${targetId}`, { 
-                        state: { question: caseItem.raw, language: 'python' } 
+                        state: { question: caseItem.raw, language: 'python', sourceArea: 'case_log' } 
                       });
                     } else if (caseItem.transformed && caseItem.transformed.problemId) {
                       navigate(`/code-editor/${caseItem.transformed.problemId}`, { 
-                        state: { question: caseItem.transformed, language: 'python' } 
+                        state: { question: caseItem.transformed, language: 'python', sourceArea: 'case_log' } 
                       });
                     } else {
                       navigate('/code-editor');
@@ -185,13 +186,17 @@ const CaseLogMainPage = () => {
 
                   {/* Difficulty Badge */}
                   <div className="mb-3">
-                    <Badge
-                      type="difficulty"
-                      difficulty={caseItem.difficulty}
-                      size="sm"
-                    >
-                      {caseItem.difficultyLabel}
-                    </Badge>
+                    {caseItem.difficulty ? (
+                      <Badge
+                        type="difficulty"
+                        difficulty={caseItem.difficulty}
+                        size="sm"
+                      >
+                        {caseItem.difficultyLabel || (caseItem.difficulty && caseItem.difficulty.charAt(0).toUpperCase() + caseItem.difficulty.slice(1))}
+                      </Badge>
+                    ) : (
+                      <div className="px-2 py-1 rounded text-xs font-bold" style={{ color: 'var(--textSec)' }}>Loading...</div>
+                    )}
                   </div>
 
                   {/* Content */}
