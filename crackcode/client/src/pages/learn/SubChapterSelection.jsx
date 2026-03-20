@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
 import Header from '../../components/common/Header';
 import { fetchLearnQuestions } from '../../services/api/questionService';
+import { AppContent } from '../../context/userauth/authenticationContext';
+import axios from '../../api/axios.js';
 
 const DIFFICULTY_CONFIG = {
   fundamentals: { title: 'Fundamentals', icon: '📚' },
@@ -14,28 +17,45 @@ const QuestionListPage = () => {
   const { trackId, difficultyId } = useParams();
   const { state } = useLocation();
   const navigate = useNavigate();
+  const { userData } = useContext(AppContent);
 
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Persist completion state in localStorage per language+difficulty
-  const storageKey = `completed-${trackId}-${difficultyId}`;
-  const [completedIds, setCompletedIds] = useState(() => {
+  // Get completed questions from backend (user's actual progress)
+  const [completedIds, setCompletedIds] = useState(new Set());
+
+  // Helper function to refresh completed questions
+  const refreshCompleted = async () => {
     try {
-      const stored = localStorage.getItem(storageKey);
-      return stored ? new Set(JSON.parse(stored)) : new Set();
-    } catch {
-      return new Set();
+      console.log('🔄 Refreshing completed questions...');
+      const response = await axios.get('/user/data');
+      const completed = response.data?.data?.completedQuestionIds || [];
+      console.log('✅ Refreshed completed IDs:', completed);
+      console.log('   Completed IDs array:', JSON.stringify(completed));
+      setCompletedIds(new Set(completed));
+    } catch (err) {
+      console.error('Failed to refresh completed questions:', err);
     }
-  });
+  };
 
   useEffect(() => {
     const load = async () => {
       try {
+        console.log(`📖 Loading Learn page - trackId: "${trackId}", difficultyId: "${difficultyId}"`);
+        
+        // Fetch questions for this language+difficulty
         const data = await fetchLearnQuestions(trackId, difficultyId);
         setQuestions(Array.isArray(data) ? data : []);
+        console.log(`📚 Loaded ${Array.isArray(data) ? data.length : 0} questions from ${trackId} ${difficultyId}`);
+        if (Array.isArray(data) && data.length > 0) {
+          console.log(`   First question: ${data[0].problemId}`);
+        }
+
+        // Always fetch user's completed questions
+        await refreshCompleted();
       } catch (err) {
-        console.warn('Failed to load questions:', err);
+        console.error('❌ Failed to load questions:', err);
         setQuestions([]);
       } finally {
         setLoading(false);
@@ -44,18 +64,35 @@ const QuestionListPage = () => {
     load();
   }, [trackId, difficultyId]);
 
-  const toggleComplete = (qId, e) => {
-    e.stopPropagation();
-    setCompletedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(qId)) next.delete(qId);
-      else next.add(qId);
-      try {
-        localStorage.setItem(storageKey, JSON.stringify([...next]));
-      } catch {}
-      return next;
-    });
-  };
+  // Refresh completed questions when page becomes visible or on custom event
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        console.log('👁️ Page became visible, refreshing completed questions...');
+        refreshCompleted();
+      }
+    };
+
+    const handleCustomEvent = (event) => {
+      console.log('🎉 Solution submitted event received:', event.detail);
+      refreshCompleted();
+    };
+
+    // Listen for page visibility changes (tab focus, minimize/maximize)
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Also listen for window focus
+    window.addEventListener('focus', refreshCompleted);
+
+    // Listen for custom event from EditorToolbar when solution is submitted
+    window.addEventListener('onSolutionSubmitted', handleCustomEvent);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', refreshCompleted);
+      window.removeEventListener('onSolutionSubmitted', handleCustomEvent);
+    };
+  }, []);
 
   const handleQuestionClick = (question) => {
     const problemId = question.problemId || question._id?.toString() || String(question.id);
@@ -65,8 +102,14 @@ const QuestionListPage = () => {
   };
 
   const difficultyInfo = DIFFICULTY_CONFIG[difficultyId] || DIFFICULTY_CONFIG.easy;
-  const completedCount = completedIds.size;
+
+  // Only count completions that belong to the currently visible question list
   const totalCount = questions.length;
+  const completedCount = questions.reduce((acc, question) => {
+    const qId = question.problemId || question._id?.toString() || String(question.id || '');
+    return acc + (completedIds.has(qId) ? 1 : 0);
+  }, 0);
+
   const progressPercent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
@@ -85,9 +128,11 @@ const QuestionListPage = () => {
 
           {/* Header */}
           <div className="mb-12">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="text-5xl">{difficultyInfo.icon}</span>
-              <h1 className="text-3xl md:text-4xl font-bold">{difficultyInfo.title}</h1>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <span className="text-5xl">{difficultyInfo.icon}</span>
+                <h1 className="text-3xl md:text-4xl font-bold">{difficultyInfo.title}</h1>
+              </div>
             </div>
 
             {/* Progress bar */}
@@ -121,23 +166,28 @@ const QuestionListPage = () => {
                 const isCompleted = completedIds.has(qId);
                 const isLast = index === questions.length - 1;
 
+                if (index === 0 || index === 1) {
+                  console.log(`🔍 Q${index + 1}: qId="${qId}", isCompleted=${isCompleted}`);
+                  console.log(`   completedIds Set:`, completedIds);
+                  console.log(`   completedIds contains qId?:`, completedIds.has(qId));
+                }
+
                 return (
                   <div key={qId} className="flex gap-5">
 
                     {/* Timeline column: circle + connector line */}
                     <div className="flex flex-col items-center" style={{ width: 44, flexShrink: 0 }}>
-                      <button
-                        onClick={(e) => toggleComplete(qId, e)}
-                        className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 shrink-0 cursor-pointer"
+                      <div
+                        className="w-11 h-11 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all duration-300 shrink-0"
                         style={{
                           backgroundColor: isCompleted ? 'var(--brand)' : 'var(--card-bg)',
                           borderColor:     isCompleted ? 'var(--brand)' : 'var(--border)',
                           color:           isCompleted ? 'var(--brandInk)' : 'var(--text)',
                         }}
-                        title={isCompleted ? 'Mark as incomplete' : 'Mark as complete'}
+                        title={isCompleted ? 'Completed ✓' : `Question ${index + 1}`}
                       >
                         {isCompleted ? '✓' : index + 1}
-                      </button>
+                      </div>
 
                       {!isLast && (
                         <div
