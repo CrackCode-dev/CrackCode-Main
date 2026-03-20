@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
 import Header from '../../components/common/Header';
+import { AppContent } from '../../context/userauth/authenticationContext';
 import pythonIcon from '../../assets/icons/learn/python.png';
 import jsIcon from '../../assets/icons/learn/js.png';
 import javaIcon from '../../assets/icons/learn/java.png';
@@ -59,6 +61,31 @@ const LearnMainPage = () => {
     },
   ];
 
+  const { userData } = useContext(AppContent);
+
+  // Determine completed counts per language (assume problemId prefix: py_, js_, java_, cpp_)
+  const completedByLang = { python: 0, javascript: 0, java: 0, cpp: 0 };
+  const completedIds = Array.isArray(userData?.completedQuestionIds) ? userData.completedQuestionIds : [];
+
+  // Deduplicate IDs and normalize
+  const uniqueIds = Array.from(new Set(completedIds.map(id => (typeof id === 'string' ? id.trim() : id))));
+
+  uniqueIds.forEach((id) => {
+    if (typeof id !== 'string' || id.length === 0) return;
+    const lower = id.toLowerCase();
+    if (lower.startsWith('py_')) completedByLang.python += 1;
+    else if (lower.startsWith('js_')) completedByLang.javascript += 1;
+    else if (lower.startsWith('java_')) completedByLang.java += 1;
+    else if (lower.startsWith('cpp_')) completedByLang.cpp += 1;
+  });
+
+  // Debug: log what we computed to help troubleshooting in the browser console
+  console.log('LearnMainPage: unique completed IDs:', uniqueIds);
+  console.log('LearnMainPage: completedByLang:', completedByLang);
+
+  // Cap counts to the visible total (15) to avoid showing >15
+  Object.keys(completedByLang).forEach(k => { if (completedByLang[k] > 15) completedByLang[k] = 15; });
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       <Header variant="empty" />
@@ -95,6 +122,18 @@ const LearnMainPage = () => {
                 </div>
 
                 <p className="text-sm mb-4 line-clamp-2 opacity-90">{lang.description}</p>
+
+                <div className="flex items-center justify-between mb-4">
+                  <div className="text-sm opacity-75">
+                    {/** Show per-language completed count (default total 15) **/}
+                    {(() => {
+                      const totals = 15;
+                      const langKey = lang.id;
+                      const completed = completedByLang[langKey] ?? 0;
+                      return `${completed}/${totals} completed`;
+                    })()}
+                  </div>
+                </div>
 
                 <div className="flex items-center justify-between">
                   <span className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: 'var(--badge-bg)', color: 'var(--badge-text)' }}>

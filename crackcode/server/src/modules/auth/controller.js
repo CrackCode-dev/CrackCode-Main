@@ -352,12 +352,12 @@ export const verifyEmail = async (req, res) => {
       });
       await user.save();
 
-      // Auto-unlock beginner badge for new users
+      // Auto-unlock welcome badge for new users on signup
       try {
-        await checkAndUnlockBadge(user._id, 'beginner');
-        console.log(`✅ Beginner badge unlocked for new user: ${user._id}`);
+        await checkAndUnlockBadge(user._id, 'welcome');
+        console.log(`✅ Welcome badge unlocked for new user: ${user._id}`);
       } catch (badgeError) {
-        console.error(`⚠️ Failed to unlock beginner badge: ${badgeError.message}`);
+        console.error(`⚠️ Failed to unlock welcome badge: ${badgeError.message}`);
         // Don't fail registration if badge unlock fails
       }
 

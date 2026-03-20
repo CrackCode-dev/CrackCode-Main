@@ -210,11 +210,19 @@ export const getCollectionQuestions = async (req, res) => {
     const collectionName = `learn${langMap[langKey]}${diffMap[diffKey]}Q`;
     const questions = await mongoose.connection.db.collection(collectionName).find({}).limit(15).toArray();
 
+    // Ensure all questions have a problemId field (generate from pattern if missing)
+    const langPrefix = langKey === 'python' ? 'py' : langKey === 'javascript' ? 'js' : langKey;
+    const diffPrefix = diffKey.toLowerCase();
+    const questionsWithIds = questions.map((q, index) => ({
+      ...q,
+      problemId: q.problemId || `${langPrefix}_${diffPrefix}_${String(index + 1).padStart(3, '0')}`,
+    }));
+
     return res.status(200).json({
       success: true,
-      count: questions.length,
+      count: questionsWithIds.length,
       collectionName,
-      data: questions,
+      data: questionsWithIds,
     });
   } catch (error) {
     return res.status(500).json({

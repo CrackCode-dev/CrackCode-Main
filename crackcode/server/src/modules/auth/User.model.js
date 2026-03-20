@@ -134,6 +134,26 @@ const userSchema = new mongoose.Schema(
       min: 0,
     },
 
+    // COMPLETED QUESTIONS TRACKING
+    completedQuestionIds: [
+      {
+        type: String,
+      }
+    ],
+
+    completedQuestions: [
+      {
+        questionId: String,
+        completedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        language: String,
+        xpAwarded: Number,
+        tokensAwarded: Number,
+      }
+    ],
+
     // ACTIVITY TRACKING
 
     lastActive: {
@@ -207,6 +227,7 @@ const userSchema = new mongoose.Schema(
       {
         type: String,
         enum: [
+          'welcome',
           'beginner',
           'cases_5',
           'cases_10',
@@ -218,6 +239,14 @@ const userSchema = new mongoose.Schema(
           'javascript_complete',
           'career_map_complete'
         ]
+      }
+    ],
+
+    // SOLVED CHALLENGES TRACKING
+    solvedChallengeIds: [
+      {
+        type: String,
+        default: []
       }
     ],
 

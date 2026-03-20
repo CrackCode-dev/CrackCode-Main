@@ -143,7 +143,8 @@ export const submitAnswer = async (req, res) => {
           const updatedUser = await User.findByIdAndUpdate(
             userId,
             { 
-              $inc: { casesSolved: 1 }
+              $inc: { casesSolved: 1 },
+              $addToSet: { solvedChallengeIds: questionId.toString() }
             },
             { returnDocument: "after" }
           );
