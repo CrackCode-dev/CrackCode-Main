@@ -20,7 +20,7 @@ const router = express.Router();
 // ═════════════════════════════════════════════════════════════
 
 // Get user profile
-router.get("/profile", userAuth, getUserProfile);
+router.get("/", userAuth, getUserProfile);
 
 // Update profile (name, bio, preset avatar)
 router.put("/", userAuth, updateUserProfile);

@@ -694,7 +694,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
-import Toast from "../../components/common/Toast";
+import { toast } from "react-toastify";
 import HQBtn from "../../components/common/HQBtn";
 import { useTheme } from "../../context/theme/ThemeContext";
 
@@ -712,12 +712,6 @@ export default function DetectiveStore() {
   const [username, setUsername] = useState("User");
   const [tokensRemaining, setTokensRemaining] = useState(0);
   const [profileImage, setProfileImage] = useState("/placeholder.png");
-
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "success",
-  });
 
   const { theme } = useTheme();
   const location = useLocation();
@@ -745,11 +739,9 @@ export default function DetectiveStore() {
   const getToken = () => localStorage.getItem("accessToken");
 
   const showToast = (message, type = "success") => {
-    setToast({
-      show: true,
-      message,
-      type,
-    });
+    if (type === "error") toast.error(message);
+    else if (type === "info") toast.info(message);
+    else toast.success(message);
   };
 
   const normalizeImageUrl = (src) => {
@@ -1110,31 +1102,30 @@ export default function DetectiveStore() {
 
   return (
     <div className={`min-h-screen flex flex-col ${pageClass}`}>
-      <div className="fixed top-6 right-6 z-[200] pointer-events-none">
-        <Toast
-          show={toast.show}
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast((prev) => ({ ...prev, show: false }))}
-        />
-      </div>
-
-      <div className="p-4">
+      <div className="flex items-center justify-between px-4 py-4">
         <HQBtn />
+        <div className="flex flex-col items-center gap-1">
+          <div className={`w-14 h-14 rounded-full overflow-hidden border-2 ${isLightFamily ? "border-green-300" : "border-green-700"} shadow-md`}>
+            <img
+              src={profileImage}
+              alt={username}
+              className="w-full h-full object-cover"
+              onError={(e) => { e.currentTarget.src = "/placeholder.png"; }}
+            />
+          </div>
+          <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${tokenClass} ${isLightFamily ? "border-green-300 bg-green-50" : "border-green-800 bg-green-950/40"}`}>
+            {tokensRemaining} Tokens
+          </span>
+        </div>
       </div>
 
       <div className="flex flex-1">
         <StoreSidebar category={category} setCategory={setCategory} />
 
         <div className="flex-1 p-10">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className={`text-3xl font-bold ${titleClass}`}>
-              Detective Store
-            </h1>
-            <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${tokenClass} ${isLightFamily ? "border-green-300 bg-green-50" : "border-green-800 bg-green-950/40"}`}>
-              {tokensRemaining} Tokens
-            </span>
-          </div>
+          <h1 className={`text-3xl font-bold mb-2 ${titleClass}`}>
+            Detective Store
+          </h1>
           <p className={`mb-10 ${subTextClass}`}>
             Unlock exclusive avatars, themes, and titles to customize your
             detective profile
