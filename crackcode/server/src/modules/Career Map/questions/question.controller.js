@@ -5,6 +5,9 @@ import {
   getAllQuestions,
   countQuestionsByCategories
 } from "./question.service.js";
+import User from "../../auth/User.model.js";
+import { checkAndUnlockMultipleBadges } from "../../badges/badge.service.js";
+import UserProgress from "../../learn/UserProgress.model.js";
 
 // Valid career paths
 const VALID_CAREERS = ["MLEngineer", "DataScientist", "SoftwareEngineer"];
@@ -80,7 +83,16 @@ export const getQuestions = async (req, res) => {
 // Body: { career, questionId, answer }
 export const submitAnswer = async (req, res) => {
   try {
+    const userId = req.userId;
     const { career, questionId, answer } = req.body;
+
+    // Require authentication
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Authentication required"
+      });
+    }
 
     // Validate inputs
     if (!career || !questionId || !answer) {
@@ -107,6 +119,56 @@ export const submitAnswer = async (req, res) => {
     }
 
     const isCorrect = checkAnswer(answer, question.correctAnswer, question.type);
+
+    // If answer is correct, update progress and check for badge unlocks
+    if (isCorrect) {
+      try {
+        // Check if already completed to avoid duplicate rewards
+        const existingProgress = await UserProgress.findOne({ userId, questionId });
+        const isFirstCompletion = !existingProgress || existingProgress.status !== 'completed';
+
+        // Update progress
+        await UserProgress.findOneAndUpdate(
+          { userId, questionId },
+          {
+            status: "completed",
+            completedAt: new Date(),
+            $inc: { attempts: 1 },
+          },
+          { upsert: true, new: true }
+        );
+
+        // On first correct answer, increment casesSolved and check badges
+        if (isFirstCompletion) {
+          const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { 
+              $inc: { casesSolved: 1 }
+            },
+            { returnDocument: "after" }
+          );
+
+          // Check and unlock relevant badges based on new casesSolved count
+          const badgesToCheck = ['beginner', 'cases_5', 'cases_10', 'cases_25'];
+          const newlyUnlocked = await checkAndUnlockMultipleBadges(userId, badgesToCheck);
+          
+          if (newlyUnlocked.length > 0) {
+            console.log(`✅ New badges unlocked for user ${userId}: ${newlyUnlocked.join(', ')}`);
+          }
+
+          return res.json({
+            success: true,
+            correct: true,
+            correctAnswer: null,
+            newCasesSolved: updatedUser?.casesSolved ?? 0,
+            badgesUnlocked: newlyUnlocked
+          });
+        }
+      } catch (err) {
+        console.error(`❌ Failed to process correct answer for user ${userId}:`, err.message);
+        // Still return success for the question, but without badge unlock info
+      }
+    }
 
     res.json({
       success: true,

@@ -1,7 +1,11 @@
 import axios from "axios";
 
+// Get backend URL from environment or use default
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5051";
+
+// Create axios instance with credentials enabled
 const instance = axios.create({
-  baseURL: "http://localhost:5000/api", // change port if needed
+  baseURL: `${API_BASE_URL}/api`,
   withCredentials: true,
 });
 

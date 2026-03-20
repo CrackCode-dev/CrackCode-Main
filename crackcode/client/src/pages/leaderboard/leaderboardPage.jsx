@@ -7,9 +7,9 @@ import { fetchGlobalLeaderboard, fetchMyRank } from "../../api/leaderboard";
 // UI Components
 import TopThree from "../../components/leaderboard/TopThree";
 import LeaderboardTable from "../../components/leaderboard/leaderboardTable";
-import HQBtn from "../../components/common/HQBtn";
 import Button from "../../components/ui/Button";
-import ThemeSwitch from "../../components/common/ThemeSwitcher";
+import HQBtn from "../../components/common/HQBtn";
+// Theme chooser intentionally omitted on this page
 
 // Leaderboard page component
 const LeaderboardPage = () => {
@@ -88,17 +88,13 @@ const LeaderboardPage = () => {
       }}
     >
 
-      {/* Theme Switch */}
-      <div className="absolute top-6 right-10 z-50">
-        <ThemeSwitch />
-      </div>
+      {/* Navbar removed for leaderboard page */}
 
-      {/* HQ button */}
-      <div className="p-4">
+      <div className="absolute top-6 left-6">
         <HQBtn />
       </div>
 
-      <main className="flex-1 px-10 pb-16 pt-4">
+      <main className="flex-1 px-10 pb-16 pt-6">
 
         {/* Filter buttons */}
         <div className="flex justify-end max-w-5xl mx-auto mb-8">
@@ -240,6 +236,8 @@ const LeaderboardPage = () => {
         )}
 
       </main>
+
+      {/* Footer removed for this page */}
 
     </div>
   );
