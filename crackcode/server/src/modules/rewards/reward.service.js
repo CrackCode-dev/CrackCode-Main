@@ -2,7 +2,7 @@ import { getRewardConfig } from './reward.config.js';
 import User from '../auth/User.model.js';
 import UserQuestionProgress from '../progress/UserQuestionProgress.model.js';
 import { checkAndUnlockMultipleBadges } from '../badges/badge.service.js';
-import mongoose from 'mongoose';
+import { ensureObjectId } from '../../utils/idConverter.js';
 
 /*
 Award XP and tokens to a user for solving a question
@@ -22,10 +22,8 @@ export async function awardReward(userId, questionId, questionType, difficulty, 
   try {
     console.log('🎁 awardReward called:', { userId, questionId, questionType, difficulty, sourceArea });
     
-    // Convert userId to ObjectId if needed
-    const userIdObj = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    // Convert userId to ObjectId
+    const userIdObj = ensureObjectId(userId);
     console.log('🆔 Converted userId:', userIdObj);
     
     // Step 1: Get or create user question progress
@@ -70,6 +68,9 @@ export async function awardReward(userId, questionId, questionType, difficulty, 
             tokens: rewardConfig.tokens,
             casesSolved: 1,
           },
+          $addToSet: {
+            solvedChallengeIds: questionId.toString()
+          }
         },
         { new: true }
       );
@@ -168,9 +169,7 @@ returns {Promise<Object>} Progress data if exists, null otherwise
  */
 export async function checkProgress(userId, questionId, questionType) {
   try {
-    const userIdObj = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    const userIdObj = ensureObjectId(userId);
 
     const progress = await UserQuestionProgress.findOne({
       userId: userIdObj,
@@ -193,9 +192,7 @@ returns {Promise<Object>} Summary stats
  */
 export async function getUserRewardStats(userId) {
   try {
-    const userIdObj = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    const userIdObj = ensureObjectId(userId);
 
     const stats = await UserQuestionProgress.aggregate([
       { $match: { userId: userIdObj, solved: true } },

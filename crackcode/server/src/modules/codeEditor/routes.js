@@ -7,6 +7,7 @@ import {
   getSupportedLanguages,
   clearAICache
 } from './codeEditor.controller.js';
+import { submitSolution } from './codeEditor.submit.controller.js';
 
 const router = express.Router();
 
@@ -21,6 +22,9 @@ const executeRateLimit = rateLimit({
 
 // Execute test cases (requires authentication for reward system)
 router.post('/execute', executeRateLimit, sessionAuth, executeTestCases);
+
+// Submit solution (requires authentication for rewards and completion tracking)
+router.post('/submit', sessionAuth, submitSolution);
 
 // Run code with input
 router.post('/run', runCode);

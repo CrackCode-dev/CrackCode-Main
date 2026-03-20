@@ -1,3 +1,8 @@
+// CENTRALIZED REWARD CONFIGURATION
+// This is the single source of truth for all rewards across the platform
+// Used by: reward.service.js, rewards.controller.js, codeEditor.submit.service.js
+// DO NOT duplicate these values elsewhere
+
 export const CODING_REWARD_CONFIG = {
   Easy: { xp: 10, tokens: 6 },
   easy: { xp: 10, tokens: 6 },

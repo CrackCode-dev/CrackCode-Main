@@ -4,9 +4,12 @@ import Button from '../../components/ui/Button';
 import Header from '../../components/common/Header';
 import { AppContent } from '../../context/userauth/authenticationContext';
 import { fetchBadgeProgress } from '../../services/api/badgeService';
+import EditEmailModal from '../../components/Profiles/EditEmailModal';
+import ChangePasswordModal from '../../components/Profiles/ChangePasswordModal';
+import ManageNotificationsModal from '../../components/Profiles/ManageNotificationsModal';
 
 const UserProfile = () => {
-  // Get the current logged-in user's data and backend URL from authentication context
+  // Get the current logged  in user's data and backend URL from authentication context
   const { userData, isLoggedIn, backendUrl } = useContext(AppContent);
 
   // State to store user profile stats fetched from the database
@@ -15,8 +18,8 @@ const UserProfile = () => {
     email: "Loading...",
     level: 0,
     casesSolved: 0,
-    totalPoints: 0,
-    winStreaks: 0,
+    totalXP: 0,
+    tokens: 0,
     rank: "#--",
     avatar: ""
   });
@@ -27,18 +30,34 @@ const UserProfile = () => {
     { level: "Medium", count: 0, color: 'bg-yellow-500' },
     { level: "Hard", count: 0, color: 'bg-red-500' }
   ]);
-
-  // State to store programming language progress
+  // State to store programming language solved counts
   const [languageProgress, setLanguageProgress] = useState([
-    { language: 'Python', percentage: 0 },
-    { language: 'JavaScript', percentage: 0 },
-    { language: 'Java', percentage: 0 },
-    { language: 'C++', percentage: 0 }
+    { language: 'Python', count: 0 },
+    { language: 'JavaScript', count: 0 },
+    { language: 'Java', count: 0 },
+    { language: 'C++', count: 0 }
   ]);
 
   // State to store badges from server
   const [badges, setBadges] = useState([]);
   const [badgesLoading, setBadgesLoading] = useState(true);
+
+  // State for profile settings (email, notifications)
+  const [profileSettings, setProfileSettings] = useState({
+    email: '',
+    emailSettings: {
+      notifications: true,
+      securityAlerts: true,
+      weeklyDigest: true,
+      leaderboardUpdates: true
+    }
+  });
+  const [settingsLoading, setSettingsLoading] = useState(false);
+
+  // State for modal visibility
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [notificationModalOpen, setNotificationModalOpen] = useState(false);
 
   // Function to fetch user stats from API
   const fetchUserStats = async () => {
@@ -58,8 +77,9 @@ const UserProfile = () => {
           email: data.email || "No email",
           level: data.level || 0,
           casesSolved: data.casesSolved || 0,
-          totalPoints: data.xp || 0,
-          winStreaks: data.currentStreak || 0,
+          // Use server-provided fields: totalXP and tokens
+          totalXP: data.totalXP ?? data.xp ?? 0,
+          tokens: data.tokens ?? 0,
           rank: "#" + (data.rank || "--")
         }));
       }
@@ -69,62 +89,47 @@ const UserProfile = () => {
   };
 
   // Function to fetch learning progress and calculate difficulty distribution
-  const fetchLearningProgress = async () => {
+  // Fetch aggregated progress summary (difficulty counts + language counts)
+  const fetchProgressSummary = async () => {
     try {
-      const response = await axios.get(`${backendUrl}/api/learn/roadmap`, {
-        withCredentials: true,
-        timeout: 5000
-      });
-      
-      if (response.data.success && response.data.data) {
-        const questions = response.data.data;
-        
-        // Count problems by difficulty level
-        const easyCount = questions.filter(q => q.difficulty === 'Easy' && q.status === 'completed').length;
-        const mediumCount = questions.filter(q => q.difficulty === 'Medium' && q.status === 'completed').length;
-        const hardCount = questions.filter(q => q.difficulty === 'Hard' && q.status === 'completed').length;
-        
-        // Update difficulty distribution with real data
-        setDifficultyDistribution([
-          { level: "Easy", count: easyCount, color: 'bg-green-500' },
-          { level: "Medium", count: mediumCount, color: 'bg-yellow-500' },
-          { level: "Hard", count: hardCount, color: 'bg-red-500' }
-        ]);
-      }
+      const resp = await axios.get(`${backendUrl}/api/user/progress-summary`, { withCredentials: true, timeout: 5000 });
+      if (!resp?.data?.success) return;
+
+      const data = resp.data.data || {};
+
+      // difficultyDistribution from server expected as { Easy: N, Medium: N, Hard: N }
+      const diff = [
+        { level: 'Easy', count: data.difficultyDistribution?.Easy || 0, color: 'bg-green-500' },
+        { level: 'Medium', count: data.difficultyDistribution?.Medium || 0, color: 'bg-yellow-500' },
+        { level: 'Hard', count: data.difficultyDistribution?.Hard || 0, color: 'bg-red-500' }
+      ];
+      setDifficultyDistribution(diff);
+
+      // languageCounts from server: { Python: n, JavaScript: n, Java: n, 'C++': n }
+      const langOrder = ['Python', 'JavaScript', 'Java', 'C++'];
+      const langArr = langOrder.map(l => ({ language: l, count: data.languageCounts?.[l] || 0 }));
+      setLanguageProgress(langArr);
     } catch (error) {
-      console.log("Error fetching learning progress:", error.message);
+      console.log('❌ Error fetching progress summary:', error.message);
     }
   };
 
-  // Function to fetch programming language progress
-  const fetchLanguageProgress = async () => {
+  // Function to fetch profile settings for account settings
+  const fetchProfileSettings = async () => {
     try {
-      const response = await axios.get(`${backendUrl}/api/learn/progress`, {
+      setSettingsLoading(true);
+      const response = await axios.get(`${backendUrl}/api/profile/settings`, {
         withCredentials: true,
         timeout: 5000
       });
-      
-      if (response.data.success && response.data.data) {
-        const progress = response.data.data;
-        
-        // Count completed problems per language
-        const languages = ['Python', 'JavaScript', 'Java', 'C++'];
-        const languageStats = languages.map(lang => {
-          // Calculate percentage based on completed problems in that language
-          const completed = progress.filter(p => p.language === lang && p.status === 'completed').length;
-          const total = progress.filter(p => p.language === lang).length;
-          const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
-          
-          return {
-            language: lang,
-            percentage: percentage
-          };
-        });
-        
-        setLanguageProgress(languageStats);
+
+      if (response.data.success) {
+        setProfileSettings(response.data.data);
       }
     } catch (error) {
-      console.log("Error fetching language progress:", error.message);
+      console.error("Error fetching profile settings:", error.message);
+    } finally {
+      setSettingsLoading(false);
     }
   };
 
@@ -144,9 +149,9 @@ const UserProfile = () => {
   useEffect(() => {
     if (isLoggedIn && backendUrl) {
       fetchUserStats();
-      fetchLearningProgress();
-      fetchLanguageProgress();
+      fetchProgressSummary();
       fetchBadgesData();
+      fetchProfileSettings();
     }
   }, [isLoggedIn, backendUrl]);
 
@@ -210,22 +215,22 @@ const UserProfile = () => {
                 <div className="text-3xl font-bold" style={{ color: 'var(--brand)' }}>{userStatus.casesSolved}</div>
               </div>
 
-              {/* Total Points Stat */}
+              {/* XP Stat */}
               <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
                 <div className="flex items-center gap-2 text-sm mb-2" style={{ color: 'var(--brand)' }}>
                   <span>⭐</span>
-                  <span>Total Points</span>
+                  <span>XP</span>
                 </div>
-                <div className="text-3xl font-bold" style={{ color: 'var(--brand)' }}>{userStatus.totalPoints}</div>
+                <div className="text-3xl font-bold" style={{ color: 'var(--brand)' }}>{userStatus.totalXP}</div>
               </div>
 
-              {/* Win Streak Stat */}
+              {/* Tokens Stat */}
               <div className="rounded-xl p-4" style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
                 <div className="flex items-center gap-2 text-sm mb-2" style={{ color: 'var(--brand)' }}>
-                  <span>🔥</span>
-                  <span>Win Streak</span>
+                  <span>💰</span>
+                  <span>Tokens</span>
                 </div>
-                <div className="text-3xl font-bold" style={{ color: 'var(--brand)' }}>{userStatus.winStreaks}</div>
+                <div className="text-3xl font-bold" style={{ color: 'var(--brand)' }}>{userStatus.tokens}</div>
               </div>
             </div>
           </div>
@@ -237,49 +242,24 @@ const UserProfile = () => {
           {/* Difficulty Distribution - Shows how many problems solved of each difficulty */}
           <div className="rounded-xl p-6" style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
             <h3 className="text-lg font-semibold mb-4">Difficulty Distribution</h3>
-            <div className="space-y-4">
-              {difficultyDistribution.map((item, index) => (
-                <div key={index}>
-                  {/* Label and count for difficulty level */}
-                  <div className="flex justify-between text-sm mb-2">
-                    <span style={{ color: 'var(--textSec)' }}>{item.level}</span>
-                    <span style={{ color: 'var(--text)' }} className="font-semibold">{item.count}</span>
+              <div className="space-y-4">
+                {difficultyDistribution.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between">
+                    <div className="text-sm" style={{ color: 'var(--textSec)' }}>{item.level}</div>
+                    <div className="text-sm font-semibold" style={{ color: 'var(--text)' }}>{item.count}</div>
                   </div>
-
-                  {/* Progress bar showing number of problems solved */}
-                  <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--border)' }}>
-                    <div
-                      // Use the color from the difficulty distribution array
-                      className={`${item.color} h-2 rounded-full transition-all duration-500`}
-                      style={{ width: `${(item.count / 24) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
           </div>
 
-          {/* Learning Distribution - Shows proficiency percentage in each programming language */}
+          {/* Learning Distribution  */}
           <div className="rounded-xl p-6" style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
             <h3 className="text-lg font-semibold mb-4">Programming Language Progress</h3>
             <div className="space-y-4">
-
               {languageProgress.map((item, index) => (
-                <div key={index}>
-                  {/* Programming language name and percentage progress */}
-                  <div className="flex justify-between text-sm mb-2">
-                    <span style={{ color: 'var(--textSec)' }}>{item.language}</span>
-                    <span style={{ color: 'var(--text)' }} className="font-semibold">{item.percentage}%</span>
-                  </div>
-
-                  {/* Progress bar showing learning progress for each language */}
-                  <div className="w-full rounded-full h-2" style={{ backgroundColor: 'var(--border)' }}>
-                    <div
-                      // Progress bar fills up with brand color based on percentage
-                      className="h-2 rounded-full transition-all duration-500"
-                      style={{ width: `${item.percentage}%`, backgroundColor: 'var(--brand)' }}
-                    ></div>
-                  </div>
+                <div key={index} className="flex items-center justify-between">
+                  <div className="text-sm" style={{ color: 'var(--textSec)' }}>{item.language}</div>
+                  <div className="text-sm font-semibold" style={{ color: 'var(--text)' }}>{item.count}</div>
                 </div>
               ))}
             </div>
@@ -375,9 +355,15 @@ const UserProfile = () => {
             <div className="flex justify-between items-center py-3 border-b" style={{ borderColor: 'var(--border)' }}>
               <div>
                 <div className="font-medium">Email Address</div>
-                <div className="text-sm" style={{ color: 'var(--textSec)' }}>{userStatus.email}</div>
+                <div className="text-sm" style={{ color: 'var(--textSec)' }}>{profileSettings.email || "Loading..."}</div>
               </div>
-              <Button variant='outline' size='sm' style={{ color: 'var(--brand)' }}>Edit</Button>
+              <Button 
+                variant='outline' 
+                size='sm' 
+                onClick={() => setEmailModalOpen(true)}
+                style={{ color: 'var(--brand)' }}>
+                Edit
+              </Button>
             </div>
 
             {/* Password Change Field */}
@@ -386,21 +372,73 @@ const UserProfile = () => {
                 <div className="font-medium">Password</div>
                 <div className="text-sm" style={{ color: 'var(--textSec)' }}>••••••••</div>
               </div>
-              <Button variant='outline' size='sm' style={{ color: 'var(--brand)' }}>Change</Button>
+              <Button 
+                variant='outline' 
+                size='sm' 
+                onClick={() => setPasswordModalOpen(true)}
+                style={{ color: 'var(--brand)' }}>
+                Change
+              </Button>
             </div>
 
             {/* Notification Preferences Field */}
             <div className="flex justify-between items-center py-3">
               <div>
                 <div className="font-medium">Notifications</div>
-                <div className="text-sm" style={{ color: 'var(--textSec)' }}>Manage notification settings</div>
+                <div className="text-sm" style={{ color: 'var(--textSec)' }}>
+                  {settingsLoading 
+                    ? "Loading..." 
+                    : `${Object.values(profileSettings.emailSettings || {}).filter(Boolean).length} notification preferences enabled`}
+                </div>
               </div>
-              <Button variant='outline' size='sm' style={{ color: 'var(--brand)' }}>Configure</Button>
+              <Button 
+                variant='outline' 
+                size='sm' 
+                onClick={() => setNotificationModalOpen(true)}
+                style={{ color: 'var(--brand)' }}>
+                Configure
+              </Button>
             </div>
           </div>
         </div>
 
-        {/* Danger Zone Section - Account deletion (use with caution) */}
+        {/* Modals */}
+        <EditEmailModal 
+          isOpen={emailModalOpen}
+          onClose={() => setEmailModalOpen(false)}
+          currentEmail={profileSettings.email}
+          backendUrl={backendUrl}
+          onSuccess={(data) => {
+            setProfileSettings(prev => ({
+              ...prev,
+              email: data.email
+            }));
+          }}
+        />
+
+        <ChangePasswordModal 
+          isOpen={passwordModalOpen}
+          onClose={() => setPasswordModalOpen(false)}
+          backendUrl={backendUrl}
+          onSuccess={() => {
+            // Password changed successfully
+          }}
+        />
+
+        <ManageNotificationsModal 
+          isOpen={notificationModalOpen}
+          onClose={() => setNotificationModalOpen(false)}
+          settings={profileSettings.emailSettings}
+          backendUrl={backendUrl}
+          onSuccess={(updatedSettings) => {
+            setProfileSettings(prev => ({
+              ...prev,
+              emailSettings: updatedSettings
+            }));
+          }}
+        />
+
+        {/*Account deletion  */}
         <h2 className="text-2xl text-left font-bold mb-6" style={{ color: '#ef4444' }}>Danger Zone</h2>
         <div className="rounded-xl p-6" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
           <h3 className="text-xl text-left font-bold mb-2" style={{ color: '#ef4444' }}>Terminate Account</h3>

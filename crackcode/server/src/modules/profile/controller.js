@@ -1,9 +1,9 @@
 import User from "../auth/User.model.js";
 import Inventory from "../shop/Inventory.model.js";
+import bcrypt from "bcryptjs";
 
-// ═════════════════════════════════════════════════════════════
+
 // Get logged-in user profile
-// ═════════════════════════════════════════════════════════════
 export const getUserProfile = async (req, res) => {
   try {
     // req.userId comes from session middleware (userAuth)
@@ -44,9 +44,8 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
+
 // Update profile (name, bio, preset avatar)
-// ═════════════════════════════════════════════════════════════
 export const updateUserProfile = async (req, res) => {
   try {
     const { name, bio, avatar } = req.body;
@@ -85,9 +84,7 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
 // Upload custom avatar (file upload)
-// ═════════════════════════════════════════════════════════════
 export const uploadAvatar = async (req, res) => {
   try {
     if (!req.file) {
@@ -125,9 +122,8 @@ export const uploadAvatar = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
+
 // Edit email (simple update - use with caution)
-// ═════════════════════════════════════════════════════════════
 export const editEmail = async (req, res) => {
   try {
     const { email } = req.body;
@@ -174,9 +170,8 @@ export const editEmail = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
 // Change email (with validation)
-// ═════════════════════════════════════════════════════════════
+
 export const changeEmail = async (req, res) => {
   try {
     const { newEmail } = req.body;
@@ -223,9 +218,8 @@ export const changeEmail = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
+
 // Configure email notification settings
-// ═════════════════════════════════════════════════════════════
 export const configureEmailSettings = async (req, res) => {
   try {
     const { notifications, securityAlerts } = req.body;
@@ -263,10 +257,244 @@ export const configureEmailSettings = async (req, res) => {
   }
 };
 
-// ═════════════════════════════════════════════════════════════
-// Equipping avatar as profile picture store --> my inventory
-// ═════════════════════════════════════════════════════════════
+// Get profile settings for account settings page
+export const getProfileSettings = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select(
+      "name email emailSettings isAccountVerified username profileVisibility"
+    );
 
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      data: user
+    });
+  } catch (error) {
+    console.error("getProfileSettings error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+// Update email (with password verification)
+export const updateEmail = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { newEmail, password } = req.body;
+
+    // Validation
+    if (!newEmail || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "New email and password are required"
+      });
+    }
+
+    const normalizedEmail = newEmail.trim().toLowerCase();
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(normalizedEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid email format"
+      });
+    }
+
+    // Get user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Incorrect password"
+      });
+    }
+
+    // Check if new email is same as current
+    if (user.email === normalizedEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "New email cannot be same as current email"
+      });
+    }
+
+    // Check if new email is already in use
+    const existingUser = await User.findOne({ email: normalizedEmail });
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Email is already in use"
+      });
+    }
+
+    // Update email
+    user.email = normalizedEmail;
+    // Optional: set isAccountVerified to false to require re-verification
+    // user.isAccountVerified = false;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Email updated successfully",
+      data: {
+        email: user.email,
+        isAccountVerified: user.isAccountVerified
+      }
+    });
+  } catch (error) {
+    console.error("updateEmail error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+// Update password (with current password verification)
+export const updatePassword = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "All password fields are required"
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New passwords do not match"
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be at least 8 characters"
+      });
+    }
+
+    // Get user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isCurrentPasswordValid) {
+      return res.status(401).json({
+        success: false,
+        message: "Current password is incorrect"
+      });
+    }
+
+    // Check if new password is same as current
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be different from current password"
+      });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully"
+    });
+  } catch (error) {
+    console.error("updatePassword error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+// Update notification settings
+export const updateNotificationSettings = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const {
+      notifications,
+      securityAlerts,
+      weeklyDigest,
+      leaderboardUpdates
+    } = req.body;
+
+    const user = await User.findById(userId).select("emailSettings");
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+    }
+
+    // Update only provided settings
+    if (typeof notifications === "boolean") {
+      user.emailSettings.notifications = notifications;
+    }
+
+    if (typeof securityAlerts === "boolean") {
+      user.emailSettings.securityAlerts = securityAlerts;
+    }
+
+    if (typeof weeklyDigest === "boolean") {
+      user.emailSettings.weeklyDigest = weeklyDigest;
+    }
+
+    if (typeof leaderboardUpdates === "boolean") {
+      user.emailSettings.leaderboardUpdates = leaderboardUpdates;
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Notification settings updated successfully",
+      data: user.emailSettings
+    });
+  } catch (error) {
+    console.error("updateNotificationSettings error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error"
+    });
+  }
+};
+
+// Equipping avatar as profile picture store --> my inventory
 
 // import Inventory from "../shop/Inventory.model.js";
 
