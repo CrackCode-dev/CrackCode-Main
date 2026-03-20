@@ -1,5 +1,7 @@
+import { useContext } from 'react';
 import { useEditor } from '../../../context/codeEditor/EditorContext';
 import { submitCodeToJudge0 } from '../../../services/api/judge0Service';
+import { AppContent } from '../../../context/userauth/authenticationContext';
 
 // figure out the error type label from the raw error text
 const extractErrorType = (errorText = '') => {
@@ -18,6 +20,7 @@ const extractErrorType = (errorText = '') => {
 
 export const useCodeExecution = () => {
   const { code, language, currentProblem, setIsExecuting, setTestResults, errorHistory } = useEditor();
+  const { userData, setUserData } = useContext(AppContent);
 
   const executeCode = async () => {
     if (!currentProblem || !code.trim()) {
@@ -68,8 +71,19 @@ export const useCodeExecution = () => {
 
       console.log(`Running ${transformedTestCases.length} test cases:`, transformedTestCases);
 
-      // call the backend with all test cases
-      const result = await submitCodeToJudge0(code, language, transformedTestCases, previousErrors);
+      // call the backend with all test cases + reward system fields
+      const result = await submitCodeToJudge0(
+        code, 
+        language, 
+        transformedTestCases, 
+        previousErrors,
+        {
+          problemId: currentProblem.problemId || currentProblem.id,
+          difficulty: currentProblem.difficulty,
+          // sourceArea will be read from location or context
+          sourceArea: currentProblem.sourceArea || 'learn_page'
+        }
+      );
       
       // turn the backend response into the shape the UI expects
       const results = result.results.map((testResult, index) => {
@@ -114,8 +128,31 @@ export const useCodeExecution = () => {
 
       // check if all passed
       const allPassed = results.every(r => r.status === 'passed');
+      console.log('🔍 Full result object:', result);
+      console.log('🔍 result.reward:', result.reward);
+      console.log('🔍 result.updatedUserStats:', result.updatedUserStats);
+      
       if (allPassed) {
         console.log('All test cases passed!');
+        
+        // Handle reward info if present
+        if (result.reward) {
+          console.log('Reward earned:', result.reward);
+          
+          // ✅ Update user stats immediately in global state
+          if (result.updatedUserStats && userData) {
+            setUserData({
+              ...userData,
+              tokens: result.updatedUserStats.tokens,
+              totalXP: result.updatedUserStats.totalXP,
+              casesSolved: result.updatedUserStats.casesSolved
+            });
+            console.log('✅ User stats updated in global state');
+          }
+          
+          // TODO: Show reward popup here
+          // TODO: Show +XP +Tokens animation
+        }
       }
 
     } catch (error) {
