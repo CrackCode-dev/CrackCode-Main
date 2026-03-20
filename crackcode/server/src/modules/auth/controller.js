@@ -13,8 +13,9 @@ import {
   clearSessionCookies,
 } from "../session/session.controller.js";
 import Session from "../session/Session.model.js";
+import { checkAndUnlockBadge } from "../badges/badge.service.js";
 
-// ─── Legacy cookie (kept for backward-compat during migration) ──
+// Legacy cookie (kept for backward-compat during migration) 
 const legacyCookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
@@ -22,7 +23,7 @@ const legacyCookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
-// ─── Username builder ────────────────────────────────────────
+//  Username builder 
 const buildUniqueUsername = async (rawUsername, fallbackName) => {
   const base =
     (rawUsername || fallbackName || "user")
@@ -138,68 +139,6 @@ export const register = async (req, res) =>{
   }
 };
 
- 
-
-
-// export const register = async (req, res) => {
-//   try {
-//     const { name, email, password, username } = req.body;
-
-//     if (!name || !email || !password) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "Missing details" });
-//     }
-
-//     if (await User.findOne({ email })) {
-//       return res
-//         .status(400)
-//         .json({ success: false, message: "User already exists" });
-//     }
-
-//     const normalizedUsername = await buildUniqueUsername(
-//       username,
-//       name || email
-//     );
-//     const hashedPassword = await bcrypt.hash(password, 10);
-
-//     const user = await User.create({
-//       name,
-//       email,
-//       username: normalizedUsername,
-//       password: hashedPassword,
-//     });
-
-//     // ── Create session (replaces plain JWT) ──────────────────
-//     const sessionData = await createSession(user._id, req);
-//     setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
-
-//     // Also set legacy cookie so old client code still works during migration
-//     const legacyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-//       expiresIn: "7d",
-//     });
-//     res.cookie("token", legacyToken, legacyCookieOptions);
-
-//     return res.status(201).json({
-//       success: true,
-//       message: "User registered successfully",
-//       sessionId: sessionData.sessionId,
-//       user: {
-//         id: user._id,
-//         name: user.name,
-//         email: user.email,
-//         username: user.username,
-//         isAccountVerified: user.isAccountVerified,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Register error:", error);
-//     return res
-//       .status(500)
-//       .json({ success: false, message: error.message });
-//   }
-// };
-
 
 // LOGIN
 // ============================================================
@@ -227,21 +166,21 @@ export const login = async (req, res) => {
         .json({ success: false, message: "Invalid password" });
     }
 
-    // ── Check if account is verified ──────────────────────────────────────
+    //  Check if account is verified 
     if (!user.isAccountVerified) {
       return res
         .status(403)
         .json({ success: false, message: "Please verify your email first. Signing up pending verification." });
     }
 
-    // ── Check account status (prevents suspended/banned users) ──────────────
+    //  Check account status (prevents suspended/banned users) 
     if (user.accountStatus !== "active") {
       return res
         .status(403)
         .json({ success: false, message: "Your account is not active. Contact support." });
     }
 
-    // ── Create session ──────────────────────────────────────
+    //  Create session 
     const sessionData = await createSession(user._id, req);
     setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
 
@@ -412,6 +351,15 @@ export const verifyEmail = async (req, res) => {
         isAccountVerified: true,
       });
       await user.save();
+
+      // Auto-unlock beginner badge for new users
+      try {
+        await checkAndUnlockBadge(user._id, 'beginner');
+        console.log(`✅ Beginner badge unlocked for new user: ${user._id}`);
+      } catch (badgeError) {
+        console.error(`⚠️ Failed to unlock beginner badge: ${badgeError.message}`);
+        // Don't fail registration if badge unlock fails
+      }
 
       // Delete pending
       await PendingRegistration.findByIdAndDelete(pending._id);

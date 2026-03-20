@@ -10,9 +10,10 @@ import {
   deleteAllUserSessionCache,
   checkRedisHealth,
 } from "./redis.session.js";
+import logger from "../../utils/logger.js";
 
 //  Configuration 
-const ACCESS_TOKEN_EXPIRY = "15m";
+const ACCESS_TOKEN_EXPIRY = "7d";
 const REFRESH_TOKEN_EXPIRY = "7d";
 const SESSION_EXPIRY_DAYS = 7;
 const MAX_SESSIONS_PER_USER = 5;
@@ -135,21 +136,21 @@ export const createSession = async (userId, req) => {
       // We log the result so beginners can see whether cache writes succeeded.
       try {
         const cacheResult = await cacheSession(sessionId, payload, ttlSeconds);
-        console.log(`[Session] cacheSession for ${sessionId} returned:`, cacheResult);
+        logger.info(`[Session] cacheSession for ${sessionId} returned: ${cacheResult}`);
       } catch (e) {
-        console.warn('[Session] Redis cache failed:', e?.message || e);
+        logger.warn('[Session] Redis cache failed:', e?.message || e);
       }
 
       // Add sessionId to the user's session set for quick "logout all"
       try {
         const addUserResult = await addUserSession(session.userId.toString(), sessionId, ttlSeconds);
-        console.log(`[Session] addUserSession for user ${session.userId.toString()} returned:`, addUserResult);
+        logger.info(`[Session] addUserSession for user ${session.userId.toString()} returned: ${addUserResult}`);
       } catch (e) {
-        console.warn('[Session] Redis user_sessions failed:', e?.message || e);
+        logger.warn('[Session] Redis user_sessions failed:', e?.message || e);
       }
     } catch (cacheErr) {
       // Never fail the login flow because of cache problems
-      console.warn('[Session] Redis caching failed, continuing with MongoDB:', cacheErr?.message || cacheErr);
+      logger.warn('[Session] Redis caching failed, continuing with MongoDB:', cacheErr?.message || cacheErr);
     }
 
   return {
@@ -199,7 +200,7 @@ export const validateSession = async (sessionId, tokenVersion) => {
     }
   } catch (redisErr) {
     // If Redis fails for any reason, log and continue to MongoDB fallback.
-    console.warn('[Session] Redis validation failed, falling back to MongoDB:', redisErr?.message || redisErr);
+    logger.warn('[Session] Redis validation failed, falling back to MongoDB:', redisErr?.message || redisErr);
   }
 
   // Redis miss or error → fallback to MongoDB (source of truth)
@@ -231,13 +232,13 @@ export const validateSession = async (sessionId, tokenVersion) => {
 
     // cacheSession and addUserSession are best-effort; failures shouldn't block validation
     await cacheSession(sessionId, payload, ttlSeconds).catch((e) => {
-      console.warn('[Session] Redis repopulation warning:', e?.message || e);
+          logger.warn('[Session] Redis repopulation warning:', e?.message || e);
     });
     await addUserSession(session.userId.toString(), sessionId, ttlSeconds).catch((e) => {
-      console.warn('[Session] Redis repopulation (user_sessions) warning:', e?.message || e);
+          logger.warn('[Session] Redis repopulation (user_sessions) warning:', e?.message || e);
     });
   } catch (cacheErr) {
-    console.warn('[Session] Redis repopulation failed after MongoDB lookup:', cacheErr?.message || cacheErr);
+    logger.warn('[Session] Redis repopulation failed after MongoDB lookup:', cacheErr?.message || cacheErr);
   }
 
   return { valid: true, userId: session.userId.toString() };
@@ -287,7 +288,7 @@ export const refreshAccessToken = async (token) => {
         $inc: { tokenVersion: 1 },
         lastActivity: new Date(),
       },
-      { new: true } // Return the updated document
+      { returnDocument: "after" } // Return the updated document (mongoose v7)
     );
 
     if (!updatedSession || updatedSession.tokenVersion === undefined) {
@@ -326,14 +327,14 @@ export const refreshAccessToken = async (token) => {
       };
 
       await cacheSession(updatedSession.sessionId, payload, ttlSeconds).catch((e) => {
-        console.warn('[Session] Redis refresh cache warning:', e?.message || e);
+        logger.warn('[Session] Redis refresh cache warning:', e?.message || e);
       });
 
       await addUserSession(updatedSession.userId.toString(), updatedSession.sessionId, ttlSeconds).catch((e) => {
-        console.warn('[Session] Redis refresh user_sessions warning:', e?.message || e);
+        logger.warn('[Session] Redis refresh user_sessions warning:', e?.message || e);
       });
     } catch (redisErr) {
-      console.warn('[Session] Redis refresh update failed:', redisErr?.message || redisErr);
+      logger.warn('[Session] Redis refresh update failed:', redisErr?.message || redisErr);
     }
 
     return {
@@ -354,7 +355,7 @@ export const invalidateSession = async (sessionId) => {
   const session = await Session.findOneAndUpdate(
     { sessionId },
     { isActive: false },
-    { new: true }
+    { returnDocument: "after" }
   );
 
   if (!session) return false;
@@ -365,7 +366,7 @@ export const invalidateSession = async (sessionId) => {
     await removeUserSession(session.userId.toString(), sessionId).catch(() => {});
   } catch (err) {
     // swallow errors — MongoDB is authoritative
-    console.warn('[Session] Redis invalidate warning:', err?.message || err);
+    logger.warn('[Session] Redis invalidate warning:', err?.message || err);
   }
 
   return true;
@@ -386,7 +387,7 @@ export const invalidateAllUserSessions = async (userId) => {
     const userIdStr = userId?.toString ? userId.toString() : String(userId);
     await deleteAllUserSessionCache(userIdStr).catch(() => {});
   } catch (err) {
-    console.warn('[Session] Redis invalidateAll warning:', err?.message || err);
+    logger.warn('[Session] Redis invalidateAll warning:', err?.message || err);
   }
 
   return result.modifiedCount;
@@ -434,9 +435,9 @@ export const initializeSessionModule = async () => {
     };
     
     if (!redisHealth.connected) {
-      console.warn('[Session] ⚠️  Redis unavailable — will use MongoDB fallback for caching');
+      logger.warn('[Session] ⚠️  Redis unavailable — will use MongoDB fallback for caching');
     } else {
-      console.log('[Session] ✅ Redis connected for session caching');
+      logger.info('[Session] ✅ Redis connected for session caching');
     }
     
     return status;

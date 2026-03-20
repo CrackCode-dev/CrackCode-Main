@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
 import connectDB from "./src/config/db.js";
 import redisClient from "./src/modules/leaderboard/redis.config.js";
 import { stripeWebhookController } from "./src/controllers/Shop.controller.js";
@@ -13,6 +14,10 @@ import { fileURLToPath } from "url";
 import paymentRoutes from "./src/routes/Payment.routes.js";
 import shopRoutes from "./src/routes/Shop.routes.js";
 
+// AI Routes (ERROR DIAGNOSIS + ASSISTANT)
+import aiRoutes from "./src/services/aiRoutes.js";
+import { logAIConfig } from "./src/services/aiConfig.js";
+
 import authRoutes from "./src/modules/auth/routes.js";
 import userRoutes from "./src/modules/user/routes.js";
 import profileRoutes from "./src/modules/profile/routes.js";
@@ -22,6 +27,7 @@ import gameProfileRoutes from "./src/modules/gameprofile/routes.js";
 import sessionRoutes from "./src/modules/session/routes.js";
 import rewardsRoutes from "./src/modules/rewards/routes.js";
 import codeEditorRoutes from "./src/modules/codeEditor/routes.js";
+import badgeRoutes from "./src/modules/badges/routes.js";
 
 // Session cleanup utility
 import { cleanupExpiredSessions } from "./src/modules/session/session.service.js";
@@ -54,10 +60,12 @@ const connectRedisOrExit = async () => {
     console.log("✅ Redis Connected");
   } catch (err) {
     console.error(
-      "❌ Redis Connection Error - cannot start server:",
+      "❌ Redis Connection Error:",
       err?.message || err
     );
-    process.exit(1);
+    console.warn('Continuing without Redis - set ENABLE_SESSION_CACHE=false to silence this warning.');
+    // Do not exit in development; allow server to run without Redis
+    return;
   }
 };
 
@@ -101,6 +109,9 @@ app.post(
 // Routes
 app.use("/api/payment", paymentRoutes);
 app.use("/api/shop", shopRoutes);
+
+// AI Services Routes
+app.use("/api/ai", aiRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/profile", profileRoutes);
@@ -111,10 +122,23 @@ app.use("/api/game-profile", gameProfileRoutes);
 app.use("/api/session", sessionRoutes);
 app.use("/api/rewards", rewardsRoutes);
 app.use("/api/codeEditor", codeEditorRoutes);
+app.use("/api/badges", badgeRoutes);
 
 // Career Map APIs
 app.use("/api/questions", questionRoutes);
 app.use("/api/progress", progressRoutes);
+
+// CaseLog API - Direct collection fetch
+app.get("/api/caseLog", async (_req, res) => {
+  try {
+    const collectionName = "caseLog";
+    const items = await mongoose.connection.db.collection(collectionName).find({}).toArray();
+    return res.status(200).json({ success: true, count: items.length, collectionName, data: items });
+  } catch (error) {
+    console.error("❌ caseLog fetch error:", error);
+    return res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // Health check
 app.get("/", (_req, res) => {
@@ -135,6 +159,9 @@ const PORT = process.env.PORT || 5050;
 
 const startServer = async () => {
   await connectRedisOrExit();
+  
+  // Log AI Services configuration
+  logAIConfig();
 
   app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
@@ -168,3 +195,4 @@ const shutdown = async (signal) => {
 
 process.on("SIGTERM", () => shutdown("SIGTERM"));
 process.on("SIGINT", () => shutdown("SIGINT"));
+

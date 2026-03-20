@@ -60,7 +60,7 @@ const QuestionListPage = () => {
   const handleQuestionClick = (question) => {
     const problemId = question.problemId || question._id?.toString() || String(question.id);
     navigate(`/code-editor/${problemId}`, {
-      state: { question, difficulty: difficultyId, language: trackId },
+      state: { question, difficulty: difficultyId, language: trackId, sourceArea: 'learn_page' },
     });
   };
 

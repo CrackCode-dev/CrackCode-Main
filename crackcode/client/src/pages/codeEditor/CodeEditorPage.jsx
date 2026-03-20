@@ -10,7 +10,8 @@ const CodeEditorContent = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const preloadedQuestion = location.state?.question || null;
-  const { error, setLanguage, setLanguageLocked } = useProblemData(problemId, preloadedQuestion);
+  const sourceArea = location.state?.sourceArea || 'learn_page'; // NEW: Get sourceArea from navigation
+  const { error, setLanguage, setLanguageLocked } = useProblemData(problemId, preloadedQuestion, sourceArea);
 
   useEffect(() => {
     if (location.state?.language) {

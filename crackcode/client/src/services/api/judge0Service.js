@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5051';
 
 // send code + test cases to the backend and get results back
-export const submitCodeToJudge0 = async (code, language, testCases, previousErrors = []) => {
+export const submitCodeToJudge0 = async (code, language, testCases, previousErrors = [], problemData = {}) => {
   try {
     const response = await axios.post(
       `${API_BASE_URL}/api/codeEditor/execute`,
@@ -11,7 +11,12 @@ export const submitCodeToJudge0 = async (code, language, testCases, previousErro
         sourceCode: code,
         language: language,
         testCases: testCases,
-        previousErrors: previousErrors // past run errors for AI context
+        previousErrors: previousErrors, // past run errors for AI context
+        
+        // NEW: Reward system fields
+        problemId: problemData.problemId || problemData.id,
+        difficulty: problemData.difficulty,
+        sourceArea: problemData.sourceArea || 'learn_page'
       },
       {
         headers: {

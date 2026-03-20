@@ -7,11 +7,12 @@ import { ArrowRight, Flame, Lock } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { fetchChallengeCollection, transformProblemData } from '../../services/api/questionService'
 
-// initial placeholders until data loads
+// initial placeholders until data loads (keep difficulty keys for selection,
+// but don't show dummy labels in the UI — label will come from fetched data)
 const initialCases = [
-  { difficulty: 'easy', difficultyLabel: 'Easy' },
-  { difficulty: 'medium', difficultyLabel: 'Medium' },
-  { difficulty: 'hard', difficultyLabel: 'Hard' },
+  { difficulty: 'easy', difficultyLabel: null },
+  { difficulty: 'medium', difficultyLabel: null },
+  { difficulty: 'hard', difficultyLabel: null },
 ]
 
 function FullWidthChallenges() {
@@ -111,9 +112,9 @@ function FullWidthChallenges() {
                 if (caseItem.raw && (caseItem.transformed?.problemId || caseItem.id)) {
                   const targetId = caseItem.transformed?.problemId || caseItem.id
                   // pass raw DB object so the editor hook can call transformProblemData
-                  navigate(`/code-editor/${targetId}`, { state: { question: caseItem.raw, language: 'python' } })
+                  navigate(`/code-editor/${targetId}`, { state: { question: caseItem.raw, language: 'python', sourceArea: 'home_challenge' } })
                 } else if (caseItem.transformed && caseItem.transformed.problemId) {
-                  navigate(`/code-editor/${caseItem.transformed.problemId}`, { state: { question: caseItem.transformed, language: 'python' } })
+                  navigate(`/code-editor/${caseItem.transformed.problemId}`, { state: { question: caseItem.transformed, language: 'python', sourceArea: 'home_challenge' } })
                 } else {
                   // fallback: open editor without preloaded question
                   navigate('/code-editor')
@@ -139,13 +140,17 @@ function FullWidthChallenges() {
               
               {/* Top badge section */}
               <div className='flex justify-between items-start mb-4'>
-                <Badge
-                  type='difficulty'
-                  difficulty={caseItem.difficulty}
-                  size='sm'
-                >
-                  {caseItem.difficultyLabel}
-                </Badge>
+                {caseItem.difficulty ? (
+                  <Badge
+                    type='difficulty'
+                    difficulty={(caseItem.transformed?.difficulty || caseItem.difficulty || '').toLowerCase()}
+                    size='sm'
+                  >
+                    {caseItem.transformed?.difficulty || caseItem.difficultyLabel || (caseItem.difficulty.charAt(0).toUpperCase() + caseItem.difficulty.slice(1))}
+                  </Badge>
+                ) : (
+                  <div className='px-2 py-1 rounded text-xs font-bold' style={{ color: 'var(--textSec)' }}>Loading...</div>
+                )}
                 {caseItem.solved && (
                   <div className='px-2 py-1 rounded text-xs font-bold' style={{ background: 'rgba(82, 200, 130, 0.2)', color: '#52c882' }}>
                     ✓ Solved
@@ -155,7 +160,9 @@ function FullWidthChallenges() {
               
               {/* Content - only show title on card; full description opens in editor */}
               <div className='mb-5'>
-                <h3 className='text-xl font-bold mb-1 group-hover:text-opacity-90 transition-all break-words'>{caseItem.title}</h3>
+                <h3 className='text-xl font-bold mb-1 group-hover:text-opacity-90 transition-all break-words'>
+                  {caseItem.title}
+                </h3>
                 <p style={{ color: 'var(--textSec)' }} className='text-sm mb-4'>
                   {caseItem.timeEstimate} • {caseItem.popularity} attempts
                 </p>
@@ -175,7 +182,9 @@ function FullWidthChallenges() {
               <div className='flex items-center justify-between pt-5' style={{ borderTop: '1px solid var(--border)' }}>
                 <div>
                   <p className='text-xs' style={{ color: 'var(--textSec)' }}>Earn Points</p>
-                  <p className='text-2xl font-bold' style={{ color: 'var(--brand)' }}>+{caseItem.points}</p>
+                  <p className='text-2xl font-bold' style={{ color: 'var(--brand)' }}>
+                    +{caseItem.points ?? '—'}
+                  </p>
                 </div>
                 {/* <button 
                   className='px-6 py-3 rounded-lg font-bold text-base transition-all duration-300 flex items-center gap-2 group/btn'

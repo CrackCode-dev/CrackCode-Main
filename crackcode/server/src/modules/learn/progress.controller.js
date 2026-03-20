@@ -1,6 +1,7 @@
 import UserProgress from "./UserProgress.model.js";
 import Question from "./Question.model.js";
 import User from "../auth/User.model.js";
+import { checkAndUnlockMultipleBadges } from "../badges/badge.service.js";
 
 // Get user's progress on all questions
 export const getUserProgress = async (req, res) => {
@@ -30,7 +31,7 @@ export const updateProgress = async (req, res) => {
         $inc: { attempts: 1 },
         ...(status === "completed" && { completedAt: new Date() }),
       },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: "after" }
     );
 
     // If newly completed, increment aggregated counters on User doc
@@ -39,14 +40,30 @@ export const updateProgress = async (req, res) => {
         const updatedUser = await User.findByIdAndUpdate(
           userId,
           { $inc: { casesSolved: 1 }, $set: { lastActive: new Date() } },
-          { new: true }
-        ).select("casesSolved currentStreak achievements");
+          { returnDocument: "after" }
+        ).select("casesSolved currentStreak achievements unlockedBadges");
 
-        return res.status(200).json({ progress, userStats: {
-          casesSolved: updatedUser?.casesSolved ?? 0,
-          currentStreak: updatedUser?.currentStreak ?? 0,
-          badgesEarned: Array.isArray(updatedUser?.achievements) ? updatedUser.achievements.length : 0
-        }});
+        // Check and unlock badges based on new casesSolved count
+        let newlyUnlocked = [];
+        try {
+          const badgesToCheck = ['beginner', 'cases_5', 'cases_10', 'cases_25'];
+          newlyUnlocked = await checkAndUnlockMultipleBadges(userId.toString(), badgesToCheck);
+          if (newlyUnlocked.length > 0) {
+            console.log(`✅ New badges unlocked: ${newlyUnlocked.join(', ')}`);
+          }
+        } catch (badgeErr) {
+          console.error('⚠️ Badge unlock error:', badgeErr.message);
+        }
+
+        return res.status(200).json({ 
+          progress, 
+          userStats: {
+            casesSolved: updatedUser?.casesSolved ?? 0,
+            currentStreak: updatedUser?.currentStreak ?? 0,
+            badgesEarned: Array.isArray(updatedUser?.achievements) ? updatedUser.achievements.length : 0
+          },
+          badgesUnlocked: newlyUnlocked
+        });
       } catch (err) {
         console.error("Failed updating aggregated user stats:", err);
         return res.status(200).json({ progress });

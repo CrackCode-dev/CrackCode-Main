@@ -3,6 +3,7 @@ import axios from 'axios'
 import Button from '../../components/ui/Button';
 import Header from '../../components/common/Header';
 import { AppContent } from '../../context/userauth/authenticationContext';
+import { fetchBadgeProgress } from '../../services/api/badgeService';
 
 const UserProfile = () => {
   // Get the current logged-in user's data and backend URL from authentication context
@@ -35,17 +36,9 @@ const UserProfile = () => {
     { language: 'C++', percentage: 0 }
   ]);
 
-  // State to store user achievements
-  const [achievements, setAchievements] = useState([
-    { icon: '🏆', title: 'First Victory', description: 'Won your first case', unlocked: false },
-    { icon: '⚡', title: 'Speed Solver', description: 'Solve case in 2 mins', unlocked: false },
-    { icon: '🔥', title: 'Streak Master', description: '7 day streak', unlocked: false },
-    { icon: '🧠', title: 'Code Master', description: '100% accuracy', unlocked: false },
-    { icon: '⭐', title: 'Rising Star', description: 'Reached Level 10', unlocked: false },
-    { icon: '💎', title: 'Persistent', description: '15 cases solved', unlocked: false },
-    { icon: '🎯', title: 'Focused', description: 'Finished Goals', unlocked: false },
-    { icon: '✅', title: 'Elite', description: 'Top 100 rank', unlocked: false }
-  ]);
+  // State to store badges from server
+  const [badges, setBadges] = useState([]);
+  const [badgesLoading, setBadgesLoading] = useState(true);
 
   // Function to fetch user stats from API
   const fetchUserStats = async () => {
@@ -135,30 +128,6 @@ const UserProfile = () => {
     }
   };
 
-  // Function to unlock achievements based on user stats
-  const updateAchievements = () => {
-    setAchievements(prevAchievements => 
-      prevAchievements.map(achievement => {
-        let unlocked = false;
-        
-        // Unlock achievements based on user stats
-        if (achievement.title === 'First Victory' && userStatus.casesSolved >= 1) unlocked = true;
-        if (achievement.title === 'Speed Solver' && userStatus.casesSolved >= 5) unlocked = true;
-        if (achievement.title === 'Streak Master' && userStatus.winStreaks >= 7) unlocked = true;
-        if (achievement.title === 'Code Master' && userStatus.totalPoints >= 1000) unlocked = true;
-        if (achievement.title === 'Rising Star' && userStatus.level >= 10) unlocked = true;
-        if (achievement.title === 'Persistent' && userStatus.casesSolved >= 15) unlocked = true;
-        if (achievement.title === 'Focused' && userStatus.casesSolved >= 25) unlocked = true;
-        if (achievement.title === 'Elite' && userStatus.rank !== "#--") unlocked = true;
-        
-        return {
-          ...achievement,
-          unlocked: unlocked
-        };
-      })
-    );
-  };
-
   // Load user data from authentication context when the component mounts
   useEffect(() => {
     if (userData) {
@@ -177,13 +146,23 @@ const UserProfile = () => {
       fetchUserStats();
       fetchLearningProgress();
       fetchLanguageProgress();
+      fetchBadgesData();
     }
   }, [isLoggedIn, backendUrl]);
 
-  // Update achievements whenever user stats change
-  useEffect(() => {
-    updateAchievements();
-  }, [userStatus]);
+  // Function to fetch badges from server
+  const fetchBadgesData = async () => {
+    try {
+      setBadgesLoading(true);
+      const badgesData = await fetchBadgeProgress();
+      setBadges(badgesData || []);
+    } catch (error) {
+      console.error('Error fetching badges:', error);
+      setBadges([]);
+    } finally {
+      setBadgesLoading(false);
+    }
+  };
 
   // If user is not logged in, show a message asking them to sign in
   if (!isLoggedIn) {
@@ -307,32 +286,86 @@ const UserProfile = () => {
           </div>
         </div>
 
-        {/* Achievements Section - Shows all badges and accomplishments */}
-        <h2 className="text-2xl text-left font-bold mb-6">Achievements</h2>
-        <div className="grid grid-cols-4 gap-4 mb-8">
-          {achievements.map((achievement, index) => (
-            // Each achievement is displayed as an interactive card
-            <div
-              key={index}
-              className="rounded-xl p-6 text-center hover:scale-105 transition-all cursor-pointer"
-              style={{ 
-                backgroundColor: 'var(--surface)', 
-                border: '1px solid var(--border)',
-                opacity: achievement.unlocked ? 1 : 0.5 // Make locked achievements semi-transparent
-              }}
-            >
-              <div className="text-4xl mb-3" style={{ filter: achievement.unlocked ? 'none' : 'grayscale(100%)' }}>
-                {achievement.icon}
-              </div>
-              <h4 className="font-semibold mb-1">{achievement.title}</h4>
-              <p className="text-xs" style={{ color: 'var(--textSec)' }}>{achievement.description}</p>
-              {/* Show lock/unlock status */}
-              <div className="text-xs mt-2" style={{ color: achievement.unlocked ? 'var(--brand)' : 'var(--textSec)' }}>
-                {achievement.unlocked ? '🔓 Unlocked' : '🔒 Locked'}
+        {/* Achievements & Badges Section - Dynamic badges from server */}
+        <h2 className="text-2xl text-left font-bold mb-6">Achievements & Badges</h2>
+        {badgesLoading ? (
+          <div className="p-8 text-center rounded-xl" style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
+            <p style={{ color: 'var(--textSec)' }}>Loading achievements...</p>
+          </div>
+        ) : badges.length === 0 ? (
+          <div className="p-8 text-center rounded-xl" style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
+            <p style={{ color: 'var(--textSec)' }}>No achievements yet. Start solving challenges to unlock badges! 🚀</p>
+          </div>
+        ) : (
+          <>
+            {/* Summary Stats */}
+            <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)' }}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-3xl font-bold" style={{ color: 'var(--brand)' }}>
+                    {badges.filter(b => b.isUnlocked).length}
+                  </p>
+                  <p style={{ color: 'var(--textSec)' }} className="text-sm">Badges Unlocked</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold">{badges.length}</p>
+                  <p style={{ color: 'var(--textSec)' }} className="text-sm">Total Badges</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-3xl font-bold" style={{ color: 'var(--brand)' }}>
+                    {Math.round((badges.filter(b => b.isUnlocked).length / badges.length) * 100)}%
+                  </p>
+                  <p style={{ color: 'var(--textSec)' }} className="text-sm">Completion</p>
+                </div>
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* Badges Grid - Organized by Category */}
+            <div className="space-y-6">
+              {/* Milestone Badges */}
+              {badges.filter(b => b.category === 'milestone').length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <span>📊</span> Milestone Badges
+                  </h3>
+                  <div className="grid grid-cols-5 gap-4">
+                    {badges.filter(b => b.category === 'milestone').map((badge) => (
+                      <BadgeCard key={badge.id} badge={badge} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Ranking Badges */}
+              {badges.filter(b => b.category === 'ranking').length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <span>🏅</span> Ranking Badges
+                  </h3>
+                  <div className="grid grid-cols-5 gap-4">
+                    {badges.filter(b => b.category === 'ranking').map((badge) => (
+                      <BadgeCard key={badge.id} badge={badge} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Career Badges */}
+              {badges.filter(b => b.category === 'career').length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <span>🎓</span> Career Badges
+                  </h3>
+                  <div className="grid grid-cols-5 gap-4">
+                    {badges.filter(b => b.category === 'career').map((badge) => (
+                      <BadgeCard key={badge.id} badge={badge} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
 
         {/* Account Settings Section - Allow user to edit their profile settings */}
         <h2 className="text-2xl text-left font-bold mb-6">Account Settings</h2>
@@ -379,6 +412,88 @@ const UserProfile = () => {
           </div>
         </div>
         </main>
+    </div>
+  );
+};
+
+// Reusable Badge Card Component for displaying individual badges
+const BadgeCard = ({ badge }) => {
+  const [showTooltip, setShowTooltip] = React.useState(false);
+
+  return (
+    <div
+      key={badge.id}
+      className="relative group cursor-pointer transition-all duration-300 h-full"
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+      style={{
+        opacity: badge.isUnlocked ? 1 : 0.3,
+      }}
+    >
+      {/* Badge Container */}
+      <div
+        className="rounded-xl p-6 text-center hover:scale-105 transition-all h-full flex flex-col items-center justify-center relative"
+        style={{
+          backgroundColor: badge.isUnlocked ? `${badge.color}15` : 'rgba(128, 128, 128, 0.1)',
+          border: badge.isUnlocked ? `2px solid ${badge.color}` : '1px solid rgba(128, 128, 128, 0.4)',
+          boxShadow: showTooltip && badge.isUnlocked ? `0 4px 12px ${badge.color}30` : 'none',
+        }}
+      >
+        {/* Badge Icon */}
+        <div
+          className="text-4xl mb-3 transition-transform duration-300"
+          style={{
+            filter: badge.isUnlocked ? 'grayscale(0)' : 'grayscale(1) brightness(0.7)'
+          }}
+        >
+          {badge.icon}
+        </div>
+
+        {/* Badge Name */}
+        <h4 className="font-semibold mb-2 text-sm text-center">{badge.name}</h4>
+
+        {/* Badge Description */}
+        <p className="text-xs text-center" style={{ color: 'var(--textSec)' }}>
+          {badge.description}
+        </p>
+
+        {/* Progress Bar for Locked Badges */}
+        {!badge.isUnlocked && badge.progress > 0 && (
+          <div className="mt-4 w-full h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--border)' }}>
+            <div
+              className="h-full transition-all duration-300"
+              style={{ width: `${badge.progress}%`, backgroundColor: badge.color }}
+            />
+          </div>
+        )}
+
+        {/* Badge Status */}
+        <div className="text-xs mt-3 font-medium" style={{ color: badge.isUnlocked ? badge.color : 'var(--textSec)' }}>
+          {badge.isUnlocked ? '🔓 Unlocked' : badge.progress > 0 ? `${Math.round(badge.progress)}%` : '🔒 Locked'}
+        </div>
+
+        {/* Lock Icon Overlay for Locked Badges */}
+        {!badge.isUnlocked && (
+          <div className="absolute inset-0 flex items-center justify-center rounded-lg pointer-events-none" style={{ background: 'rgba(0, 0, 0, 0.2)' }}>
+            <span className="text-lg">🔒</span>
+          </div>
+        )}
+      </div>
+
+      {/* Tooltip on Hover */}
+      {showTooltip && (
+        <div
+          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 bg-black text-white text-xs rounded px-3 py-2 z-50 whitespace-nowrap"
+          style={{
+            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+            border: '1px solid rgba(255, 165, 0, 0.3)',
+          }}
+        >
+          {badge.category === 'milestone' && '📊 Milestone'}
+          {badge.category === 'ranking' && '🏅 Ranking'}
+          {badge.category === 'career' && '🎓 Career'}
+        </div>
+      )}
     </div>
   );
 };

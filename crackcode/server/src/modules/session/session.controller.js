@@ -19,7 +19,7 @@ export const accessCookieOptions = () => ({
   httpOnly: true,
   secure: isProduction(),
   sameSite: isProduction() ? "strict" : "lax",
-  maxAge: 15 * 60 * 1000, // 15 minutes
+  maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });
 
 export const refreshCookieOptions = () => ({
@@ -30,27 +30,26 @@ export const refreshCookieOptions = () => ({
   path: "/api/session/refresh", // only sent to the refresh endpoint
 });
 
-// ─── Helper: set both cookies on the response ────────────────
+//  Helper: set both cookies on the response 
 export const setSessionCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, accessCookieOptions());
   res.cookie("refreshToken", refreshToken, refreshCookieOptions());
 };
 
-// ─── Helper: clear all auth cookies ──────────────────────────
+//  Helper: clear all auth cookies 
 export const clearSessionCookies = (res) => {
   res.clearCookie("accessToken");
   res.clearCookie("refreshToken", { path: "/api/session/refresh" });
   res.clearCookie("token"); // legacy
 };
 
-// ─────────────────────────────────────────────────────────────
+
 //There is NO "createSession" endpoint here.
 // Sessions are created INSIDE the auth controller (login/register).
-// ─────────────────────────────────────────────────────────────
 
-/**
- * POST /api/session/refresh
- * No auth required — uses the refresh-token cookie.
+/*
+ POST /api/session/refresh
+ No auth required — uses the refresh-token cookie.
  */
 export const refreshToken = async (req, res) => {
   try {
@@ -89,9 +88,9 @@ export const refreshToken = async (req, res) => {
   }
 };
 
-/**
- * POST /api/session/logout
- * Invalidates the current session.
+/*
+ POST /api/session/logout
+ Invalidates the current session.
  */
 export const logout = async (req, res) => {
   try {
@@ -120,9 +119,9 @@ export const logout = async (req, res) => {
   }
 };
 
-/**
- * POST /api/session/logout-all
- * Invalidates ALL sessions for the current user (all devices).
+/*
+ POST /api/session/logout-all
+ Invalidates ALL sessions for the current user (all devices).
  */
 export const logoutAll = async (req, res) => {
   try {
@@ -143,9 +142,9 @@ export const logoutAll = async (req, res) => {
   }
 };
 
-/**
- * GET /api/session/list
- * Returns all active sessions for the current user with "isCurrent" flag.
+/*
+  GET /api/session/list
+ Returns all active sessions for the current user with "isCurrent" flag.
  */
 export const getSessions = async (req, res) => {
   try {
@@ -169,9 +168,9 @@ export const getSessions = async (req, res) => {
   }
 };
 
-/**
- * DELETE /api/session/revoke/:sessionId
- * Revoke a specific session (cannot revoke your own — use logout).
+/*
+  DELETE /api/session/revoke/:sessionId
+  Revoke a specific session (cannot revoke your own — use logout).
  */
 export const revokeSession = async (req, res) => {
   try {
@@ -215,10 +214,10 @@ export const revokeSession = async (req, res) => {
   }
 };
 
-/**
- * GET /api/session/state
- * Returns the authenticated user's current balance (XP, tokens, rank).
- * This is the endpoint the React SessionContext calls on mount.
+/*
+ GET /api/session/state
+  Returns the authenticated user's current balance (XP, tokens, rank).
+ This is the endpoint the React SessionContext calls on mount.
  */
 export const getSessionState = async (req, res) => {
   try {
