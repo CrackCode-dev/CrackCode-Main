@@ -138,6 +138,26 @@ const run = async () => {
 
     const items = [
       {
+        name: "Country Theme",
+        description: "A warm rustic country-style theme for your profile.",
+        category: "theme",
+        pricing: { type: "paid", amount: 6, currency: "USD" },
+        imageUrl: "/uploads/themes/country.png",
+        metadata: { themeKey: "country" },
+        isActive: true,
+      },
+
+      {
+        name: "Midnight Theme",
+        description: "A sleek deep-blue midnight theme for your profile.",
+        category: "theme",
+        pricing: { type: "paid", amount: 6, currency: "USD" },
+        imageUrl: "/uploads/themes/midnight.png",
+        metadata: { themeKey: "midnight" },
+        isActive: true,
+      },
+
+      {
         name: "Cena",
         category: "avatar",
         isActive: true,

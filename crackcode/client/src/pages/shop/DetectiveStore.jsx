@@ -690,7 +690,7 @@
 
 
 //--------------------------------------------------------------------------------------------------
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
@@ -713,9 +713,10 @@ export default function DetectiveStore() {
   const [tokensRemaining, setTokensRemaining] = useState(0);
   const [profileImage, setProfileImage] = useState("/placeholder.png");
 
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
+  const processingPaymentRef = useRef(false);
 
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5051";
 
@@ -890,64 +891,60 @@ export default function DetectiveStore() {
     const params = new URLSearchParams(location.search);
     const payment = params.get("payment");
     const sessionId = params.get("session_id");
-  
-    const refreshAfterStripe = async () => {
+
+    if (!payment) return;
+
+    // Prevent double-processing (React StrictMode fires effects twice in dev)
+    if (processingPaymentRef.current) return;
+    processingPaymentRef.current = true;
+
+    const handlePaymentReturn = async () => {
       try {
-        if (payment === "success" && sessionId) {
+        if (payment === "cancelled") {
+          showToast("Payment was cancelled.", "info");
+          navigate("/store", { replace: true });
+          return;
+        }
+
+        if (payment !== "success") {
+          navigate("/store", { replace: true });
+          return;
+        }
+
+        if (sessionId) {
           const res = await fetch(
             `${API_BASE_URL}/api/payment/verify-session?session_id=${sessionId}`,
             {
               method: "GET",
-              credentials: "include",
               headers: {
                 Authorization: `Bearer ${getToken()}`,
               },
             }
           );
-  
-          const rawText = await res.text();
-          let data = null;
-  
-          try {
-            data = rawText ? JSON.parse(rawText) : null;
-          } catch {
-            console.error("Verify session returned non-JSON:", rawText);
-          }
-  
+
+          const data = await res.json().catch(() => null);
+
           if (!res.ok) {
-            console.error("Verify session API error status:", res.status);
-            console.error("Verify session API error body:", data || rawText);
-            showToast(
-              data?.message || "Failed to verify payment session",
-              "error"
-            );
+            showToast(data?.message || "Failed to verify payment.", "error");
+            navigate("/store", { replace: true });
             return;
           }
-  
-          await Promise.all([loadInventory(), loadProfile(), loadItems()]);
-  
-          showToast(
-            data?.message || "Payment successful! Inventory updated.",
-            "success"
-          );
-  
-          navigate("/store", { replace: true });
-        } else if (payment === "success") {
-          await Promise.all([loadInventory(), loadProfile(), loadItems()]);
-          showToast("Payment successful! Inventory refreshed.", "success");
-          navigate("/store", { replace: true });
-        } else if (payment === "cancelled") {
-          showToast("Payment was cancelled.", "error");
-          navigate("/store", { replace: true });
         }
+
+        await Promise.all([loadInventory(), loadProfile(), loadItems()]);
+        showToast("Payment successful! Item added to your inventory.", "success");
+        navigate("/store", { replace: true });
       } catch (error) {
-        console.error("Stripe verify failed:", error);
-        showToast("Failed to verify payment session", "error");
+        console.error("Post-payment handling failed:", error);
+        showToast("Something went wrong after payment.", "error");
+        navigate("/store", { replace: true });
+      } finally {
+        processingPaymentRef.current = false;
       }
     };
-  
-    refreshAfterStripe();
-  }, [location.search, navigate]);
+
+    handlePaymentReturn();
+  }, [location.search]);
   
   useEffect(() => {
     if (category === "inventory") {
@@ -1065,6 +1062,9 @@ export default function DetectiveStore() {
       if (data?.success) {
         setEquippedItemId(item._id);
         showToast(data.message || "Item equipped successfully!", "success");
+        if (item.category === "theme" && item.metadata?.themeKey) {
+          setTheme(item.metadata.themeKey);
+        }
         await loadProfile();
       } else {
         showToast(data?.message || "Failed to equip item", "error");
