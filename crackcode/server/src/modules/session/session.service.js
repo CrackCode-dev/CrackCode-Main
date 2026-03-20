@@ -13,7 +13,7 @@ import {
 import logger from "../../utils/logger.js";
 
 //  Configuration 
-const ACCESS_TOKEN_EXPIRY = "15m";
+const ACCESS_TOKEN_EXPIRY = "7d";
 const REFRESH_TOKEN_EXPIRY = "7d";
 const SESSION_EXPIRY_DAYS = 7;
 const MAX_SESSIONS_PER_USER = 5;
