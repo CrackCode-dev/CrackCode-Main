@@ -3,6 +3,8 @@ import { analyseError, classifyErrorType } from '../../services/aiErrorAgent.js'
 import { clearCache, getCacheStats } from '../../services/errorCache.js';
 import { awardReward } from '../rewards/reward.service.js';
 import { markQuestionSolved, incrementAttempt } from '../progress/progress.service.js';
+import Question from '../learn/Question.model.js';
+import LearnUserProgress from '../learn/UserProgress.model.js';
 
 // Run test cases for a submission WITH REWARD SYSTEM
 export const executeTestCases = async (req, res) => {
@@ -86,15 +88,29 @@ export const executeTestCases = async (req, res) => {
       try {
         console.log('💰 Reward system: Processing for user:', userId, 'question:', problemId);
         
-        // Increment attempt count
-        await incrementAttempt(userId, problemId, 'coding');
+        // Resolve question id: some callers send `problemId` (string code) while
+        // progress expects the Question._id. Try to resolve the document first.
+        let questionIdentifier = problemId;
+        try {
+          if (problemId && typeof problemId === 'string') {
+            const q = await Question.findOne({ problemId: problemId });
+            if (q && q._id) {
+              questionIdentifier = q._id;
+            }
+          }
+        } catch (resolveErr) {
+          console.warn('Could not resolve Question by problemId, proceeding with original id:', resolveErr.message);
+        }
+
+        // Increment attempt count (use resolved identifier)
+        await incrementAttempt(userId, questionIdentifier, 'coding');
         console.log('✅ Attempt incremented');
 
         // If all tests passed, mark solved and potentially award reward
         if (allTestsPassed) {
           await markQuestionSolved(
             userId,
-            problemId,
+            questionIdentifier,
             'coding',
             sourceArea,
             passedCount,
@@ -102,15 +118,32 @@ export const executeTestCases = async (req, res) => {
           );
           console.log('✅ Question marked as solved');
 
-          // Award reward
+          // Award reward (pass resolved identifier)
           rewardResult = await awardReward(
             userId,
-            problemId,
+            questionIdentifier,
             'coding',
             difficulty || 'Medium',
             sourceArea
           );
           console.log('✅ Reward awarded:', rewardResult);
+
+          // Also update learn/UserProgress for learn page tracking
+          try {
+            await LearnUserProgress.findOneAndUpdate(
+              { userId, questionId: questionIdentifier },
+              {
+                status: 'completed',
+                completedAt: new Date(),
+                attempts: 1
+              },
+              { upsert: true }
+            );
+            console.log('✅ Learn progress updated to completed');
+          } catch (learnErr) {
+            console.error('⚠️ Error updating learn progress:', learnErr.message);
+            // Don't fail submission if learn tracking fails
+          }
         } else {
           console.log('⚠️ Test cases did not all pass, no reward given');
         }

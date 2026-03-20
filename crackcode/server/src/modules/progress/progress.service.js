@@ -1,5 +1,5 @@
 import UserQuestionProgress from './UserQuestionProgress.model.js';
-import mongoose from 'mongoose';
+import { ensureObjectId } from '../../utils/idConverter.js';
 
 /*
 userId - User ID
@@ -16,12 +16,12 @@ export async function markQuestionSolved(
   questionType,
   sourceArea,
   testCasesPassed = 0,
-  testCasesTotal = 0
+  testCasesTotal = 0,
+  difficulty = null,
+  language = null
 ) {
   try {
-    const userIdObj = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    const userIdObj = ensureObjectId(userId);
 
     let progress = await UserQuestionProgress.findOne({
       userId: userIdObj,
@@ -42,6 +42,8 @@ export async function markQuestionSolved(
         lastSubmittedAt: new Date(),
         testCasesPassed,
         testCasesTotal,
+        difficulty,
+        language,
       });
     } else {
       // Already solved before, just update
@@ -50,6 +52,9 @@ export async function markQuestionSolved(
       progress.lastSubmittedAt = new Date();
       progress.testCasesPassed = testCasesPassed;
       progress.testCasesTotal = testCasesTotal;
+      // Update metadata if provided
+      if (difficulty) progress.difficulty = difficulty;
+      if (language) progress.language = language;
     }
 
     await progress.save();
@@ -68,11 +73,9 @@ questionId - Question ID
 questionType - Type of question
 returns {Promise<Object>} Updated progress
  */
-export async function incrementAttempt(userId, questionId, questionType) {
+export async function incrementAttempt(userId, questionId, questionType, difficulty = null, language = null) {
   try {
-    const userIdObj = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    const userIdObj = ensureObjectId(userId);
 
     let progress = await UserQuestionProgress.findOne({
       userId: userIdObj,
@@ -87,6 +90,8 @@ export async function incrementAttempt(userId, questionId, questionType) {
         questionType,
         attempts: 1,
         lastSubmittedAt: new Date(),
+        difficulty,
+        language,
       });
     } else {
       progress.attempts += 1;
@@ -110,9 +115,7 @@ returns {Promise<Array>} Array of solved question progress
  */
 export async function getUserSolvedQuestions(userId, questionType = null) {
   try {
-    const userIdObj = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    const userIdObj = ensureObjectId(userId);
 
     const filter = {
       userId: userIdObj,
@@ -143,9 +146,7 @@ returns {Promise<boolean>} True if solved, false otherwise
  */
 export async function isQuestionSolved(userId, questionId, questionType) {
   try {
-    const userIdObj = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    const userIdObj = ensureObjectId(userId);
 
     const progress = await UserQuestionProgress.findOne({
       userId: userIdObj,
@@ -168,9 +169,7 @@ returns {Promise<Object>} Progress summary
  */
 export async function getUserProgressSummary(userId) {
   try {
-    const userIdObj = mongoose.Types.ObjectId.isValid(userId)
-      ? new mongoose.Types.ObjectId(userId)
-      : userId;
+    const userIdObj = ensureObjectId(userId);
 
     const progress = await UserQuestionProgress.aggregate([
       { $match: { userId: userIdObj } },

@@ -29,6 +29,18 @@ const userQuestionProgressSchema = new mongoose.Schema(
       default: 'learn_page',
     },
 
+    // Difficulty and language for richer statistics
+    difficulty: {
+      type: String,
+      enum: ['Easy', 'Medium', 'Hard'],
+      default: null,
+    },
+
+    language: {
+      type: String,
+      default: null,
+    },
+
     // Problem solving status
     solved: {
       type: Boolean,

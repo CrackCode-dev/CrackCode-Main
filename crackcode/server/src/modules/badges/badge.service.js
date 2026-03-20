@@ -163,6 +163,11 @@ returns {boolean} - Whether condition is met
  */
 function evaluateBadgeCondition(condition, user) {
   try {
+    // Handle signup/account creation badge
+    if (condition === 'accountCreated') {
+      return true; // Always true for any existing user
+    }
+
     // Simple condition parser - can be extended for complex logic
     if (condition.includes('casesSolved')) {
       const match = condition.match(/casesSolved >= (\d+)/);

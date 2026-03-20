@@ -1,6 +1,15 @@
-
-
 export const BADGE_DEFINITIONS = {
+  // Signup Badge
+  WELCOME: {
+    id: 'welcome',
+    name: 'Welcome Aboard',
+    description: 'Create your CrackCode account',
+    icon: '🎉',
+    color: '#A8DADC',
+    category: 'milestone',
+    condition: 'accountCreated'
+  },
+
   // Core Achievement Badges
   BEGINNER: {
     id: 'beginner',

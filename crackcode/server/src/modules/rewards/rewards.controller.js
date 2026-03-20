@@ -1,31 +1,10 @@
 import { awardXP, awardTokens, awardRewards } from "../session/transaction.service.js";
 import UserProgress from "../learn/UserProgress.model.js";
 import Question from "../learn/Question.model.js";
+import { getRewardConfig } from "./reward.config.js";
 
-/**
- * Reward configuration based on difficulty
- */
-const REWARD_CONFIG = {
-  Easy: { xp: 10, tokens: 5 },
-  Medium: { xp: 25, tokens: 15 },
-  Hard: { xp: 50, tokens: 30 },
-};
-
-/**
- * Daily bonus multiplier
- */
-const DAILY_STREAK_MULTIPLIER = {
-  1: 1.0,
-  2: 1.1,
-  3: 1.2,
-  4: 1.3,
-  5: 1.4,
-  6: 1.5,
-  7: 2.0, // Week streak bonus
-};
-
-/**
- * Award rewards for completing a coding challenge
+/*
+  Award rewards for completing a coding challenge
  */
 export const awardChallengeCompletion = async (req, res) => {
   try {
@@ -57,8 +36,8 @@ export const awardChallengeCompletion = async (req, res) => {
       });
     }
     
-    // Calculate rewards
-    const baseRewards = REWARD_CONFIG[question.difficulty] || REWARD_CONFIG.Easy;
+    // Calculate rewards using centralized config
+    const baseRewards = getRewardConfig("coding", question.difficulty) || { xp: 10, tokens: 5 };
     
     let xpReward = baseRewards.xp;
     let tokenReward = baseRewards.tokens;
@@ -191,8 +170,8 @@ export const awardQuizCompletion = async (req, res) => {
   }
 };
 
-/**
- * Award daily login bonus
+/*
+  Award daily login bonus
  */
 export const awardDailyBonus = async (req, res) => {
   try {
@@ -256,8 +235,8 @@ export const awardDailyBonus = async (req, res) => {
   }
 };
 
-/**
- * Award achievement unlock bonus
+/*
+  Award achievement unlock bonus
  */
 export const awardAchievement = async (req, res) => {
   try {
