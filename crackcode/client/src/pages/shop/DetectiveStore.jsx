@@ -695,8 +695,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
 import Toast from "../../components/common/Toast";
-import Header from "../../components/common/Header";
-import Footer from "../../components/common/Footer";
+import HQBtn from "../../components/common/HQBtn";
 import { useTheme } from "../../context/theme/ThemeContext";
 
 export default function DetectiveStore() {
@@ -1120,9 +1119,11 @@ export default function DetectiveStore() {
         />
       </div>
 
-      <Header />
+      <div className="p-4">
+        <HQBtn />
+      </div>
 
-      <div className="flex flex-1 pt-20">
+      <div className="flex flex-1">
         <StoreSidebar category={category} setCategory={setCategory} />
 
         <div className="flex-1 p-10">
@@ -1174,8 +1175,6 @@ export default function DetectiveStore() {
           )}
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }
