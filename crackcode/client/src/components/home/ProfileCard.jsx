@@ -1,18 +1,41 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContent } from '../../context/userauth/authenticationContext';
-import { UserProgressContext } from '../../context/userauth/UserProgressContext';
 import { useTheme } from '../../context/theme/ThemeContext';
 import Avatar from '../common/Avatar';
 import CircularProgress from './CircularProgress';
 import { ChevronRight, Lock } from 'lucide-react';
+import { fetchBadgeProgress } from '../../services/api/badgeService';
 
 function ProfileCard() {
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { userData, isLoggedIn } = useContext(AppContent);
-  const { getBadgesProgress, questionsCompleted } = useContext(UserProgressContext);
   const [hoveredBadge, setHoveredBadge] = useState(null);
+  const [badges, setBadges] = useState([]);
+  const [badgesLoading, setBadgesLoading] = useState(true);
+
+  // Fetch badges from server
+  useEffect(() => {
+    const loadBadges = async () => {
+      if (!isLoggedIn) {
+        setBadgesLoading(false);
+        return;
+      }
+
+      try {
+        const badgesData = await fetchBadgeProgress();
+        setBadges(badgesData || []);
+      } catch (error) {
+        console.error('Failed to load badges:', error);
+        setBadges([]);
+      } finally {
+        setBadgesLoading(false);
+      }
+    };
+
+    loadBadges();
+  }, [isLoggedIn]);
 
   // Mock data for testing when not logged in
   const mockUserData = {
@@ -25,10 +48,14 @@ function ProfileCard() {
   // Use real user data if logged in, otherwise mock data
   const currentUser = userData && isLoggedIn ? userData : mockUserData;
 
-  // Get stats from userData - now includes xp, tokens, rank from backend
+  // Get stats from userData - now includes totalXP, tokens, rank from backend
+  const totalXP = currentUser?.totalXP || 0;
+  const xpForCurrentLevel = totalXP % 100; // XP within current level
+  const maxXpPerLevel = 100;
+  
   const stats = {
-    xp: currentUser?.xp || 0,
-    xpMax: currentUser?.xpMax || 5000,
+    xp: xpForCurrentLevel,
+    xpMax: maxXpPerLevel,
     tokens: currentUser?.tokens || 0,
     tokensMax: currentUser?.tokensMax || 2000,
     casesSolved: currentUser?.casesSolved || 0,
@@ -40,7 +67,7 @@ function ProfileCard() {
     navigate('/user-profile');
   };
 
-  const badges = getBadgesProgress();
+  const questionsCompleted = userData?.casesSolved || 0;
 
   return (
     <div
@@ -75,7 +102,7 @@ function ProfileCard() {
             <div className='min-w-0 flex-1'>
               <h3 className='font-bold text-sm truncate'>{currentUser?.username || currentUser?.name || 'Detective'}</h3>
               <p className='text-xs truncate' style={{ color: 'var(--textSec)' }}>
-                Level {currentUser?.level || '0'}
+                Level {Math.floor(totalXP / 100)}
               </p>
               <p className='text-xs truncate' style={{ color: 'var(--textSec)' }}>
                 {questionsCompleted} cases solved
@@ -136,13 +163,22 @@ function ProfileCard() {
         <div className='flex items-center justify-between mb-4'>
           <h4 className='text-sm font-bold'>Badges</h4>
           <span className='text-xs px-2 py-1 rounded' style={{ background: 'rgba(255, 165, 0, 0.15)', color: 'var(--brand)' }}>
-            {badges.filter(b => b.isUnlocked).length}/8
+            {badgesLoading ? '...' : `${badges.filter(b => b.isUnlocked).length}/${badges.length}`}
           </span>
         </div>
 
         {/* Badges Grid - with space for tooltip */}
-        <div className='grid grid-cols-4 gap-2 relative' style={{ padding: '12px 4px 20px 4px' }}>
-          {badges.map((badge, index) => {
+        <div className='grid gap-2 relative' style={{ padding: '12px 4px 20px 4px', gridTemplateColumns: `repeat(${Math.min(5, badges.length)}, minmax(0, 1fr))` }}>
+          {badgesLoading ? (
+            <div className='col-span-full flex items-center justify-center py-8'>
+              <p className='text-xs' style={{ color: 'var(--textSec)' }}>Loading badges...</p>
+            </div>
+          ) : badges.length === 0 ? (
+            <div className='col-span-full flex items-center justify-center py-8'>
+              <p className='text-xs' style={{ color: 'var(--textSec)' }}>No badges available</p>
+            </div>
+          ) : (
+            badges.map((badge, index) => {
             // Determine tooltip position based on badge position in grid
             const isLeftColumn = index % 4 === 0;
             const isRightColumn = index % 4 === 3;
@@ -183,7 +219,7 @@ function ProfileCard() {
               onMouseLeave={() => setHoveredBadge(null)}
               className='relative group cursor-pointer transition-all duration-300'
               style={{
-                opacity: badge.isUnlocked ? 1 : 0.5,
+                opacity: badge.isUnlocked ? 1 : 0.3,
                 zIndex: hoveredBadge === badge.id ? 50 : 0
               }}
             >
@@ -193,10 +229,12 @@ function ProfileCard() {
                 style={{
                   background: badge.isUnlocked 
                     ? `${badge.color}25` 
-                    : 'rgba(128, 128, 128, 0.1)',
+                    : 'rgba(128, 128, 128, 0.15)',
                   border: hoveredBadge === badge.id 
                     ? `2px solid ${badge.color}`
-                    : `1px solid ${badge.color}40`,
+                    : badge.isUnlocked
+                    ? `1px solid ${badge.color}60`
+                    : '1px solid rgba(128, 128, 128, 0.4)',
                   boxShadow: hoveredBadge === badge.id 
                     ? `0 4px 12px ${badge.color}30`
                     : 'none',
@@ -209,16 +247,16 @@ function ProfileCard() {
                 <div
                   className='text-2xl transition-transform duration-300'
                   style={{
-                    filter: badge.isUnlocked ? 'grayscale(0)' : 'grayscale(1)'
+                    filter: badge.isUnlocked ? 'grayscale(0)' : 'grayscale(1) brightness(0.7)'
                   }}
                 >
                   {badge.icon}
                 </div>
 
-                {/* Lock Icon for Locked Badges */}
+                {/* Lock Icon for Locked Badges - More Prominent */}
                 {!badge.isUnlocked && (
-                  <div className='absolute inset-0 flex items-center justify-center rounded-lg' style={{ background: 'rgba(0, 0, 0, 0.3)' }}>
-                    <Lock className='w-3 h-3' style={{ color: '#fff' }} />
+                  <div className='absolute inset-0 flex items-center justify-center rounded-lg transition-all duration-300' style={{ background: badge.isUnlocked ? 'transparent' : 'rgba(0, 0, 0, 0.4)' }}>
+                    <Lock className='w-4 h-4 transition-transform duration-300' style={{ color: '#fff', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))' }} />
                   </div>
                 )}
 
@@ -258,7 +296,8 @@ function ProfileCard() {
               )}
             </div>
             );
-          })}
+          })
+          )}
         </div>
 
         {/* Badge Info */}
@@ -266,7 +305,7 @@ function ProfileCard() {
           <p>
             {questionsCompleted === 0 
               ? '🎯 Solve your first challenge to unlock badges!' 
-              : `✨ ${8 - badges.filter(b => b.isUnlocked).length} badges remaining. Keep solving!`}
+              : `✨ ${Math.max(0, badges.length - badges.filter(b => b.isUnlocked).length)} badges remaining. Keep solving!`}
           </p>
         </div>
       </div>
