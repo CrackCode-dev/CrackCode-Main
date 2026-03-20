@@ -240,6 +240,9 @@ export const purchaseItem = async (req, res) => {
     if (/not enough|insufficient/i.test(msg)) {
       return res.status(400).json({ success: false, message: msg });
     }
+    if (/already own/i.test(msg)) {
+      return res.status(400).json({ success: false, message: msg });
+    }
 
     return res.status(400).json({ success: false, message: msg });
   }
@@ -297,22 +300,40 @@ export const createCheckoutSessionController = async (req, res) => {
 
     const { itemId } = req.body || {};
     if (!itemId) {
-      return res.status(400).json({ message: "itemId is required" });
+      return res.status(400).json({
+        success: false,
+        message: "itemId is required",
+      });
     }
 
     const session = await createCheckoutSession(userId, itemId);
 
     return res.status(200).json(session);
   } catch (err) {
-    return res.status(400).json({ message: err.message });
+    const msg = err?.message || "Stripe checkout failed";
+
+    if (/already own/i.test(msg)) {
+      return res.status(400).json({ success: false, message: msg });
+    }
+    if (/not found|inactive/i.test(msg)) {
+      return res.status(404).json({ success: false, message: msg });
+    }
+    if (/unauthorized/i.test(msg)) {
+      return res.status(401).json({ success: false, message: msg });
+    }
+
+    return res.status(400).json({ success: false, message: msg });
   }
 };
 
 /**
- * POST /api/shop/webhook
+ * POST /api/payment/webhook
  */
 export const stripeWebhookController = async (req, res) => {
+  console.log("=== STRIPE WEBHOOK HIT ===");
+
   const signature = req.headers["stripe-signature"];
+  console.log("Signature exists:", !!signature);
 
   let event;
 
@@ -324,6 +345,8 @@ export const stripeWebhookController = async (req, res) => {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET
     );
+
+    console.log("Webhook event type:", event.type);
   } catch (err) {
     console.error("Webhook signature verification failed:", err.message);
     return res.status(400).send(`Webhook Error: ${err.message}`);
@@ -333,11 +356,15 @@ export const stripeWebhookController = async (req, res) => {
     if (event.type === "checkout.session.completed") {
       const session = event.data.object;
 
+      console.log("Checkout session completed:", session.id);
+      console.log("Metadata:", session.metadata);
+
       const userId = session.metadata?.userId;
       const itemId = session.metadata?.itemId;
       const stripeSessionId = session.id;
 
       if (!userId || !itemId) {
+        console.error("Missing metadata:", { userId, itemId });
         return res.status(400).json({
           success: false,
           message: "Missing userId or itemId in Stripe metadata",
@@ -349,14 +376,26 @@ export const stripeWebhookController = async (req, res) => {
         itemId,
         stripeSessionId,
       });
+
+      console.log("finalizePaidPurchase completed successfully");
     }
 
     return res.status(200).json({ received: true });
   } catch (err) {
     console.error("Stripe webhook processing failed:", err);
+
+    const msg = err?.message || "Webhook processing failed";
+
+    if (/already own/i.test(msg)) {
+      return res.status(200).json({
+        success: true,
+        message: "User already owns this item",
+      });
+    }
+
     return res.status(500).json({
       success: false,
-      message: err.message || "Webhook processing failed",
+      message: msg,
     });
   }
 };

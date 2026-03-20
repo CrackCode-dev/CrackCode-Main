@@ -23,7 +23,7 @@ const router = express.Router();
 // Profile Routes (All require authentication via userAuth)
 
 // Get user profile
-router.get("/profile", userAuth, getUserProfile);
+router.get("/", userAuth, getUserProfile);
 
 // Get profile settings (for account settings page)
 router.get("/settings", userAuth, getProfileSettings);

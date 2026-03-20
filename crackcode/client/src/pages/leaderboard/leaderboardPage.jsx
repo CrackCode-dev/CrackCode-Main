@@ -1,6 +1,5 @@
 // React hooks
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 // API functions to fetch leaderboard data
 import { fetchGlobalLeaderboard, fetchMyRank } from "../../api/leaderboard";
@@ -14,8 +13,6 @@ import HQBtn from "../../components/common/HQBtn";
 
 // Leaderboard page component
 const LeaderboardPage = () => {
-
-  const navigate = useNavigate();
 
   const [leaders, setLeaders] = useState([]);
   const [myRank, setMyRank] = useState(null);
