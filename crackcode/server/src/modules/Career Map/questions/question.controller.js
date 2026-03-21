@@ -8,6 +8,7 @@ import {
 import User from "../../auth/User.model.js";
 import { checkAndUnlockMultipleBadges } from "../../badges/badge.service.js";
 import UserProgress from "../../learn/UserProgress.model.js";
+import Question, { findQuestionByIdentifier } from "../../learn/Question.model.js";
 
 // Valid career paths
 const VALID_CAREERS = ["MLEngineer", "DataScientist", "SoftwareEngineer"];
@@ -123,13 +124,18 @@ export const submitAnswer = async (req, res) => {
     // If answer is correct, update progress and check for badge unlocks
     if (isCorrect) {
       try {
+        // Normalize question identifier (support problemId strings)
+        let qid = questionId;
+        const qdoc = await findQuestionByIdentifier(questionId);
+        if (qdoc) qid = qdoc._id;
+
         // Check if already completed to avoid duplicate rewards
-        const existingProgress = await UserProgress.findOne({ userId, questionId });
+        const existingProgress = await UserProgress.findOne({ userId, questionId: qid });
         const isFirstCompletion = !existingProgress || existingProgress.status !== 'completed';
 
         // Update progress
         await UserProgress.findOneAndUpdate(
-          { userId, questionId },
+          { userId, questionId: qid },
           {
             status: "completed",
             completedAt: new Date(),

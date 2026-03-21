@@ -1,0 +1,107 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  DEPLOY_SERVER: ${{ secrets.DEPLOY_SERVER }}
+  DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+  DEPLOY_PATH: /root/CrackCode-Main/crackcode
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test Build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies (Server)
+        working-directory: crackcode/server
+        run: npm ci --omit=dev
+
+      - name: Install dependencies (Client)
+        working-directory: crackcode/client
+        run: npm ci
+
+      - name: Build client
+        working-directory: crackcode/client
+        run: npm run build
+
+      - name: Lint check (Server)
+        working-directory: crackcode/server
+        run: npm run lint 2>/dev/null || echo "No lint script configured"
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    name: Deploy to Production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+
+      - name: Pull latest code
+        run: |
+          ssh -p 22 ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_SERVER }} \
+            "cd ${{ env.DEPLOY_PATH }} && git pull origin main"
+
+      - name: Rebuild and deploy containers
+        run: |
+          ssh -p 22 ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_SERVER }} \
+            "cd ${{ env.DEPLOY_PATH }} && \
+             docker compose down && \
+             docker system prune -f && \
+             docker compose up -d --build"
+
+      - name: Verify deployment
+        run: |
+          ssh -p 22 ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_SERVER }} \
+            "cd ${{ env.DEPLOY_PATH }} && \
+             docker compose ps && \
+             echo '--- Server Logs ---' && \
+             docker compose logs server | head -20"
+
+      - name: Health check
+        run: |
+          for i in {1..30}; do
+            if curl -f http://${{ env.DEPLOY_SERVER }}:4173 > /dev/null 2>&1; then
+              echo "✅ Application is UP"
+              exit 0
+            fi
+            echo "Checking... ($i/30)"
+            sleep 2
+          done
+          echo "❌ Application failed to start"
+          exit 1
+
+      - name: Deployment Success Notification
+        if: success()
+        run: |
+          echo "🚀 Deployment successful!"
+          echo "Application: http://${{ env.DEPLOY_SERVER }}:4173"
+
+      - name: Deployment Failure Notification
+        if: failure()
+        run: |
+          echo "❌ Deployment failed - Check logs above"
+          exit 1
