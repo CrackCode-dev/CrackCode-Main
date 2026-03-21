@@ -1,12 +1,10 @@
-import axios from 'axios';
-
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5051';
+import axios from '../../api/axios.js';
 
 // send code + test cases to the backend and get results back
 export const submitCodeToJudge0 = async (code, language, testCases, previousErrors = [], problemData = {}) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/api/codeEditor/execute`,
+      '/codeEditor/execute',
       {
         sourceCode: code,
         language: language,
@@ -45,7 +43,7 @@ export const submitCodeToJudge0 = async (code, language, testCases, previousErro
 export const executeCodeWithInput = async (code, language, input) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/api/codeEditor/run`,
+      '/codeEditor/run',
       {
         sourceCode: code,
         language: language,
@@ -78,7 +76,7 @@ export const executeCodeWithInput = async (code, language, input) => {
 export const getSupportedLanguages = async () => {
   try {
     const response = await axios.get(
-      `${API_BASE_URL}/api/codeEditor/languages`,
+      '/codeEditor/languages',
       {
         timeout: 10000
       }

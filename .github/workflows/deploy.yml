@@ -1,0 +1,43 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: 22
+          script: |
+            echo "🚀 Starting deployment..."
+            cd ~/CrackCode-Main/crackcode
+            
+            echo "📥 Pulling latest code from main..."
+            git fetch origin main
+            git reset --hard origin/main
+            
+            echo "🔨 Rebuilding Docker containers..."
+            docker compose down
+            docker compose up -d --build
+            
+            echo "⏳ Waiting for services to start..."
+            sleep 60
+            
+            echo "✅ Verifying deployment..."
+            docker compose ps
+            
+            echo "📋 Server logs:"
+            docker logs crackcode-server-1 | tail -20
+            
+            echo "🎉 Deployment complete!"
+            echo "App live at: http://64.227.140.199:4173"

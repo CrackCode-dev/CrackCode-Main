@@ -150,7 +150,7 @@ export default function StoreItemCard({
 }) {
   const { theme } = useTheme();
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5051";
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || "http://localhost:5051";
 
   const rawImagePath = item.imageUrl || item.image || "";
 

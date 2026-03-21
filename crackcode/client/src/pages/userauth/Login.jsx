@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AppContent } from "../../context/userauth/authenticationContext";
 import axios from "axios";
+import api from "../../api/axios";
 import LetterGlitch from "../../components/bgEffect/LetterGlitch";
 import { toast } from "react-toastify";
 import { Mail, LockKeyhole, UserRound } from "lucide-react";
@@ -40,7 +41,7 @@ const Login = () => {
           return toast.error("You must accept the Terms and Conditions.");
         }
 
-        const { data } = await axios.post(`${backendUrl}/api/auth/register`, {
+        const { data } = await api.post(`/auth/register`, {
           name,
           email,
           password,
@@ -55,7 +56,7 @@ const Login = () => {
           toast.error(data?.message || "Registration failed.");
         }
       } else {
-        const { data } = await axios.post(`${backendUrl}/api/auth/login`, {
+        const { data } = await api.post(`/auth/login`, {
           email,
           password,
         });
@@ -65,17 +66,18 @@ const Login = () => {
           if (data.accessToken) {
             try {
               localStorage.setItem('accessToken', data.accessToken);
-              axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+              api.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
             } catch (e) {}
           }
           
           setIsLoggedIn(true);
-          await getUserData();
+          await getUserData();  // Wait for user data to load before navigating
+          console.log("✅ User logged in and data loaded");
 
           // If the returned user isn't verified, prompt verification flow
           if (data.user && !data.user.isAccountVerified) {
             try {
-              await axios.post(`${backendUrl}/api/auth/send-verify-otp`);
+              await api.post(`/auth/send-verify-otp`);
               toast.info("Please verify your email. OTP sent to your email.");
             } catch (err) {
               console.log("OTP send error on login:", err);
@@ -84,7 +86,7 @@ const Login = () => {
             navigate("/verify-account");
           } else {
             toast.success("Welcome back!");
-            navigate("/home");
+            navigate("/home");  // Navigate AFTER auth state + user data are fully loaded
           }
         } else {
           toast.error(data?.message || "Login failed.");

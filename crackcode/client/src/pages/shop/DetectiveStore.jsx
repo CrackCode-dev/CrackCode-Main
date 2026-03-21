@@ -718,7 +718,7 @@ export default function DetectiveStore() {
   const navigate = useNavigate();
   const processingPaymentRef = useRef(false);
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5051";
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || "http://localhost:5051";
 
   const isLightFamily = ["light", "cream", "country"].includes(theme);
 

@@ -1,13 +1,13 @@
 import express from "express";
-import userAuth from "../auth/middleware.js";
+import { sessionAuth } from "../session/session.middleware.js";
 import { getUserData, getProgressSummary, getUserActivity, getUserProgressRaw, deleteAccount } from "./controller.js";
 
 const router = express.Router();
 
-router.get("/data", userAuth, getUserData);
-router.get("/progress-summary", userAuth, getProgressSummary);
-router.get("/activity", userAuth, getUserActivity);
-router.get("/progress-raw", userAuth, getUserProgressRaw);
-router.post("/delete-account", userAuth, deleteAccount);
+router.get("/data", sessionAuth, getUserData);
+router.get("/progress-summary", sessionAuth, getProgressSummary);
+router.get("/activity", sessionAuth, getUserActivity);
+router.get("/progress-raw", sessionAuth, getUserProgressRaw);
+router.post("/delete-account", sessionAuth, deleteAccount);
 
 export default router;

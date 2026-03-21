@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
-import axios from 'axios'
+import api from '../../api/axios'
 import Button from '../../components/ui/Button';
 import Header from '../../components/common/Header';
 import { AppContent } from '../../context/userauth/authenticationContext';
@@ -64,10 +64,7 @@ const UserProfile = () => {
   // Function to fetch user stats from API
   const fetchUserStats = async () => {
     try {
-      const response = await axios.get(`${backendUrl}/api/user/data`, {
-        withCredentials: true,
-        timeout: 5000
-      });
+      const response = await api.get('/user/data', { timeout: 5000 });
       
       if (response.data.success) {
         const data = response.data.data;
@@ -94,7 +91,17 @@ const UserProfile = () => {
   // Fetch aggregated progress summary (difficulty counts + language counts)
   const fetchProgressSummary = async () => {
     try {
-      const resp = await axios.get(`${backendUrl}/api/user/progress-summary`, { withCredentials: true, timeout: 5000 });
+      const resp = await api.get('/user/progress-summary', { timeout: 5000 });
+      // Debug: log full progress-summary response
+      console.debug('DEBUG: /api/user/progress-summary response', resp?.data);
+
+      // Debug: fetch raw progress documents to help diagnose aggregation issues
+      try {
+        const raw = await axios.get(`${backendUrl}/api/user/progress-raw`, { withCredentials: true, timeout: 5000 });
+        console.debug('DEBUG: /api/user/progress-raw (sample rows)', raw?.data?.data?.slice?.(0,10) || raw?.data);
+      } catch (rawErr) {
+        console.warn('Could not fetch /api/user/progress-raw:', rawErr?.message || rawErr);
+      }
       if (!resp?.data?.success) return;
 
       const data = resp.data.data || {};
@@ -120,10 +127,7 @@ const UserProfile = () => {
   const fetchProfileSettings = async () => {
     try {
       setSettingsLoading(true);
-      const response = await axios.get(`${backendUrl}/api/profile/settings`, {
-        withCredentials: true,
-        timeout: 5000
-      });
+      const response = await api.get('/profile/settings', { timeout: 5000 });
 
       if (response.data.success) {
         setProfileSettings(response.data.data);
@@ -139,11 +143,7 @@ const UserProfile = () => {
   const handleDeleteAccount = async () => {
     try {
       setIsDeleting(true);
-      const response = await axios.post(
-        `${backendUrl}/api/user/delete-account`,
-        {},
-        { withCredentials: true, timeout: 5000 }
-      );
+      const response = await api.post('/user/delete-account', {}, { timeout: 5000 });
 
       if (response.data.success) {
         console.log('✅ Account deleted successfully');

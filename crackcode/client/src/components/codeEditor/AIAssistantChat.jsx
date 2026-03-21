@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { useEditor } from '../../context/codeEditor/EditorContext';
+import axios from '../../api/axios.js';
 
 const AIAssistantChat = () => {
   const { aiMessages, setAiMessages, aiInput, setAiInput, isAiTyping, setIsAiTyping, testResults, code, language } = useEditor();
@@ -20,37 +21,24 @@ const AIAssistantChat = () => {
     setIsAiTyping(true);
 
     try {
-      console.log('📤 Sending to /api/ai/assistant:', {
+      console.log('📤 Sending to AI Assistant:', {
         question: text,
         language: language || 'python',
         code: code ? code.substring(0, 100) : '(empty)',
         testResults: testResults?.length || 0
       });
 
-      // Call the real AI API endpoint with editor context
-      const response = await fetch('/api/ai/assistant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          question: text,
-          language: language || 'python',
-          code: code || '',
-          problemTitle: '',
-          problemDescription: '',
-          lastJudgeResult: testResults?.[0] || null
-        })
-      });
+      // Use axios instance (honors VITE_BACKEND_URL)
+      const resp = await axios.post('/ai/assistant', {
+        question: text,
+        language: language || 'python',
+        code: code || '',
+        problemTitle: '',
+        problemDescription: '',
+        lastJudgeResult: testResults?.[0] || null
+      }, { withCredentials: true });
 
-      console.log('📥 Response status:', response.status);
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ API error:', response.status, errorText);
-        throw new Error(`API error: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
+      const data = resp.data;
       console.log('✅ API response:', data);
 
       if (!data.success) {
