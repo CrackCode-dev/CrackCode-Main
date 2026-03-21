@@ -13,7 +13,11 @@ services:
     restart: unless-stopped
 
   client:
-    build: ./client
+    build:
+      context: ./client
+      args:
+        VITE_BACKEND_URL: http://64.227.140.199:5051
+        VITE_API_URL: http://64.227.140.199:5051
     image: crackcode-client
     ports:
       - "4173:80"

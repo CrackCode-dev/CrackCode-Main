@@ -134,8 +134,10 @@ export const getProgressSummary = async (req, res) => {
       }
     });
 
-    // If there are no progress documents, fall back to user's completedQuestions
-    if (totalSolved === 0 && Array.isArray(fullUser.completedQuestions) && fullUser.completedQuestions.length > 0) {
+    // If aggregation produced no or fewer progress documents than user's recorded completions,
+    // fall back to computing distribution from the embedded `completedQuestions` array.
+    const completedCount = Array.isArray(fullUser.completedQuestions) ? fullUser.completedQuestions.length : 0;
+    if ((totalSolved === 0 || totalSolved < completedCount) && completedCount > 0) {
       // helper maps
       const idMap = {
         50: 'c',

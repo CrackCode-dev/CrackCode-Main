@@ -114,7 +114,9 @@ export const executeTestCases = async (req, res) => {
             'coding',
             sourceArea,
             passedCount,
-            testCases.length
+            testCases.length,
+            difficulty || null,
+            language || null
           );
           console.log('✅ Question marked as solved');
 
