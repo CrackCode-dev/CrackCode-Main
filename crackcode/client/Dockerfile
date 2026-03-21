@@ -7,11 +7,11 @@ RUN npm install
 
 COPY . .
 
-ARG VITE_API_URL=http://localhost:5051
-ENV VITE_API_URL=${VITE_API_URL}
-
+# Accept backend URL as build argument, default to localhost:5051
 ARG VITE_BACKEND_URL=http://localhost:5051
-ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
+
+# Create .env.production file with Vite variables
+RUN echo "VITE_BACKEND_URL=${VITE_BACKEND_URL}" > .env.production
 
 RUN npm run build
 

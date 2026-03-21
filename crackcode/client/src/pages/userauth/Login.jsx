@@ -70,7 +70,8 @@ const Login = () => {
           }
           
           setIsLoggedIn(true);
-          await getUserData();
+          await getUserData();  // Wait for user data to load before navigating
+          console.log("✅ User logged in and data loaded");
 
           // If the returned user isn't verified, prompt verification flow
           if (data.user && !data.user.isAccountVerified) {
@@ -84,7 +85,7 @@ const Login = () => {
             navigate("/verify-account");
           } else {
             toast.success("Welcome back!");
-            navigate("/home");
+            navigate("/home");  // Navigate AFTER auth state + user data are fully loaded
           }
         } else {
           toast.error(data?.message || "Login failed.");
