@@ -189,7 +189,7 @@ export const login = async (req, res) => {
 
     //  Create session 
     const sessionData = await createSession(user._id, req);
-    setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
+    setSessionCookies(req, res, sessionData.accessToken, sessionData.refreshToken);
 
     // Legacy cookie
     const legacyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -379,7 +379,7 @@ export const verifyEmail = async (req, res) => {
 
       // Create session and set cookies (log user in)
       const sessionData = await createSession(user._id, req);
-      setSessionCookies(res, sessionData.accessToken, sessionData.refreshToken);
+      setSessionCookies(req, res, sessionData.accessToken, sessionData.refreshToken);
       const legacyToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
       res.cookie("token", legacyToken, legacyCookieOptions);
 
