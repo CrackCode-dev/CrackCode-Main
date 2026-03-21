@@ -90,7 +90,7 @@ const LearnMainPage = () => {
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       <Header variant="empty" />
 
-      <main className="flex-1 px-6 sm:px-10 py-10">
+      <main className="flex-1 px-6 sm:px-10 py-10 mt-20">
         <div className="max-w-5xl mx-auto pt-10">
           <div className="mb-12 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--text)' }}>

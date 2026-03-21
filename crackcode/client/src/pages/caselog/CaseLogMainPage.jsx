@@ -109,10 +109,10 @@ const CaseLogMainPage = () => {
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       <Header variant="empty" />
 
-      <main className="flex-1 px-6 sm:px-10 py-10">
+      <main className="flex-1 px-6 sm:px-10 py-10 mt-20">
         <div className="max-w-6xl mx-auto pt-10">
           {/* Header Section */}
-          <div className="mb-12">
+          <div className="mb-12 flex flex-col items-center text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--text)' }}>
               Case Log Challenges
             </h1>

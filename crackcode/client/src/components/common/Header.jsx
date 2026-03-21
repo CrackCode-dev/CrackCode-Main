@@ -14,7 +14,7 @@ import Button from '../ui/Button';
 import SettingsDropdown from './SettingsDropdown';
 import { useState, useEffect } from 'react';
 
-const Header = ({ variant = "default" }) => {
+const Header = ({ variant = "default", showBackBtn = true, showHQ = true }) => {
     const { theme } = useTheme()
     const darkThemes = ["dark", "country", "midnight"];
     const activeLogo = darkThemes.includes(theme) ? logo_light : logo_dark;
@@ -85,8 +85,8 @@ const Header = ({ variant = "default" }) => {
         return (
         <header className={`${baseStyles} ${variants[variant]}`} style={headerStyle}>
             <div className='flex w-full items-center gap-4'>
-                <HQBtn />
-                <BackBtn />
+                {showHQ && <HQBtn />}
+                {showBackBtn && <BackBtn />}
             </div>
         </header> 
     )}

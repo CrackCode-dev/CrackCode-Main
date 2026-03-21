@@ -1,4 +1,5 @@
 import React from "react";
+import { UserRoundSearch, Flame } from "lucide-react";
 
 // ── Renders either an <img> or emoji depending on the avatar value ──
 const Avatar = ({ avatar, name }) => {
@@ -19,7 +20,7 @@ const Avatar = ({ avatar, name }) => {
     );
   }
   const isEmoji = typeof avatar === "string" && /\p{Emoji}/u.test(avatar);
-  return <span className="text-xl">{isEmoji ? avatar : "🕵️"}</span>;
+  return <span className="text-xl">{isEmoji ? avatar : <UserRoundSearch className="w-6 h-6" />}</span>;
 };
 
 const LeaderboardTable = ({ data = [] }) => {
@@ -51,7 +52,11 @@ const LeaderboardTable = ({ data = [] }) => {
               <td style={{ padding: "20px 20px" }}>{user.specialization}</td>
               <td style={{ padding: "20px 20px" }} className="green">{user.points.toLocaleString()}</td>
               <td style={{ padding: "20px 20px" }}>{user.cases}</td>
-              <td style={{ padding: "20px 20px" }} className="orange">🔥 {user.streak}</td>
+              <td style={{ padding: "20px 20px" }} className="orange">
+                <div className="flex items-center gap-1">
+                  {user.streak} <Flame className="w-4 h-4" /> 
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
