@@ -101,11 +101,7 @@ export default function Leaderboard() {
       if (data.success) setPlayers(data.leaderboard ?? []);
       else throw new Error(data.message || "Failed to load leaderboard");
     } catch (e) {
-      setError(
-        e.name === "AbortError"
-          ? "Request timed out — is the backend running on port 5050?"
-          : e.message
-      );
+      setError(e.name === "AbortError" ? "Request timed out — is the backend reachable?" : e.message);
     } finally {
       setLoading(false);
     }
@@ -121,11 +117,7 @@ export default function Leaderboard() {
         setPagination(data.pagination);
       } else throw new Error(data.message || "Failed to load leaderboard");
     } catch (e) {
-      setError(
-        e.name === "AbortError"
-          ? "Request timed out — is the backend running on port 5050?"
-          : e.message
-      );
+      setError(e.name === "AbortError" ? "Request timed out — is the backend reachable?" : e.message);
     } finally {
       setLoading(false);
     }

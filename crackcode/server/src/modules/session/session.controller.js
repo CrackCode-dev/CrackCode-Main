@@ -18,14 +18,14 @@ const isProduction = () => process.env.NODE_ENV === "production";
 export const accessCookieOptions = () => ({
   httpOnly: true,
   secure: isProduction(),
-  sameSite: isProduction() ? "strict" : "lax",
+  sameSite: "lax",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });
 
 export const refreshCookieOptions = () => ({
   httpOnly: true,
   secure: isProduction(),
-  sameSite: isProduction() ? "strict" : "lax",
+  sameSite: "lax",
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   path: "/api/session/refresh", // only sent to the refresh endpoint
 });
