@@ -351,3 +351,52 @@ export const getUserProgressRaw = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Delete user account and all associated data
+export const deleteAccount = async (req, res) => {
+  try {
+    const userId = req.user?._id || req.userId;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'User not authenticated' });
+    }
+
+    console.log(`🗑️ Deleting account for user: ${userId}`);
+
+    // Start a session for transaction-like behavior
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // Delete all user-related data in parallel
+    try {
+      await Promise.all([
+        // Delete user progress records
+        UserProgress.deleteMany({ userId }),
+        // Delete user question progress
+        UserQuestionProgress.deleteMany({ userId }),
+        // Delete user submissions
+        Submission.deleteMany({ userId }),
+        // Delete user account itself
+        User.findByIdAndDelete(userId)
+      ]);
+
+      console.log(`✅ All user data deleted successfully`);
+      
+      return res.json({
+        success: true,
+        message: 'Account and all associated data have been permanently deleted'
+      });
+    } catch (deleteError) {
+      console.error('❌ Error during data deletion:', deleteError);
+      throw deleteError;
+    }
+  } catch (error) {
+    console.error(`❌ Error deleting account:`, error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to delete account'
+    });
+  }
+};

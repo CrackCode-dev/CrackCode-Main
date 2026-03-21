@@ -230,17 +230,33 @@ export const submitSolutionService = async ({
 
     // Step 9: Persist solved progress with difficulty + language
     try {
-      await markQuestionSolved(userId, questionId, 'coding', 'code_editor', testCasesPassed = passedCount, testCasesTotal = visibleTestCases.length, question.difficulty || null, languageName);
+      console.log(`📝 Marking question solved - difficulty: ${question.difficulty}, language: ${languageName}`);
+      await markQuestionSolved(
+        userId,
+        questionId,
+        'coding',
+        'code_editor',
+        passedCount,                    // testCasesPassed
+        visibleTestCases.length,        // testCasesTotal
+        question.difficulty || null,    // difficulty
+        languageName                    // language
+      );
+      console.log('✅ Progress marked as solved');
     } catch (err) {
-      console.warn('Could not persist progress:', err.message);
+      console.error('❌ Error marking progress:', err.message);
     }
 
-    // Step 9: Check and unlock milestone badges
+    // Step 9: Check and unlock milestone badges + language-specific badges
     const badgesToCheck = [
-      "beginner",  // First completion
-      "cases_5",   // 5 completions
-      "cases_10",  // 10 completions
-      "cases_25"   // 25 completions
+      "beginner",              // First completion
+      "cases_5",               // 5 completions
+      "cases_10",              // 10 completions
+      "cases_25",              // 25 completions
+      "python_complete",       // Complete 5 Python questions
+      "javascript_complete",   // Complete 5 JavaScript questions
+      "java_complete",         // Complete 5 Java questions
+      "cpp_complete",          // Complete 5 C++ questions
+      "career_map_complete"    // Complete 5 questions in all 4 languages
     ];
 
     const newlyUnlockedBadges = await checkAndUnlockMultipleBadges(
