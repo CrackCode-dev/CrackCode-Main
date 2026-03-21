@@ -2,6 +2,7 @@
 // This hook handles all the API logic for talking to Detective AI
 
 import { useState } from 'react';
+import axios from '../api/axios.js';
 
 export const useAIAssistant = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,25 +24,16 @@ export const useAIAssistant = () => {
     try {
       console.log('🤖 Asking AI Assistant:', question);
 
-      const result = await fetch('/api/ai/assistant', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          question,
-          language,
-          code,
-          problemTitle,
-          problemDescription,
-          lastJudgeResult
-        })
-      });
+      const response = await axios.post('/ai/assistant', {
+        question,
+        language,
+        code,
+        problemTitle,
+        problemDescription,
+        lastJudgeResult
+      }, { withCredentials: true });
 
-      if (!result.ok) {
-        throw new Error(`API error: ${result.status}`);
-      }
-
-      const data = await result.json();
+      const data = response.data;
 
       if (!data.success) {
         throw new Error(data.message || 'Unknown error');

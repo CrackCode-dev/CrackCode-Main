@@ -212,6 +212,10 @@ import progressRoutes from "./src/modules/Career Map/progress/progress.routes.js
 
 const app = express();
 
+// If the app is running behind a proxy/load-balancer (nginx, cloud LB),
+// enable trust proxy so req.secure and x-forwarded-* headers are populated.
+app.set('trust proxy', true);
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
