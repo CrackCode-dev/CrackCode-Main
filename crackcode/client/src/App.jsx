@@ -13,7 +13,7 @@ import Login from "./pages/userauth/Login";
 import ResetPassword from "./pages/userauth/ResetPassword";
 import CareermapMain from "./pages/careermap/CareermapMain";
 import GameProfile from "./pages/gameprofile/gameprofile";
-import UserProfile from "./pages/userprofile/UserProfile";
+import UserProfile from "./pages/userprofile/userprofile";
 import CodeEditorPage from "./pages/codeEditor/CodeEditorPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import CaseLogMainPage from "./pages/caselog/CaseLogMainPage";

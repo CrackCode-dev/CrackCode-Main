@@ -64,6 +64,29 @@ export const AppContextProvider = (props) => {
         getAuthState();   // Then check auth status
     }, [])
 
+    // Listen for solution submissions to refresh user data globally
+    useEffect(() => {
+        if (!isLoggedIn || !backendUrl) return;
+
+        const handleSolutionSubmitted = async (event) => {
+            console.log('👤 Solution submitted - refreshing global user data...', event.detail);
+            try {
+                await getUserData();
+                console.log('✅ User data refreshed');
+            } catch (err) {
+                console.error('❌ Error refreshing user data:', err);
+            }
+        };
+
+        // Add event listener using standard event name (lowercase, no 'on' prefix)
+        window.addEventListener('solutionSubmitted', handleSolutionSubmitted);
+
+        // Cleanup: remove event listener when component unmounts
+        return () => {
+            window.removeEventListener('solutionSubmitted', handleSolutionSubmitted);
+        };
+    }, [isLoggedIn, backendUrl]);
+
     const value = {
         backendUrl,
         isLoggedIn, setIsLoggedIn,

@@ -125,17 +125,17 @@ const GameProfile = () => {
 
 
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-6">
+        <div className="min-h-screen bg-white text-gray-900 flex flex-col items-center justify-center p-6">
 
             <Header />
             {/* Main Content*/}
             <div className="max-w-3xl w-full space-y-10 mt-17">
                 {/* Title*/}
                 <div className="text-center space-y-3">
-                    <h1 className="text-4xl md:text-5xl font-bold text-white">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
                         Choose your Detective Avatar
                     </h1>
-                    <p className="text-gray-300 text-lg">
+                    <p className="text-gray-600 text-lg">
                         Select the avatar that matches your vibe
                     </p>
                 </div>
@@ -150,11 +150,11 @@ const GameProfile = () => {
                                 setUploadedAvatar('');
                             }
                             }
-                            className={`w-30 h-30 rounded-full overflow-hidden bg-gray-900
+                            className={`w-30 h-30 rounded-full overflow-hidden bg-gray-100
                 transition-all duration-300 hover:scale-110
                 ${selectedAvatar === avatar.src
-                                    ? 'ring-2 ring-white scale-110'
-                                    : 'ring-2 ring-gray-700'
+                                    ? 'ring-4 ring-orange-500 scale-110'
+                                    : 'ring-2 ring-gray-300'
 
                                 }`}
                         >
@@ -170,18 +170,18 @@ const GameProfile = () => {
                     {/*Upload Button*/}
                     <button
                         onClick={() => setShowAvatarUpload(true)}
-                        className={`w-30 h-30 rounded-full bg-gray-900 
+                        className={`w-30 h-30 rounded-full bg-gray-100 
                         flex flex-col items-center justify-center
-                        transition-all duration-300 hover:scale-110 hover:bg-gray-700
-                        ring-2 ring-gray-700
-                        ${selectedAvatar === 'uploaded' ? 'ring-2 ring-white scale-110' : ''}`}
+                        transition-all duration-300 hover:scale-110 hover:bg-gray-200
+                        ring-2 ring-gray-300
+                        ${selectedAvatar === 'uploaded' ? 'ring-4 ring-orange-500 scale-110' : ''}`}
                     >
                         {uploadedAvatar ? (
                             <img src={uploadedAvatar} alt="Uploaded Avatar " className='w-full h-full rounded-full object-cover' />
                         ) : (
                             <>
-                                <Upload className='w-5 h-5 text-gray-300' />
-                                <span className="text-xs font-semibold text-gray-300 mt-1">Upload</span>
+                                <Upload className='w-5 h-5 text-gray-600' />
+                                <span className="text-xs font-semibold text-orange-500 mt-1">Upload</span>
                             </>
                         )}
 
@@ -192,13 +192,13 @@ const GameProfile = () => {
 
                 {/*Username Input*/}
                 <div className="max-w-md mx-auto space-y-4">
-                    <p className="text-center text-gray-300">
+                    <p className="text-center text-gray-600">
                         Pick a cool username for the adventure ahead
                     </p>
 
                     <div className="relative ">
                         <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none ">
-                            <CircleUserIcon className='w-7 h-7 text-gray-300' />
+                            <CircleUserIcon className='w-7 h-7 text-gray-400' />
                         </div>
                         <input
                             type="text"
@@ -207,22 +207,22 @@ const GameProfile = () => {
                                 setUsername(e.target.value)
                                 setErrors([]);
                             }}
-                            className={`w-full pl-15 pr-6 py-2.5 bg-gray-800 rounded-full
-                                        text-white  transition-all
-                                        focus:outline-none focus:ring-2 placeholder-gray-300
+                            className={`w-full pl-15 pr-6 py-2.5 bg-gray-50 rounded-full
+                                        text-gray-900 transition-all
+                                        focus:outline-none focus:ring-2 placeholder-gray-400
                                         ${errors.some(err => err.toLowerCase().includes('username'))
-                                    ? 'ring-2 ring-orange-600' // error state
+                                    ? 'ring-2 ring-red-500' // error state
                                     : username.trim() !== ''
-                                        ? 'ring-2 ring-orange-400' //correct user name
-                                        : 'ring-1 ring-white' //empty input
+                                        ? 'ring-2 ring-orange-500' //correct user name
+                                        : 'ring-1 ring-gray-300' //empty input
                                 }`}
                             placeholder="Enter an username" required />
 
                     </div>
 
                     {/*Username availability messages*/}
-                    <p className={`text-sm mt-1 ${checkingUsername ? 'text-white' :
-                        usernameAvailable === false ? 'text-orange-600' :
+                    <p className={`text-sm mt-1 ${checkingUsername ? 'text-gray-600' :
+                        usernameAvailable === false ? 'text-red-600' :
                             usernameAvailable === true ? 'text-green-600' : ''
                         }`}>
                         {checkingUsername
@@ -239,7 +239,7 @@ const GameProfile = () => {
                     {errors.length > 0 && (
                         <div className='space-y-1'>
                             {errors.map((err, index) => (
-                                <p key={index} className='text-orange-600 text-sm text-left ml-4'>{err}</p>
+                                <p key={index} className='text-red-600 text-sm text-left ml-4'>{err}</p>
                             ))}
                         </div>
                     )}

@@ -58,6 +58,8 @@ const UserProfile = () => {
   const [emailModalOpen, setEmailModalOpen] = useState(false);
   const [passwordModalOpen, setPasswordModalOpen] = useState(false);
   const [notificationModalOpen, setNotificationModalOpen] = useState(false);
+  const [deleteAccountModalOpen, setDeleteAccountModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Function to fetch user stats from API
   const fetchUserStats = async () => {
@@ -133,6 +135,32 @@ const UserProfile = () => {
     }
   };
 
+  // Function to delete user account permanently
+  const handleDeleteAccount = async () => {
+    try {
+      setIsDeleting(true);
+      const response = await axios.post(
+        `${backendUrl}/api/user/delete-account`,
+        {},
+        { withCredentials: true, timeout: 5000 }
+      );
+
+      if (response.data.success) {
+        console.log('✅ Account deleted successfully');
+        // Clear auth state and redirect to login
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('❌ Error deleting account:', error.message);
+      alert(`Failed to delete account: ${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsDeleting(false);
+      setDeleteAccountModalOpen(false);
+    }
+  };
+
   // Load user data from authentication context when the component mounts
   useEffect(() => {
     if (userData) {
@@ -155,11 +183,46 @@ const UserProfile = () => {
     }
   }, [isLoggedIn, backendUrl]);
 
+  // Listen for question submission events to refresh statistics and badges
+  useEffect(() => {
+    if (!isLoggedIn || !backendUrl) return;
+
+    const handleSolutionSubmitted = async (event) => {
+      console.log('📊 Solution submitted - refreshing profile stats...', event.detail);
+      try {
+        // Refresh stats concurrently
+        await Promise.all([
+          fetchUserStats(),
+          fetchProgressSummary(),
+          fetchBadgesData()
+        ]);
+        console.log('✅ Profile stats refreshed successfully');
+        console.log('🎯 Language badges updated - check hover tooltips for progress');
+      } catch (err) {
+        console.error('❌ Error refreshing profile stats:', err);
+      }
+    };
+
+    // Add event listener for solution submissions (lowercase event name)
+    window.addEventListener('solutionSubmitted', handleSolutionSubmitted);
+
+    // Cleanup: remove event listener when component unmounts
+    return () => {
+      window.removeEventListener('solutionSubmitted', handleSolutionSubmitted);
+    };
+  }, [backendUrl, isLoggedIn]);
+
   // Function to fetch badges from server
   const fetchBadgesData = async () => {
     try {
       setBadgesLoading(true);
       const badgesData = await fetchBadgeProgress();
+      console.log('📋 Fetched badge progress:', badgesData?.map(b => ({
+        id: b.id,
+        name: b.name,
+        isUnlocked: b.isUnlocked,
+        progress: Math.round(b.progress) + '%'
+      })));
       setBadges(badgesData || []);
     } catch (error) {
       console.error('Error fetching badges:', error);
@@ -446,9 +509,24 @@ const UserProfile = () => {
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
           <div className='flex justify-start'>
-            <Button variant='outline' size='lg' style={{ color: '#ef4444', borderColor: '#ef4444' }}>Delete Account</Button>
+            <Button 
+              variant='outline' 
+              size='lg' 
+              onClick={() => setDeleteAccountModalOpen(true)}
+              style={{ color: '#ef4444', borderColor: '#ef4444' }}>
+              Delete Account
+            </Button>
           </div>
         </div>
+
+        {/* Delete Account Confirmation Modal */}
+        <DeleteAccountModal 
+          isOpen={deleteAccountModalOpen}
+          onClose={() => setDeleteAccountModalOpen(false)}
+          onConfirm={handleDeleteAccount}
+          isDeleting={isDeleting}
+          userName={userStatus.name}
+        />
         </main>
     </div>
   );
@@ -536,5 +614,109 @@ const BadgeCard = ({ badge }) => {
   );
 };
 
+// Delete Account Confirmation Modal Component
+const DeleteAccountModal = ({ isOpen, onClose, onConfirm, isDeleting, userName }) => {
+  const [confirmText, setConfirmText] = React.useState('');
+  const isConfirmValid = confirmText === 'DELETE ACCOUNT';
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onClick={onClose}>
+      <div 
+        className="bg-white rounded-xl p-8 max-w-md w-full mx-4" 
+        style={{ backgroundColor: 'var(--surface)', border: '1px solid var(--border)', color: 'var(--text)' }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="text-3xl">⚠️</div>
+          <h2 className="text-2xl font-bold" style={{ color: '#ef4444' }}>Delete Account</h2>
+        </div>
+
+        {/* Warning Message */}
+        <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', borderLeft: '4px solid #ef4444' }}>
+          <p className="text-sm" style={{ color: 'var(--text)' }}>
+            <strong>This action is permanent and cannot be undone.</strong> All your data, including:
+          </p>
+          <ul className="text-sm mt-2" style={{ color: 'var(--textSec)' }}>
+            <li>• Profile and personal information</li>
+            <li>• Solved problems and progress</li>
+            <li>• Badges and achievements</li>
+            <li>• Messages and activity history</li>
+          </ul>
+          <p className="text-sm mt-3" style={{ color: 'var(--text)' }}>
+            will be <strong>permanently deleted</strong>.
+          </p>
+        </div>
+
+        {/* Confirmation Input */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium mb-2" style={{ color: 'var(--text)' }}>
+            Type <strong>DELETE ACCOUNT</strong> to confirm:
+          </label>
+          <input
+            type="text"
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
+            placeholder="DELETE ACCOUNT"
+            className="w-full px-3 py-2 rounded border text-sm font-mono"
+            style={{
+              backgroundColor: 'var(--surface)',
+              borderColor: confirmText === 'DELETE ACCOUNT' ? '#ef4444' : 'var(--border)',
+              color: 'var(--text)'
+            }}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={onClose}
+            disabled={isDeleting}
+            className="flex-1 px-4 py-2 rounded font-semibold transition-colors"
+            style={{
+              backgroundColor: 'var(--surface2)',
+              border: '1px solid var(--border)',
+              color: 'var(--text)',
+              opacity: isDeleting ? 0.5 : 1,
+              cursor: isDeleting ? 'not-allowed' : 'pointer'
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={!isConfirmValid || isDeleting}
+            className="flex-1 px-4 py-2 rounded font-semibold transition-all flex items-center justify-center gap-2"
+            style={{
+              backgroundColor: isConfirmValid && !isDeleting ? '#ef4444' : '#999',
+              color: 'white',
+              cursor: !isConfirmValid || isDeleting ? 'not-allowed' : 'pointer',
+              opacity: !isConfirmValid || isDeleting ? 0.6 : 1
+            }}
+          >
+            {isDeleting ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Deleting...
+              </>
+            ) : (
+              'Delete Account'
+            )}
+          </button>
+        </div>
+
+        {/* Safety Note */}
+        <p className="text-xs mt-4 text-center" style={{ color: 'var(--textSec)' }}>
+          If you change your mind, this is your last chance to stop.
+        </p>
+      </div>
+    </div>
+  );
+};
 
 export default UserProfile

@@ -74,7 +74,7 @@ const QuestionListPage = () => {
     };
 
     const handleCustomEvent = (event) => {
-      console.log('🎉 Solution submitted event received:', event.detail);
+      console.log('🎉 Solution submitted - refreshing completed status:', event.detail);
       refreshCompleted();
     };
 
@@ -84,13 +84,13 @@ const QuestionListPage = () => {
     // Also listen for window focus
     window.addEventListener('focus', refreshCompleted);
 
-    // Listen for custom event from EditorToolbar when solution is submitted
-    window.addEventListener('onSolutionSubmitted', handleCustomEvent);
+    // Listen for custom event from EditorToolbar when solution is submitted (use standard event name)
+    window.addEventListener('solutionSubmitted', handleCustomEvent);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('focus', refreshCompleted);
-      window.removeEventListener('onSolutionSubmitted', handleCustomEvent);
+      window.removeEventListener('solutionSubmitted', handleCustomEvent);
     };
   }, []);
 
@@ -117,7 +117,7 @@ const QuestionListPage = () => {
       <Header variant="empty" />
 
       <main className="flex-1 px-6 sm:px-10 py-10">
-        <div className="max-w-2xl mx-auto pt-12">
+        <div className="max-w-2xl mx-auto pt-10">
 
           <button
             onClick={() => navigate(`/learn/${trackId}`)}
