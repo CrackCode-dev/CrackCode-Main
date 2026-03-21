@@ -1,11 +1,35 @@
 import React from 'react';
 import ErrorConceptCard from './ErrorConceptCard';
 
-// Safely convert any value (including objects) to a displayable string
+/**
+ * Safely convert any value (including booleans and objects) to a displayable string.
+ * Normalizes cross-language boolean representations for consistent display.
+ */
 const toStr = (val) => {
   if (val === null || val === undefined) return '';
+  if (typeof val === 'boolean') return val ? 'true' : 'false';
   if (typeof val === 'object') return JSON.stringify(val);
   return String(val);
+};
+
+/**
+ * Detect if a string value represents a boolean for display styling.
+ */
+const isBooleanStr = (val) => {
+  if (typeof val === 'boolean') return true;
+  if (typeof val === 'string') {
+    const lower = val.trim().toLowerCase();
+    return lower === 'true' || lower === 'false';
+  }
+  return false;
+};
+
+/**
+ * Get a display-friendly color class based on value type.
+ */
+const getValueColorClass = (val) => {
+  if (isBooleanStr(val)) return 'text-amber-300';
+  return 'text-gray-400';
 };
 
 const TestCaseResult = ({ result }) => {
@@ -72,10 +96,28 @@ const TestCaseResult = ({ result }) => {
 
       {result.status === 'passed' && result.details && (
         <div className="text-gray-400 text-xs mt-2 pl-8 space-y-1">
-          {result.details.input != null && <div>Input: {toStr(result.details.input)}</div>}
-          {result.details.expected != null && <div>Expected: {toStr(result.details.expected)}</div>}
+          {result.details.input != null && (
+            <div>Input: <span className="text-cyan-300">{toStr(result.details.input)}</span></div>
+          )}
+          {result.details.expected != null && (
+            <div>Expected: <span className={getValueColorClass(result.details.expected)}>{toStr(result.details.expected)}</span></div>
+          )}
           {result.details.time && <div>Execution Time: {result.details.time}s</div>}
           {result.details.memory && <div>Memory: {result.details.memory}KB</div>}
+        </div>
+      )}
+
+      {/* Failed test - show expected vs actual with type-aware coloring */}
+      {result.status === 'failed' && result.expected != null && result.actual != null && (
+        <div className="bg-[#1a1a1a] rounded p-3 mt-2 border border-gray-700/50 text-xs font-mono space-y-1">
+          <div>
+            <span className="text-gray-500">Expected: </span>
+            <span className={getValueColorClass(result.expected)}>{toStr(result.expected)}</span>
+          </div>
+          <div>
+            <span className="text-gray-500">Actual:   </span>
+            <span className="text-red-300">{toStr(result.actual)}</span>
+          </div>
         </div>
       )}
 

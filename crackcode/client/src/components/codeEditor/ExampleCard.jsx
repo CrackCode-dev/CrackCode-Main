@@ -1,15 +1,31 @@
 import React from 'react';
 
+/**
+ * Format a value for display in example cards.
+ * Handles booleans, objects, arrays, numbers, and strings.
+ */
+const formatDisplay = (value) => {
+  if (value === null || value === undefined) return '';
+  if (typeof value === 'boolean') return value ? 'true' : 'false';
+  if (typeof value === 'object') return JSON.stringify(value, null, 2);
+  return String(value);
+};
+
+/**
+ * Determine styling class based on the output value type.
+ */
+const getOutputColorClass = (value) => {
+  if (typeof value === 'boolean') return 'text-amber-300';
+  if (typeof value === 'number') return 'text-purple-300';
+  return 'text-emerald-300';
+};
+
 const ExampleCard = ({ example }) => {
   if (!example) return null;
 
-  const inputDisplay = typeof example.input === 'object'
-    ? JSON.stringify(example.input, null, 2)
-    : example.input;
-
-  const outputDisplay = typeof example.output === 'object'
-    ? JSON.stringify(example.output, null, 2)
-    : example.output;
+  const inputDisplay = formatDisplay(example.input);
+  const outputDisplay = formatDisplay(example.output);
+  const outputColor = getOutputColorClass(example.output);
 
   return (
     <div className="rounded-xl border border-gray-800 bg-[#161616] overflow-hidden">
@@ -34,8 +50,8 @@ const ExampleCard = ({ example }) => {
         {/* Output */}
         <div>
           <p className="text-[10px] text-gray-600 uppercase tracking-widest mb-1.5">Output</p>
-          <pre className="bg-[#0d0d0d] rounded-lg px-3 py-2.5 text-xs text-emerald-300 font-mono
-                          border border-gray-800/60 whitespace-pre-wrap overflow-x-auto">
+          <pre className={`bg-[#0d0d0d] rounded-lg px-3 py-2.5 text-xs font-mono
+                          border border-gray-800/60 whitespace-pre-wrap overflow-x-auto ${outputColor}`}>
             {outputDisplay}
           </pre>
         </div>

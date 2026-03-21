@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../../context/theme/ThemeContext';
 import { AppContent } from '../../context/userauth/authenticationContext';
-import { Trophy, TrendingUp, ExternalLink } from 'lucide-react';
+import { Trophy, TrendingUp, ExternalLink, Crown } from 'lucide-react';
 import Button from '../ui/Button';
 import { getGlobalLeaderboard, getMyRank } from '../../services/api/leaderboardService';
 
@@ -146,7 +146,7 @@ export default function LeaderboardCard() {
                     color: player.position === 1 ? '#FFD700' : player.position === 2 ? '#C0C0C0' : '#CD7F32'
                   }}
                 >
-                  {player.position === 1 ? '👑' : `#${player.position}`}
+                  {player.position === 1 ? <Crown className='w-5 h-5' /> : `#${player.position}`}
                 </span>
                 <div className='min-w-0 flex-1'>
                   <p className='text-sm font-semibold truncate'>{player.username || 'Unknown'}</p>

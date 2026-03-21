@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { AlertCircle, MessageSquare, Clock, BarChart3 } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
 import { cardHoverEffects, animationConfig } from './hoverEffects'
+import CodeEditorPreview from '../../assets/videos/codeEditor.mp4'
 
 export default function AITechSection() {
     const features = [
@@ -107,7 +108,9 @@ export default function AITechSection() {
                     >
                         {/* Placeholder: removed heavy GIF/video for performance. Add media later. */}
                         <div className='w-full aspect-video rounded-2xl overflow-hidden shadow-lg flex items-center justify-center' style={{ background: landingTheme === 'light' ? 'rgba(0,0,0,0.02)' : vars.cardBgDark, border: `1px solid ${vars.rim}` }}>
-                            {/* Intentionally left empty for future GIF/video */}
+                            <video autoPlay loop muted className='w-full h-full object-cover'>
+                                <source src={CodeEditorPreview} type="video/mp4" />
+                            </video>
                         </div>
                     </motion.div>
                 </div>

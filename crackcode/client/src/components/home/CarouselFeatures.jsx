@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTheme } from '../../context/theme/ThemeContext';
-import { Zap, Code, Trophy, Layers } from 'lucide-react';
+import { ShoppingCart, Code, Trophy, Layers } from 'lucide-react';
 import Button from '../ui/Button';
 
 export default function CarouselFeatures() {
@@ -23,9 +23,9 @@ export default function CarouselFeatures() {
       color: '#0992C2'
     },
     {
-      icon: Zap,
-      title: 'Instant Feedback',
-      description: 'Get real-time feedback and suggestions on your solutions',
+      icon: ShoppingCart,
+      title: 'Store',
+      description: 'Spend your earned tokens, xp on themes, avatars, and exclusive rewards',
       color: '#FFB33F'
     },
     {
@@ -133,27 +133,6 @@ export default function CarouselFeatures() {
                   {Feature.description}
                 </p>
               </div>
-
-              {/* CTA Button - Premium */}
-              {/* <motion.button
-                className='mt-4 px-6 py-2 rounded-3xl font-semibold text-sm transition-all duration-300 flex items-center gap-2 shrink-0'
-                style={{
-                  background: Feature.color,
-                  color: '#fff'
-                }}
-                whileHover={{ scale: 1.05, boxShadow: `0 8px 20px ${Feature.color}40` }}
-                whileTap={{ scale: 0.95 }}
-              >
-                Explore
-                <svg className='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
-                  <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-                </svg>
-              </motion.button> */}
-              <Button style={{
-                background: Feature.color,
-                borderColor: Feature.color}}>
-                Explore
-              </Button>
             </div>
           </motion.div>
         </AnimatePresence>

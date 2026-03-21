@@ -121,7 +121,7 @@ const CareerChapterSelectionPage = () => {
         <div className="min-h-screen bg-(--bg)">
             <Header variant="empty" />
 
-            <main className="pt-10 px-6 sm:px-10 py-6 pb-20">
+            <main className="pt-10 px-6 sm:px-10 py-6 pb-20 mt-20">
                 <div className="max-w-4xl mx-auto">
 
                     {/* Header — title from career card */}

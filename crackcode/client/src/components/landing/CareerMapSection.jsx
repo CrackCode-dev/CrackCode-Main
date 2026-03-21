@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { MapPin, Compass, Target, Users, TrendingUp, Code2 } from 'lucide-react'
 import { useLandingTheme, resolveLandingVars } from '../../pages/landing/LandingThemeContext'
 import { cardHoverEffects, animationConfig } from './hoverEffects'
+import CareerPath from '../../assets/videos/careerPath.mp4'
 
 export default function CareerMapSection() {
     const careerPaths = [
@@ -149,15 +150,16 @@ export default function CareerMapSection() {
                         variants={fadeInUp}
                         className='relative hidden lg:flex items-center justify-center order-2 lg:order-1'
                     >
-                        <div className='w-full h-full min-h-[400px] rounded-3xl overflow-hidden shadow-2xl'>
+                        <div className='w-full h-full min-h-100 rounded-3xl overflow-hidden shadow-2xl'>
                             <div className='w-full h-full flex items-center justify-center relative' style={{ background: `linear-gradient(135deg, ${vars.btnStart}, ${vars.btnEnd})` }}>
-                                <motion.div
-                                    animate={{ scale: [1, 1.1, 1] }}
-                                    transition={{ duration: 3, repeat: Infinity }}
-                                    className='text-6xl'
-                                >
-                                    📚
-                                </motion.div>
+                                <video
+                                    src={CareerPath}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    className='w-full h-full object-cover'
+                                />
+
                             </div>
                         </div>
                     </motion.div>

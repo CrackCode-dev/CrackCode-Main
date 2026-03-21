@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useContext } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
-import { Calendar, Zap, TrendingUp } from 'lucide-react';
+import { Calendar, Flame } from 'lucide-react';
 import axios from 'axios';
 import { AppContent } from '../../context/userauth/authenticationContext';
 
@@ -209,6 +209,7 @@ export default function StreakCalendar() {
         if ((activityData && activityData[key]) > 0) trailing += 1;
         else break;
       }
+    // eslint-disable-next-line no-unused-vars
     } catch (e) {
       trailing = 0;
     }
@@ -252,7 +253,12 @@ export default function StreakCalendar() {
               id='year-select'
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className='bg-transparent border rounded px-2 py-1 text-sm'
+              className='border rounded px-2 py-1 text-sm'
+              style={{
+                background: 'var(--surface)',
+                color: 'var(--text)',
+                borderColor: 'var(--border)'
+              }}
               aria-label='Select year'
             >
               {yearsList.map((y) => (
@@ -439,7 +445,7 @@ export default function StreakCalendar() {
           }}
         >
           <p className='text-base font-bold mb-1'>
-            🔥 Keep up the amazing work!
+            <Flame className="inline-block mr-2" color='var(--brand)' /> Keep up the amazing work!
           </p>
           <p style={{ color: 'var(--textSec)' }} className='text-sm'>
             You're on a {stats.currentStreak}-day streak! Maintain consistency to unlock elite badges.

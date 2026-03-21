@@ -1,6 +1,6 @@
 import { memo, useCallback, useMemo } from "react";
 import Footer from "../../components/common/Footer";
-import HQBtn from "../../components/common/HQBtn";
+import Header from "../../components/common/Header";
 import ContentCard from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import { Lock, ArrowRight } from "lucide-react";
@@ -30,16 +30,14 @@ function CareermapMain() {
   return (
     <div className="min-h-screen bg-(--bg) text-(--text) flex flex-col pt-8 ">
       {/*HQ Button */}
-      <div className="absolute top-6 left-6 z-30">
-        <HQBtn />
-      </div>
+      <Header variant="empty"/>
 
       {/* Header Section */}
-      <header className="text-center px-8 py-12  mt-20">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-4 leading-tight">
+      <header className="text-center px-8 py-12 mt-20">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
           Choose the best career path that suits you!
         </h1>
-        <p className="text-(--muted) text-lg md:text-xl">
+        <p className="text-(--muted) text-lg">
           We stand beside you through out your entire journey
         </p>
       </header>

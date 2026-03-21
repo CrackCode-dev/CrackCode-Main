@@ -421,7 +421,7 @@ const UserProfile = () => {
                 <div className="text-sm" style={{ color: 'var(--textSec)' }}>{profileSettings.email || "Loading..."}</div>
               </div>
               <Button 
-                variant='outline' 
+                variant='secondary' 
                 size='sm' 
                 onClick={() => setEmailModalOpen(true)}
                 style={{ color: 'var(--brand)' }}>
@@ -436,7 +436,7 @@ const UserProfile = () => {
                 <div className="text-sm" style={{ color: 'var(--textSec)' }}>••••••••</div>
               </div>
               <Button 
-                variant='outline' 
+                variant='secondary' 
                 size='sm' 
                 onClick={() => setPasswordModalOpen(true)}
                 style={{ color: 'var(--brand)' }}>
@@ -455,7 +455,7 @@ const UserProfile = () => {
                 </div>
               </div>
               <Button 
-                variant='outline' 
+                variant='secondary' 
                 size='sm' 
                 onClick={() => setNotificationModalOpen(true)}
                 style={{ color: 'var(--brand)' }}>
