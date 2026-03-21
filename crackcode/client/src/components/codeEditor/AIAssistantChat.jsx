@@ -1,32 +1,8 @@
 import React, { useRef, useEffect } from 'react';
 import { useEditor } from '../../context/codeEditor/EditorContext';
 
-const getAutoReply = (userMsg, testResults) => {
-  const messageLower = userMsg.toLowerCase();
-
-  if (messageLower.includes('hint') || messageLower.includes('help')) {
-    return "🔍 Detective hint: focus on the edge cases —> empty inputs and boundary values are where most suspects hide.";
-  }
-  if (messageLower.includes('error') || messageLower.includes('fail')) {
-    const failed = testResults?.filter(r => r.status === 'failed') || [];
-    if (failed.length > 0 && failed[0].error) {
-      const errorMessage = failed[0].error.substring(0, 280);
-      return `🕵️ The evidence points here:\n\n\`\`\`\n${errorMessage}\n\`\`\`\n\nCheck the line number above carefully.`;
-    }
-    return "🕵️ No errors on record yet. Run your code first, then I can analyse the evidence.";
-  }
-  if (messageLower.includes('time') || messageLower.includes('complexity') || messageLower.includes('big o')) {
-    return "⏱ For optimal performance, aim for O(n) or O(n log n). Nested loops create O(n²) complexity — a red flag in most cases.";
-  }
-  if (messageLower.includes('loop') || messageLower.includes('iterate')) {
-    return "🔄 Make sure your loop bounds are correct and you're not going off-index. Off-by-one errors are the most common crime scene.";
-  }
-  return "🤖 I'm analysing the case file… What specific part of the problem would you like me to investigate?";
-};
-
-
 const AIAssistantChat = () => {
-  const { aiMessages, setAiMessages, aiInput, setAiInput, isAiTyping, setIsAiTyping, testResults } = useEditor();
+  const { aiMessages, setAiMessages, aiInput, setAiInput, isAiTyping, setIsAiTyping, testResults, code, language } = useEditor();
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -34,7 +10,7 @@ const AIAssistantChat = () => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [aiMessages, isAiTyping]);
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const text = aiInput.trim();
     if (!text) return;
 
@@ -43,13 +19,58 @@ const AIAssistantChat = () => {
     setAiInput('');
     setIsAiTyping(true);
 
-    // Wait 0.9 to 1.5 seconds before showing AI response (feels more natural)
-    const randomDelay = 900 + Math.random() * 600;
-    setTimeout(() => {
-      const replyText = getAutoReply(text, testResults);
+    try {
+      console.log('📤 Sending to /api/ai/assistant:', {
+        question: text,
+        language: language || 'python',
+        code: code ? code.substring(0, 100) : '(empty)',
+        testResults: testResults?.length || 0
+      });
+
+      // Call the real AI API endpoint with editor context
+      const response = await fetch('/api/ai/assistant', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          question: text,
+          language: language || 'python',
+          code: code || '',
+          problemTitle: '',
+          problemDescription: '',
+          lastJudgeResult: testResults?.[0] || null
+        })
+      });
+
+      console.log('📥 Response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('❌ API error:', response.status, errorText);
+        throw new Error(`API error: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ API response:', data);
+
+      if (!data.success) {
+        throw new Error(data.message || 'Unknown error');
+      }
+
+      // Get the reply from the API response
+      let replyText = data.data?.reply || 'Assistant unavailable.';
+      
+      // Format with detective emoji
+      replyText = `🕵️ ${replyText}`;
+
       setAiMessages(prev => [...prev, { role: 'assistant', text: replyText, id: Date.now() + 1 }]);
+    } catch (error) {
+      console.error('❌ AI Assistant error:', error);
+      const errorReply = `🕵️ Error: ${error.message}`;
+      setAiMessages(prev => [...prev, { role: 'assistant', text: errorReply, id: Date.now() + 1 }]);
+    } finally {
       setIsAiTyping(false);
-    }, randomDelay);
+    }
   };
 
   const handleKeyDown = (e) => {

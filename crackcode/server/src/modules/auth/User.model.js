@@ -2,10 +2,9 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
-    // ═══════════════════════════════════════════════════════════
+   
     // AUTHENTICATION & PROFILE
-    // ═══════════════════════════════════════════════════════════
-
+    
     name: {
       type: String,
       required: true,
@@ -50,10 +49,8 @@ const userSchema = new mongoose.Schema(
       default: "",
       maxlength: 500,
     },
-
-    // ═══════════════════════════════════════════════════════════
+ 
     // VERIFICATION & SECURITY
-    // ═══════════════════════════════════════════════════════════
 
     isAccountVerified: {
       type: Boolean,
@@ -86,9 +83,8 @@ const userSchema = new mongoose.Schema(
       default: "active",
     },
 
-    // ═══════════════════════════════════════════════════════════
+  
     // GAME PROFILE
-    // ═══════════════════════════════════════════════════════════
 
     username: {
       type: String,
@@ -106,12 +102,6 @@ const userSchema = new mongoose.Schema(
       default: 0,
       min: 0,
       max: 100,
-    },
-
-    xp: {
-      type: Number,
-      default: 0,
-      min: 0,
     },
 
     totalXP: {
@@ -144,18 +134,34 @@ const userSchema = new mongoose.Schema(
       min: 0,
     },
 
-    // ═══════════════════════════════════════════════════════════
+    // COMPLETED QUESTIONS TRACKING
+    completedQuestionIds: [
+      {
+        type: String,
+      }
+    ],
+
+    completedQuestions: [
+      {
+        questionId: String,
+        completedAt: {
+          type: Date,
+          default: Date.now,
+        },
+        language: String,
+        xpAwarded: Number,
+        tokensAwarded: Number,
+      }
+    ],
+
     // ACTIVITY TRACKING
-    // ═══════════════════════════════════════════════════════════
 
     lastActive: {
       type: Date,
       default: Date.now,
     },
-
-    // ═══════════════════════════════════════════════════════════
+ 
     // ACCOUNT SETTINGS
-    // ═══════════════════════════════════════════════════════════
 
     emailSettings: {
       notifications: {
@@ -200,10 +206,8 @@ const userSchema = new mongoose.Schema(
       enum: ["public", "private"],
       default: "public",
     },
-
-    // ═══════════════════════════════════════════════════════════
+ 
     // ACHIEVEMENTS & BADGES
-    // ═══════════════════════════════════════════════════════════
 
     achievements: [
       {
@@ -218,10 +222,52 @@ const userSchema = new mongoose.Schema(
       },
     ],
 
+    //  BADGES SYSTEM 
+    unlockedBadges: [
+      {
+        type: String,
+        enum: [
+          'welcome',
+          'beginner',
+          'cases_5',
+          'cases_10',
+          'cases_25',
+          'top_3_leaderboard',
+          'python_complete',
+          'cpp_complete',
+          'java_complete',
+          'javascript_complete',
+          'career_map_complete'
+        ]
+      }
+    ],
+
+    // SOLVED CHALLENGES TRACKING
+    solvedChallengeIds: [
+      {
+        type: String,
+        default: []
+      }
+    ],
+
     badgeCount: {
       type: Number,
       default: 0,
       min: 0,
+    },
+
+    //  CAREER TRACKING 
+    completedCareers: [
+      {
+        type: String,
+        enum: ['MLEngineer', 'DataScientist', 'SoftwareEngineer']
+      }
+    ],
+
+    leaderboardPosition: {
+      type: Number,
+      default: null,
+      min: 1
     },
   },
   { timestamps: true }
@@ -229,18 +275,16 @@ const userSchema = new mongoose.Schema(
 
 );
 
-// ═══════════════════════════════════════════════════════════
 // DATABASE INDEXES
-// ═══════════════════════════════════════════════════════════
 
 // Frequently queried fields
-userSchema.index({ email: 1 });
-userSchema.index({ username: 1 });
+// email and username have `unique: true` at the field level —
+// avoid duplicate schema-level index declarations.
 
 // Leaderboard queries
 userSchema.index({ rank: 1, totalXP: -1 });
 userSchema.index({ totalXP: -1 });
-userSchema.index({ level: -1, xp: -1 });
+userSchema.index({ level: -1, totalXP: -1 });
 
 // Activity tracking
 userSchema.index({ lastActive: -1 });

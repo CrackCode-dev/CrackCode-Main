@@ -1,6 +1,5 @@
 // React hooks
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 // API functions to fetch leaderboard data
 import { fetchGlobalLeaderboard, fetchMyRank } from "../../api/leaderboard";
@@ -8,15 +7,12 @@ import { fetchGlobalLeaderboard, fetchMyRank } from "../../api/leaderboard";
 // UI Components
 import TopThree from "../../components/leaderboard/TopThree";
 import LeaderboardTable from "../../components/leaderboard/leaderboardTable";
-import Header from "../../components/common/Header";
-import Footer from "../../components/common/Footer";
 import Button from "../../components/ui/Button";
-import ThemeSwitch from "../../components/common/ThemeSwitcher";
+import HQBtn from "../../components/common/HQBtn";
+// Theme chooser intentionally omitted on this page
 
 // Leaderboard page component
 const LeaderboardPage = () => {
-
-  const navigate = useNavigate();
 
   const [leaders, setLeaders] = useState([]);
   const [myRank, setMyRank] = useState(null);
@@ -92,39 +88,13 @@ const LeaderboardPage = () => {
       }}
     >
 
-      <Header />
+      {/* Navbar removed for leaderboard page */}
 
-      {/* Theme Switch */}
-      <div className="absolute top-6 right-10 z-50">
-        <ThemeSwitch />
+      <div className="absolute top-6 left-6">
+        <HQBtn />
       </div>
 
-      {/* HQ button */}
-      <button
-        onClick={() => navigate("/hq")}
-        style={{
-          position: "fixed",
-          top: "80px",
-          left: "20px",
-          zIndex: 50,
-          display: "flex",
-          alignItems: "center",
-          gap: "6px",
-          padding: "8px 14px",
-          borderRadius: "10px",
-          border: "1.5px solid var(--brand)",
-          background: "transparent",
-          color: "var(--brand)",
-          fontSize: "13px",
-          fontWeight: "700",
-          cursor: "pointer",
-          letterSpacing: "0.5px",
-        }}
-      >
-        🏠 HQ
-      </button>
-
-      <main className="flex-1 px-10 pb-16 pt-24">
+      <main className="flex-1 px-10 pb-16 pt-6">
 
         {/* Filter buttons */}
         <div className="flex justify-end max-w-5xl mx-auto mb-8">
@@ -267,7 +237,7 @@ const LeaderboardPage = () => {
 
       </main>
 
-      <Footer />
+      {/* Footer removed for this page */}
 
     </div>
   );

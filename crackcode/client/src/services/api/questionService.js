@@ -136,6 +136,12 @@ export const fetchProblemsByTopic = async (topic) => {
   }
 };
 
+// Helper function to convert escaped newline strings to actual newlines
+const formatDescription = (text) => {
+  if (!text) return '';
+  return text.replace(/\\n/g, '\n');
+};
+
 // converts a MongoDB problem object into the shape the UI expects
 export const transformProblemData = (problem, language = 'python') => {
   if (!problem) return null;
@@ -146,7 +152,7 @@ export const transformProblemData = (problem, language = 'python') => {
 
   // Prefer variant's themed narrative; fall back to the original generic text
   const title       = variant.narrative?.title       || problem.original?.title;
-  const description = variant.narrative?.description || problem.original?.description;
+  const description = formatDescription(variant.narrative?.description || problem.original?.description);
 
   const extMap = { python: 'py', javascript: 'js', java: 'java', cpp: 'cpp' };
 
@@ -160,7 +166,7 @@ export const transformProblemData = (problem, language = 'python') => {
     topic: problem.topic,
     fileName: `investigation.${extMap[language] || 'py'}`,
     objectives: [],
-    clue: 'Focus on edge cases and constraints',
+    clue: formatDescription(problem.story?.clue || 'Focus on edge cases and constraints'),
     example: problem.examples?.[0] || {},
     starterCode: {
       python: problem.variants?.find((v) => v.language === 'python')?.starterCode || '',
@@ -169,7 +175,7 @@ export const transformProblemData = (problem, language = 'python') => {
       cpp: problem.variants?.find((v) => v.language === 'cpp')?.starterCode || '',
     },
     testCases: problem.test_cases || [],
-    constraints: problem.constraints || [],
+    constraints: (problem.constraints || []).map(c => typeof c === 'string' ? formatDescription(c) : c),
     story: problem.story || {},
     variant: variant,
   };

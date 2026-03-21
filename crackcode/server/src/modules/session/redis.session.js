@@ -1,4 +1,5 @@
 import redisClient from '../leaderboard/redis.config.js'
+import logger from '../../utils/logger.js'
 
 //  Key Helpers 
 const sessionKey = (sessionId) => `session:${sessionId}`
@@ -45,7 +46,7 @@ export const cacheSession = async (sessionId, payload, ttlSeconds) => {
     }
     return true
   } catch (err) {
-    console.warn(`[Redis] cacheSession failed: ${err?.message || err}`)
+    logger.warn(`[Redis] cacheSession failed: ${err?.message || err}`)
     return false
   }
 }
@@ -71,7 +72,7 @@ export const getCachedSession = async (sessionId) => {
     }
   } catch (err) {
     // Redis unavailable — caller will fallback to MongoDB
-    console.warn(`[Redis] getCachedSession failed (will use MongoDB): ${err?.message || err}`)
+    logger.warn(`[Redis] getCachedSession failed (will use MongoDB): ${err?.message || err}`)
     return null
   }
 }
@@ -88,7 +89,7 @@ export const deleteCachedSession = async (sessionId) => {
     const deleted = await redisClient.del(key)
     return deleted > 0
   } catch (err) {
-    console.warn(`[Redis] deleteCachedSession failed: ${err?.message || err}`)
+    logger.warn(`[Redis] deleteCachedSession failed: ${err?.message || err}`)
     return false
   }
 }
@@ -117,7 +118,7 @@ export const addUserSession = async (userId, sessionId, ttlSeconds = null) => {
     
     return true
   } catch (err) {
-    console.warn(`[Redis] addUserSession failed: ${err?.message || err}`)
+    logger.warn(`[Redis] addUserSession failed: ${err?.message || err}`)
     return false
   }
 }
@@ -135,7 +136,7 @@ export const removeUserSession = async (userId, sessionId) => {
     const removed = await redisClient.sRem(key, sessionId)
     return removed > 0
   } catch (err) {
-    console.warn(`[Redis] removeUserSession failed: ${err?.message || err}`)
+    logger.warn(`[Redis] removeUserSession failed: ${err?.message || err}`)
     return false
   }
 }
@@ -154,7 +155,7 @@ export const getUserSessionIds = async (userId) => {
     const members = await redisClient.sMembers(key)
     return Array.isArray(members) ? members : []
   } catch (err) {
-    console.warn(`[Redis] getUserSessionIds failed (will use MongoDB): ${err?.message || err}`)
+    logger.warn(`[Redis] getUserSessionIds failed (will use MongoDB): ${err?.message || err}`)
     return []
   }
 }
@@ -199,7 +200,7 @@ export const deleteAllUserSessionCache = async (userId) => {
 
     return removed
   } catch (err) {
-    console.warn(`[Redis] deleteAllUserSessionCache failed: ${err?.message || err}`)
+    logger.warn(`[Redis] deleteAllUserSessionCache failed: ${err?.message || err}`)
     return 0
   }
 }

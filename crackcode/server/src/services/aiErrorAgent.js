@@ -1,36 +1,9 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { generateCacheKey, getFromCache, saveToCache } from './errorCache.js';
 import { buildSystemInstruction, buildAnalysisPrompt } from './promptBuilder.js';
-
-// set ENABLE_AI_AGENT=true in .env to turn on AI error analysis
-
-let geminiModel = null;
-
-const getGeminiModel = () => {
-  // return the existing model if already created
-  if (geminiModel) return geminiModel;
-
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error('❌ GEMINI_API_KEY is missing from .env file!');
-    throw new Error('GEMINI_API_KEY is missing from .env file');
-  }
-
-  console.log(`✓ GEMINI_API_KEY found (length: ${apiKey.length} chars)`);
-
-  const genAI = new GoogleGenerativeAI(apiKey);
-  geminiModel = genAI.getGenerativeModel({
-    model: 'gemini-2.0-flash',
-    systemInstruction: buildSystemInstruction(),
-    generationConfig: {
-      temperature: 0.4,     // lower = more consistent answers
-      maxOutputTokens: 600, // limit reply length to save quota
-    },
-  });
-
-  console.log('✓ Gemini model initialized successfully');
-  return geminiModel;
-};
+import { aiConfig } from './aiConfig.js';
+import { checkRateLimit } from './aiRateLimiter.js';
+import { getGeminiModel } from './aiModel.js';
+import { safeParseJSON } from './aiJson.js';
 
 // figure out what kind of error it is (NameError, TypeError, etc.)
 export const classifyErrorType = (testResult) => {
@@ -51,52 +24,48 @@ export const classifyErrorType = (testResult) => {
   return 'Runtime Error';
 };
 
-// pull the JSON from Gemini's reply (it sometimes wraps it in a code block)
-const safeParseJSON = (rawText) => {
-  try {
-    // first try direct JSON parse
-    return JSON.parse(rawText);
-  } catch {
-    // try to find JSON inside code blocks
-    const jsonBlockMatch = rawText.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (jsonBlockMatch) {
-      try {
-        return JSON.parse(jsonBlockMatch[1]);
-      } catch {
-        console.log('Failed to parse JSON from code block');
-      }
-    }
-    
-    // try to find JSON object in the text
-    const jsonMatch = rawText.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      try {
-        return JSON.parse(jsonMatch[0]);
-      } catch {
-        console.log('Failed to parse JSON object from text');
-      }
-    }
-    
-    return null;
-  }
-};
-
 // main function — sends failed test + code to Gemini and returns hints
-export const analyseError = async ({ code, language, testResult, previousErrors = [] }) => {
+export const analyseError = async ({ userId, sessionId, code, language, testResult, previousErrors = [] }) => {
 
-  // skip if AI is turned off in .env
-  const aiEnabled = process.env.ENABLE_AI_AGENT === 'true';
-  console.log(`AI Agent Status: ENABLE_AI_AGENT=${process.env.ENABLE_AI_AGENT}, Enabled=${aiEnabled}`);
-  
-  if (!aiEnabled) {
-    console.log('AI Agent: disabled in .env (ENABLE_AI_AGENT !== "true")');
+  // Check if AI is enabled in .env via new config system
+  if (!aiConfig.enabled || !aiConfig.errorDiagnosisEnabled) {
+    console.log(`AI Error Diagnosis: disabled (ENABLE_AI_AGENT=${process.env.ENABLE_AI_AGENT}, ENABLE_AI_ERROR_DIAGNOSIS=${process.env.ENABLE_AI_ERROR_DIAGNOSIS})`);
     return null;
   }
 
   // only run for failed tests
   if (testResult.status !== 'failed') {
-    console.log('AI Agent: skipping non-failed test');
+    console.log('AI Error Diagnosis: skipping non-failed test');
     return null;
+  }
+
+  // Check rate limit (user can get 8 diagnoses per minute)
+  const userKey = userId || sessionId || 'anonymous';
+  const rate = checkRateLimit({
+    userKey,
+    feature: 'error_diagnosis',
+    limitPerMinute: aiConfig.errorDiagnosisLimitPerMinute,
+  });
+
+  if (!rate.allowed) {
+    console.log(`⚠️  Error diagnosis rate limit hit for ${userKey}: ${rate.used}/${aiConfig.errorDiagnosisLimitPerMinute}`);
+    return {
+      errorType: 'Rate Limit',
+      simplifiedMessage: 'Officer, you have used the AI diagnosis too many times in one minute.',
+      whatWentWrong: 'This is a safety limit for testing so the AI service does not get spammed.',
+      affectedLines: [],
+      actionableSteps: [
+        'Step 1: Wait a few seconds.',
+        'Step 2: Fix one thing before running again.',
+        'Step 3: Re-run after the minute window resets.'
+      ],
+      conceptTitle: 'Rate Limiting',
+      conceptLesson: 'Think of it like a queue at a help desk. Too many requests at once means you need to wait your turn.',
+      severity: 'info',
+      rateLimited: true,
+      remaining: rate.remaining,
+      resetAt: rate.resetAt,
+    };
   }
 
   // build the error description we will send to Gemini
@@ -109,13 +78,17 @@ export const analyseError = async ({ code, language, testResult, previousErrors 
   const cached = getFromCache(cacheKey);
 
   if (cached) {
-    console.log('AI Agent: returning cached result');
+    console.log('AI Error Diagnosis: returning cached result');
     return cached;
   }
 
   // call Gemini and get the analysis
   try {
-    const model = getGeminiModel();
+    const model = getGeminiModel({
+      modelName: aiConfig.model,
+      systemInstruction: buildSystemInstruction(),
+      temperature: 0.4,
+    });
 
     const prompt = buildAnalysisPrompt({
       code,
@@ -127,34 +100,31 @@ export const analyseError = async ({ code, language, testResult, previousErrors 
       previousErrors,
     });
 
-    console.log(`AI Agent: calling Gemini for ${errorType} in ${language}...`);
+    console.log(`→ Calling Gemini for error diagnosis: ${errorType} in ${language}...`);
     const response = await model.generateContent(prompt);
     const rawText  = response.response.text();
 
-    console.log(`AI Agent: Gemini response length: ${rawText.length} chars`);
-    console.log(`AI Agent: Raw response (first 200 chars): ${rawText.substring(0, 200)}`);
+    console.log(`✓ Gemini response length: ${rawText.length} chars`);
 
     // parse the JSON that Gemini returned
     const analysis = safeParseJSON(rawText);
 
     if (!analysis) {
-      console.warn(`AI Agent: Failed to parse JSON from Gemini response for ${errorType}`);
-      console.warn(`AI Agent: Raw text: ${rawText.substring(0, 500)}`);
+      console.warn(`⚠️  Failed to parse JSON from Gemini response for ${errorType}`);
       return null;
     }
 
-    console.log(`AI Agent: Successfully parsed analysis for ${errorType}`);
+    console.log(`✓ Successfully parsed analysis for ${errorType}`);
     
     // save so the same error doesn't need another API call
     saveToCache(cacheKey, analysis);
-    console.log(`AI Agent: Cached result for ${errorType}`);
+    console.log(`✓ Cached result for ${errorType}`);
 
     return analysis;
 
   } catch (error) {
     // if Gemini fails, the app still works — just without AI hints
-    console.error('AI Agent error (app still works):', error.message);
-    console.error('AI Agent stack:', error.stack);
+    console.error('❌ AI Error Diagnosis error (app still works):', error.message);
     return null;
   }
 };

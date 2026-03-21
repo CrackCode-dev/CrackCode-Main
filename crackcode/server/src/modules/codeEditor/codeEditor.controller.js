@@ -1,11 +1,34 @@
 import { runTestCases, executeCode, getLanguageId } from './codeEditor.service.js';
 import { analyseError, classifyErrorType } from '../../services/aiErrorAgent.js';
 import { clearCache, getCacheStats } from '../../services/errorCache.js';
+import { awardReward } from '../rewards/reward.service.js';
+import { markQuestionSolved, incrementAttempt } from '../progress/progress.service.js';
+import Question from '../learn/Question.model.js';
+import LearnUserProgress from '../learn/UserProgress.model.js';
 
-// Run test cases for a submission
+// Run test cases for a submission WITH REWARD SYSTEM
 export const executeTestCases = async (req, res) => {
   try {
-    const { sourceCode, language, testCases, previousErrors = [] } = req.body;
+    const {
+      sourceCode,
+      language,
+      testCases,
+      previousErrors = [],
+      problemId,
+      difficulty,
+      sourceArea = 'learn_page',
+      mode = 'challenge',  //  Support run/challenge modes
+      paramOrder = []      // Parameter mapping for flexible arg order
+    } = req.body;
+    const userId = req.user?._id || req.userId;
+
+    console.log('🎯 executeTestCases called with:');
+    console.log('  userId:', userId);
+    console.log('  problemId:', problemId);
+    console.log('  difficulty:', difficulty);
+    console.log('  sourceArea:', sourceArea);
+    console.log('  mode:', mode);
+    console.log('  paramOrder:', paramOrder);
 
     // Validation
     if (!sourceCode) {
@@ -29,43 +52,135 @@ export const executeTestCases = async (req, res) => {
       });
     }
 
-    // Execute test cases
-    const results = await runTestCases(sourceCode, language, testCases);
+    // Execute test cases with mode and paramOrder options
+    const results = await runTestCases(sourceCode, language, testCases, {
+      mode,
+      paramOrder
+    });
 
-    //  AI Error Analysis 
-    // attach a clean error type label to every failed result
+    // Attach error type label to failed results
     results.forEach(r => {
       if (r.status === 'failed') {
         r.errorType = classifyErrorType(r);
       }
     });
 
-    // only call Gemini for the first failed test — saves API quota
+    // AI Error Analysis only for first failed test
     const firstFailedIndex = results.findIndex(r => r.status === 'failed');
     if (firstFailedIndex !== -1) {
       results[firstFailedIndex].aiAnalysis = await analyseError({
-        code:          sourceCode,
+        userId,
+        sessionId: req.sessionID,
+        code: sourceCode,
         language,
-        testResult:    results[firstFailedIndex],
-        previousErrors, // real history sent from the client
+        testResult: results[firstFailedIndex],
+        previousErrors,
       });
     }
-    // 
 
     const passedCount = results.filter(r => r.status === 'passed').length;
     const failedCount = results.filter(r => r.status === 'failed').length;
+    const allTestsPassed = failedCount === 0 && passedCount > 0;
 
-    return res.status(200).json({
+    // REWARD SYSTEM: Track attempt and award rewards if all tests pass
+    let rewardResult = null;
+    if (userId && problemId) {
+      try {
+        console.log('💰 Reward system: Processing for user:', userId, 'question:', problemId);
+        
+        // Resolve question id: some callers send `problemId` (string code) while
+        // progress expects the Question._id. Try to resolve the document first.
+        let questionIdentifier = problemId;
+        try {
+          if (problemId && typeof problemId === 'string') {
+            const q = await Question.findOne({ problemId: problemId });
+            if (q && q._id) {
+              questionIdentifier = q._id;
+            }
+          }
+        } catch (resolveErr) {
+          console.warn('Could not resolve Question by problemId, proceeding with original id:', resolveErr.message);
+        }
+
+        // Increment attempt count (use resolved identifier)
+        await incrementAttempt(userId, questionIdentifier, 'coding');
+        console.log('✅ Attempt incremented');
+
+        // If all tests passed, mark solved and potentially award reward
+        if (allTestsPassed) {
+          await markQuestionSolved(
+            userId,
+            questionIdentifier,
+            'coding',
+            sourceArea,
+            passedCount,
+            testCases.length
+          );
+          console.log('✅ Question marked as solved');
+
+          // Award reward (pass resolved identifier)
+          rewardResult = await awardReward(
+            userId,
+            questionIdentifier,
+            'coding',
+            difficulty || 'Medium',
+            sourceArea
+          );
+          console.log('✅ Reward awarded:', rewardResult);
+
+          // Also update learn/UserProgress for learn page tracking
+          try {
+            await LearnUserProgress.findOneAndUpdate(
+              { userId, questionId: questionIdentifier },
+              {
+                status: 'completed',
+                completedAt: new Date(),
+                attempts: 1
+              },
+              { upsert: true }
+            );
+            console.log('✅ Learn progress updated to completed');
+          } catch (learnErr) {
+            console.error('⚠️ Error updating learn progress:', learnErr.message);
+            // Don't fail submission if learn tracking fails
+          }
+        } else {
+          console.log('⚠️ Test cases did not all pass, no reward given');
+        }
+      } catch (rewardError) {
+        console.error('❌ Error in reward system:', rewardError);
+        // Don't fail the submission if reward system has issues
+      }
+    } else {
+      console.log('⚠️ Reward system: Skipped because userId=' + userId + ' or problemId=' + problemId);
+    }
+
+    const response = {
       success: true,
       data: {
         results,
         summary: {
           total: results.length,
           passed: passedCount,
-          failed: failedCount
+          failed: failedCount,
+          allPassed: allTestsPassed,
         }
       }
-    });
+    };
+
+    // Include reward info if applicable
+    if (rewardResult) {
+      response.data.reward = {
+        xpAwarded: rewardResult.xpAwarded,
+        tokensAwarded: rewardResult.tokensAwarded,
+        alreadyRewarded: rewardResult.alreadyRewarded,
+        isFirstSolve: rewardResult.isFirstSolve,
+        badgesUnlocked: rewardResult.badgesUnlocked || [] // Include newly unlocked badges
+      };
+      response.data.updatedUserStats = rewardResult.updatedUserStats;
+    }
+
+    return res.status(200).json(response);
   } catch (error) {
     console.error('Execute Test Cases Error:', error);
     return res.status(500).json({

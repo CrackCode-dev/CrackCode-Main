@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { EditorProvider } from "../../context/codeEditor/EditorContext";
 import { useProblemData } from "../../features/codeEditor/hooks/useProblemData";
+import BackBtn from "../../components/common/BackBtn";
 import CaseDetails from "../../components/codeEditor/CaseDetails";
 import EditorWrapper from "../../components/codeEditor/EditorWrapper";
 
@@ -10,7 +11,8 @@ const CodeEditorContent = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const preloadedQuestion = location.state?.question || null;
-  const { error, setLanguage, setLanguageLocked } = useProblemData(problemId, preloadedQuestion);
+  const sourceArea = location.state?.sourceArea || 'learn_page'; // NEW: Get sourceArea from navigation
+  const { error, setLanguage, setLanguageLocked } = useProblemData(problemId, preloadedQuestion, sourceArea);
 
   useEffect(() => {
     if (location.state?.language) {
@@ -37,15 +39,23 @@ const CodeEditorContent = () => {
   );
 
   return (
-    <div className="h-screen flex bg-[#0d0d0d] overflow-hidden">
-      {/* LEFT: Problem Description */}
-      <div className="w-[42%] flex-shrink-0 overflow-y-auto border-r border-gray-800/60">
-        <CaseDetails />
+    <div className="h-screen flex flex-col bg-[#0d0d0d] overflow-hidden">
+      {/* Header with Back Button */}
+      <div className="flex-shrink-0 bg-[#0d0d0d] border-b border-gray-800/60 px-5 py-3">
+        <BackBtn />
       </div>
 
-      {/* RIGHT: Editor + Analysis Panel */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <EditorWrapper />
+      {/* Main Content */}
+      <div className="flex flex-1 min-h-0 overflow-hidden">
+        {/* LEFT: Problem Description */}
+        <div className="w-[42%] flex-shrink-0 overflow-y-auto border-r border-gray-800/60">
+          <CaseDetails />
+        </div>
+
+        {/* RIGHT: Editor + Analysis Panel */}
+        <div className="flex-1 flex flex-col min-w-0">
+          <EditorWrapper />
+        </div>
       </div>
     </div>
   );

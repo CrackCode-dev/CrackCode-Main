@@ -1,11 +1,13 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
+import { sessionAuth } from '../session/session.middleware.js';
 import {
   executeTestCases,
   runCode,
   getSupportedLanguages,
   clearAICache
 } from './codeEditor.controller.js';
+import { submitSolution } from './codeEditor.submit.controller.js';
 
 const router = express.Router();
 
@@ -18,8 +20,11 @@ const executeRateLimit = rateLimit({
   message: { success: false, message: 'Too many requests — please wait a moment before running again.' }
 });
 
-// Execute test cases
-router.post('/execute', executeRateLimit, executeTestCases);
+// Execute test cases (requires authentication for reward system)
+router.post('/execute', executeRateLimit, sessionAuth, executeTestCases);
+
+// Submit solution (requires authentication for rewards and completion tracking)
+router.post('/submit', sessionAuth, submitSolution);
 
 // Run code with input
 router.post('/run', runCode);

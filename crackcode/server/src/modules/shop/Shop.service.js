@@ -290,15 +290,13 @@
 //   }
 // };
 
-
-
 import mongoose from "mongoose";
 import Stripe from "stripe";
 
 import ShopItem from "./ShopItem.model.js";
 import Inventory from "./Inventory.model.js";
 import Purchase from "./Purchase.model.js";
-import User from "../auth/User.model.js"; // adjust path if needed
+import User from "../auth/User.model.js";
 
 const getStripe = () => {
   const secretKey = process.env.STRIPE_SECRET_KEY;
@@ -326,14 +324,14 @@ export const purchaseItemWithTokens = async (userId, itemId) => {
         throw new Error("Item not found or inactive");
       }
 
+      if (!item.pricing || !["free", "tokens"].includes(item.pricing.type)) {
+        throw new Error("This item is not available for token purchase");
+      }
+
       const existingInventory = await Inventory.findOne({ userId, itemId }).session(session);
 
       if (existingInventory) {
         throw new Error("You already own this item");
-      }
-
-      if (!item.pricing || !["free", "tokens"].includes(item.pricing.type)) {
-        throw new Error("This item is not available for token purchase");
       }
 
       const priceTokens =
@@ -358,17 +356,16 @@ export const purchaseItemWithTokens = async (userId, itemId) => {
       user.tokens = currentTokens - priceTokens;
       await user.save({ session });
 
-      const updatedInventory = await Inventory.findOneAndUpdate(
-        { userId, itemId },
-        {
-          $setOnInsert: {
+      const createdInventory = await Inventory.create(
+        [
+          {
             userId,
             itemId,
             category: item.category,
+            quantity: 1,
           },
-          $inc: { quantity: 1 },
-        },
-        { upsert: true, new: true, session }
+        ],
+        { session }
       );
 
       await Purchase.create(
@@ -378,7 +375,8 @@ export const purchaseItemWithTokens = async (userId, itemId) => {
             itemId,
             itemName: item.name,
             price: priceTokens,
-            tokensAfterPurchase: user.tokens,
+            xpAfterPurchase: user.tokens, // ✅ fixed naming
+            paymentMethod: "xp",
             currency: "tokens",
           },
         ],
@@ -388,11 +386,16 @@ export const purchaseItemWithTokens = async (userId, itemId) => {
       result = {
         success: true,
         remainingTokens: user.tokens,
-        inventoryItem: updatedInventory,
+        inventoryItem: createdInventory[0],
       };
     });
 
     return result;
+  } catch (err) {
+    if (err?.code === 11000) {
+      throw new Error("You already own this item");
+    }
+    throw err;
   } finally {
     session.endSession();
   }
@@ -408,8 +411,7 @@ export const getShopItems = async (category) => {
     filter.category = category;
   }
 
-  const items = await ShopItem.find(filter).sort({ createdAt: -1 });
-  return items;
+  return await ShopItem.find(filter).sort({ createdAt: -1 });
 };
 
 // ------------------------------------------------------------
@@ -422,15 +424,13 @@ export const getMyInventory = async (userId, category) => {
     filter.category = category;
   }
 
-  const inventory = await Inventory.find(filter)
+  return await Inventory.find(filter)
     .populate("itemId")
     .sort({ createdAt: -1 });
-
-  return inventory;
 };
 
 // ------------------------------------------------------------
-// Create Stripe checkout session for paid items
+// Create Stripe checkout session
 // ------------------------------------------------------------
 export const createCheckoutSession = async (userId, itemId) => {
   const stripe = getStripe();
@@ -445,6 +445,12 @@ export const createCheckoutSession = async (userId, itemId) => {
     throw new Error("This item is not available for paid checkout");
   }
 
+  const existingInventory = await Inventory.findOne({ userId, itemId });
+
+  if (existingInventory) {
+    throw new Error("You already own this item");
+  }
+
   const amount = Number(item.pricing.amount || 0);
 
   if (!Number.isFinite(amount) || amount <= 0) {
@@ -455,10 +461,13 @@ export const createCheckoutSession = async (userId, itemId) => {
     mode: "payment",
     payment_method_types: ["card"],
     client_reference_id: String(userId),
+
     metadata: {
       userId: String(userId),
       itemId: String(item._id),
+      itemName: item.name, // ✅ added
     },
+
     line_items: [
       {
         price_data: {
@@ -472,8 +481,9 @@ export const createCheckoutSession = async (userId, itemId) => {
         quantity: 1,
       },
     ],
-    success_url: `${process.env.CLIENT_URL}/shop/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.CLIENT_URL}/shop/cancel`,
+
+    success_url: `${process.env.CLIENT_URL}/store?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${process.env.CLIENT_URL}/store?payment=cancelled`,
   });
 
   return {
@@ -484,7 +494,7 @@ export const createCheckoutSession = async (userId, itemId) => {
 };
 
 // ------------------------------------------------------------
-// Finalize paid purchase after Stripe webhook success
+// Finalize Stripe purchase (IDEMPOTENT)
 // ------------------------------------------------------------
 export const finalizePaidPurchase = async ({
   userId,
@@ -503,33 +513,37 @@ export const finalizePaidPurchase = async ({
         throw new Error("Item not found or inactive");
       }
 
+      // ✅ already processed (purchase exists)
       const existingPurchase = await Purchase.findOne({
         stripeSessionId,
       }).session(session);
 
       if (existingPurchase) {
-        result = {
-          success: true,
-          alreadyProcessed: true,
-        };
+        result = { success: true, alreadyProcessed: true };
         return;
       }
 
-      const updatedInventory = await Inventory.findOneAndUpdate(
-        { userId, itemId },
-        {
-          $setOnInsert: {
+      // ✅ already processed (inventory exists)
+      const existingInventory = await Inventory.findOne({
+        userId,
+        itemId,
+      }).session(session);
+
+      if (existingInventory) {
+        result = { success: true, alreadyProcessed: true };
+        return;
+      }
+
+      const createdInventory = await Inventory.create(
+        [
+          {
             userId,
             itemId,
             category: item.category,
+            quantity: 1,
           },
-          $inc: { quantity: 1 },
-        },
-        {
-          upsert: true,
-          new: true,
-          session,
-        }
+        ],
+        { session }
       );
 
       await Purchase.create(
@@ -549,11 +563,16 @@ export const finalizePaidPurchase = async ({
 
       result = {
         success: true,
-        inventoryItem: updatedInventory,
+        inventoryItem: createdInventory[0],
       };
     });
 
     return result;
+  } catch (err) {
+    if (err?.code === 11000) {
+      return { success: true, alreadyProcessed: true };
+    }
+    throw err;
   } finally {
     session.endSession();
   }

@@ -1,5 +1,3 @@
-
-
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AppContent } from "../../context/userauth/authenticationContext";
@@ -7,9 +5,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Mail, LockKeyhole, UserRound } from "lucide-react";
 import Logo from "../../assets/logo/crackcode_logo.svg";
-import logo_light from "../../assets/logo/logo_light.png";
 import logo_dark from "../../assets/logo/logo_dark.png";
-import { useTheme } from "../../context/theme/ThemeContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -101,9 +97,7 @@ const Login = () => {
     }
   };
 
-  const { theme } = useTheme();
-  const darkThemes = ["dark", "country", "midnight"];
-  const activeLogo = darkThemes.includes(theme) ? logo_light : logo_dark;
+
 
   return (
     // ✅ Video background wrapper
@@ -151,7 +145,7 @@ const Login = () => {
             {/* TOP HEADER */}
             <div className="flex items-center justify-between w-full mb-4 z-10">
               <div className="flex items-center gap-3">
-                <img src={activeLogo} alt="CrackCode Logo" className="h-10 drop-shadow-sm" />
+                <img src={logo_dark} alt="CrackCode Logo" className="h-10 drop-shadow-sm" />
               </div>
 
               <div className="flex bg-[#FFCE99]/30 rounded-full p-1 shadow-sm shrink-0">

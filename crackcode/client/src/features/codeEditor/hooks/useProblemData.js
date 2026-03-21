@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useEditor } from '../../../context/codeEditor/EditorContext';
 import { fetchProblemByLanguage, transformProblemData } from '../../../services/api/questionService';
 
-export const useProblemData = (problemId, preloadedQuestion = null) => {
+export const useProblemData = (problemId, preloadedQuestion = null, sourceArea = 'learn_page') => {
   const { setCurrentProblem, setCode, setLoading, language, setLanguage, languageLocked, setLanguageLocked } = useEditor();
   const [error, setError] = useState(null);
 
@@ -20,6 +20,8 @@ export const useProblemData = (problemId, preloadedQuestion = null) => {
           setLoading(true);
           setError(null);
           const transformed = transformProblemData(preloadedQuestion, language);
+          // Add sourceArea to transformed problem for reward system
+          transformed.sourceArea = sourceArea;
           setCurrentProblem(transformed);
           const variant = preloadedQuestion.variants?.find((v) => v.language === language)
             || preloadedQuestion.variants?.[0];
@@ -42,6 +44,8 @@ export const useProblemData = (problemId, preloadedQuestion = null) => {
 
         // Transform the data to match our UI format
         const transformedProblem = transformProblemData(rawProblem, language);
+        // Add sourceArea to transformed problem for reward system
+        transformedProblem.sourceArea = sourceArea;
 
         setCurrentProblem(transformedProblem);
 
@@ -59,7 +63,7 @@ export const useProblemData = (problemId, preloadedQuestion = null) => {
     };
 
     loadProblem();
-  }, [problemId, language, preloadedQuestion, setCurrentProblem, setCode, setLoading]);
+  }, [problemId, language, preloadedQuestion, sourceArea, setCurrentProblem, setCode, setLoading]);
 
   return { error, setLanguage, setLanguageLocked };
 };

@@ -8,6 +8,8 @@ const chapterProgressSchema = new mongoose.Schema({
   hardScore: { type: Number, default: 0 },       
   passed: { type: Boolean, default: false },      
   attempts: { type: Number, default: 0 },        
+  // Number of questions in this chapter that have already been rewarded
+  rewardedQuestions: { type: Number, default: 0 },
 });
 
 const progressSchema = new mongoose.Schema({
@@ -40,7 +42,7 @@ const progressSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-// Unique index — one progress document per user per career
+// Unique index = one progress document per user per career
 progressSchema.index({ userId: 1, career: 1 }, { unique: true });
 
 export default mongoose.model("Progress", progressSchema);

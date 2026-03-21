@@ -4,7 +4,7 @@ import HQBtn from "../../components/common/HQBtn";
 import ContentCard from "../../components/ui/Card";
 import Badge from "../../components/ui/Badge";
 import { Lock, ArrowRight } from "lucide-react";
-import { careers, getDifficultyLabel } from "./Careers";
+import { careers, getDifficultyLabel } from "./careers";
 import { useNavigate } from "react-router-dom";
 
 

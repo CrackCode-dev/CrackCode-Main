@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useEditor } from '../../context/codeEditor/EditorContext';
 import { useCodeExecution } from '../../features/codeEditor/hooks/useCodeExecution';
+import { useNavigate } from 'react-router-dom';
+import axios from '../../api/axios.js';
 
 const EditorToolbar = () => {
   const {
@@ -8,7 +10,9 @@ const EditorToolbar = () => {
     code, setCode, attemptCount, languageLocked,
   } = useEditor();
   const { executeCode } = useCodeExecution();
+  const navigate = useNavigate();
   const [copyFeedback, setCopyFeedback] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Keyboard shortcut: Ctrl+Enter → Execute
   useEffect(() => {
@@ -41,6 +45,84 @@ const EditorToolbar = () => {
     const starter = currentProblem?.starterCode?.[language];
     if (starter && window.confirm('Reset code to starter template?')) {
       setCode(starter);
+    }
+  };
+
+  // Submit solution for official evaluation
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+
+      // Convert language format (python → python, etc.)
+      const languageMap = {
+        python: 71,
+        javascript: 63,
+        cpp: 54,
+        java: 62
+      };
+
+      const response = await axios.post('/codeEditor/submit', {
+        questionId: currentProblem?.problemId || currentProblem?._id,
+        code: code,
+        languageId: languageMap[language] || 71
+      });
+
+      const { data } = response.data;
+
+      if (!data.passed) {
+        // Tests failed
+        alert(`❌ Some test cases failed!\n\n${
+          data.failedTests?.length > 0 
+            ? `Failed ${data.failedTests.length} test(s)` 
+            : data.message
+        }`);
+        return;
+      }
+
+      if (data.firstTimeCompletion) {
+        // First-time completion - show celebration
+        const badges = data.newlyUnlockedBadges?.length > 0 
+          ? `\n🏆 Unlocked badges: ${data.newlyUnlockedBadges.join(', ')}`
+          : '';
+        alert(
+          `✅ Correct!\n\n+${data.earnedXP} XP\n+${data.earnedTokens} Tokens${badges}`
+        );
+      } else {
+        // Already completed before
+        alert('✅ Correct!\n\n(Already completed)');
+      }
+
+      // Dispatch custom event to signal successful submission (use standard event name without 'on')
+      console.log('🎯 Dispatching solutionSubmitted event for:', currentProblem?.problemId);
+      window.dispatchEvent(new CustomEvent('solutionSubmitted', { 
+        detail: { questionId: currentProblem?.problemId, earnedXP: data.earnedXP, earnedTokens: data.earnedTokens }
+      }));
+
+      // Navigate back to learn page or reload
+      const sourceArea = currentProblem?.sourceArea;
+      if (sourceArea === 'learn_page') {
+        // Parse learn page info from the problemId (e.g., py_fundamentals_001)
+        const problemId = currentProblem?.problemId || '';
+        // Match: {lang}_{difficulty}_{number}
+        const match = problemId.match(/^(py|js|java|cpp)_([a-z]+)_\d+/);
+        if (match) {
+          const langMap = { py: 'python', js: 'javascript', java: 'java', cpp: 'cpp' };
+          const trackId = langMap[match[1]];
+          const difficultyId = match[2];  // Just the difficulty word, no number
+          console.log(`🔄 Navigating back to /learn/${trackId}/${difficultyId}`);
+          navigate(`/learn/${trackId}/${difficultyId}`);
+          return;
+        }
+      }
+      
+      // Fallback: refresh page to update stats
+      console.log('🔄 Reloading page...');
+      window.location.reload();
+
+    } catch (error) {
+      alert(`❌ Error submitting solution:\n${error.response?.data?.message || error.message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -137,6 +219,35 @@ const EditorToolbar = () => {
               </>
             )}
           </button>
+
+          {/* Submit button */}
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting || isExecuting}
+            title="Submit solution for official evaluation"
+            className={`flex items-center gap-1.5 px-4 py-1.5 rounded font-semibold text-sm transition-all
+              ${isSubmitting || isExecuting
+                ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-900/40 active:scale-95'
+              }`}
+          >
+            {isSubmitting ? (
+              <>
+                <svg className="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Submitting…
+              </>
+            ) : (
+              <>
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 1a1 1 0 011-1h12a1 1 0 011 1H3zm0 4a1 1 0 011-1h12a1 1 0 011 1H3zm0 4a1 1 0 011-1h12a1 1 0 011 1H3zm0 4a1 1 0 011-1h12a1 1 0 011 1H3z" />
+                </svg>
+                Submit
+              </>
+            )}
+          </button>
         </div>
       </div>
 
@@ -145,7 +256,7 @@ const EditorToolbar = () => {
         <kbd className="px-1 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-500">Ctrl</kbd>
         <span>+</span>
         <kbd className="px-1 py-0.5 rounded bg-gray-800 border border-gray-700 text-gray-500">Enter</kbd>
-        <span className="ml-1">to run</span>
+        <span className="ml-1">to run, click Submit to evaluate</span>
       </div>
     </div>
   );

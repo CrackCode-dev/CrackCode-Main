@@ -65,6 +65,37 @@ export default function StreakCalendar() {
     };
   }, [backendUrl, selectedYear]);
 
+  // Listen for submissions from other parts of the app and refresh activity cache
+  useEffect(() => {
+    const LOCAL_KEY = `userActivityData_v1_${selectedYear}`;
+    const LOCAL_AT = `userActivityFetchedAt_v1_${selectedYear}`;
+
+    const handleSolutionSubmitted = async () => {
+      try {
+        // Clear cached data for this year so we force a backend refresh
+        localStorage.removeItem(LOCAL_KEY);
+        localStorage.removeItem(LOCAL_AT);
+
+        // Immediately fetch fresh activity for selectedYear
+        const year = selectedYear;
+        const start = new Date(year, 0, 1);
+        const end = new Date(year, 11, 31, 23, 59, 59, 999);
+        const url = `${backendUrl}/api/user/activity?startDate=${encodeURIComponent(start.toISOString())}&endDate=${encodeURIComponent(end.toISOString())}`;
+        const { data } = await axios.get(url, { withCredentials: true, timeout: 10000 });
+        if (data && data.success) {
+          setActivityData(data.data.activity || {});
+          localStorage.setItem(LOCAL_KEY, JSON.stringify(data.data.activity || {}));
+          localStorage.setItem(LOCAL_AT, String(Date.now()));
+        }
+      } catch (err) {
+        // ignore 
+      }
+    };
+
+    window.addEventListener('onSolutionSubmitted', handleSolutionSubmitted);
+    return () => window.removeEventListener('onSolutionSubmitted', handleSolutionSubmitted);
+  }, [backendUrl, selectedYear]);
+
   // Prepare years list (current year down to earliest 2018 or 5 years back)
   useEffect(() => {
     const current = new Date().getFullYear();
@@ -128,7 +159,11 @@ export default function StreakCalendar() {
   
   // Derive stats: prefer server-provided summary for current streak; compute longest streak from activity data
   const stats = useMemo(() => {
-    const daysWindow = 84;
+    // compute days window for the selected year
+    const yearStart = new Date(selectedYear, 0, 1);
+    const yearEnd = new Date(selectedYear, 11, 31, 23, 59, 59, 999);
+    const daysWindow = Math.round((yearEnd - yearStart) / (1000 * 60 * 60 * 24)) + 1;
+
     const contributions = Object.values(activityData || {}).filter(v => v > 0).length;
 
     // compute longest consecutive streak from activity map
@@ -153,10 +188,11 @@ export default function StreakCalendar() {
           current = 1;
         }
         if (current > longest) longest = current;
+        prevDate = d; // only advance prevDate when we have activity
       } else {
+        // do not advance prevDate for empty days; this ensures consecutive checks work
         current = 0;
       }
-      prevDate = d;
     }
 
     // compute current streak: prefer server value if present
@@ -186,14 +222,14 @@ export default function StreakCalendar() {
       totalContributions: contributions,
       completionRate,
     };
-  }, [activityData, progressSummary]);
+  }, [activityData, progressSummary, selectedYear]);
 
   const getActivityColor = (completed) => {
-    return completed === 1 ? 'var(--brand)' : '#f0f0f0';
+    return (completed || 0) > 0 ? 'var(--brand)' : '#f0f0f0';
   };
 
   const getActivityLabel = (completed) => {
-    return completed === 1 ? 'Completed a question' : 'No activity';
+    return (completed || 0) > 0 ? 'Completed a question' : 'No activity';
   };
 
   return (
@@ -289,7 +325,7 @@ export default function StreakCalendar() {
           </div>
         </div>
 
-        {/* Calendar Grid - GitHub Style - Organized by Months - Horizontal */}
+        {/* Calendar Grid  - Organized by Months - Horizontal */}
         <div
           className='rounded-lg p-6'
           style={{

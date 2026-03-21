@@ -1,4 +1,5 @@
 import express from "express";
+import userAuth from "../../auth/middleware.js";
 import { getQuestions, getQuestion, submitAnswer, getCareers , getQuestionCount} from "./question.controller.js";
 
 const router = express.Router();
@@ -15,7 +16,7 @@ router.get("/", getQuestions);
 // GET /api/questions/:id?career=MLEngineer
 router.get("/:id", getQuestion);
 
-// POST /api/questions/submit
-router.post("/submit", submitAnswer);
+// POST /api/questions/submit (requires authentication)
+router.post("/submit", userAuth, submitAnswer);
 
 export default router;

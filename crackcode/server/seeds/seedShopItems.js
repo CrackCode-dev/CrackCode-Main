@@ -138,11 +138,65 @@ const run = async () => {
 
     const items = [
       {
+        name: "Country Theme",
+        description: "A warm rustic country-style theme for your profile.",
+        category: "theme",
+        pricing: { type: "paid", amount: 6.00, currency: "USD" },
+        imageUrl: "/uploads/themes/country.png",
+        metadata: { themeKey: "country" },
+        isActive: true,
+      },
+
+      {
+        name: "Midnight Theme",
+        description: "A calm midnight blue theme for your profile.",
+        category: "theme",
+        pricing: { type: "paid", amount: 6.00, currency: "USD" },
+        imageUrl: "/uploads/themes/midnight.png",
+        metadata: { themeKey: "country" },
+        isActive: true,
+      },
+
+      {
+        name: "Midnight Theme",
+        description: "A sleek deep-blue midnight theme for your profile.",
+        category: "theme",
+        pricing: { type: "paid", amount: 6, currency: "USD" },
+        imageUrl: "/uploads/themes/midnight.png",
+        metadata: { themeKey: "midnight" },
+        isActive: true,
+      },
+
+      {
         name: "Cena",
         category: "avatar",
         isActive: true,
         imageUrl: "/uploads/avatars/Cena.png",
         pricing: { type: "tokens", amount: 50 },
+      },
+
+      {
+        name: "Goblin",
+        category: "avatar",
+        isActive: true,
+        imageUrl: "/uploads/avatars/Goblin.jpg",
+        pricing: { type: "tokens", amount: 40 },
+      },
+
+      {
+        name: "Witch",
+        category: "avatar",
+        isActive: true,
+        imageUrl: "/uploads/avatars/Witch.png",
+        pricing: { type: "tokens", amount: 80 },
+      },
+
+      {
+        name: "Butcher",
+        category: "avatar",
+        isActive: true,
+        imageUrl: "/uploads/avatars/Butcher.png",
+        pricing: { type: "tokens", amount: 70 },
       },
 
       {
@@ -167,6 +221,30 @@ const run = async () => {
         category: "avatar",
         pricing: { type: "paid", amount: 4.98, currency: "USD" },
         imageUrl: "/uploads/avatars/Batman.png",
+        metadata: {
+          rarity: "premium",
+        },
+        isActive: true,
+      },
+
+      {
+        name: "Hacker",
+        description: "Premium avatar",
+        category: "avatar",
+        pricing: { type: "paid", amount: 3.98, currency: "USD" },
+        imageUrl: "/uploads/avatars/Hacker.jpg",
+        metadata: {
+          rarity: "premium",
+        },
+        isActive: true,
+      },
+
+      {
+        name: "Targarian",
+        description: "Premium avatar",
+        category: "avatar",
+        pricing: { type: "paid", amount: 6.98, currency: "USD" },
+        imageUrl: "/uploads/avatars/Targarian.jpg",
         metadata: {
           rarity: "premium",
         },

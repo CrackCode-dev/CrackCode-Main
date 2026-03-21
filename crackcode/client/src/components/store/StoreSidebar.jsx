@@ -38,7 +38,7 @@ export default function StoreSidebar({ category, setCategory }) {
     { label: "All", value: "all" },
     { label: "Avatars", value: "avatar" },
     { label: "Themes", value: "theme" },
-    { label: "Titles", value: "title" },
+    
     { label: "My Inventory", value: "inventory" },
   ];
 

@@ -7,9 +7,9 @@ import { useNavigate } from 'react-router-dom'
 import { fetchChallengeCollection, transformProblemData } from '../../services/api/questionService'
 
 const PLACEHOLDER = [
-  { id: 'rec-1', title: 'Two Sum Problem', difficulty: 'Easy', points: 100, category: 'Arrays', matchScore: 95, timeEstimate: '10 min', icon: '🎯' },
-  { id: 'rec-2', title: 'Binary Tree Level Order Traversal', difficulty: 'Medium', points: 150, category: 'Trees', matchScore: 88, timeEstimate: '20 min', icon: '🌳' },
-  { id: 'rec-3', title: 'Longest Common Subsequence', difficulty: 'Hard', points: 250, category: 'Dynamic Programming', matchScore: 82, timeEstimate: '30 min', icon: '📈' }
+  { id: 'rec-1', title: 'Loading…', difficulty: null, points: null, category: null, matchScore: null, timeEstimate: null, icon: '🎯' },
+  { id: 'rec-2', title: 'Loading…', difficulty: null, points: null, category: null, matchScore: null, timeEstimate: null, icon: '🌳' },
+  { id: 'rec-3', title: 'Loading…', difficulty: null, points: null, category: null, matchScore: null, timeEstimate: null, icon: '📈' }
 ];
 
 export default function RecommendedChallenges() {
@@ -120,7 +120,9 @@ export default function RecommendedChallenges() {
                 <div className='flex items-start gap-3 mb-3'>
                   <span className='text-3xl'>{challenge.icon}</span>
                   <div className='flex-1 min-w-0'>
-                    <h3 className='text-lg font-bold mb-1 line-clamp-1'>{challenge.title}</h3>
+                    <h3 className='text-lg font-bold mb-1 line-clamp-1'>
+                      {challenge.title}
+                    </h3>
                   </div>
                 </div>
 
@@ -132,13 +134,18 @@ export default function RecommendedChallenges() {
 
                 {/* Badges */}
                 <div className='flex flex-wrap gap-2 mb-5'>
-                  <Badge
-                    type='difficulty'
-                    difficulty={challenge.difficulty?.toLowerCase()}
-                    size='sm'
-                  >
-                    {challenge.difficulty}
-                  </Badge>
+                  { (challenge.difficulty || challenge.transformed?.difficulty) ? (
+                    <Badge
+                      type='difficulty'
+                      difficulty={(challenge.transformed?.difficulty || challenge.difficulty || '').toLowerCase()}
+                      size='sm'
+                    >
+                      {challenge.transformed?.difficulty || challenge.difficulty}
+                    </Badge>
+                  ) : (
+                    <div className='px-2 py-1 rounded text-xs font-bold' style={{ color: 'var(--textSec)' }}>Loading...</div>
+                  )}
+
                   <div
                     className='px-2 py-1 rounded text-xs font-bold'
                     style={{
@@ -146,8 +153,9 @@ export default function RecommendedChallenges() {
                       color: 'var(--brand)'
                     }}
                   >
-                    +{challenge.points} pts
+                    +{challenge.points ?? '—'} pts
                   </div>
+
                   <div
                     className='px-2 py-1 rounded text-xs font-semibold'
                     style={{
@@ -155,7 +163,7 @@ export default function RecommendedChallenges() {
                       color: 'var(--textSec)'
                     }}
                   >
-                    {challenge.category}
+                    {challenge.category ?? '—'}
                   </div>
                 </div>
 
