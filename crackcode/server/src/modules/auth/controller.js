@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "./User.model.js";
 import PendingRegistration from "./PendingRegistration.model.js";
-import transporter from "./nodemailer.config.js";
+import { sendTransactionalEmail } from "../notifications/brevo.client.js";
 import { 
   createSession,
   invalidateSession,
@@ -107,20 +107,27 @@ export const register = async (req, res) =>{
     });
     await pending.save();
 
-    // Try to send OTP email. In development we don't want SMTP problems to block signup,
-    // so swallow sendMail failures and expose the tempId (and OTP in logs) so devs can verify.
+    // Send OTP email via Brevo API only. Fail fast if API key not configured.
     try {
-      await transporter.sendMail({
-        from: process.env.SENDER_EMAIL,
-        to: email,
-        subject: "Account Verification OTP",
-        text: `Your OTP is ${otp}. Verify your account using this OTP.`,
-      });
+      const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY || process.env.SIB_API_KEY;
+      if (!apiKey) {
+        // In non-production, log OTP to help local testing. In production, return error.
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`DEV OTP for ${email}: ${otp} (tempId=${pending._id})`);
+        } else {
+          console.error("BREVO_API_KEY missing - cannot send verification email");
+          return res.status(500).json({ success: false, message: "Email provider not configured (BREVO_API_KEY missing)" });
+        }
+      } else {
+        const html = `<p>Your OTP is <strong>${otp}</strong>. Verify your account using this OTP.</p>`;
+        await sendTransactionalEmail({ to: email, subject: "Account Verification OTP", html, senderEmail: process.env.SENDER_EMAIL });
+      }
     } catch (mailErr) {
-      console.warn("⚠️ Failed to send verification email:", mailErr?.message || mailErr);
-      // In non-production, log the OTP so local testing can proceed without SMTP
+      console.error("⚠️ Failed to send verification email:", mailErr?.message || mailErr);
       if (process.env.NODE_ENV !== "production") {
         console.log(`DEV OTP for ${email}: ${otp} (tempId=${pending._id})`);
+      } else {
+        return res.status(500).json({ success: false, message: "Failed to send verification email" });
       }
     }
 
@@ -311,14 +318,20 @@ export const sendVerifyOtp = async (req, res) => {
     await pending.save();
 
     try {
-      await transporter.sendMail({
-        from: process.env.SENDER_EMAIL,
-        to: pending.email,
-        subject: "Account Verification OTP",
-        text: `Your OTP is ${otp}. Verify your account using this OTP.`,
-      });
+      const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY || process.env.SIB_API_KEY;
+      if (!apiKey) {
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`DEV OTP for ${pending.email}: ${otp}`);
+        } else {
+          console.error("BREVO_API_KEY missing - cannot send verification OTP");
+          return res.status(500).json({ success: false, message: "Email provider not configured (BREVO_API_KEY missing)" });
+        }
+      } else {
+        const html = `<p>Your OTP is <strong>${otp}</strong>. Verify your account using this OTP.</p>`;
+        await sendTransactionalEmail({ to: pending.email, subject: "Account Verification OTP", html, senderEmail: process.env.SENDER_EMAIL });
+      }
     } catch (mailErr) {
-      console.error("[Email] Failed to send verification OTP:", mailErr?.message);
+      console.error("[Email] Failed to send verification OTP:", mailErr?.message || mailErr);
       return res.status(500).json({ success: false, message: "Failed to send OTP email. Please try again." });
     }
 
@@ -455,14 +468,20 @@ export const sendResetOtp = async (req, res) => {
     await user.save();
 
     try {
-      await transporter.sendMail({
-        from: process.env.SENDER_EMAIL,
-        to: user.email,
-        subject: "Password Reset OTP",
-        text: `Your OTP for password reset is ${otp}. It will expire in 15 minutes.`,
-      });
+      const apiKey = process.env.BREVO_API_KEY || process.env.SENDINBLUE_API_KEY || process.env.SIB_API_KEY;
+      if (!apiKey) {
+        if (process.env.NODE_ENV !== "production") {
+          console.log(`DEV OTP for ${user.email}: ${otp}`);
+        } else {
+          console.error("BREVO_API_KEY missing - cannot send password reset OTP");
+          return res.status(500).json({ success: false, message: "Email provider not configured (BREVO_API_KEY missing)" });
+        }
+      } else {
+        const html = `<p>Your OTP for password reset is <strong>${otp}</strong>. It will expire in 15 minutes.</p>`;
+        await sendTransactionalEmail({ to: user.email, subject: "Password Reset OTP", html, senderEmail: process.env.SENDER_EMAIL });
+      }
     } catch (mailErr) {
-      console.error("[Email] Failed to send password reset OTP:", mailErr?.message);
+      console.error("[Email] Failed to send password reset OTP:", mailErr?.message || mailErr);
       return res.status(500).json({ success: false, message: "Failed to send OTP email. Please try again." });
     }
 
