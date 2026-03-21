@@ -62,7 +62,24 @@ export const AppContextProvider = (props) => {
     useEffect(() => {
         setAuthHeader();  // First, restore auth header from localStorage
         getAuthState();   // Then check auth status
-    }, [])
+    }, []);
+
+    // Listen for token changes in localStorage (e.g., login happens somewhere)
+    // This ensures all components immediately sync when login occurs
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const handleStorageChange = (e) => {
+            if (e.key === "accessToken") {
+                console.log("🔄 Token changed, syncing auth state...");
+                setAuthHeader();  // Update axios header
+                getAuthState();   // Re-check auth status (will call getUserData if logged in)
+            }
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+        return () => window.removeEventListener("storage", handleStorageChange);
+    }, []);
 
     // Listen for solution submissions to refresh user data globally
     useEffect(() => {
