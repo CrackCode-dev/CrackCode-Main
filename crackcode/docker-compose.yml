@@ -1,0 +1,36 @@
+services:
+  server:
+    build: ./server
+    image: crackcode-server
+    env_file: ./.env
+    ports:
+      - "5051:5051"
+    volumes:
+      - ./server/uploads:/app/uploads
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  client:
+    build: ./client
+    image: crackcode-client
+    ports:
+      - "4173:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  redis-data:

@@ -234,7 +234,7 @@ const ChapterSelectionPage = () => {
       <Header variant="empty" />
 
       <main className="flex-1 px-6 sm:px-10 py-10">
-        <div className="max-w-5xl mx-auto pt-12">
+        <div className="max-w-5xl mx-auto pt-10">
           <div className="flex items-center gap-4 mb-12">
             <img src={languageMeta.icon} alt={trackId} className="w-14 h-14 object-contain" />
             <div>

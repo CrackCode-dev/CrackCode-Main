@@ -149,8 +149,18 @@ export const submitAnswer = async (req, res) => {
             { returnDocument: "after" }
           );
 
-          // Check and unlock relevant badges based on new casesSolved count
-          const badgesToCheck = ['beginner', 'cases_5', 'cases_10', 'cases_25'];
+          // Check and unlock relevant badges based on new casesSolved count + language badges
+          const badgesToCheck = [
+            'beginner', 
+            'cases_5', 
+            'cases_10', 
+            'cases_25',
+            'python_complete',       // Language-specific badges
+            'javascript_complete',
+            'java_complete',
+            'cpp_complete',
+            'career_map_complete'
+          ];
           const newlyUnlocked = await checkAndUnlockMultipleBadges(userId, badgesToCheck);
           
           if (newlyUnlocked.length > 0) {

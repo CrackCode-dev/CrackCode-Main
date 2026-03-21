@@ -37,6 +37,30 @@ function ProfileCard() {
     loadBadges();
   }, [isLoggedIn]);
 
+  // Listen for question submission events to refresh badges on profile card
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const handleSolutionSubmitted = async (event) => {
+      console.log('🏆 Solution submitted - refreshing profile badges...', event.detail);
+      try {
+        const badgesData = await fetchBadgeProgress();
+        setBadges(badgesData || []);
+        console.log('✅ Profile badges refreshed');
+      } catch (error) {
+        console.error('❌ Failed to refresh badges:', error);
+      }
+    };
+
+    // Add event listener using standard event name (lowercase, no 'on' prefix)
+    window.addEventListener('solutionSubmitted', handleSolutionSubmitted);
+
+    // Cleanup: remove event listener when component unmounts
+    return () => {
+      window.removeEventListener('solutionSubmitted', handleSolutionSubmitted);
+    };
+  }, [isLoggedIn]);
+
   // Mock data for testing when not logged in
   const mockUserData = {
     name: 'John Doe',

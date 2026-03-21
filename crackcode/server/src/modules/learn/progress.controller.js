@@ -43,10 +43,20 @@ export const updateProgress = async (req, res) => {
           { returnDocument: "after" }
         ).select("casesSolved currentStreak achievements unlockedBadges");
 
-        // Check and unlock badges based on new casesSolved count
+        // Check and unlock badges based on new casesSolved count + language badges
         let newlyUnlocked = [];
         try {
-          const badgesToCheck = ['beginner', 'cases_5', 'cases_10', 'cases_25'];
+          const badgesToCheck = [
+            'beginner', 
+            'cases_5', 
+            'cases_10', 
+            'cases_25',
+            'python_complete',       // Language-specific badges
+            'javascript_complete',
+            'java_complete',
+            'cpp_complete',
+            'career_map_complete'
+          ];
           newlyUnlocked = await checkAndUnlockMultipleBadges(userId.toString(), badgesToCheck);
           if (newlyUnlocked.length > 0) {
             console.log(`✅ New badges unlocked: ${newlyUnlocked.join(', ')}`);

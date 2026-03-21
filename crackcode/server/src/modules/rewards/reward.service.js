@@ -77,10 +77,20 @@ export async function awardReward(userId, questionId, questionType, difficulty, 
 
       console.log('✅ User updated:', { totalXP: user.totalXP, tokens: user.tokens });
 
-      // Step 3: Check and unlock badges based on new casesSolved count
+      // Step 3: Check and unlock badges based on new casesSolved count + language badges
       let badgesUnlocked = [];
       try {
-        const badgesToCheck = ['beginner', 'cases_5', 'cases_10', 'cases_25'];
+        const badgesToCheck = [
+          'beginner', 
+          'cases_5', 
+          'cases_10', 
+          'cases_25',
+          'python_complete',       // Language-specific badges
+          'javascript_complete',
+          'java_complete',
+          'cpp_complete',
+          'career_map_complete'
+        ];
         badgesUnlocked = await checkAndUnlockMultipleBadges(userIdObj.toString(), badgesToCheck);
         if (badgesUnlocked.length > 0) {
           console.log(`✅ New badges unlocked: ${badgesUnlocked.join(', ')}`);

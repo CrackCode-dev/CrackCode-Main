@@ -92,9 +92,10 @@ const EditorToolbar = () => {
         alert('✅ Correct!\n\n(Already completed)');
       }
 
-      // Dispatch custom event to signal successful submission
-      window.dispatchEvent(new CustomEvent('onSolutionSubmitted', { 
-        detail: { questionId: currentProblem?.problemId }
+      // Dispatch custom event to signal successful submission (use standard event name without 'on')
+      console.log('🎯 Dispatching solutionSubmitted event for:', currentProblem?.problemId);
+      window.dispatchEvent(new CustomEvent('solutionSubmitted', { 
+        detail: { questionId: currentProblem?.problemId, earnedXP: data.earnedXP, earnedTokens: data.earnedTokens }
       }));
 
       // Navigate back to learn page or reload

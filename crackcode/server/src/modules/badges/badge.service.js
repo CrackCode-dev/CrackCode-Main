@@ -5,6 +5,28 @@
 import User from "../auth/User.model.js";
 import BADGE_DEFINITIONS, { getAllBadges } from "./badge.config.js";
 
+// Each language has multiple difficulties (Easy, Medium, Hard) with 15 questions each
+// Total: 4 difficulties × 15 questions = 60 questions per language
+
+export const LANGUAGE_BADGE_CONFIG = {
+  python: {
+    totalQuestions: 60,     
+    unlockThreshold: 0.50   // 50% completion = unlock badge (30 out of 60 questions)
+  },
+  javascript: {
+    totalQuestions: 60,
+    unlockThreshold: 0.50
+  },
+  java: {
+    totalQuestions: 60,
+    unlockThreshold: 0.50
+  },
+  cpp: {
+    totalQuestions: 60,
+    unlockThreshold: 0.50
+  }
+};
+
 /*
 Check if user qualifies for a badge and unlock if necessary
 userId - MongoDB user ID
@@ -30,8 +52,29 @@ export const checkAndUnlockBadge = async (userId, badgeId) => {
       return false;
     }
 
-    // Evaluate condition
-    const shouldUnlock = evaluateBadgeCondition(badge.condition, user);
+    // Fetch language-specific question counts for badge evaluation
+    const UserQuestionProgress = (await import('../progress/UserQuestionProgress.model.js')).default;
+    const languageCounts = {};
+    
+    try {
+      const langAgg = await UserQuestionProgress.aggregate([
+        { $match: { userId: user._id } },
+        { $group: { _id: '$language', count: { $sum: 1 } } }
+      ]);
+      
+      langAgg.forEach(item => {
+        const lang = (item._id || '').toLowerCase();
+        if (lang.includes('py') || lang === 'python') languageCounts.python = item.count;
+        else if (lang.includes('js') || lang === 'javascript') languageCounts.javascript = item.count;
+        else if (lang.includes('java') && !lang.includes('script')) languageCounts.java = item.count;
+        else if (lang.includes('cpp') || lang.includes('c++') || lang === 'c++') languageCounts.cpp = item.count;
+      });
+    } catch (err) {
+      console.warn('⚠️ Error fetching language counts:', err.message);
+    }
+
+    // Evaluate condition with language counts
+    const shouldUnlock = evaluateBadgeCondition(badge.condition, user, languageCounts);
 
     if (shouldUnlock) {
       // Add to unlockedBadges array
@@ -95,11 +138,32 @@ export const getUserBadgeProgress = async (userId) => {
       return [];
     }
 
+    // Fetch language-specific question counts from UserQuestionProgress
+    const UserQuestionProgress = (await import('../progress/UserQuestionProgress.model.js')).default;
+    const languageCounts = {};
+    
+    try {
+      const langAgg = await UserQuestionProgress.aggregate([
+        { $match: { userId: user._id } },
+        { $group: { _id: '$language', count: { $sum: 1 } } }
+      ]);
+      
+      langAgg.forEach(item => {
+        const lang = (item._id || '').toLowerCase();
+        if (lang.includes('py') || lang === 'python') languageCounts.python = item.count;
+        else if (lang.includes('js') || lang === 'javascript') languageCounts.javascript = item.count;
+        else if (lang.includes('java') && !lang.includes('script')) languageCounts.java = item.count;
+        else if (lang.includes('cpp') || lang.includes('c++') || lang === 'c++') languageCounts.cpp = item.count;
+      });
+    } catch (err) {
+      console.warn('⚠️ Error fetching language counts:', err.message);
+    }
+
     const allBadges = getAllBadges();
 
     return allBadges.map(badge => {
       const isUnlocked = user.unlockedBadges?.includes(badge.id) || false;
-      const progress = calculateBadgeProgress(badge.condition, user);
+      const progress = calculateBadgeProgress(badge.condition, user, languageCounts);
 
       return {
         ...badge,
@@ -161,7 +225,7 @@ condition - Condition string from badge config
 user - User document from MongoDB
 returns {boolean} - Whether condition is met
  */
-function evaluateBadgeCondition(condition, user) {
+function evaluateBadgeCondition(condition, user, languageCounts = {}) {
   try {
     // Handle signup/account creation badge
     if (condition === 'accountCreated') {
@@ -185,24 +249,51 @@ function evaluateBadgeCondition(condition, user) {
       }
     }
 
+    // Language-specific badges: use threshold from config
+    // User must complete at least unlockThreshold% of questions in that language
     if (condition === 'pythonCareerComplete') {
-      return user.completedCareers?.includes('MLEngineer') || user.completedCareers?.includes('DataScientist');
-    }
-
-    if (condition === 'cppCareerComplete') {
-      return user.completedCareers?.includes('SoftwareEngineer');
-    }
-
-    if (condition === 'javaCareerComplete') {
-      return user.completedCareers?.includes('SoftwareEngineer');
+      const pythonCount = languageCounts.python || 0;
+      const config = LANGUAGE_BADGE_CONFIG.python;
+      const threshold = config.totalQuestions * config.unlockThreshold;
+      return pythonCount >= threshold;
     }
 
     if (condition === 'javascriptCareerComplete') {
-      return user.completedCareers?.includes('DataScientist');
+      const jsCount = languageCounts.javascript || 0;
+      const config = LANGUAGE_BADGE_CONFIG.javascript;
+      const threshold = config.totalQuestions * config.unlockThreshold;
+      return jsCount >= threshold;
+    }
+
+    if (condition === 'javaCareerComplete') {
+      const javaCount = languageCounts.java || 0;
+      const config = LANGUAGE_BADGE_CONFIG.java;
+      const threshold = config.totalQuestions * config.unlockThreshold;
+      return javaCount >= threshold;
+    }
+
+    if (condition === 'cppCareerComplete') {
+      const cppCount = languageCounts.cpp || 0;
+      const config = LANGUAGE_BADGE_CONFIG.cpp;
+      const threshold = config.totalQuestions * config.unlockThreshold;
+      return cppCount >= threshold;
     }
 
     if (condition === 'allCareersComplete') {
-      return user.completedCareers?.length === 3; // All 3 careers
+      // Check if user has met the threshold in all 4 languages
+      const configs = [
+        { lang: 'python', key: 'python' },
+        { lang: 'javascript', key: 'javascript' },
+        { lang: 'java', key: 'java' },
+        { lang: 'cpp', key: 'cpp' }
+      ];
+      
+      return configs.every(({ key }) => {
+        const count = languageCounts[key] || 0;
+        const config = LANGUAGE_BADGE_CONFIG[key];
+        const threshold = config.totalQuestions * config.unlockThreshold;
+        return count >= threshold;
+      });
     }
 
     return false;
@@ -215,7 +306,7 @@ function evaluateBadgeCondition(condition, user) {
 /*
  Calculate progress towards a badge (0-100%)
  */
-function calculateBadgeProgress(condition, user) {
+function calculateBadgeProgress(condition, user, languageCounts = {}) {
   try {
     if (condition.includes('casesSolved')) {
       const match = condition.match(/casesSolved >= (\d+)/);
@@ -230,10 +321,48 @@ function calculateBadgeProgress(condition, user) {
       return Math.min((user.totalXP / 5000) * 100, 100);
     }
 
-    if (condition.includes('Career')) {
-      const careers = user.completedCareers?.length || 0;
-      const required = condition === 'allCareersComplete' ? 3 : 1;
-      return Math.min((careers / required) * 100, 100);
+    // Language-specific badges: use dynamic total questions from config
+    if (condition === 'pythonCareerComplete') {
+      const pythonCount = languageCounts.python || 0;
+      const totalPython = LANGUAGE_BADGE_CONFIG.python.totalQuestions || 60;
+      return Math.min((pythonCount / totalPython) * 100, 100);
+    }
+
+    if (condition === 'javascriptCareerComplete') {
+      const jsCount = languageCounts.javascript || 0;
+      const totalJS = LANGUAGE_BADGE_CONFIG.javascript.totalQuestions || 60;
+      return Math.min((jsCount / totalJS) * 100, 100);
+    }
+
+    if (condition === 'javaCareerComplete') {
+      const javaCount = languageCounts.java || 0;
+      const totalJava = LANGUAGE_BADGE_CONFIG.java.totalQuestions || 60;
+      return Math.min((javaCount / totalJava) * 100, 100);
+    }
+
+    if (condition === 'cppCareerComplete') {
+      const cppCount = languageCounts.cpp || 0;
+      const totalCpp = LANGUAGE_BADGE_CONFIG.cpp.totalQuestions || 60;
+      return Math.min((cppCount / totalCpp) * 100, 100);
+    }
+
+    if (condition === 'allCareersComplete') {
+      // Progress based on total languages at threshold
+      let languagesAtThreshold = 0;
+      [
+        { lang: 'python', key: 'python' },
+        { lang: 'javascript', key: 'javascript' },
+        { lang: 'java', key: 'java' },
+        { lang: 'cpp', key: 'cpp' }
+      ].forEach(({ lang, key }) => {
+        const count = languageCounts[key] || 0;
+        const total = LANGUAGE_BADGE_CONFIG[key].totalQuestions || 60;
+        const threshold = LANGUAGE_BADGE_CONFIG[key].unlockThreshold || 0.5;
+        if (count / total >= threshold) {
+          languagesAtThreshold++;
+        }
+      });
+      return Math.min((languagesAtThreshold / 4) * 100, 100);
     }
 
     return 0;

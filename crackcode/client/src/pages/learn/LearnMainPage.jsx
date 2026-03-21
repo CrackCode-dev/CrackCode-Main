@@ -91,8 +91,8 @@ const LearnMainPage = () => {
       <Header variant="empty" />
 
       <main className="flex-1 px-6 sm:px-10 py-10">
-        <div className="max-w-5xl mx-auto pt-12">
-          <div className="mb-16 text-center">
+        <div className="max-w-5xl mx-auto pt-10">
+          <div className="mb-12 text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: 'var(--text)' }}>
               Choose Your Learning Path
             </h1>
