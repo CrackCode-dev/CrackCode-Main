@@ -1,17 +1,11 @@
-// React hooks
 import { useEffect, useState } from "react";
-
-// API functions to fetch leaderboard data
 import { fetchGlobalLeaderboard, fetchMyRank } from "../../api/leaderboard";
-
-// UI Components
 import TopThree from "../../components/leaderboard/TopThree";
 import LeaderboardTable from "../../components/leaderboard/leaderboardTable";
 import Button from "../../components/ui/Button";
-import HQBtn from "../../components/common/HQBtn";
-// Theme chooser intentionally omitted on this page
+import Header from "../../components/common/Header";
+import { Trophy, Search, AlertTriangle, Flame, RefreshCw, ArrowUp, HatGlasses } from "lucide-react";
 
-// Leaderboard page component
 const LeaderboardPage = () => {
 
   const [leaders, setLeaders] = useState([]);
@@ -52,7 +46,7 @@ const LeaderboardPage = () => {
             setMyRank(me);
           }
 
-        } catch {}
+        } catch { /* empty */ }
 
       } catch (err) {
 
@@ -80,24 +74,27 @@ const LeaderboardPage = () => {
 
   return (
 
-    <div
-      className="min-h-screen flex flex-col relative px-6 sm:px-10 py-6"
-      style={{
-        backgroundColor: "var(--bg)",
-        color: "var(--text)",
-      }}
-    >
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
+      <Header variant="empty" showBackBtn={false}/>
 
-      {/* Navbar removed for leaderboard page */}
+      <main className="flex-1 px-6 sm:px-10 py-10 pt-6">
 
-      <div className="absolute top-6 left-6">
-        <HQBtn />
-      </div>
-
-      <main className="flex-1 px-10 pb-16 pt-6">
-
-        {/* Filter buttons */}
-        <div className="flex justify-end max-w-5xl mx-auto mb-8">
+         {/* Title + Filter buttons */}
+        <div className="flex items-center justify-between max-w-5xl mx-auto mt-20 mb-12">
+          <div className="text-center flex-1">
+            <div className="flex flex-col gap-5">
+              <h1 
+                className="text-4xl md:text-5xl font-bold tracking-wide inline-flex items-center justify-center gap-5 mb-4" 
+                style={{color: 'var(--text)'}}
+              >
+                <Trophy className="w-9 h-9 shrink-0" style={{color: 'var(--brand)'}}/>
+                <span>Detective Hall of Fame</span>
+              </h1>
+            </div>
+            <p className="text-(--muted) text-lg">
+              Top investigators in the Code Detectives agency
+            </p>
+          </div>
           <div className="flex gap-3">
             {filterButtons.map(({ label, value }) => (
               <Button
@@ -111,20 +108,10 @@ const LeaderboardPage = () => {
           </div>
         </div>
 
-        {/* Title */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold tracking-wide">
-            🏆 Detective Hall of Fame
-          </h1>
-          <p className="text-[var(--muted)]">
-            Top investigators in the Code Detectives agency
-          </p>
-        </div>
-
         {/* My Rank */}
         {myRank && (
           <div
-            className="flex items-center justify-between rounded-xl px-6 py-4 mb-10 max-w-5xl mx-auto border"
+            className="relative flex items-center justify-between rounded-xl px-6 py-4 mb-10 max-w-5xl mx-auto border"
             style={{
               backgroundColor: "var(--surface)",
               borderColor: "var(--border)",
@@ -133,11 +120,11 @@ const LeaderboardPage = () => {
 
             <div className="flex items-center gap-3">
               <span className="text-2xl">
-                {myRank.avatar ?? "🕵️"}
+                {myRank.avatar ?? <HatGlasses className="w-6 h-6" />}
               </span>
 
               <div>
-                <p className="text-xs text-[var(--muted)] uppercase">
+                <p className="text-xs text-(--muted) uppercase">
                   Your Rank
                 </p>
 
@@ -147,27 +134,27 @@ const LeaderboardPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-8 text-sm">
+            <div className="flex items-center justify-center gap-8 text-sm mr-16">
 
-              <div className="text-center">
-                <p className="text-[var(--muted)]">
+              <div className="text-center text-lg">
+                <p className="text-(--muted)">
                   #{myRank.position}
                 </p>
-                <p className="text-[var(--muted)]">Position</p>
+                <p className="text-(--muted)">Position</p>
               </div>
 
-              <div className="text-center">
-                <p className="text-[var(--muted)] font-bold text-lg">
+              <div className="text-center text-lg">
+                <p className="text-(--muted) font-bold text-lg">
                   {(myRank.totalXP ?? 0).toLocaleString()}
                 </p>
-                <p className="text-[var(--muted)] text-xs">Total XP</p>
+                <p className="text-(--muted) ">Total XP</p>
               </div>
 
-              <div className="text-center">
-                <p className="font-bold text-lg" style={{ color: "var(--accent)" }}>
-                  🔥 {myRank.streak ?? 0}
-                </p>
-                <p className="text-[var(--muted)] text-sm">Streak</p>
+              <div className="absolute flex items-center gap-1" style={{top: '12px', right: '16px'}}>
+                <Flame className="w-5 h-5" style={{ color: "var(--brand)" }} />
+                <span className="font-bold text-lg" style={{ color: "var(--accent)" }}>
+                  {myRank.streak ?? 0}
+                </span>
               </div>
 
             </div>
@@ -178,8 +165,10 @@ const LeaderboardPage = () => {
         {loading ? (
 
           <div className="flex flex-col items-center py-24">
-            <span className="text-4xl animate-pulse">🔍</span>
-            <p className="text-[var(--muted)] mt-2 text-sm">
+            <span className="text-4xl animate-pulse">
+              <Search className="w-10 h-10" style={{ color: "var(--brand)" }} />  
+            </span>
+            <p className="text-(--muted) mt-2 text-sm">
               Investigating records…
             </p>
           </div>
@@ -188,7 +177,9 @@ const LeaderboardPage = () => {
 
           <div className="flex flex-col items-center py-24 gap-4">
 
-            <span className="text-4xl">⚠️</span>
+            <span className="text-4xl">
+              <AlertTriangle className="w-10 h-10" style={{ color: "var(--brand)" }} />
+            </span>
 
             <p style={{ color: "var(--brand)" }}>
               {error}
@@ -220,15 +211,13 @@ const LeaderboardPage = () => {
 
             <div className="flex justify-center mt-10">
               <Button
-                variant="outline"
+                variant="primary"
+                icon={ArrowUp}
+                iconPosition="left"
                 onClick={() =>
-                  window.scrollTo({
-                    top: 0,
-                    behavior: "smooth",
-                  })
-                }
+                window.scrollTo({top: 0,behavior: "smooth",})}
               >
-                ↑ Back to Top
+                Back to Top
               </Button>
             </div>
 

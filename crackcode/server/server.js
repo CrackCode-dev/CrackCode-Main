@@ -189,6 +189,7 @@ import shopRoutes from "./src/routes/Shop.routes.js";
 // AI Routes (ERROR DIAGNOSIS + ASSISTANT)
 import aiRoutes from "./src/services/aiRoutes.js";
 import { logAIConfig } from "./src/services/aiConfig.js";
+import { verifyBrevoApiKey } from "./src/modules/notifications/brevo.client.js";
 
 import authRoutes from "./src/modules/auth/routes.js";
 import userRoutes from "./src/modules/user/routes.js";
@@ -200,6 +201,7 @@ import sessionRoutes from "./src/modules/session/routes.js";
 import rewardsRoutes from "./src/modules/rewards/routes.js";
 import codeEditorRoutes from "./src/modules/codeEditor/routes.js";
 import badgeRoutes from "./src/modules/badges/routes.js";
+import brevoRoutes from "./src/modules/notifications/brevo.routes.js";
 
 // Session cleanup utility
 import { cleanupExpiredSessions } from "./src/modules/session/session.service.js";
@@ -209,6 +211,10 @@ import questionRoutes from "./src/modules/Career Map/questions/question.routes.j
 import progressRoutes from "./src/modules/Career Map/progress/progress.routes.js";
 
 const app = express();
+
+// If the app is running behind a proxy/load-balancer (nginx, cloud LB),
+// enable trust proxy so req.secure and x-forwarded-* headers are populated.
+app.set('trust proxy', true);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -300,6 +306,7 @@ app.use("/api/session", sessionRoutes);
 app.use("/api/rewards", rewardsRoutes);
 app.use("/api/codeEditor", codeEditorRoutes);
 app.use("/api/badges", badgeRoutes);
+app.use("/api/admin/brevo", brevoRoutes);
 
 // Career Map APIs
 app.use("/api/questions", questionRoutes);
@@ -376,6 +383,20 @@ const startServer = async () => {
   if (process.env.ENABLE_AI_AGENT === 'true' && !process.env.GEMINI_API_KEY) {
     console.error('❌ AI enabled but GEMINI_API_KEY missing in .env');
     process.exit(1);
+  }
+
+  // Check Brevo connectivity and log status
+  try {
+    const brevoOk = await verifyBrevoApiKey();
+    if (brevoOk) {
+      console.log('✅ Brevo API reachable');
+    } else if (process.env.BREVO_API_KEY) {
+      console.warn('⚠️ BREVO_API_KEY set but Brevo API did not respond (check key/network)');
+    } else {
+      console.warn('⚠️ BREVO_API_KEY not configured. Email sending will be disabled.');
+    }
+  } catch (err) {
+    console.warn('⚠️ Could not verify Brevo API:', err?.message || err);
   }
   
   await connectRedisOrExit();

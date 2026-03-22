@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
 import { toast } from "react-toastify";
-import HQBtn from "../../components/common/HQBtn";
+import Header from "../../components/common/Header";
 import { useTheme } from "../../context/theme/ThemeContext";
 
 export default function DetectiveStore() {
@@ -26,7 +26,7 @@ export default function DetectiveStore() {
   const navigate = useNavigate();
   const processingPaymentRef = useRef(false);
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5051";
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || "http://localhost:5051";
 
   const isLightFamily = ["light", "cream", "country"].includes(theme);
 
@@ -411,30 +411,35 @@ export default function DetectiveStore() {
   return (
     <div className={`min-h-screen flex flex-col ${pageClass}`}>
       <div className="flex items-center justify-between px-4 py-4">
-        <HQBtn />
-        <div className="flex flex-col items-center gap-1">
-          <div className={`w-14 h-14 rounded-full overflow-hidden border-2 ${isLightFamily ? "border-green-300" : "border-green-700"} shadow-md`}>
-            <img
-              src={profileImage}
-              alt={username}
-              className="w-full h-full object-cover"
-              onError={(e) => { e.currentTarget.src = "/placeholder.png"; }}
-            />
-          </div>
-          <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${tokenClass} ${isLightFamily ? "border-green-300 bg-green-50" : "border-green-800 bg-green-950/40"}`}>
-            {tokensRemaining} Tokens
-          </span>
-        </div>
+        <Header variant="empty" showBackBtn={false} />
       </div>
 
       <div className="flex flex-1">
-        <StoreSidebar category={category} setCategory={setCategory} />
+  <StoreSidebar category={category} setCategory={setCategory} />
 
-        <div className="flex-1 p-10">
-          <h1 className={`text-3xl font-bold mb-2 ${titleClass}`}>
-            Detective Store
-          </h1>
-          <p className={`mb-10 ${subTextClass}`}>
+  <div className="flex-1 p-10">
+
+    {/* Heading row with avatar on the right */}
+    <div className="flex items-center justify-between">
+      <h1 className={`text-4xl md:text-5xl font-bold text-[var(--muted)] ${titleClass}`}>
+        Detective Store
+      </h1>
+      <div className="flex flex-col items-center gap-1">
+        <div className={`w-14 h-14 rounded-full overflow-hidden border-2 mt-5 ${isLightFamily ? "border-green-300" : "border-green-700"} shadow-md`}>
+          <img
+            src={profileImage}
+            alt={username}
+            className="w-full h-full object-cover"
+            onError={(e) => { e.currentTarget.src = "/placeholder.png"; }}
+          />
+        </div>
+        <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${tokenClass} ${isLightFamily ? "border-green-300 bg-green-50" : "border-green-800 bg-green-950/40"}`}>
+          {tokensRemaining} Tokens
+        </span>
+      </div>
+    </div>
+
+          <p className={`mb-10 text-lg ${subTextClass}`}>
             Unlock exclusive avatars, themes, and titles to customize your
             detective profile
           </p>

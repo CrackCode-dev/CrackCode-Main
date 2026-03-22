@@ -15,25 +15,34 @@ const isValidSessionId = (id) => {
 // ─── Cookie config ───────────────────────────────────────────
 const isProduction = () => process.env.NODE_ENV === "production";
 
-export const accessCookieOptions = () => ({
+// Determine whether cookies should be marked secure based on the incoming request
+const requestIsSecure = (req) => {
+  // Prefer explicit request information. If not available, allow override via env var.
+  if (!req) return process.env.FORCE_SECURE_COOKIES === 'true';
+  const proto = (req.headers && (req.headers["x-forwarded-proto"] || req.headers["X-Forwarded-Proto"])) || '';
+  return Boolean(req.secure) || proto.toLowerCase().includes('https') || process.env.FORCE_SECURE_COOKIES === 'true';
+};
+
+export const accessCookieOptions = (req) => ({
   httpOnly: true,
-  secure: isProduction(),
-  sameSite: isProduction() ? "strict" : "lax",
+  secure: requestIsSecure(req),
+  // If cookie is secure (i.e. used cross-site over https) set sameSite to 'none'
+  sameSite: requestIsSecure(req) ? 'none' : 'lax',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 });
 
-export const refreshCookieOptions = () => ({
+export const refreshCookieOptions = (req) => ({
   httpOnly: true,
-  secure: isProduction(),
-  sameSite: isProduction() ? "strict" : "lax",
+  secure: requestIsSecure(req),
+  sameSite: requestIsSecure(req) ? 'none' : 'lax',
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   path: "/api/session/refresh", // only sent to the refresh endpoint
 });
 
 //  Helper: set both cookies on the response 
-export const setSessionCookies = (res, accessToken, refreshToken) => {
-  res.cookie("accessToken", accessToken, accessCookieOptions());
-  res.cookie("refreshToken", refreshToken, refreshCookieOptions());
+export const setSessionCookies = (req, res, accessToken, refreshToken) => {
+  res.cookie("accessToken", accessToken, accessCookieOptions(req));
+  res.cookie("refreshToken", refreshToken, refreshCookieOptions(req));
 };
 
 //  Helper: clear all auth cookies 
@@ -76,7 +85,7 @@ export const refreshToken = async (req, res) => {
     }
 
     // Set rotated tokens
-    setSessionCookies(res, result.accessToken, result.refreshToken);
+    setSessionCookies(req, res, result.accessToken, result.refreshToken);
 
     return res.json({ success: true, message: "Token refreshed" });
   } catch (error) {

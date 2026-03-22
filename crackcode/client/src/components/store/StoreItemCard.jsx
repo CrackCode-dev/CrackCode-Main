@@ -1,3 +1,5 @@
+
+
 import Card from "../ui/Card";
 import Button from "../ui/Button";
 import { CirclePoundSterling, CircleDollarSign } from "lucide-react";
@@ -15,19 +17,32 @@ export default function StoreItemCard({
 }) {
   const { theme } = useTheme();
 
-  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5051";
+  const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || "http://localhost:5051";
 
   const rawImagePath = item.imageUrl || item.image || "";
 
-  const normalizedImagePath = rawImagePath.startsWith("/upload/")
-    ? rawImagePath.replace("/upload/", "/uploads/")
-    : rawImagePath;
+  let imageSrc = "/placeholder.png";
+  if (rawImagePath && rawImagePath.trim()) {
+    const p = rawImagePath.trim();
 
-  const imageSrc = normalizedImagePath
-    ? normalizedImagePath.startsWith("http")
-      ? normalizedImagePath
-      : `${API_BASE_URL}${normalizedImagePath}`
-    : "/placeholder.png";
+    if (/^https?:\/\//i.test(p)) {
+      imageSrc = p;
+    } else if (p.startsWith("/upload/")) {
+      // legacy path: /upload/... -> normalize to /uploads/ and serve from API
+      imageSrc = `${API_BASE_URL}${p.replace("/upload/", "/uploads/")}`;
+    } else if (p.startsWith("/uploads") || p.includes("/uploads/")) {
+      // server-hosted uploads
+      imageSrc = `${API_BASE_URL}${p.startsWith("/") ? p : `/${p}`}`;
+    } else if (p.startsWith("/")) {
+      // client public path (Vite will serve this)
+      imageSrc = p;
+    } else {
+      // relative path from seeds or asset references -> use filename from path
+      const parts = p.split(/[\\/]/);
+      const filename = parts[parts.length - 1] || p;
+      imageSrc = `/shop/${filename}`;
+    }
+  }
 
   const pricingType = item.pricing?.type;
   const amount = item.pricing?.amount ?? 0;
@@ -42,54 +57,54 @@ export default function StoreItemCard({
     theme === "light"
       ? "border-gray-200 bg-gray-100 shadow-md hover:shadow-lg"
       : theme === "cream"
-      ? "border-[#ddd2c1] bg-[#f3ede3] shadow-md hover:shadow-lg"
-      : theme === "country"
-      ? "border-[#cfbea6] bg-[#efe4d3] shadow-md hover:shadow-lg"
-      : theme === "midnight"
-      ? "border-[#22314f] bg-[#12203c] shadow-md hover:shadow-xl"
-      : "border-gray-800 bg-[#161616] shadow-md hover:shadow-xl";
+        ? "border-[#ddd2c1] bg-[#f3ede3] shadow-md hover:shadow-lg"
+        : theme === "country"
+          ? "border-[#cfbea6] bg-[#efe4d3] shadow-md hover:shadow-lg"
+          : theme === "midnight"
+            ? "border-[#22314f] bg-[#12203c] shadow-md hover:shadow-xl"
+            : "border-gray-800 bg-[#161616] shadow-md hover:shadow-xl";
 
   const imageAreaClass =
     theme === "light"
       ? "bg-gray-50"
       : theme === "cream"
-      ? "bg-[#faf6ef]"
-      : theme === "country"
-      ? "bg-[#f7efe2]"
-      : theme === "midnight"
-      ? "bg-[#0d1a33]"
-      : "bg-[#222222]";
+        ? "bg-[#faf6ef]"
+        : theme === "country"
+          ? "bg-[#f7efe2]"
+          : theme === "midnight"
+            ? "bg-[#0d1a33]"
+            : "bg-[#222222]";
 
   const contentAreaClass =
     theme === "light"
       ? "bg-gray-100"
       : theme === "cream"
-      ? "bg-[#f3ede3]"
-      : theme === "country"
-      ? "bg-[#efe4d3]"
-      : theme === "midnight"
-      ? "bg-[#0f1b35]"
-      : "bg-[#0f0f0f]";
+        ? "bg-[#f3ede3]"
+        : theme === "country"
+          ? "bg-[#efe4d3]"
+          : theme === "midnight"
+            ? "bg-[#0f1b35]"
+            : "bg-[#0f0f0f]";
 
   const titleClass = isLightFamily ? "text-gray-900" : "text-white";
   const metaClass =
     theme === "midnight"
       ? "text-gray-300"
       : isLightFamily
-      ? "text-gray-500"
-      : "text-gray-400";
+        ? "text-gray-500"
+        : "text-gray-400";
   const ownedClass =
     theme === "midnight"
       ? "text-gray-300"
       : isLightFamily
-      ? "text-gray-500"
-      : "text-gray-400";
+        ? "text-gray-500"
+        : "text-gray-400";
   const ratingClass = "text-green-500";
   const priceClass = isLightFamily ? "text-green-600" : "text-green-400";
 
   let displayPrice = "N/A";
   let buttonLabel = "Buy";
-  let buttonAction = () => {};
+  let buttonAction = () => { };
   let isDisabled = loading;
 
   if (!isInventoryView) {
@@ -130,7 +145,7 @@ export default function StoreItemCard({
         buttonLabel = "Avatar Equipped";
       }
       isDisabled = true;
-      buttonAction = () => {};
+      buttonAction = () => { };
     } else {
       if (category === "theme") {
         buttonLabel = isEquipping ? "Applying..." : "Apply Theme";

@@ -5,7 +5,7 @@ import { Settings, Sun, Moon, Cloud, Palette, User, LogOut, Lock } from 'lucide-
 import { THEMES } from '../../context/theme/ThemeContext';
 
 const LOCKED_THEMES = ['country', 'midnight'];
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5051';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || 'http://localhost:5051';
 
 export default function SettingsDropdown() {
   const [open, setOpen] = useState(false);

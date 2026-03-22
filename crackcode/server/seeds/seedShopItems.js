@@ -142,7 +142,7 @@ const run = async () => {
         description: "A warm rustic country-style theme for your profile.",
         category: "theme",
         pricing: { type: "paid", amount: 6.00, currency: "USD" },
-        imageUrl: "/uploads/themes/country.png",
+        imageUrl: "/shop/country.png",
         metadata: { themeKey: "country" },
         isActive: true,
       },
@@ -152,17 +152,7 @@ const run = async () => {
         description: "A calm midnight blue theme for your profile.",
         category: "theme",
         pricing: { type: "paid", amount: 6.00, currency: "USD" },
-        imageUrl: "/uploads/themes/midnight.png",
-        metadata: { themeKey: "country" },
-        isActive: true,
-      },
-
-      {
-        name: "Midnight Theme",
-        description: "A sleek deep-blue midnight theme for your profile.",
-        category: "theme",
-        pricing: { type: "paid", amount: 6, currency: "USD" },
-        imageUrl: "/uploads/themes/midnight.png",
+        imageUrl: "/shop/midnight.png",
         metadata: { themeKey: "midnight" },
         isActive: true,
       },
@@ -171,7 +161,7 @@ const run = async () => {
         name: "Cena",
         category: "avatar",
         isActive: true,
-        imageUrl: "/uploads/avatars/Cena.png",
+        imageUrl: "/shop/cena.png",
         pricing: { type: "tokens", amount: 50 },
       },
 
@@ -179,7 +169,7 @@ const run = async () => {
         name: "Goblin",
         category: "avatar",
         isActive: true,
-        imageUrl: "/uploads/avatars/Goblin.jpg",
+        imageUrl: "/shop/goblin.jpg",
         pricing: { type: "tokens", amount: 40 },
       },
 
@@ -187,7 +177,7 @@ const run = async () => {
         name: "Witch",
         category: "avatar",
         isActive: true,
-        imageUrl: "/uploads/avatars/Witch.png",
+        imageUrl: "/shop/witch.png",
         pricing: { type: "tokens", amount: 80 },
       },
 
@@ -195,7 +185,7 @@ const run = async () => {
         name: "Butcher",
         category: "avatar",
         isActive: true,
-        imageUrl: "/uploads/avatars/Butcher.png",
+        imageUrl: "/shop/butcher.png",
         pricing: { type: "tokens", amount: 70 },
       },
 
@@ -203,7 +193,7 @@ const run = async () => {
         name: "Detective",
         category: "avatar",
         isActive: true,
-        imageUrl: "/uploads/avatars/Detective.png",
+        imageUrl: "/shop/detective.png",
         pricing: { type: "tokens", amount: 140 },
       },
 
@@ -211,7 +201,7 @@ const run = async () => {
         name: "Prime",
         category: "avatar",
         isActive: true,
-        imageUrl: "/uploads/avatars/Prime.png",
+        imageUrl: "/shop/prime.png",
         pricing: { type: "tokens", amount: 100 },
       },
 
@@ -220,7 +210,7 @@ const run = async () => {
         description: "Premium avatar",
         category: "avatar",
         pricing: { type: "paid", amount: 4.98, currency: "USD" },
-        imageUrl: "/uploads/avatars/Batman.png",
+        imageUrl: "/shop/batman.png",
         metadata: {
           rarity: "premium",
         },
@@ -232,7 +222,7 @@ const run = async () => {
         description: "Premium avatar",
         category: "avatar",
         pricing: { type: "paid", amount: 3.98, currency: "USD" },
-        imageUrl: "/uploads/avatars/Hacker.jpg",
+        imageUrl: "/shop/hacker.jpg",
         metadata: {
           rarity: "premium",
         },
@@ -244,7 +234,7 @@ const run = async () => {
         description: "Premium avatar",
         category: "avatar",
         pricing: { type: "paid", amount: 6.98, currency: "USD" },
-        imageUrl: "/uploads/avatars/Targarian.jpg",
+        imageUrl: "/shop/targarian.jpg",
         metadata: {
           rarity: "premium",
         },
@@ -256,7 +246,7 @@ const run = async () => {
         description: "Premium avatar",
         category: "avatar",
         pricing: { type: "paid", amount: 4.98, currency: "USD" },
-        imageUrl: "/uploads/avatars/Superman.jpg",
+        imageUrl: "/shop/superman.jpg",
         metadata: {
           rarity: "premium",
         },
@@ -268,7 +258,7 @@ const run = async () => {
         description: "Premium avatar",
         category: "avatar",
         pricing: { type: "tokens", amount: 250 },
-        imageUrl: "/uploads/avatars/Wizard.png",
+        imageUrl: "/shop/wizard.png",
         metadata: {
           themeKey: "dark_neon",
         },
@@ -280,7 +270,7 @@ const run = async () => {
         description: "Premium avatar",
         category: "avatar",
         pricing: { type: "paid", amount: 4.98, currency: "USD" },
-        imageUrl: "/uploads/avatars/Steve.jpg",
+        imageUrl: "/shop/steve.jpg",
         metadata: {
           rarity: "premium",
         },
@@ -292,7 +282,7 @@ const run = async () => {
         description: "Exclusive badge for your profile.",
         category: "avatar",
         pricing: { type: "paid", amount: 6.66, currency: "USD" },
-        imageUrl: "/uploads/avatars/North.jpg",
+        imageUrl: "/shop/north.jpg",
         metadata: {
           badgeType: "legend",
         },

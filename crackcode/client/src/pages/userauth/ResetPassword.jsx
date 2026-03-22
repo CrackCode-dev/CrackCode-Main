@@ -6,6 +6,7 @@ import { AppContent } from "../../context/userauth/authenticationContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Header from "../../components/common/Header";
+import LetterGlitch from "../../components/bgEffect/LetterGlitch";
 
 function ResetPassword() {
   const { backendUrl } = useContext(AppContent);
@@ -120,19 +121,17 @@ function ResetPassword() {
     <div className="min-h-screen relative overflow-hidden">
       <Header variant="landing" />
 
-      {/* Background Video */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover z-0"
-      >
-        <source src="/auth-bg.mp4" type="video/mp4" />
-      </video>
-
-      {/* Brown Overlay */}
-      <div className="absolute inset-0 bg-[#562F00]/70 z-10"></div>
+      {/* Letter Glitch Background Effect */}
+      <div className="absolute inset-0 z-0">
+        <LetterGlitch
+          glitchColors={['#ff6b35', '#f7c244', '#61b3dc', '#61dca3', '#e63946']}
+          glitchSpeed={60}
+          smooth={true}
+          outerVignette={false}
+          centerVignette={false}
+          backgroundColor="#FFFDF1"
+        />
+      </div>
 
       {/* Center Wrapper */}
       <div className="relative z-20 min-h-screen flex items-center justify-center px-4">

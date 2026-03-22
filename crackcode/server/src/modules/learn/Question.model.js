@@ -96,3 +96,17 @@ questionSchema.index({ difficulty: 1 });
 questionSchema.index({ language: 1 });
 
 export default mongoose.model("Question", questionSchema);
+
+// Helper: find question by either ObjectId or problemId string
+export async function findQuestionByIdentifier(idOrProblemId) {
+  if (!idOrProblemId) return null;
+
+  // If it's a valid ObjectId, try by _id first
+  if (mongoose.Types.ObjectId.isValid(idOrProblemId)) {
+    const byId = await mongoose.model("Question").findById(idOrProblemId);
+    if (byId) return byId;
+  }
+
+  // Otherwise, try problemId
+  return await mongoose.model("Question").findOne({ problemId: idOrProblemId });
+}

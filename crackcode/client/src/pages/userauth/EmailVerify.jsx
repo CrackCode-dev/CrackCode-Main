@@ -6,6 +6,7 @@ import Button from "../../components/ui/Button";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/common/Header";
+import LetterGlitch from "../../components/bgEffect/LetterGlitch";
 
 function EmailVerify() {
   const { backendUrl, getUserData, setIsLoggedIn } = useContext(AppContent);
@@ -53,7 +54,8 @@ function EmailVerify() {
           try {
             localStorage.setItem('accessToken', data.accessToken);
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
-          } catch (e) {}
+          // eslint-disable-next-line no-unused-vars
+          } catch (e) { /* empty */ }
         }
         toast.success(data.message || "Email verified successfully!");
         // User is now authenticated by the backend
@@ -72,13 +74,16 @@ function EmailVerify() {
     <div className="min-h-screen relative overflow-hidden">
       <Header variant="landing" />
 
-      {/* Background video */}
-      <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0">
-        <source src="/auth-bg.mp4" type="video/mp4" />
-      </video>
-
-      {/* Overlay (tinted to your palette) */}
-      <div className="absolute inset-0 bg-[#562F00]/65 z-10" />
+      <div className="absolute inset-0 z-0">
+        <LetterGlitch
+          glitchColors={['#ff6b35', '#f7c244', '#61b3dc', '#61dca3', '#e63946']}
+          glitchSpeed={60}
+          smooth={true}
+          outerVignette={false}
+          centerVignette={false}
+          backgroundColor="#FFFDF1"
+        />
+      </div>
 
       {/* Card */}
       <div className="relative z-20 flex items-center justify-center min-h-screen px-4">

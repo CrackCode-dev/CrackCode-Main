@@ -1,6 +1,6 @@
 import { awardXP, awardTokens, awardRewards } from "../session/transaction.service.js";
 import UserProgress from "../learn/UserProgress.model.js";
-import Question from "../learn/Question.model.js";
+import Question, { findQuestionByIdentifier } from "../learn/Question.model.js";
 import { getRewardConfig } from "./reward.config.js";
 
 /*
@@ -11,8 +11,8 @@ export const awardChallengeCompletion = async (req, res) => {
     const { questionId, isFirstAttempt = false } = req.body;
     const userId = req.userId;
     
-    // Get question details
-    const question = await Question.findById(questionId);
+    // Get question details (accept either ObjectId or problemId)
+    const question = await findQuestionByIdentifier(questionId);
     if (!question) {
       return res.status(404).json({
         success: false,
@@ -21,9 +21,10 @@ export const awardChallengeCompletion = async (req, res) => {
     }
     
     // Check if already completed (prevent farming)
+    const qid = question._id;
     const existingProgress = await UserProgress.findOne({
       userId,
-      questionId,
+      questionId: qid,
       status: "completed",
     });
     
@@ -58,7 +59,7 @@ export const awardChallengeCompletion = async (req, res) => {
     
     // Update progress
     await UserProgress.findOneAndUpdate(
-      { userId, questionId },
+      { userId, questionId: qid },
       {
         status: "completed",
         completedAt: new Date(),

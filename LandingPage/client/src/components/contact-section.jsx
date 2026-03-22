@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { Button } from "./ui/button.jsx"
 import DotBackground from "./ui/dot-background.jsx"
 import { Linkedin, Instagram, ChevronDown, HelpCircle, Rocket, Heart, Github, Mail, MessageSquare, ExternalLink, Sparkles } from "lucide-react"
-import logo from "../assets/CrackCode-Logo.png"
+import logo from "../assets/logo.png"
 
 export default function ContactSection() {
   const [openFaq, setOpenFaq] = useState(null)

@@ -167,7 +167,7 @@ export default function CareerQuizPage() {
         <div className="min-h-screen bg-(--bg) flex flex-col items-center px-6 py-8">
             <Header variant="empty" />
 
-            <div className="w-full max-w-5xl flex justify-end items-center mb-12 mt-10">
+            <div className="w-full max-w-5xl flex justify-end items-center mb-12 mt-20">
                 <div className="flex flex-col items-end gap-2">
                     <span className="text-(--muted) text-sm font-mono">
                         Question {currentQ + 1} of {total}

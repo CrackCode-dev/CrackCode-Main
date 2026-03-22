@@ -1,5 +1,5 @@
 import UserProgress from "./UserProgress.model.js";
-import Question from "./Question.model.js";
+import Question, { findQuestionByIdentifier } from "./Question.model.js";
 import User from "../auth/User.model.js";
 import { checkAndUnlockMultipleBadges } from "../badges/badge.service.js";
 
@@ -19,7 +19,14 @@ export const getUserProgress = async (req, res) => {
 export const updateProgress = async (req, res) => {
   try {
     const userId = req.userId;
-    const { questionId, status } = req.body;
+    const { questionId: rawQuestionId, status } = req.body;
+
+    // Normalize question identifier to ObjectId when possible
+    let questionId = rawQuestionId;
+    if (rawQuestionId) {
+      const q = await findQuestionByIdentifier(rawQuestionId);
+      if (q) questionId = q._id;
+    }
 
     // detect previous state to know if this is a new completion
     const existing = await UserProgress.findOne({ userId, questionId });

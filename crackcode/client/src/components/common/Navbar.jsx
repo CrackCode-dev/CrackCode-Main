@@ -22,13 +22,17 @@ function Navbar() {
         <NavLink
           key={to}
           to={to}
-          className="px-4 py-2 rounded-lg text-base font-semibold transition-opacity hover:opacity-70"
+          className="relative inline-flex flex-col px-4 py-2 rounded-lg text-lg font-semibold transition-all duration-300 group"
           style={({ isActive }) => ({
-            background: isActive ? 'var(--brand)' : 'transparent',
-            color: isActive ? 'var(--brandInk)' : 'var(--text)',
+            background: isActive ? "var(--brand)" : "transparent",
+            color: isActive ? "var(--brandInk)" : "var(--text)",
           })}
         >
           {label}
+          <span
+            className="absolute bottom-1 left-4 right-4 h-0.5 w-0 group-hover:w-[calc(100%-2rem)] transition-all duration-300 rounded-full"
+            style={{ background: "linear-gradient(to right, var(--brand), rgba(255,165,0,0.4))" }}
+          />
         </NavLink>
       ))}
     </div>

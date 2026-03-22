@@ -17,7 +17,7 @@ const LetterGlitch = ({
     // Python
     'def', 'self', 'print()', 'range()', 'lambda', 'elif', 'True', 'False', 'None', '__init__', 'import', 'from', 'as', 'with', 'open()', 'class:', 'yield', 'assert', 'raise', 'except', 'finally:', 'pass', 'global', 'nonlocal', '__name__', '__main__', 'pip', 'venv', 'dict', 'list', 'tuple', 'set',
     // C++
-    '#include', '<iostream>', '<vector>', '<string>', '<map>', '<set>', '<algorithm>', '<memory>', 'std::', 'cout', 'cin', 'endl', 'namespace', 'using', 'template', 'typename', 'virtual', 'override', 'const', 'constexpr', 'static_cast', 'dynamic_cast', 'nullptr', 'auto', 'inline', 'explicit', 'friend', 'operator', 'struct', 'enum', 'union', 'typedef', 'sizeof', 'new', 'delete', 'malloc', 'free', 'printf', 'scanf', '&', '*ptr', '->',  'public:', 'private:', 'protected:', '::',
+    '#include', '<iostream>', '<vector>', '<string>', '<map>', '<set>', '<algorithm>', '<memory>', 'std::', 'cout', 'cin', 'endl', 'namespace', 'using', 'template', 'typename', 'virtual', 'override', 'const', 'constexpr', 'static_cast', 'dynamic_cast', 'nullptr', 'auto', 'inline', 'explicit', 'friend', 'operator', 'struct', 'enum', 'union', 'typedef', 'sizeof', 'new', 'delete', 'malloc', 'free', 'printf', 'scanf', '&', '*ptr', '->', 'public:', 'private:', 'protected:', '::',
     // C
     '#define', '#ifdef', '#ifndef', '#endif', '#pragma', 'stdio.h', 'stdlib.h', 'string.h', 'malloc()', 'calloc()', 'realloc()', 'free()', 'sizeof()', 'NULL', 'FILE*', 'fopen', 'fclose', 'fprintf', 'fscanf', 'argv', 'argc',
     // Java
@@ -67,10 +67,10 @@ const LetterGlitch = ({
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result
       ? {
-          r: parseInt(result[1], 16),
-          g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16)
-        }
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      }
       : null;
   };
 
@@ -95,11 +95,11 @@ const LetterGlitch = ({
     grid.current = { columns, rows };
     const totalCells = columns * rows;
     const cellWidth = charWidth * keywordMaxWidth;
-    
+
     keywords.current = Array.from({ length: totalCells }, (_, index) => {
       const row = Math.floor(index / columns);
       const staggerOffset = (row % 2) * (cellWidth * 0.4); // stagger odd rows
-      
+
       return {
         keyword: getRandomKeyword(),
         color: getRandomColor(),
@@ -137,7 +137,7 @@ const LetterGlitch = ({
   };
 
   const drawKeywords = () => {
-    if (!context.current || keywords.current.length === 0) return;
+    if (!context.current || keywords.current.length === 0 || !canvasRef.current) return;
     const ctx = context.current;
     const { width, height } = canvasRef.current.getBoundingClientRect();
     ctx.clearRect(0, 0, width, height);
@@ -257,7 +257,7 @@ const LetterGlitch = ({
     const b = parseInt(color.substr(4, 2), 16)
     return (r * 299 + g * 587 + b * 114) / 1000
   }
-  
+
   const isLightBg = getBrightness(backgroundColor) > 128
   const vignetteColor = isLightBg ? '255,255,255' : '0,0,0'
 
@@ -265,7 +265,7 @@ const LetterGlitch = ({
     <div className="relative w-full h-full overflow-hidden" style={{ backgroundColor }}>
       <canvas ref={canvasRef} className="block w-full h-full" />
       {outerVignette && (
-        <div 
+        <div
           className="absolute top-0 left-0 w-full h-full pointer-events-none"
           style={{
             background: `radial-gradient(circle, rgba(${vignetteColor},0) 60%, rgba(${vignetteColor},1) 100%)`
@@ -273,7 +273,7 @@ const LetterGlitch = ({
         />
       )}
       {centerVignette && (
-        <div 
+        <div
           className="absolute top-0 left-0 w-full h-full pointer-events-none"
           style={{
             background: `radial-gradient(circle, rgba(${vignetteColor},0.8) 0%, rgba(${vignetteColor},0) 60%)`

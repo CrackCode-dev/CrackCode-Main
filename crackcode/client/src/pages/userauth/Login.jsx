@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AppContent } from "../../context/userauth/authenticationContext";
 import axios from "axios";
+import api from "../../api/axios";
+import LetterGlitch from "../../components/bgEffect/LetterGlitch";
 import { toast } from "react-toastify";
 import { Mail, LockKeyhole, UserRound } from "lucide-react";
-import Logo from "../../assets/logo/crackcode_logo.svg";
 import logo_dark from "../../assets/logo/logo_dark.png";
 
 const Login = () => {
@@ -40,7 +41,7 @@ const Login = () => {
           return toast.error("You must accept the Terms and Conditions.");
         }
 
-        const { data } = await axios.post(`${backendUrl}/api/auth/register`, {
+        const { data } = await api.post(`/auth/register`, {
           name,
           email,
           password,
@@ -55,7 +56,7 @@ const Login = () => {
           toast.error(data?.message || "Registration failed.");
         }
       } else {
-        const { data } = await axios.post(`${backendUrl}/api/auth/login`, {
+        const { data } = await api.post(`/auth/login`, {
           email,
           password,
         });
@@ -65,17 +66,18 @@ const Login = () => {
           if (data.accessToken) {
             try {
               localStorage.setItem('accessToken', data.accessToken);
-              axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
+              api.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
             } catch (e) {}
           }
           
           setIsLoggedIn(true);
-          await getUserData();
+          await getUserData();  // Wait for user data to load before navigating
+          console.log("✅ User logged in and data loaded");
 
           // If the returned user isn't verified, prompt verification flow
           if (data.user && !data.user.isAccountVerified) {
             try {
-              await axios.post(`${backendUrl}/api/auth/send-verify-otp`);
+              await api.post(`/auth/send-verify-otp`);
               toast.info("Please verify your email. OTP sent to your email.");
             } catch (err) {
               console.log("OTP send error on login:", err);
@@ -84,7 +86,7 @@ const Login = () => {
             navigate("/verify-account");
           } else {
             toast.success("Welcome back!");
-            navigate("/home");
+            navigate("/home");  // Navigate AFTER auth state + user data are fully loaded
           }
         } else {
           toast.error(data?.message || "Login failed.");
@@ -100,15 +102,18 @@ const Login = () => {
 
 
   return (
-    // ✅ Video background wrapper
+    // Letter glitch background effect
     <div className="min-h-screen relative overflow-hidden">
-      {/* Background video */}
-      <video autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0">
-        <source src="/auth-bg.mp4" type="video/mp4" />
-      </video>
-
-      {/* Palette overlay (brown tint) */}
-      <div className="absolute inset-0 bg-[#562F00]/65 z-10" />
+      <div className="absolute inset-0 z-0">
+        <LetterGlitch
+          glitchColors={['#ff6b35', '#f7c244', '#61b3dc', '#61dca3', '#e63946']}
+          glitchSpeed={60}
+          smooth={true}
+          outerVignette={false}
+          centerVignette={false}
+          backgroundColor="#FFFDF1"
+        />
+      </div>
 
       {/* Center card */}
       <div className="relative z-20 min-h-screen flex items-center justify-center p-4">

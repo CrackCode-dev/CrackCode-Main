@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api/axios";
 
-const API_BASE_URL = "http://localhost:5051/api";
+const API_BASE = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || "http://localhost:5051";
 
 const AvatarShop = () => {
   const [avatars, setAvatars] = useState([]);
@@ -27,21 +27,14 @@ const AvatarShop = () => {
       setLoading(true);
       setError("");
 
-      const avatarsRes = await axios.get(
-        `${API_BASE_URL}/shop/items?category=avatar`
-      );
+      const avatarsRes = await api.get(`/shop/items?category=avatar`);
 
       setAvatars(avatarsRes.data.items || []);
 
       const token = getToken();
       if (token) {
         try {
-          const inventoryRes = await axios.get(
-            `${API_BASE_URL}/shop/inventory?category=avatar`,
-            {
-              headers: getAuthHeaders(),
-            }
-          );
+          const inventoryRes = await api.get(`/shop/inventory?category=avatar`);
 
           setInventory(inventoryRes.data.items || []);
         } catch (inventoryErr) {
@@ -76,21 +69,13 @@ const AvatarShop = () => {
       setError("");
 
       if (avatar.pricing.type === "paid") {
-        const res = await axios.post(
-          `${API_BASE_URL}/shop/checkout`,
-          { itemId: avatar._id },
-          { headers: getAuthHeaders() }
-        );
+        const res = await api.post(`/shop/checkout`, { itemId: avatar._id });
 
         window.location.href = res.data.checkoutUrl;
         return;
       }
 
-      await axios.post(
-        `${API_BASE_URL}/shop/purchase`,
-        { itemId: avatar._id },
-        { headers: getAuthHeaders() }
-      );
+      await api.post(`/shop/purchase`, { itemId: avatar._id });
 
       await loadAvatarShop();
       alert("Avatar purchased successfully!");
@@ -129,7 +114,7 @@ const AvatarShop = () => {
                 className="border p-4 rounded-xl text-center shadow bg-white"
               >
                 <img
-                  src={`http://localhost:5051${avatar.imageUrl}`}
+                  src={`${API_BASE}${avatar.imageUrl}`}
                   alt={avatar.name}
                   className="w-24 h-24 mx-auto mb-3 rounded-full object-cover"
                 />
