@@ -28,22 +28,6 @@ export default function DetectiveStore() {
 
   const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || "http://localhost:5051";
 
-  const isLightFamily = ["light", "cream", "country"].includes(theme);
-
-  const pageClass =
-    theme === "light"
-      ? "bg-gray-50 text-gray-900"
-      : theme === "cream"
-      ? "bg-[#f6f1e7] text-gray-900"
-      : theme === "country"
-      ? "bg-[#efe7dc] text-gray-900"
-      : theme === "midnight"
-      ? "bg-[#08142b] text-white"
-      : "bg-black text-white";
-
-  const titleClass = isLightFamily ? "text-gray-900" : "text-white";
-  const subTextClass = isLightFamily ? "text-gray-500" : "text-gray-400";
-  const tokenClass = isLightFamily ? "text-green-600" : "text-green-400";
 
   const getToken = () => localStorage.getItem("accessToken");
 
@@ -98,6 +82,15 @@ export default function DetectiveStore() {
         "/placeholder.png";
 
       setProfileImage(normalizeImageUrl(avatarSrc));
+
+      const equippedId =
+        user?.equippedAvatarItemId?._id ||
+        user?.equippedThemeItemId?._id ||
+        user?.equippedTitleItemId?._id ||
+        null;
+      if (equippedId) {
+        setEquippedItemId(String(equippedId));
+      }
     } catch (error) {
       console.error("Failed to load profile:", error);
       setUsername("User");
@@ -409,23 +402,21 @@ export default function DetectiveStore() {
       : `${category.charAt(0).toUpperCase() + category.slice(1)} Items`;
 
   return (
-    <div className={`min-h-screen flex flex-col ${pageClass}`}>
-      <div className="flex items-center justify-between px-4 py-4">
-        <Header variant="empty" showBackBtn={false} />
-      </div>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
+      <Header variant="empty" showBackBtn={false} />
 
-      <div className="flex flex-1">
+      <div className="flex flex-1 pt-20">
   <StoreSidebar category={category} setCategory={setCategory} />
 
   <div className="flex-1 p-10">
 
     {/* Heading row with avatar on the right */}
     <div className="flex items-center justify-between">
-      <h1 className={`text-4xl md:text-5xl font-bold text-[var(--muted)] ${titleClass}`}>
+      <h1 className="text-4xl md:text-5xl font-bold" style={{ color: 'var(--text)' }}>
         Detective Store
       </h1>
       <div className="flex flex-col items-center gap-1">
-        <div className={`w-14 h-14 rounded-full overflow-hidden border-2 mt-5 ${isLightFamily ? "border-green-300" : "border-green-700"} shadow-md`}>
+        <div className="w-14 h-14 rounded-full overflow-hidden border-2 mt-5 shadow-md" style={{ borderColor: 'var(--brand)' }}>
           <img
             src={profileImage}
             alt={username}
@@ -433,31 +424,31 @@ export default function DetectiveStore() {
             onError={(e) => { e.currentTarget.src = "/placeholder.png"; }}
           />
         </div>
-        <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${tokenClass} ${isLightFamily ? "border-green-300 bg-green-50" : "border-green-800 bg-green-950/40"}`}>
+        <span className="text-sm font-semibold px-3 py-1 rounded-full border" style={{ color: 'var(--brand)', borderColor: 'var(--brand)', background: 'var(--brandSoft)' }}>
           {tokensRemaining} Tokens
         </span>
       </div>
     </div>
 
-          <p className={`mb-10 text-lg ${subTextClass}`}>
+          <p className="mb-10 text-lg" style={{ color: 'var(--textSec)' }}>
             Unlock exclusive avatars, themes, and titles to customize your
             detective profile
           </p>
 
-          <h2 className={`mb-6 text-2xl font-semibold ${titleClass}`}>
+          <h2 className="mb-6 text-2xl font-semibold" style={{ color: 'var(--text)' }}>
             {sectionTitle}
           </h2>
 
           {loading && category !== "inventory" && (
-            <p className={subTextClass}>Loading store items...</p>
+            <p style={{ color: 'var(--textSec)' }}>Loading store items...</p>
           )}
 
           {inventoryLoading && category === "inventory" && (
-            <p className={subTextClass}>Loading your inventory...</p>
+            <p style={{ color: 'var(--textSec)' }}>Loading your inventory...</p>
           )}
 
           {!loading && !inventoryLoading && displayedItems.length === 0 && (
-            <p className={subTextClass}>
+            <p style={{ color: 'var(--textSec)' }}>
               {category === "inventory"
                 ? "You do not own any items yet."
                 : "No items found in this category."}

@@ -1,5 +1,6 @@
 import User from "../auth/User.model.js";
 import Inventory from "../shop/Inventory.model.js";
+import ShopItem from "../shop/ShopItem.model.js";
 import bcrypt from "bcryptjs";
 
 
@@ -7,12 +8,16 @@ import bcrypt from "bcryptjs";
 export const getUserProfile = async (req, res) => {
   try {
     // req.userId comes from session middleware (userAuth)
-    const user = await User.findById(req.userId).select("-password");
+    const user = await User.findById(req.userId)
+      .select("-password")
+      .populate("equippedAvatarItemId", "imageUrl name category")
+      .populate("equippedThemeItemId", "imageUrl name category metadata")
+      .populate("equippedTitleItemId", "imageUrl name category");
 
     if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "User not found" 
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
       });
     }
 
@@ -33,6 +38,9 @@ export const getUserProfile = async (req, res) => {
         emailSettings: user.emailSettings,
         lastActive: user.lastActive,
         createdAt: user.createdAt,
+        equippedAvatarItemId: user.equippedAvatarItemId,
+        equippedThemeItemId: user.equippedThemeItemId,
+        equippedTitleItemId: user.equippedTitleItemId,
       }
     });
   } catch (error) {
@@ -494,63 +502,6 @@ export const updateNotificationSettings = async (req, res) => {
   }
 };
 
-// Equipping avatar as profile picture store --> my inventory
-
-// import Inventory from "../shop/Inventory.model.js";
-
-// export const equipItem = async (req, res) => {
-//   try {
-//     const userId = req.user._id;
-//     const { itemId, category } = req.body;
-
-//     if (!itemId || !category) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "itemId and category are required",
-//       });
-//     }
-
-//     // check ownership
-//     const owned = await Inventory.findOne({
-//       userId,
-//       itemId,
-//     });
-
-//     if (!owned) {
-//       return res.status(403).json({
-//         success: false,
-//         message: "Item not owned",
-//       });
-//     }
-
-//     const update = {};
-
-//     if (category === "avatar") {
-//       update.equippedAvatarItemId = itemId;
-//     }
-
-//     if (category === "theme") {
-//       update.equippedThemeItemId = itemId;
-//     }
-
-//     if (category === "title") {
-//       update.equippedTitleItemId = itemId;
-//     }
-
-//     await User.findByIdAndUpdate(userId, update);
-
-//     res.json({
-//       success: true,
-//       message: "Item equipped",
-//     });
-//   } catch (error) {
-//     console.error("Equip item error:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Failed to equip item",
-//     });
-//   }
-// };
 
 
 
@@ -579,10 +530,16 @@ export const equipItem = async (req, res) => {
       });
     }
 
+    const shopItem = await ShopItem.findById(itemId);
+    if (!shopItem) {
+      return res.status(404).json({ success: false, message: "Item not found" });
+    }
+
     const update = {};
 
     if (category === "avatar") {
       update.equippedAvatarItemId = itemId;
+      update.avatar = shopItem.imageUrl;
     }
 
     if (category === "theme") {
@@ -598,6 +555,7 @@ export const equipItem = async (req, res) => {
     res.json({
       success: true,
       message: "Item equipped",
+      equippedItemId: itemId,
     });
 
   } catch (error) {

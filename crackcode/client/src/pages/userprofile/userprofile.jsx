@@ -79,7 +79,8 @@ const UserProfile = () => {
           // Use server-provided fields: totalXP and tokens
           totalXP: data.totalXP ?? data.xp ?? 0,
           tokens: data.tokens ?? 0,
-          rank: "#" + (data.rank || "--")
+          rank: "#" + (data.rank || "--"),
+          avatar: data.avatar || prevData.avatar || ""
         }));
       }
     } catch (error) {
@@ -254,8 +255,16 @@ const UserProfile = () => {
           <div className="rounded-2xl p-8 mb-8" style={{ backgroundColor: 'var(--surface2)', border: '1px solid var(--border)' }}>
             <div className="flex items-center gap-6 mb-8">
               {/* User Avatar Circle - Shows user's profile picture or placeholder */}
-              <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl" style={{ backgroundColor: 'var(--brand)' }}>
-                {userStatus.avatar || '👤'}
+              <div className="w-20 h-20 rounded-full overflow-hidden flex items-center justify-center text-4xl" style={{ backgroundColor: 'var(--brand)' }}>
+                {(() => {
+                  const raw = userStatus.avatar;
+                  if (!raw) return '👤';
+                  const API_BASE = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || 'http://localhost:5051';
+                  const src = raw.startsWith('http') ? raw : raw.startsWith('/uploads') ? `${API_BASE}${raw}` : raw.startsWith('/') ? raw : null;
+                  return src
+                    ? <img src={src} alt="avatar" className="w-full h-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.parentElement.textContent = '👤'; }} />
+                    : raw;
+                })()}
               </div>
 
               {/* User Name and Rank Info */}
