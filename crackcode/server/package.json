@@ -7,7 +7,11 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "seed:questions": "node seeds/seedQuestion.js",
-    "seed:shop": "node seeds/seedShopItems.js"
+    "seed:shop": "node seeds/seedShopItems.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watch",
+    "test:coverage": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
+    "test:codeEditor": "node --experimental-vm-modules node_modules/jest/bin/jest.js __tests__/codeEditor.test.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -26,7 +30,20 @@
     "stripe": "^20.4.1"
   },
   "devDependencies": {
-    "nodemon": "^3.1.4"
+    "nodemon": "^3.1.4",
+    "jest": "^29.7.0",
+    "@jest/globals": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {},
+    "testMatch": ["**/__tests__/**/*.test.js"],
+    "collectCoverageFrom": [
+      "src/**/*.js",
+      "!src/**/*.model.js",
+      "!**/node_modules/**"
+    ]
   },
   "keywords": [],
   "author": "",

@@ -1,5 +1,6 @@
 import User from "../auth/User.model.js";
 import Inventory from "../shop/Inventory.model.js";
+import ShopItem from "../shop/ShopItem.model.js";
 import bcrypt from "bcryptjs";
 
 
@@ -7,7 +8,10 @@ import bcrypt from "bcryptjs";
 export const getUserProfile = async (req, res) => {
   try {
     // req.userId comes from session middleware (userAuth)
-    const user = await User.findById(req.userId).select("-password");
+    // Populate equipped items so frontend can read imageUrl and metadata
+    const user = await User.findById(req.userId)
+      .select("-password")
+      .populate("equippedAvatarItemId equippedThemeItemId equippedTitleItemId");
 
     if (!user) {
       return res.status(404).json({ 
@@ -24,6 +28,7 @@ export const getUserProfile = async (req, res) => {
         email: user.email,
         username: user.username,
         avatar: user.avatar,
+        avatarType: user.avatarType,
         bio: user.bio,
         xp: user.xp,
         totalXP: user.totalXP,
@@ -33,6 +38,10 @@ export const getUserProfile = async (req, res) => {
         emailSettings: user.emailSettings,
         lastActive: user.lastActive,
         createdAt: user.createdAt,
+        // include equipped item objects if populated
+        equippedAvatarItemId: user.equippedAvatarItemId || null,
+        equippedThemeItemId: user.equippedThemeItemId || null,
+        equippedTitleItemId: user.equippedTitleItemId || null,
       }
     });
   } catch (error) {
@@ -557,7 +566,7 @@ export const updateNotificationSettings = async (req, res) => {
 
 export const equipItem = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.userId;
     const { itemId, category } = req.body;
 
     if (!itemId || !category) {
@@ -583,6 +592,17 @@ export const equipItem = async (req, res) => {
 
     if (category === "avatar") {
       update.equippedAvatarItemId = itemId;
+      try {
+        const shopItem = await ShopItem.findById(itemId).select("imageUrl");
+        if (shopItem && shopItem.imageUrl) {
+          // copy equipped avatar image into user's avatar so existing UI using `user.avatar` updates
+          update.avatar = shopItem.imageUrl;
+          // avatarType should reflect a preset/shop avatar
+          update.avatarType = "default";
+        }
+      } catch (err) {
+        console.warn("Could not load ShopItem to copy avatar image:", err?.message || err);
+      }
     }
 
     if (category === "theme") {
