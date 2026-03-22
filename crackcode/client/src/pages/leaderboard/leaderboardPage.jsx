@@ -77,7 +77,7 @@ const LeaderboardPage = () => {
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
       <Header variant="empty" showBackBtn={false}/>
 
-      <main className="flex-1 px-6 sm:px-10 py-10 pt-6">
+      <main className="flex-1 px-6 sm:px-10 py-10 mt-20">
 
          {/* Title + Filter buttons */}
         <div className="flex items-center justify-between max-w-5xl mx-auto mt-20 mb-12">
