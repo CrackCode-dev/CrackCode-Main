@@ -690,13 +690,14 @@
 
 
 //--------------------------------------------------------------------------------------------------
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import StoreGrid from "../../components/store/StoreGrid";
 import StoreSidebar from "../../components/store/StoreSidebar";
 import { toast } from "react-toastify";
 import Header from "../../components/common/Header";
 import { useTheme } from "../../context/theme/ThemeContext";
+import { AppContent } from "../../context/userauth/authenticationContext";
 
 export default function DetectiveStore() {
   const [items, setItems] = useState([]);
@@ -714,6 +715,7 @@ export default function DetectiveStore() {
   const [profileImage, setProfileImage] = useState("/placeholder.png");
 
   const { theme, setTheme } = useTheme();
+  const { getUserData } = useContext(AppContent);
   const location = useLocation();
   const navigate = useNavigate();
   const processingPaymentRef = useRef(false);
@@ -790,6 +792,13 @@ export default function DetectiveStore() {
         "/placeholder.png";
 
       setProfileImage(normalizeImageUrl(avatarSrc));
+      
+      // Track equipped item IDs from the user's equipped slots
+      if (user?.equippedAvatarItemId?._id) {
+        setEquippedItemId(user.equippedAvatarItemId._id);
+      } else if (user?.equippedAvatarItemId && typeof user.equippedAvatarItemId === 'string') {
+        setEquippedItemId(user.equippedAvatarItemId);
+      }
     } catch (error) {
       console.error("Failed to load profile:", error);
       setUsername("User");
@@ -1066,6 +1075,8 @@ export default function DetectiveStore() {
           setTheme(item.metadata.themeKey);
         }
         await loadProfile();
+        // Refresh context userData so Avatar components update globally
+        await getUserData();
       } else {
         showToast(data?.message || "Failed to equip item", "error");
       }

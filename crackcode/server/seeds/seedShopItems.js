@@ -162,7 +162,7 @@ const run = async () => {
         category: "avatar",
         isActive: true,
         imageUrl: "/shop/cena.png",
-        pricing: { type: "tokens", amount: 50 },
+        pricing: { type: "xp", amount: 50 },
       },
 
       {
@@ -170,7 +170,7 @@ const run = async () => {
         category: "avatar",
         isActive: true,
         imageUrl: "/shop/goblin.jpg",
-        pricing: { type: "tokens", amount: 40 },
+        pricing: { type: "xp", amount: 40 },
       },
 
       {
@@ -178,7 +178,7 @@ const run = async () => {
         category: "avatar",
         isActive: true,
         imageUrl: "/shop/witch.png",
-        pricing: { type: "tokens", amount: 80 },
+        pricing: { type: "xp", amount: 80 },
       },
 
       {
@@ -186,7 +186,7 @@ const run = async () => {
         category: "avatar",
         isActive: true,
         imageUrl: "/shop/butcher.png",
-        pricing: { type: "tokens", amount: 70 },
+        pricing: { type: "xp", amount: 70 },
       },
 
       {
@@ -194,7 +194,7 @@ const run = async () => {
         category: "avatar",
         isActive: true,
         imageUrl: "/shop/detective.png",
-        pricing: { type: "tokens", amount: 140 },
+        pricing: { type: "xp", amount: 140 },
       },
 
       {
@@ -202,7 +202,7 @@ const run = async () => {
         category: "avatar",
         isActive: true,
         imageUrl: "/shop/prime.png",
-        pricing: { type: "tokens", amount: 100 },
+        pricing: { type: "xp", amount: 100 },
       },
 
       {
@@ -257,7 +257,7 @@ const run = async () => {
         name: "Wizard",
         description: "Premium avatar",
         category: "avatar",
-        pricing: { type: "tokens", amount: 250 },
+        pricing: { type: "xp", amount: 250 },
         imageUrl: "/shop/wizard.png",
         metadata: {
           themeKey: "dark_neon",
