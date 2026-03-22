@@ -6,7 +6,7 @@ import logo_dark from  "../../assets/logo/logo_dark.png";
 import { useTheme } from '../../context/theme/ThemeContext'
 import logo from "../../assets/logo/crackcode_logo.svg"
 import Navbar from './Navbar'
-import { Bell } from 'lucide-react';
+import { Bell, Gamepad2 } from 'lucide-react';
 import Avatar from './Avatar';
 import HQBtn from './HQBtn';
 import BackBtn from './BackBtn';
@@ -115,28 +115,23 @@ const Header = ({ variant = "default", showBackBtn = true, showHQ = true }) => {
                 {showHeaderActions && (
                     <div className='flex items-center gap-4'>
 
-                        {/* Search Bar */}
-                        <input 
-                            name='search-bar'
-                            type="text" 
-                            placeholder='Search Cases...' 
-                            className='w-24 sm:w-32 text-xs sm:text-sm rounded-md px-2 py-1 
-                            focus:outline-none focus:ring-1 focus:w-32 sm:focus:w-40 
-                            transition-all duration-300 ease-in-out'
-                            style={{
-                                background: 'rgba(255, 165, 0, 0.1)',
-                                color: 'var(--text)',
-                                border: '1px solid var(--border)'
+                        {/* Games Button */}
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                                navigate('/home#brain-breaker');
+                                setTimeout(() => {
+                                    const element = document.getElementById('brain-breaker');
+                                    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                }, 100);
                             }}
-                            onFocus={(e) => {
-                                e.target.style.boxShadow = '0 0 0 1px var(--brand)';
-                                e.target.style.background = 'rgba(255, 165, 0, 0.15)';
-                            }}
-                            onBlur={(e) => {
-                                e.target.style.boxShadow = 'none';
-                                e.target.style.background = 'rgba(255, 165, 0, 0.1)';
-                            }}
-                        />
+                            className='flex items-center gap-2 text-xs sm:text-sm font-semibold hover:bg-opacity-80'
+                            title="Brain Breaker Games"
+                        >
+                            <Gamepad2 className='w-4 h-4 sm:w-5 sm:h-5' />
+                            Games
+                        </Button>
 
                             {/* Settings Dropdown */}
                             <SettingsDropdown />
