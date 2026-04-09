@@ -596,3 +596,13 @@ code {
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+/* Give crawlers and pre-renderers immediate visibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .fade-in-section {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
