@@ -4,4 +4,4 @@ Allow: /
 # Block any potential API or private paths
 Disallow: /api/
 
-Sitemap: https://crackcode.lk/sitemap.xml
+Sitemap: https://crackcodehq.com/sitemap.xml
