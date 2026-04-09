@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 import api from '../../api/axios'
+import axios from '../../api/axios'
 import Button from '../../components/ui/Button';
 import Header from '../../components/common/Header';
 import { AppContent } from '../../context/userauth/authenticationContext';
@@ -11,6 +12,15 @@ import ManageNotificationsModal from '../../components/Profiles/ManageNotificati
 const UserProfile = () => {
   // Get the current logged  in user's data and backend URL from authentication context
   const { userData, isLoggedIn, backendUrl } = useContext(AppContent);
+
+  // Normalize image URL to full path with backend URL if needed
+  const normalizeImageUrl = (src) => {
+    if (!src) return null;
+    if (src.startsWith("http")) return src;
+    if (src.startsWith("/uploads")) return `${backendUrl || "http://localhost:5051"}${src}`;
+    if (src.startsWith("/src")) return src;
+    return src;
+  };
 
   // State to store user profile stats fetched from the database
   const [userStatus, setUserStatus] = useState({
@@ -79,7 +89,8 @@ const UserProfile = () => {
           // Use server-provided fields: totalXP and tokens
           totalXP: data.totalXP ?? data.xp ?? 0,
           tokens: data.tokens ?? 0,
-          rank: "#" + (data.rank || "--")
+          rank: "#" + (data.rank || "--"),
+          avatar: data.avatar || "" // Fetch avatar from server
         }));
       }
     } catch (error) {
@@ -254,8 +265,19 @@ const UserProfile = () => {
           <div className="rounded-2xl p-8 mb-8" style={{ backgroundColor: 'var(--surface2)', border: '1px solid var(--border)' }}>
             <div className="flex items-center gap-6 mb-8">
               {/* User Avatar Circle - Shows user's profile picture or placeholder */}
-              <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl" style={{ backgroundColor: 'var(--brand)' }}>
-                {userStatus.avatar || '👤'}
+              <div className="w-20 h-20 rounded-full flex items-center justify-center text-4xl overflow-hidden" style={{ backgroundColor: 'var(--brand)' }}>
+                {userStatus.avatar && userStatus.avatar.trim() ? (
+                  <img 
+                    src={normalizeImageUrl(userStatus.avatar)} 
+                    alt="User Avatar" 
+                    className="w-full h-full object-cover rounded-full"
+                    onError={(e) => {
+                      e.currentTarget.parentElement.innerHTML = '👤';
+                    }}
+                  />
+                ) : (
+                  '👤'
+                )}
               </div>
 
               {/* User Name and Rank Info */}

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useTheme } from "../../context/theme/ThemeContext";
-import { Settings, Bell, Search } from "lucide-react";
+import { Settings, Bell, Gamepad2 } from "lucide-react";
 import CrackcodeLogo from "../../assets/logo/crackcode_logo.svg";
 
 const NAV_TABS = [
@@ -77,23 +77,19 @@ export default function AppNavbar() {
           ))}
         </nav>
 
-        {/* Right side: search + bell + settings */}
+        {/* Right side: games button + bell + settings */}
         <div className="flex items-center gap-2 shrink-0">
 
-          {/* Search input */}
-          <div className="relative hidden sm:block">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: "var(--muted)" }} />
-            <input
-              placeholder="Search Cases..."
-              className="w-48 pl-8 pr-3 py-2 rounded-xl text-sm border transition-shadow duration-200 focus:outline-none focus:ring-2"
-              style={{
-                background: "var(--surface2)",
-                border:     "1.5px solid var(--border)",
-                color:      "var(--text)",
-                "--tw-ring-color": "rgba(255,150,68,0.3)",
-              }}
-            />
-          </div>
+          {/* Games button */}
+          <NavLink
+            to="/home"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-sm transition-opacity hover:opacity-70"
+            style={{ color: "var(--text)" }}
+            title="Brain Breaker Games"
+          >
+            <Gamepad2 size={16} />
+            Games
+          </NavLink>
 
           {/* Bell */}
           <button
