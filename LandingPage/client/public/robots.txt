@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Block any potential API or private paths
+Disallow: /api/
+
+Sitemap: https://crackcode.lk/sitemap.xml

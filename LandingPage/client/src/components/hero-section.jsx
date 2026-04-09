@@ -16,67 +16,79 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#050505]">
+    <section 
+      id="home" 
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#050505]"
+      aria-label="Hero – CrackCode gamified coding platform"
+    >
       <DotBackground color="#f97316" />
 
       {/* Gradient Orbs */}
-      <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] animate-pulse-slow" />
-      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-orange-600/10 rounded-full blur-[100px] animate-pulse-slow delay-1000" />
+      {/* <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] bg-orange-500/10 rounded-full blur-[120px] animate-pulse-slow" />
+      <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] bg-orange-600/10 rounded-full blur-[100px] animate-pulse-slow delay-1000" /> */}
 
       {/* Navbar */}
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out border-b ${
-          isScrolled
-            ? "bg-transparent backdrop-blur-xl border-white/10 py-3 shadow-2xl shadow-orange-500/5"
-            : "bg-transparent border-transparent py-5"
-        }`}
-      >
-        <div className="container mx-auto px-4 flex items-center justify-between">
-          <a href="#home" className="flex items-center gap-2 group cursor-pointer">
-            <div className="relative">
-              <img 
-                src={logo} 
-                alt="CrackCode Logo" 
-                className="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-105" 
-              />
-              <div className="absolute inset-0 bg-orange-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <header role="banner">
+        <nav
+        aria-label="Main Navigation"
+          className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out border-b ${
+            isScrolled
+              ? "bg-transparent backdrop-blur-xl border-white/10 py-3 shadow-2xl shadow-orange-500/5"
+              : "bg-transparent border-transparent py-5"
+          }`}
+        >
+          <div className="container mx-auto px-4 flex items-center justify-between">
+            <a href="#home" aria-label="CrackCode — go to homepage" className="flex items-center gap-2 group cursor-pointer">
+              <div className="relative">
+                <img 
+                  src={logo} 
+                  alt="CrackCode Logo" 
+                  fetchpriority="high"
+                  className="h-10 w-auto object-contain transition-all duration-300 group-hover:scale-105" 
+                />
+                <div aria-hidden="true" className="absolute inset-0 bg-orange-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+            </a>
+            
+            <div className="hidden md:flex items-center gap-6 lg:gap-8" role="list">
+              {["Home", "Problem", "Solution", "Preview", "Team", "Contact"].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  aria-label={`Navigate to ${item}`}
+                  role="listitem"
+                  className="relative text-sm lg:text-base font-medium text-muted-foreground hover:text-orange-500 transition-all duration-300 group"
+                >
+                  {item}
+                  <span aria-hidden="true" className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-300 group-hover:w-full" />
+                </a>
+              ))}
             </div>
-          </a>
-          
-          <div className="hidden md:flex items-center gap-6 lg:gap-8">
-            {["Home", "Problem", "Solution", "Preview", "Team", "Contact"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="relative text-sm lg:text-base font-medium text-muted-foreground hover:text-orange-500 transition-all duration-300 group"
-              >
-                {item}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-500 to-orange-400 transition-all duration-300 group-hover:w-full" />
-              </a>
-            ))}
+            
+            <Button 
+              size="lg" 
+              variant="gamified"
+              onClick={() => window.open("https://app.crackcodehq.com", "_blank")}
+              className={`transition-all duration-500 ${
+                isScrolled 
+                  ? "bg-orange-600 hover:bg-orange-700 scale-95" 
+                  : "bg-orange-500 hover:bg-orange-600"
+              } text-white shadow-lg shadow-orange-500/25 text-sm lg:text-base px-4 lg:px-6`}
+              aria-label="Get started with CrackCode for free"
+            >
+              Get Started
+            </Button>
           </div>
-          
-          <Button 
-            size="lg" 
-            variant="gamified"
-            onClick={() => window.open("https://app.crackcodehq.com", "_blank")}
-            className={`transition-all duration-500 ${
-              isScrolled 
-                ? "bg-orange-600 hover:bg-orange-700 scale-95" 
-                : "bg-orange-500 hover:bg-orange-600"
-            } text-white shadow-lg shadow-orange-500/25 text-sm lg:text-base px-4 lg:px-6`}
-          >
-            Get Started
-          </Button>
-        </div>
-      </nav>
+        </nav>
+      </header>
+      
 
       {/* Hero Content */}
       <div className="relative z-10 container mx-auto px-4 text-center mt-20">
         <div className="max-w-5xl mx-auto space-y-8">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded-full text-orange-400 text-sm font-medium animate-fade-in-up">
-            <Sparkles className="w-4 h-4" />
+            <Sparkles aria-hidden="true" className="w-4 h-4" />
             <span>The Future of Coding Education</span>
           </div>
 
@@ -94,19 +106,19 @@ export default function HeroSection() {
           <div className="flex flex-wrap justify-center gap-8 md:gap-16 pt-6 animate-fade-in-up delay-300">
             <div className="flex flex-col items-center gap-3 group">
               <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all duration-300">
-                <BookOpen className="w-8 h-8 text-orange-500 animate-float" />
+                <BookOpen aria-hidden="true" className="w-8 h-8 text-orange-500 animate-float" />
               </div>
               <span className="text-sm text-orange-500 font-semibold">Story-Driven</span>
             </div>
             <div className="flex flex-col items-center gap-3 group">
               <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all duration-300">
-                <Code2 className="w-8 h-8 text-orange-500 animate-float delay-200" />
+                <Code2 aria-hidden="true" className="w-8 h-8 text-orange-500 animate-float delay-200" />
               </div>
               <span className="text-sm text-orange-500 font-semibold">Real Code</span>
             </div>
             <div className="flex flex-col items-center gap-3 group">
               <div className="p-4 bg-orange-500/10 rounded-2xl border border-orange-500/20 group-hover:bg-orange-500/20 group-hover:scale-110 transition-all duration-300">
-                <Trophy className="w-8 h-8 text-orange-500 animate-float delay-400" />
+                <Trophy aria-hidden="true" className="w-8 h-8 text-orange-500 animate-float delay-400" />
               </div>
               <span className="text-sm text-orange-500 font-semibold">Gamified</span>
             </div>
@@ -119,6 +131,7 @@ export default function HeroSection() {
               size="lg" 
               onClick={() => window.open("https://app.crackcodehq.com", "_blank")}
               className="bg-orange-600 hover:bg-orange-700 text-white px-12 py-7 text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-[0_0_40px_-10px_rgba(249,115,22,0.5)]"
+              aria-label="Start your journey on CrackCode"
             >
               Start Your Journey
             </Button>
@@ -129,9 +142,10 @@ export default function HeroSection() {
           <a 
             href="#problem" 
             className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors font-medium"
+            aria-label="Explore the challenges on CrackCode"
           >
             Explore the Challenges
-            <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg aria-hidden="true" className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
           </a>

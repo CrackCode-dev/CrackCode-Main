@@ -102,7 +102,7 @@ export default function App() {
   return (
     <>
       {/* Custom Crosshair Cursor */}
-      <div ref={cursorRef} className="custom-cursor">
+      <div ref={cursorRef} className="custom-cursor" aria-hidden="true" role="presentation">
         <div ref={squareRef} className="cursor-square">
           <div className="corner tl"></div>
           <div className="corner tr"></div>
@@ -119,7 +119,11 @@ export default function App() {
       </div>
 
       {/* Main Content */}
-      <main className="relative overflow-hidden font-sans antialiased text-foreground bg-background">
+      <main 
+        id="main-content"
+        aria-label="CrackCode — gamified detective coding education platform"
+        className="relative overflow-hidden font-sans antialiased text-foreground bg-background"
+      >
         <HeroSection />
         <ProblemSection />
         <SolutionSection />

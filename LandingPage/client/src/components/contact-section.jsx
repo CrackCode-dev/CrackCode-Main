@@ -241,14 +241,18 @@ export default function ContactSection() {
   const modalData = activeLegalModal ? legalModalConfig[activeLegalModal] : null
 
   return (
-    <section id="contact" className="relative py-24 md:py-32 bg-[#050505] overflow-hidden">
+    <section 
+      id="contact" 
+      className="relative py-24 md:py-32 bg-[#050505] overflow-hidden"
+      aria-label="Contact and frequently asked questions"
+    >
       <DotBackground color="#f97316" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 border border-orange-500/30 rounded-full text-orange-500 text-sm font-medium mb-6">
-            <MessageSquare className="w-4 h-4" />
+            <MessageSquare className="w-4 h-4" aria-hidden="true" />
             <span>Get In Touch</span>
           </div>
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-balance">
@@ -262,52 +266,72 @@ export default function ContactSection() {
         <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-8 lg:gap-12">
 
           {/* FAQ Section - Takes 3 columns */}
-          <div className="lg:col-span-3">
+          <section aria-label="Frequently Asked Questions" className="lg:col-span-3">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-orange-500/10 rounded-lg">
-                <HelpCircle className="w-5 h-5 text-orange-500" />
+              <div className="p-2 bg-orange-500/10 rounded-lg" aria-hidden="true">
+                <HelpCircle className="w-5 h-5 text-orange-500" aria-hidden="true" />
               </div>
               <h3 className="text-xl font-bold text-foreground">Frequently Asked Questions</h3>
             </div>
 
-            <div className="space-y-3">
-              {faqs.map((faq, index) => (
-                <div
-                  key={index}
-                  className="bg-card/80 border border-border rounded-xl overflow-hidden hover:border-orange-500/30 transition-all duration-300"
-                >
-                  <button
-                    onClick={() => toggleFaq(index)}
-                    className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/20 transition-colors"
-                  >
-                    <span className="font-medium text-foreground pr-4 text-sm md:text-base">{faq.question}</span>
-                    <ChevronDown
-                      className={`w-5 h-5 text-orange-500 shrink-0 transition-transform duration-300 ${openFaq === index ? 'rotate-180' : ''
-                        }`}
-                    />
-                  </button>
+            <dl className="space-y-3">
+              {faqs.map((faq, index) => {
+                const panelId  = `faq-answer-${index}`
+                const buttonId = `faq-question-${index}`
+                const isOpen   = openFaq === index
+ 
+                return (
                   <div
-                    className={`overflow-hidden transition-all duration-300 ease-in-out ${openFaq === index ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0'
-                      }`}
+                    key={index}
+                    className="bg-card/80 border border-border rounded-xl overflow-hidden hover:border-orange-500/30 transition-all duration-300"
                   >
-                    <p className="px-5 pb-5 text-muted-foreground leading-relaxed text-sm">
-                      {faq.answer}
-                    </p>
+                    <dt>
+                      <button
+                        id={buttonId}
+                        aria-expanded={isOpen}
+                        aria-controls={panelId}
+                        onClick={() => toggleFaq(index)}
+                        className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/20 transition-colors"
+                      >
+                        <span className="font-medium text-foreground pr-4 text-sm md:text-base">
+                          {faq.question}
+                        </span>
+                        <ChevronDown
+                          aria-hidden="true"
+                          className={`w-5 h-5 text-orange-500 shrink-0 transition-transform duration-300 ${
+                            isOpen ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                    </dt>
+                    <dd
+                      id={panelId}
+                      role="region"
+                      aria-labelledby={buttonId}
+                      hidden={!isOpen}
+                      className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                        isOpen ? "max-h-48 opacity-100" : "max-h-0 opacity-0"
+                      }`}
+                    >
+                      <p className="px-5 pb-5 text-muted-foreground leading-relaxed text-sm">
+                        {faq.answer}
+                      </p>
+                    </dd>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
+                )
+              })}
+            </dl>
+          </section>
 
           {/* Right Side - CTA & Social Links - Takes 2 columns */}
-          <div className="lg:col-span-2 space-y-6">
+          <div aria-label="Get started and connect with us" className="lg:col-span-2 space-y-6">
 
             {/* Main CTA Card */}
             <div className="bg-gradient-to-br from-orange-500/10 via-orange-600/5 to-transparent border border-orange-500/30 rounded-2xl p-6 md:p-8 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />
+              <div aria-hidden="true" className="absolute top-0 right-0 w-40 h-40 bg-orange-500/10 rounded-full blur-3xl" />
 
               <div className="relative z-10">
-                <div className="p-3 bg-orange-500/20 rounded-xl w-fit mb-5">
+                <div className="p-3 bg-orange-500/20 rounded-xl w-fit mb-5" aria-hidden="true">
                   <Rocket className="w-7 h-7 text-orange-500" />
                 </div>
 
@@ -319,10 +343,11 @@ export default function ContactSection() {
                 <Button
                   variant="gamified"
                   size="lg"
+                  aria-label="Start learning for free on CrackCode"
                   onClick={() => window.open("https://app.crackcodehq.com", "_blank")}
                   className="w-full bg-orange-600 hover:bg-orange-700 text-white py-6 text-base rounded-xl transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-orange-500/25 flex items-center justify-center gap-2"
                 >
-                  <Sparkles className="w-5 h-5" />
+                  <Sparkles className="w-5 h-5" aria-hidden="true"/>
                   Start Learning Free
                 </Button>
               </div>
@@ -332,14 +357,15 @@ export default function ContactSection() {
             <div className="bg-card/80 border border-border rounded-2xl p-6">
               <h3 className="text-lg font-bold text-foreground mb-5">Connect With Us</h3>
 
-              <div className="space-y-3">
+              <nav aria-label="CrackCode Social Media Links" className="space-y-3">
                 <a
                   href="https://www.linkedin.com/in/crack-code-619461396"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="CrackCode on LinkedIn (opens in new tab)"
                   className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl hover:bg-blue-500/10 border border-transparent hover:border-blue-500/30 transition-all duration-300 group"
                 >
-                  <div className="p-2.5 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors">
+                  <div className="p-2.5 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors" aria-hidden="true">
                     <Linkedin className="w-5 h-5 text-blue-500" />
                   </div>
                   <div className="flex-1">
@@ -353,9 +379,10 @@ export default function ContactSection() {
                   href="https://www.instagram.com/crackcodelk"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="CrackCode on Instagram @crackcodelk (opens in new tab)"
                   className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl hover:bg-pink-500/10 border border-transparent hover:border-pink-500/30 transition-all duration-300 group"
                 >
-                  <div className="p-2.5 bg-pink-500/10 rounded-lg group-hover:bg-pink-500/20 transition-colors">
+                  <div className="p-2.5 bg-pink-500/10 rounded-lg group-hover:bg-pink-500/20 transition-colors" aria-hidden="true">
                     <Instagram className="w-5 h-5 text-pink-500" />
                   </div>
                   <div className="flex-1">
@@ -369,9 +396,10 @@ export default function ContactSection() {
                   href="https://www.youtube.com/@CrackCodelk"
                   target="_blank"
                   rel="noopener noreferrer"
+                  aria-label="CrackCode on YouTube @crackcodelk (opens in new tab)"
                   className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all duration-300 group"
                 >
-                  <div className="p-2.5 bg-red-500/10 rounded-lg group-hover:bg-red-500/20 transition-colors">
+                  <div className="p-2.5 bg-red-500/10 rounded-lg group-hover:bg-red-500/20 transition-colors" aria-hidden="true">
                     <YoutubeIcon className="w-5 h-5 text-red-500" />
                   </div>
                   <div className="flex-1">
@@ -399,6 +427,7 @@ export default function ContactSection() {
 
                 <a
                   href="mailto:info.crackcode@gmail.com"
+                  aria-label="Send an email to CrackCode at info.crackcode@gmail.com"
                   className="flex items-center gap-4 p-4 bg-muted/30 rounded-xl hover:bg-orange-500/10 border border-transparent hover:border-orange-500/30 transition-all duration-300 group"
                 >
                   <div className="p-2.5 bg-orange-500/10 rounded-lg group-hover:bg-orange-500/20 transition-colors">
@@ -408,24 +437,27 @@ export default function ContactSection() {
                     <div className="font-medium text-foreground text-sm">Email Us</div>
                     <div className="text-xs text-muted-foreground">info.crackcode@gmail.com</div>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-orange-500 transition-colors" />
+                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-orange-500 transition-colors" aria-hidden="true" />
                 </a>
-              </div>
+              </nav>
             </div>
           </div>
         </div>
       </div>
 
       {/* FOOTER - Clean without duplicate socials */}
-      <footer className="mt-24 border-t border-border relative z-10">
+      <footer className="mt-24 border-t border-border relative z-10" aria-label="Site footer">
         <div className="container mx-auto px-4 py-10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
 
             {/* Logo */}
-            <a href="#home" className="block group transition-transform hover:scale-105 cursor-pointer">
+            <a href="#home" aria-label="CrackCode — back to top" className="block group transition-transform hover:scale-105 cursor-pointer">
               <img
                 src={logo}
                 alt="CrackCode Logo"
+                aria-label="CrackCode Logo"
+                loading="lazy"
+                decoding="async"
                 className="h-10 w-auto object-contain"
               />
             </a>
@@ -449,10 +481,10 @@ export default function ContactSection() {
             </div>
 
             {/* Legal Links */}
-            <div className="flex items-center gap-10 text-sm font-medium">
+            <nav aria-label="Legal links" className="flex items-center gap-10 text-sm font-medium">
               <a onClick={openPrivacyPolicy} className="text-muted-foreground hover:text-orange-500 transition-colors">Privacy Policy</a>
               <a onClick={openTermsAndConditions} className="text-muted-foreground hover:text-orange-500 transition-colors">Terms & Conditions</a>
-            </div>
+            </nav>
           </div>
 
 
