@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import DotBackground from "./ui/dot-background.jsx"
-import { Contrast, Github, Linkedin, Mail } from "lucide-react"
+import { Contrast, Github, Linkedin, Mail, Wrench } from "lucide-react"
 import Nadeesha from "../assets/team/nadeesha.jpg"
 import Vidun from "../assets/team/vidun.jpg"
 import Chris from "../assets/team/chris.jpg"
@@ -102,6 +102,10 @@ export default function TeamSection() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center mb-20 fade-in-section opacity-0 transition-all duration-1000 translate-y-10">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-500/20 border border-silver-500/30 rounded-full text-silver-500 text-sm font-medium mb-6">
+            <Wrench className="w-4 h-4" />
+            <span>Behind the Code</span>
+          </div>
           <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-4 text-balance tracking-tight">THE BUILDERS</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Meet the passionate team building the future of coding education.
@@ -219,6 +223,19 @@ export default function TeamSection() {
               </div>
             )
           })}
+        </div>
+
+        <div className="flex flex-col items-center justify-center pt-10">
+          <p className="text-muted-foreground mb-6">Want to know more about the platform?</p>
+          <a 
+            href="#contact" 
+            className="inline-flex items-center gap-2 text-silver-400 hover:text-gray-300 transition-colors font-medium"
+          >
+            Reach Out to Us
+            <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </a>
         </div>
       </div>
 

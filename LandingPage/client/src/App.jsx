@@ -18,36 +18,51 @@ export default function App() {
     const cursor = cursorRef.current
     const lines = linesRef.current
     const square = squareRef.current
-    
-    if (!cursor) return
+
+    if (!cursor || !lines || !square) return
+
+    const isInteractiveElement = (element) => {
+      if (!element) return false
+
+      const interactiveTarget = element.closest("a, button, [role='button'], input, textarea, select")
+      if (interactiveTarget) return true
+
+      return (
+        Boolean(element.onclick) ||
+        element.classList.contains("cursor-pointer") ||
+        window.getComputedStyle(element).cursor === "pointer"
+      )
+    }
 
     // Track cursor position
     const moveCursor = (e) => {
       cursor.style.left = e.clientX + "px"
       cursor.style.top = e.clientY + "px"
-      
+
+      const elementUnderPointer = document.elementFromPoint(e.clientX, e.clientY)
+      cursor.classList.toggle("hovering", isInteractiveElement(elementUnderPointer))
+
       // Add moving class to trigger square pulse
       square.classList.add("moving")
-      
+
       // Clear previous timeout
       if (moveTimeout.current) {
         clearTimeout(moveTimeout.current)
       }
-      
+
       // Remove moving class after animation and randomly rotate lines
       moveTimeout.current = setTimeout(() => {
         square.classList.remove("moving")
-        
+
         // Random rotation direction
         const isClockwise = Math.random() > 0.5
         lines.classList.remove('rotating-cw', 'rotating-ccw')
-        
+
         setTimeout(() => {
           lines.classList.add(isClockwise ? 'rotating-cw' : 'rotating-ccw')
         }, 10)
-        
-        const newRotation = rotation + (isClockwise ? 90 : -90)
-        setRotation(newRotation)
+
+        setRotation((prevRotation) => prevRotation + (isClockwise ? 90 : -90))
       }, 100)
     }
 
@@ -57,25 +72,6 @@ export default function App() {
       setTimeout(() => {
         square.classList.remove("clicking")
       }, 200)
-    }
-
-    // Handle hover on interactive elements
-    const handleMouseOver = (e) => {
-      const target = e.target
-      const isInteractive = 
-        target.tagName === 'A' || 
-        target.tagName === 'BUTTON' || 
-        target.onclick || 
-        target.classList.contains('cursor-pointer') ||
-        window.getComputedStyle(target).cursor === 'pointer'
-      
-      if (isInteractive) {
-        cursor.classList.add('hovering')
-      }
-    }
-
-    const handleMouseOut = () => {
-      cursor.classList.remove('hovering')
     }
 
     // Hide cursor when leaving window
@@ -89,28 +85,24 @@ export default function App() {
 
     window.addEventListener("mousemove", moveCursor)
     window.addEventListener("click", handleClick)
-    document.addEventListener("mouseover", handleMouseOver)
-    document.addEventListener("mouseout", handleMouseOut)
     document.addEventListener("mouseleave", handleMouseLeave)
     document.addEventListener("mouseenter", handleMouseEnter)
 
     return () => {
       window.removeEventListener("mousemove", moveCursor)
       window.removeEventListener("click", handleClick)
-      document.removeEventListener("mouseover", handleMouseOver)
-      document.removeEventListener("mouseout", handleMouseOut)
       document.removeEventListener("mouseleave", handleMouseLeave)
       document.removeEventListener("mouseenter", handleMouseEnter)
       if (moveTimeout.current) {
         clearTimeout(moveTimeout.current)
       }
     }
-  }, [rotation])
+  }, [])
 
   return (
     <>
       {/* Custom Crosshair Cursor */}
-      <div ref={cursorRef} className="custom-cursor">
+      <div ref={cursorRef} className="custom-cursor" aria-hidden="true" role="presentation">
         <div ref={squareRef} className="cursor-square">
           <div className="corner tl"></div>
           <div className="corner tr"></div>
@@ -127,7 +119,11 @@ export default function App() {
       </div>
 
       {/* Main Content */}
-      <main className="relative overflow-hidden font-sans antialiased text-foreground bg-background">
+      <main 
+        id="main-content"
+        aria-label="CrackCode — gamified detective coding education platform"
+        className="relative overflow-hidden font-sans antialiased text-foreground bg-background"
+      >
         <HeroSection />
         <ProblemSection />
         <SolutionSection />

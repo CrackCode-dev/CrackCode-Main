@@ -315,6 +315,19 @@ export default function PreviewSection() {
             </div>
           </div>
         </div>
+
+        <div className="flex flex-col items-center justify-center pt-10">
+          <p className="text-muted-foreground mb-6">Built with purpose, designed for impact.</p>
+          <a 
+            href="#team" 
+            className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 transition-colors font-medium"
+          >
+            Meet the Crew
+            <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </a>
+        </div>
       </div>
       
       <style>{`

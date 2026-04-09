@@ -127,7 +127,7 @@ export default function SolutionSection() {
           <div className="max-w-4xl mx-auto text-center">
             <p className="text-muted-foreground mb-8 text-sm uppercase tracking-widest">Languages & Technologies You'll Master</p>
             <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-              {languages.map((lang, i) => (
+              {languages.map((lang) => (
                 <div 
                   key={lang}
                   className={`px-5 py-2.5 bg-card border border-border rounded-full text-sm font-medium transition-all duration-300 cursor-default ${
@@ -141,6 +141,19 @@ export default function SolutionSection() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div className="flex flex-col items-center justify-center pt-10">
+          <p className="text-muted-foreground mb-6">So how does it actually work?</p>
+          <a 
+            href="#how-it-works" 
+            className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors font-medium"
+          >
+            Start Your Journey
+            <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </a>
         </div>
       </div>
       

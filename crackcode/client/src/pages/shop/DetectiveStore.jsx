@@ -735,7 +735,7 @@ export default function DetectiveStore() {
       ? "bg-[#08142b] text-white"
       : "bg-black text-white";
 
-  const titleClass = isLightFamily ? "text-gray-900" : "text-white";
+  // const titleClass = isLightFamily ? "text-gray-900" : "text-white";
   const subTextClass = isLightFamily ? "text-gray-500" : "text-gray-400";
   const tokenClass = isLightFamily ? "text-green-600" : "text-green-400";
 
@@ -1117,37 +1117,37 @@ export default function DetectiveStore() {
         <Header variant="empty" showBackBtn={false} />
       </div>
 
-      <div className="flex flex-1">
-  <StoreSidebar category={category} setCategory={setCategory} />
+      <main className="flex flex-1 px-6 sm:px-10 py-10 mt-20">
+        <StoreSidebar category={category} setCategory={setCategory} />
 
-  <div className="flex-1 p-10">
+        <div className="flex-1 p-10">
 
-    {/* Heading row with avatar on the right */}
-    <div className="flex items-center justify-between">
-      <h1 className={`text-4xl md:text-5xl font-bold text-[var(--muted)] ${titleClass}`}>
-        Detective Store
-      </h1>
-      <div className="flex flex-col items-center gap-1">
-        <div className={`w-14 h-14 rounded-full overflow-hidden border-2 mt-5 ${isLightFamily ? "border-green-300" : "border-green-700"} shadow-md`}>
-          <img
-            src={profileImage}
-            alt={username}
-            className="w-full h-full object-cover"
-            onError={(e) => { e.currentTarget.src = "/placeholder.png"; }}
-          />
-        </div>
-        <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${tokenClass} ${isLightFamily ? "border-green-300 bg-green-50" : "border-green-800 bg-green-950/40"}`}>
-          {tokensRemaining} Tokens
-        </span>
-      </div>
-    </div>
+          {/* Heading row with avatar on the right */}
+          <div className="flex items-center justify-between">
+            <h1 className='text-4xl md:text-5xl font-bold' style={{ color: 'var(--text)' }}>
+              Detective Store
+            </h1>
+            <div className="flex flex-col items-center gap-1">
+              <div className={`w-14 h-14 rounded-full overflow-hidden border-2 mt-5 ${isLightFamily ? "border-green-300" : "border-green-700"} shadow-md`}>
+                <img
+                  src={profileImage}
+                  alt={username}
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.currentTarget.src = "/placeholder.png"; }}
+                />
+              </div>
+              <span className={`text-sm font-semibold px-3 py-1 rounded-full border ${tokenClass} ${isLightFamily ? "border-green-300 bg-green-50" : "border-green-800 bg-green-950/40"}`}>
+                {tokensRemaining} Tokens
+              </span>
+            </div>
+          </div>
 
-          <p className={`mb-10 text-lg ${subTextClass}`}>
+          <p className='mb-10 text-lg' style={{ color: 'var(--textSec)' }}>
             Unlock exclusive avatars, themes, and titles to customize your
             detective profile
           </p>
 
-          <h2 className={`mb-6 text-2xl font-semibold ${titleClass}`}>
+          <h2 className='mb-6 text-2xl font-semibold' style={{ color: 'var(--text)' }}>
             {sectionTitle}
           </h2>
 
@@ -1181,7 +1181,7 @@ export default function DetectiveStore() {
             />
           )}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
