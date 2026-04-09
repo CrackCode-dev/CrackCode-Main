@@ -186,11 +186,18 @@ export default function HowItWorksSection() {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16 fade-in-section opacity-0 transition-all duration-1000 translate-y-10" style={{ transitionDelay: '800ms' }}>
-          <p className="text-muted-foreground mb-6">Ready to start your detective training?</p>
-          <button className="inline-flex items-center gap-2 px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-full transition-all duration-300 hover:scale-105 shadow-lg shadow-purple-500/25">
-            <Rocket className="w-5 h-5" />
-            Begin Your Journey
-          </button>
+          <p className="text-muted-foreground mb-6">Let’s take a closer look.</p>
+          <div className="flex items-center justify-center">
+            <a 
+              href="#preview" 
+              className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors font-medium"
+            >
+              See It in Action
+              <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
 

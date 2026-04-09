@@ -471,7 +471,7 @@
 .custom-cursor.hovering .cursor-center {
   background: #ffc800;
   transform: translate(-50%, -50%) scale(1.5);
-
+}
   /*
    UTILITY CLASSES
    ============================================ */
@@ -595,4 +595,4 @@ code {
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-}}
+}

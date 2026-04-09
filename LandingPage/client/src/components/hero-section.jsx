@@ -58,6 +58,8 @@ export default function HeroSection() {
           
           <Button 
             size="lg" 
+            variant="gamified"
+            onClick={() => window.open("https://app.crackcodehq.com", "_blank")}
             className={`transition-all duration-500 ${
               isScrolled 
                 ? "bg-orange-600 hover:bg-orange-700 scale-95" 
@@ -112,15 +114,28 @@ export default function HeroSection() {
           
           {/* CTA - Single Button Only */}
           <div className="flex flex-col items-center gap-6 pt-8 animate-fade-in-up delay-400">
-            <ChevronDown className="h-8 w-8 text-orange-500 animate-bounce" />
-            
             <Button 
+              variant="gamified"
               size="lg" 
+              onClick={() => window.open("https://app.crackcodehq.com", "_blank")}
               className="bg-orange-600 hover:bg-orange-700 text-white px-12 py-7 text-lg rounded-full transition-all duration-300 transform hover:scale-105 shadow-[0_0_40px_-10px_rgba(249,115,22,0.5)]"
             >
               Start Your Journey
             </Button>
           </div>
+
+          <div className="flex flex-col items-center justify-center pt-10">
+          <p className="text-muted-foreground mb-6">Ready to rethink how you learn coding?</p>
+          <a 
+            href="#problem" 
+            className="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 transition-colors font-medium"
+          >
+            Explore the Challenges
+            <svg className="w-5 h-5 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </a>
+        </div>
         </div>
       </div>
 
