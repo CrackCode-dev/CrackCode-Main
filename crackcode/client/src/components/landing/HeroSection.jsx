@@ -129,7 +129,7 @@ export default function HeroSection() {
                             Get Started
                         </Button>
 
-                        <Button variant='secondary' size='xl' onClick={() => navigate('/home')} icon={Users} iconPosition='right' className='text-black'>
+                        <Button variant='secondary' size='xl' onClick={() => window.open("https://www.crackcodehq.com", "_blank")} icon={Users} iconPosition='right' className='text-black'>
                             Learn More
                         </Button>
                     </motion.div>

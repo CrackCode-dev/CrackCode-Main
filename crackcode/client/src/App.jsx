@@ -23,6 +23,9 @@ import WeeklyChallenges from "./pages/weeklychallenges/weeklyChallenges.jsx";
 import ChapterSelectionPage from "./pages/learn/ChapterSelection";
 import QuestionListPage from "./pages/learn/SubChapterSelection";
 import DetectiveStore from "./pages/shop/DetectiveStore";
+import PrivacyPolicyPage from "./pages/legal/PrivacyPolicyPage";
+import TermsAndConditionsPage from "./pages/legal/TermsAndConditionsPage";
+import ContactUsPage from "./pages/legal/ContactUsPage";
 
 import CareerChapterSelectionPage from "./pages/careermap/CareerChapterSelection.jsx";
 import CareerQuizPage from "./pages/careermap/CareerQuizPage.jsx";
@@ -41,6 +44,9 @@ function App() {
           <Route path="/verify-account" element={<EmailVerify />} />
           <Route path="/email-verify" element={<EmailVerify />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsAndConditionsPage />} />
+          <Route path="/contact" element={<ContactUsPage />} />
 
           <Route path='/careermap' element={<CareermapMain />} />
           <Route path='/careermap/:careerId/quiz/:chapterId' element={<CareerQuizPage />} />
