@@ -231,7 +231,8 @@ export default function ContactSection() {
 
           <div className="space-y-2">
             <h4 className="font-semibold text-foreground">12. Governing Law</h4>
-            <p>These terms are governed by the laws applicable in your operating region (you can specify Sri Lanka if needed)..</p>
+            These Terms and Conditions shall be governed by and interpreted in accordance 
+            with the laws of the <span className="font-bold">Democratic Socialist Republic of Sri Lanka</span>.
           </div>
         </div>
       )
