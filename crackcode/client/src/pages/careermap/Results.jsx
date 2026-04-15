@@ -102,7 +102,7 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
 
         {/* Show unlock if next chapter is available */}
         {loaded && nextChapter && (
-          <div className="w-full bg-green-950/50 border border-green-500 rounded-2xl px-6 py-4 text-center">
+          <div className="w-full bg-green-100 border border-green-500 rounded-2xl px-6 py-4 text-center">
             <p className="text-green-500 font-semibold">Chapter unlocked !</p>
           </div>
         )}
