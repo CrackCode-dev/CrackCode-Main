@@ -2,6 +2,7 @@ import Button from "../../components/ui/Button";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getChapterByCareerId } from "./CareerChapters";
+import { fetchProgress } from "../../services/api/careermapService";
 
 export default function ResultsPage({ score, total, title, subtitle, careerId, currentChapterId, onRestart }) {
   const navigate = useNavigate();
@@ -14,23 +15,28 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
     const chapters = getChapterByCareerId(careerId);
     const currentIndex = chapters.findIndex((c) => c.id === currentChapterId);
     const nextIndex = currentIndex + 1;
-    const currentPassed = localStorage.getItem(`${careerId}_${currentChapterId}_passed`) === "true";
 
-    // Only unlock next chapter if current is passed and next exists
-    if (currentPassed && nextIndex < chapters.length) {
-      setNextChapter(chapters[nextIndex]);
-    } else {
-      setNextChapter(null);
-    }
+    // Fetch progress from DB to determine chapter unlock and completion state
+    fetchProgress(careerId).then((progress) => {
+      const passedMap = {};
+      progress.chapters?.forEach((ch) => {
+        passedMap[ch.chapterId] = ch.passed;
+      });
 
-    // Check if all chapters are completed
-    const allDone = chapters.every(
-      (ch) => localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true"
-    );
+      const currentPassed = !!passedMap[currentChapterId];
+      // Only unlock next chapter if current is passed and next exists
+      if (currentPassed && nextIndex < chapters.length) {
+        setNextChapter(chapters[nextIndex]);
+      } else {
+        setNextChapter(null);
+      }
 
-    // Update completion states
-    setAllChaptersDone(allDone);
-    setLoaded(true);
+      const allDone = chapters.every((ch) => !!passedMap[ch.id]);
+
+      // Update completion states
+      setAllChaptersDone(allDone);
+      setLoaded(true);
+    }).catch(() => setLoaded(true));
 
   }, [careerId, currentChapterId]);
 
@@ -124,7 +130,7 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
             Try Again
           </Button>
 
-          {!loaded || !localStorage.getItem(`${careerId}_${currentChapterId}_passed`) ? (
+          {!loaded || (!nextChapter && !allChaptersDone) ? (
             <Button variant="outline" size="lg" fullWidth onClick={() => navigate(`/careermap/${careerId}`)}>
               Back to Chapters
             </Button>

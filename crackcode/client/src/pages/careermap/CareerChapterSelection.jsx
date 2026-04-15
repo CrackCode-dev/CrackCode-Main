@@ -43,11 +43,8 @@ const CareerChapterSelectionPage = () => {
                         scoreMap[ch.chapterId] = ch.easyScore + ch.mediumScore + ch.hardScore;
                     });
                 } else {
-                    // No DB data — fall back to localStorage
                     baseChapters.forEach((ch) => {
-                        passedMap[ch.id] =
-                            localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true" ||
-                            localStorage.getItem(`${careerId}_${ch.id}_completed`) === "true";
+                        passedMap[ch.id] = false;
                     });
                 }
 
@@ -56,12 +53,11 @@ const CareerChapterSelectionPage = () => {
                 setLoaded(true);
             })
             .catch(() => {
-                // DB fetch failed — fall back to localStorage for all chapters
+                // DB fetch failed — show all chapters as locked
                 const fallback = {};
                 baseChapters.forEach((ch) => {
-                    fallback[ch.id] =
-                        localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true" ||
-                        localStorage.getItem(`${careerId}_${ch.id}_completed`) === "true";
+                    fallback[ch.id] = false
+
                 });
                 setPassedChapters(fallback);
                 setLoaded(true);
@@ -79,7 +75,7 @@ const CareerChapterSelectionPage = () => {
 
     }, [careerId]);
 
-    // Lock/unlock chapters based on previous chapter completion in localStorage
+    // Lock/unlock chapters based on previous chapter completion from DB
     const chapters = baseChapters.map((chapter, index) => ({
         ...chapter,
         isUnlocked: index === 0 ? true : !!passedChapters[baseChapters[index - 1].id],

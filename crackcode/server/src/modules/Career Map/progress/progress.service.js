@@ -1,6 +1,5 @@
 import Progress from "./progress.model.js";
 import User from "../../auth/User.model.js";
-import { checkAndUnlockMultipleBadges } from "../../badges/badge.service.js";
 
 // Helper = recompute overall totals from all chapters
 const recomputeTotals = (chapters) => {
@@ -24,9 +23,9 @@ export const updateChapterProgress = async (userId, career, chapterId, easyScore
   easyScore = Math.max(0, parseInt(easyScore) || 0);
   mediumScore = Math.max(0, parseInt(mediumScore) || 0);
   hardScore = Math.max(0, parseInt(hardScore) || 0);
-  
+
   const newTotal = easyScore + mediumScore + hardScore;
-  
+
   //  Sanity check: total score shouldn't exceed 100 (reasonable quiz limit)
   if (newTotal > 100) {
     throw new Error(`Invalid score: total (${newTotal}) exceeds maximum of 100. Possible cheating attempt.`);
@@ -101,73 +100,37 @@ export const updateChapterProgress = async (userId, career, chapterId, easyScore
     { returnDocument: "after" }
   );
 
-  // AWARD XP/TOKENS only if newly passed (prevents duplicate rewards)
-  let tokensAwarded = 0;
-  let xpAwarded = 0;
-
-  if (passed && !previouslyPassed) {
-    // First time passing: award for ALL correct answers
-    tokensAwarded = newTotal;
-    xpAwarded = newTotal * 3;
-    
+  // Award XP based on first-time or retry pass
+  if (passed) {
+    const xp = previouslyPassed ? 5 : 10;
     try {
       await User.findByIdAndUpdate(userId, {
-        $inc: {
-          tokens: tokensAwarded,
-          totalXP: xpAwarded,
-          casesSolved: tokensAwarded
-        }
+        $inc: { totalXP: xp }
       });
-
-      // Record this in progress so we don't re-award on retry
-      await Progress.updateOne(
-        { userId, career, "chapters.chapterId": chapterId },
-        { $set: { "chapters.$.rewardedQuestions": newTotal } }
-      );
-      console.log(`✅ First-time pass reward: ${tokensAwarded} tokens, ${xpAwarded} XP to user ${userId} for ${career}/${chapterId}`);
-
-      // Check and unlock relevant badges
-      const badgesToCheck = ['beginner', 'cases_5', 'cases_10', 'cases_25'];
-      const newlyUnlocked = await checkAndUnlockMultipleBadges(userId, badgesToCheck);
-      if (newlyUnlocked.length > 0) {
-        console.log(`✅ New badges unlocked: ${newlyUnlocked.join(', ')}`);
-      }
+      console.log(`✅ Chapter ${previouslyPassed ? 'retry' : 'first'} pass: +${xp} XP to user ${userId} for ${career}/${chapterId}`);
     } catch (err) {
-      console.error(`❌ Failed to award first-time pass rewards for user ${userId}:`, err.message);
+      console.error(`❌ Failed to award chapter XP:`, err.message);
     }
-  } else if (passed && previouslyPassed && newTotal > previousRewarded) {
-    // Already passed before: only award for NEW correct answers (improvement bonus)
-    tokensAwarded = newTotal - previousRewarded;
-    xpAwarded = tokensAwarded * 3;
-    
+  }
+
+  // Award 1 token when all 4 chapters passed for the first time
+  progress = await Progress.findOne({ userId, career });
+  const allChaptersPassed = progress.chapters.length === 4 &&
+    progress.chapters.every(ch => ch.passed);
+
+  if (allChaptersPassed && !progress.careerRewarded) {
     try {
       await User.findByIdAndUpdate(userId, {
-        $inc: {
-          tokens: tokensAwarded,
-          totalXP: xpAwarded,
-          casesSolved: tokensAwarded
-        }
+        $inc: { tokens: 1 }
       });
-
-      // Update rewardedQuestions to track the new high score
       await Progress.updateOne(
-        { userId, career, "chapters.chapterId": chapterId },
-        { $set: { "chapters.$.rewardedQuestions": newTotal } }
+        { userId, career },
+        { $set: { careerRewarded: true } }
       );
-      console.log(`✅ Improvement bonus: +${tokensAwarded} tokens, +${xpAwarded} XP to user ${userId} for ${career}/${chapterId}`);
-
-      //  Check and unlock relevant badges
-      const badgesToCheck = ['beginner', 'cases_5', 'cases_10', 'cases_25'];
-      const newlyUnlocked = await checkAndUnlockMultipleBadges(userId, badgesToCheck);
-      if (newlyUnlocked.length > 0) {
-        console.log(`✅ New badges unlocked: ${newlyUnlocked.join(', ')}`);
-      }
+      console.log(`✅ Career complete: +1 token to user ${userId} for ${career}`);
     } catch (err) {
-      console.error(`❌ Failed to award improvement bonus for user ${userId}:`, err.message);
+      console.error(`❌ Failed to award career token:`, err.message);
     }
-  } else if (!passed) {
-    // Did not pass - no XP/tokens awarded
-    console.log(`ℹ️ Quiz not passed (${newTotal} correct, need >12): no rewards for user ${userId}`);
   }
 
   // Refetch and return updated document

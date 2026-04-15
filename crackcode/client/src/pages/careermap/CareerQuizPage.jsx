@@ -121,19 +121,13 @@ export default function CareerQuizPage() {
 
             console.log("Quiz finished:", { careerId, chapterId, newEasy, newMedium, newHard, passed });
 
-            // Keep chapter as passed even if user scores lower on a retry
-            const alreadyPassed = localStorage.getItem(`${careerId}_${chapterId}_passed`) === "true";
-            const finalPassed = passed || alreadyPassed; 
+            const finalPassed = passed ;
 
             if (!progressSentRef.current) {
                 progressSentRef.current = true;
                 updateProgress(careerId, chapterId, newEasy, newMedium, newHard, finalPassed)
                     .then((res) => console.log("✅ Progress saved:", res))
                     .catch((err) => console.error("❌ Progress update failed:", err));
-            }
-
-            if (passed) {
-                localStorage.setItem(`${careerId}_${chapterId}_passed`, "true");
             }
             setFinished(true);
         } else {
