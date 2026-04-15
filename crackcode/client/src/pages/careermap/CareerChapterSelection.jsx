@@ -27,6 +27,7 @@ const CareerChapterSelectionPage = () => {
     const [passedChapters, setPassedChapters] = useState({});
     const [chapterScores, setChapterScores] = useState({});
     const [questionCounts, setQuestionCounts] = useState({});
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         // Fetch progress from DB for this career
@@ -52,6 +53,7 @@ const CareerChapterSelectionPage = () => {
 
                 setPassedChapters(passedMap);
                 setChapterScores(scoreMap);
+                setLoaded(true);
             })
             .catch(() => {
                 // DB fetch failed — fall back to localStorage for all chapters
@@ -62,6 +64,7 @@ const CareerChapterSelectionPage = () => {
                         localStorage.getItem(`${careerId}_${ch.id}_completed`) === "true";
                 });
                 setPassedChapters(fallback);
+                setLoaded(true);
             });
 
         // Fetch live question counts per chapter from the API
@@ -136,6 +139,19 @@ const CareerChapterSelectionPage = () => {
                             </p>
                         </div>
                     </div>
+
+                    {/* Show Career completion banner*/}
+                    {loaded && chapters.every((ch) => passedChapters[ch.id]) && (
+                        <div className="w-full bg-green-100 border border-green-500 rounded-2xl px-6 py-6 flex flex-col items-center gap-2 text-center mb-10">
+                            <div className="text-4xl">🎉</div>
+                            <p className="text-green-500 text-xl font-extrabold">Career Completed!</p>
+                            <p className="text-black text-sm">
+                                You've completed all 4 chapters in the{" "}
+                                <span className="text-green-500 font-semibold">{title}</span> career path.
+                                Stay focused and never give up!
+                            </p>
+                        </div>
+                    )}
 
                     {/* Roadmap List */}
                     <div className="flex flex-col">

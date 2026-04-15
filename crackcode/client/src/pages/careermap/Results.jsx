@@ -6,6 +6,7 @@ import { getChapterByCareerId } from "./CareerChapters";
 export default function ResultsPage({ score, total, title, subtitle, careerId, currentChapterId, onRestart }) {
   const navigate = useNavigate();
   const [nextChapter, setNextChapter] = useState(null);
+  const [allChaptersDone, setAllChaptersDone] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   // Check if current chapter is passed and if a next chapter exists
@@ -21,10 +22,17 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
     } else {
       setNextChapter(null);
     }
-    setLoaded(true);
-  }, [careerId, currentChapterId]);
 
-  const isLastChapter = loaded && !nextChapter && score >= 8;
+    // Check if all chapters are completed
+    const allDone = chapters.every(
+      (ch) => localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true"
+    );
+
+    // Update completion states
+    setAllChaptersDone(allDone);
+    setLoaded(true);
+
+  }, [careerId, currentChapterId]);
 
   // Navigate to next chapter
   const handleNextClick = () => {
@@ -40,7 +48,7 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
   return (
     <div className="min-h-screen bg-(--bg) flex flex-col items-center px-6 py-8">
 
-      
+
 
       <div className="w-full max-w-5xl text-center mb-4">
         <h1 className="text-4xl font-extrabold text-(--text) tracking-tight leading-tight">
@@ -93,21 +101,20 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
         </div>
 
         {/* Show unlock if next chapter is available */}
-        {nextChapter && score >= 8 && (
-          <div className="w-full bg-green-950/60 border border-green-500 rounded-2xl px-6 py-4 text-center">
-            <p className="text-green-400 font-semibold">Chapter unlocked!</p>
+        {loaded && nextChapter && (
+          <div className="w-full bg-green-950/50 border border-green-500 rounded-2xl px-6 py-4 text-center">
+            <p className="text-green-500 font-semibold">Chapter unlocked !</p>
           </div>
         )}
 
         {/* Show completion message if last chapter is passed */}
-        {isLastChapter && (
-          <div className="w-full bg-green-950/40 border border-green-500 rounded-2xl px-6 py-6 flex flex-col items-center gap-2 text-center">
+        {loaded && allChaptersDone && !nextChapter && (
+          <div className="w-full bg-green-100 border border-green-500 rounded-2xl px-6 py-6 flex flex-col items-center gap-2 text-center">
             <div className="text-4xl">🎉</div>
-            <p className="text-green-400 text-xl font-extrabold">Career Path Completed!</p>
-            <p className="text-(--muted) text-sm">
+            <p className="text-green-500 text-xl font-extrabold">All Chapters Completed!</p>
+            <p className="text-black text-sm">
               You've successfully completed all chapters in the{" "}
-              <span className="text-green-400 font-semibold">{title}</span> career path.
-              Stay focused and never give up!
+              <span className="text-green-500 font-semibold">{title}</span> career path.
             </p>
           </div>
         )}
@@ -117,8 +124,7 @@ export default function ResultsPage({ score, total, title, subtitle, careerId, c
             Try Again
           </Button>
 
-          {score < 8 ? (
-            // Low score — show Back to Chapters
+          {!loaded || !localStorage.getItem(`${careerId}_${currentChapterId}_passed`) ? (
             <Button variant="outline" size="lg" fullWidth onClick={() => navigate(`/careermap/${careerId}`)}>
               Back to Chapters
             </Button>
