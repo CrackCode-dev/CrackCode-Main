@@ -27,6 +27,7 @@ const CareerChapterSelectionPage = () => {
     const [passedChapters, setPassedChapters] = useState({});
     const [chapterScores, setChapterScores] = useState({});
     const [questionCounts, setQuestionCounts] = useState({});
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         // Fetch progress from DB for this career
@@ -42,26 +43,24 @@ const CareerChapterSelectionPage = () => {
                         scoreMap[ch.chapterId] = ch.easyScore + ch.mediumScore + ch.hardScore;
                     });
                 } else {
-                    // No DB data — fall back to localStorage
                     baseChapters.forEach((ch) => {
-                        passedMap[ch.id] =
-                            localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true" ||
-                            localStorage.getItem(`${careerId}_${ch.id}_completed`) === "true";
+                        passedMap[ch.id] = false;
                     });
                 }
 
                 setPassedChapters(passedMap);
                 setChapterScores(scoreMap);
+                setLoaded(true);
             })
             .catch(() => {
-                // DB fetch failed — fall back to localStorage for all chapters
+                // DB fetch failed — show all chapters as locked
                 const fallback = {};
                 baseChapters.forEach((ch) => {
-                    fallback[ch.id] =
-                        localStorage.getItem(`${careerId}_${ch.id}_passed`) === "true" ||
-                        localStorage.getItem(`${careerId}_${ch.id}_completed`) === "true";
+                    fallback[ch.id] = false
+
                 });
                 setPassedChapters(fallback);
+                setLoaded(true);
             });
 
         // Fetch live question counts per chapter from the API
@@ -76,7 +75,7 @@ const CareerChapterSelectionPage = () => {
 
     }, [careerId]);
 
-    // Lock/unlock chapters based on previous chapter completion in localStorage
+    // Lock/unlock chapters based on previous chapter completion from DB
     const chapters = baseChapters.map((chapter, index) => ({
         ...chapter,
         isUnlocked: index === 0 ? true : !!passedChapters[baseChapters[index - 1].id],
@@ -136,6 +135,19 @@ const CareerChapterSelectionPage = () => {
                             </p>
                         </div>
                     </div>
+
+                    {/* Show Career completion banner*/}
+                    {loaded && chapters.every((ch) => passedChapters[ch.id]) && (
+                        <div className="w-full bg-green-100 border border-green-500 rounded-2xl px-6 py-6 flex flex-col items-center gap-2 text-center mb-10">
+                            <div className="text-4xl">🎉</div>
+                            <p className="text-green-500 text-xl font-extrabold">Career Completed!</p>
+                            <p className="text-black text-sm">
+                                You've completed all 4 chapters in the{" "}
+                                <span className="text-green-500 font-semibold">{title}</span> career path.
+                                Stay focused and never give up!
+                            </p>
+                        </div>
+                    )}
 
                     {/* Roadmap List */}
                     <div className="flex flex-col">

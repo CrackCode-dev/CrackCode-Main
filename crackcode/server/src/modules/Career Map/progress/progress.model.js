@@ -38,7 +38,8 @@ const progressSchema = new mongoose.Schema({
   mediumCompleted: { type: Boolean, default: false },
   hardCompleted: { type: Boolean, default: false },
 
-  totalQuestions: { type: Number, default: 60 }
+  totalQuestions: { type: Number, default: 60 },
+  careerRewarded: { type: Boolean, default: false } // True when user has received career completion reward
 
 }, { timestamps: true });
 

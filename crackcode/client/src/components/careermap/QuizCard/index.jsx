@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ContentCard from "../../ui/Card";
 import Button from "../../ui/Button";
 import AnswerOptions from "./AnswerOptions";
@@ -10,6 +10,37 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
   const [fillValue, setFillValue] = useState("");
   const [revealed, setRevealed] = useState(false);
 
+  const latestRef = useRef({});
+  latestRef.current = { revealed, selected, question, onNext, variant, fillValue };
+
+  // Handle Enter key for both MCQ and fill-in-the-blank questions
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key !== "Enter") return;
+      const { revealed, selected, question, onNext, variant, fillValue } = latestRef.current;
+
+      if (variant === "mcq" && revealed && question) {
+        const correct = selected === question.correct;
+        onNext?.({ correct });
+      }
+
+      if (variant === "fill" && !revealed && fillValue.trim()) {
+        document.querySelector("[data-check-btn]")?.click();
+      }
+
+      if (variant === "fill" && revealed) {
+        const answers = question.answer?.split(",").map(a => a.trim().toLowerCase()) || [];
+        const normalized = fillValue.trim().toLowerCase();
+        const correct = answers.some(ans =>
+          ans === normalized ||
+          (ans.split(/\s+/).length === 2 && ans.split(/\s+/).includes(normalized))
+        );
+        onNext?.({ correct });
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   if (!question) return null;
 
@@ -99,6 +130,8 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
           revealed={revealed}
           isCorrect={fillIsCorrect}
           correctAnswer={question.answer}
+          onReveal={handleRevealFill}
+          onNext={handleNext}
         />
       )}
 
@@ -112,7 +145,7 @@ export default function QuizCard({ variant = "mcq", question, index, isLast = fa
 
         {/* Fill: Check answer */}
         {variant === "fill" && !revealed && (
-          <Button variant="primary" size="lg" fullWidth disabled={!canReveal} onClick={handleRevealFill}>
+          <Button data-check-btn variant="primary" size="lg" fullWidth disabled={!canReveal} onClick={handleRevealFill}>
             Check Answer
           </Button>
         )}
