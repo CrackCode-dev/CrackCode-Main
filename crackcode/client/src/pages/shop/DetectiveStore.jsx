@@ -1,695 +1,3 @@
-// import { useEffect, useMemo, useState } from "react";
-// import StoreGrid from "../../components/store/StoreGrid";
-// import StoreSidebar from "../../components/store/StoreSidebar";
-// import Toast from "../../components/common/Toast";
-// import HQBtn from "../../components/common/HQBtn";
-// import BackBtn from "../../components/common/BackBtn";
-
-// export default function DetectiveStore() {
-//   const [items, setItems] = useState([]);
-//   const [inventoryItems, setInventoryItems] = useState([]);
-//   const [ownedItemIds, setOwnedItemIds] = useState(new Set());
-//   const [category, setCategory] = useState("all");
-//   const [buyingItemId, setBuyingItemId] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [inventoryLoading, setInventoryLoading] = useState(false);
-//   const [equippingItemId, setEquippingItemId] = useState(null);
-//   const [equippedItemId, setEquippedItemId] = useState(null);
-
-//   const [username, setUsername] = useState("User");
-//   const [tokensRemaining, setTokensRemaining] = useState(0);
-//   const [profileImage, setProfileImage] = useState("/placeholder.png");
-
-//   const getToken = () => localStorage.getItem("accessToken");
-
-//   const [toast, setToast] = useState({
-//     show: false,
-//     message: "",
-//     type: "success",
-//   });
-
-//   const showToast = (message, type = "success") => {
-//     setToast({
-//       show: true,
-//       message,
-//       type,
-//     });
-//   };
-
-//   const normalizeImageUrl = (src) => {
-//     if (!src) return "/placeholder.png";
-//     if (src.startsWith("http")) return src;
-//     if (src.startsWith("/uploads")) return `http://localhost:5051${src}`;
-//     if (src.startsWith("/src")) return src;
-//     return src;
-//   };
-
-//   const loadProfile = async () => {
-//     try {
-//       const res = await fetch("http://localhost:5051/api/profile", {
-//         method: "GET",
-//         headers: {
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//       });
-
-//       const data = await res.json();
-//       console.log("PROFILE DATA:", data);
-
-//       const user =
-//         data?.user ||
-//         data?.profile ||
-//         data?.data?.user ||
-//         data?.data ||
-//         data;
-
-//       setUsername(user?.username || user?.name || "User");
-//       setTokensRemaining(user?.tokens ?? 0);
-
-//       const avatarSrc =
-//         user?.equippedAvatarItemId?.imageUrl ||
-//         user?.avatar ||
-//         "/placeholder.png";
-
-//       setProfileImage(normalizeImageUrl(avatarSrc));
-//     } catch (error) {
-//       console.error("Failed to load profile:", error);
-//       setUsername("User");
-//       setTokensRemaining(0);
-//       setProfileImage("/placeholder.png");
-//     }
-//   };
-
-//   const loadInventory = async () => {
-//     try {
-//       const res = await fetch("http://localhost:5051/api/shop/inventory", {
-//         method: "GET",
-//         headers: {
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//       });
-
-//       const data = await res.json();
-//       const inventory = Array.isArray(data) ? data : data.items || [];
-
-//       setInventoryItems(inventory);
-
-//       const ids = new Set(
-//         inventory.map((inv) => String(inv.itemId?._id || inv.itemId || inv._id))
-//       );
-
-//       setOwnedItemIds(ids);
-//     } catch (error) {
-//       console.error("Failed to load inventory:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const fetchItems = async () => {
-//       try {
-//         setLoading(true);
-
-//         const res = await fetch("http://localhost:5051/api/shop/items");
-//         const data = await res.json();
-
-//         setItems(Array.isArray(data) ? data : data.items || []);
-//       } catch (error) {
-//         console.error("Failed to fetch store items:", error);
-//         showToast("Failed to load store items", "error");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchItems();
-//     loadInventory();
-//     loadProfile();
-//   }, []);
-
-//   useEffect(() => {
-//     if (category === "inventory") {
-//       const fetchInventoryTab = async () => {
-//         try {
-//           setInventoryLoading(true);
-//           await loadInventory();
-//         } catch (error) {
-//           console.error("Failed to fetch inventory:", error);
-//           setInventoryItems([]);
-//           showToast("Failed to load inventory", "error");
-//         } finally {
-//           setInventoryLoading(false);
-//         }
-//       };
-
-//       fetchInventoryTab();
-//     }
-//   }, [category]);
-
-//   const handleBuyTokens = async (itemId) => {
-//     try {
-//       setBuyingItemId(itemId);
-
-//       const res = await fetch("http://localhost:5051/api/shop/purchase", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//         body: JSON.stringify({ itemId }),
-//       });
-
-//       const data = await res.json();
-
-//       if (data.success) {
-//         showToast("Successful! Item purchased", "success");
-//         await loadInventory();
-//         await loadProfile();
-//       } else {
-//         showToast(data.message || "Purchase failed", "error");
-//       }
-//     } catch (error) {
-//       console.error("Token purchase failed:", error);
-//       showToast("Purchase failed", "error");
-//     } finally {
-//       setBuyingItemId(null);
-//     }
-//   };
-
-//   const handleBuyPaid = async (itemId) => {
-//     try {
-//       setBuyingItemId(itemId);
-
-//       const res = await fetch("http://localhost:5051/api/shop/checkout", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//         body: JSON.stringify({ itemId }),
-//       });
-
-//       const data = await res.json();
-
-//       if (data?.url) {
-//         showToast("Redirecting to payment...", "success");
-//         window.location.href = data.url;
-//       } else {
-//         showToast(data.message || "Stripe checkout failed", "error");
-//       }
-//     } catch (error) {
-//       console.error("Stripe checkout failed:", error);
-//       showToast("Stripe checkout failed", "error");
-//     } finally {
-//       setBuyingItemId(null);
-//     }
-//   };
-
-//   const handleEquip = async (item) => {
-//     try {
-//       setEquippingItemId(item._id);
-
-//       const res = await fetch("http://localhost:5051/api/profile/equip-item", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//         body: JSON.stringify({
-//           itemId: item._id,
-//           category: item.category,
-//         }),
-//       });
-
-//       const data = await res.json();
-
-//       if (data.success) {
-//         setEquippedItemId(item._id);
-//         showToast("Item equipped successfully!", "success");
-//         await loadProfile();
-//       } else {
-//         showToast(data.message || "Failed to equip item", "error");
-//       }
-//     } catch (error) {
-//       console.error("Equip failed:", error);
-//       showToast("Failed to equip item", "error");
-//     } finally {
-//       setEquippingItemId(null);
-//     }
-//   };
-
-//   const displayedItems = useMemo(() => {
-//     if (category === "inventory") {
-//       return inventoryItems.map((inv) => inv.itemId || inv);
-//     }
-
-//     if (category === "all") {
-//       return items;
-//     }
-
-//     return items.filter(
-//       (item) => item.category?.toLowerCase() === category.toLowerCase()
-//     );
-//   }, [category, items, inventoryItems]);
-
-//   const sectionTitle =
-//     category === "inventory"
-//       ? "My Inventory"
-//       : category === "all"
-//       ? "All Items"
-//       : `${category.charAt(0).toUpperCase() + category.slice(1)} Items`;
-
-//   return (
-//     <div className="min-h-screen bg-black text-white">
-//       <Toast
-//         show={toast.show}
-//         message={toast.message}
-//         type={toast.type}
-//         onClose={() => setToast((prev) => ({ ...prev, show: false }))}
-//       />
-
-//       <div className="flex items-center justify-between px-10 py-6">
-//         <div className="flex items-center gap-4">
-//           <HQBtn />
-//           <BackBtn />
-//         </div>
-
-//         <div className="flex items-center gap-3 rounded-full border border-gray-700 bg-[#111] px-4 py-2">
-//           <img
-//             src={profileImage}
-//             alt={username}
-//             className="h-10 w-10 rounded-full object-cover border border-gray-600"
-//             onError={(e) => {
-//               e.currentTarget.src = "/placeholder.png";
-//             }}
-//           />
-
-//           <div className="leading-tight">
-//             <p className="text-sm font-semibold">{username}</p>
-//             <p className="text-xs font-medium text-green-400">
-//               {tokensRemaining} Tokens
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="flex">
-//         <StoreSidebar category={category} setCategory={setCategory} />
-
-//         <div className="flex-1 p-10">
-//           <h1 className="mb-2 text-3xl font-bold">Detective Store</h1>
-//           <p className="mb-10 text-gray-400">
-//             Unlock exclusive avatars, themes, and titles to customize your
-//             detective profile
-//           </p>
-
-//           <h2 className="mb-6 text-2xl font-semibold">{sectionTitle}</h2>
-
-//           {loading && category !== "inventory" && (
-//             <p className="text-gray-400">Loading store items...</p>
-//           )}
-
-//           {inventoryLoading && category === "inventory" && (
-//             <p className="text-gray-400">Loading your inventory...</p>
-//           )}
-
-//           {!loading && !inventoryLoading && displayedItems.length === 0 && (
-//             <p className="text-gray-400">
-//               {category === "inventory"
-//                 ? "You do not own any items yet."
-//                 : "No items found in this category."}
-//             </p>
-//           )}
-
-//           {!loading && !inventoryLoading && displayedItems.length > 0 && (
-//             <StoreGrid
-//               items={displayedItems}
-//               onBuyXP={category === "inventory" ? undefined : handleBuyTokens}
-//               onBuyPaid={category === "inventory" ? undefined : handleBuyPaid}
-//               buyingItemId={buyingItemId}
-//               isInventoryView={category === "inventory"}
-//               onEquip={handleEquip}
-//               equippingItemId={equippingItemId}
-//               equippedItemId={equippedItemId}
-//               ownedItemIds={ownedItemIds}
-//             />
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// --------------------------------------------------------------------------------------------------
-
-// import { useEffect, useMemo, useState } from "react";
-// import StoreGrid from "../../components/store/StoreGrid";
-// import StoreSidebar from "../../components/store/StoreSidebar";
-// import Toast from "../../components/common/Toast";
-// import HQBtn from "../../components/common/HQBtn";
-// import BackBtn from "../../components/common/BackBtn";
-
-
-// export default function DetectiveStore() {
-//   const [items, setItems] = useState([]);
-//   const [inventoryItems, setInventoryItems] = useState([]);
-//   const [ownedItemIds, setOwnedItemIds] = useState(new Set());
-//   const [category, setCategory] = useState("all");
-//   const [buyingItemId, setBuyingItemId] = useState(null);
-//   const [loading, setLoading] = useState(true);
-//   const [inventoryLoading, setInventoryLoading] = useState(false);
-//   const [equippingItemId, setEquippingItemId] = useState(null);
-//   const [equippedItemId, setEquippedItemId] = useState(null);
-
-//   const [username, setUsername] = useState("User");
-//   const [tokensRemaining, setTokensRemaining] = useState(0);
-//   const [profileImage, setProfileImage] = useState("/placeholder.png");
-
-//   const getToken = () => localStorage.getItem("accessToken");
-
-//   const [toast, setToast] = useState({
-//     show: false,
-//     message: "",
-//     type: "success",
-//   });
-
-//   const showToast = (message, type = "success") => {
-//     setToast({
-//       show: true,
-//       message,
-//       type,
-//     });
-//   };
-
-//   const normalizeImageUrl = (src) => {
-//     if (!src) return "/placeholder.png";
-//     if (src.startsWith("http")) return src;
-//     if (src.startsWith("/uploads")) return `http://localhost:5051${src}`;
-//     if (src.startsWith("/src")) return src;
-//     return src;
-//   };
-
-//   const loadProfile = async () => {
-//     try {
-//       const res = await fetch("http://localhost:5051/api/profile", {
-//         method: "GET",
-//         headers: {
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//       });
-
-//       const data = await res.json();
-//       console.log("PROFILE DATA:", data);
-
-//       const user =
-//         data?.user ||
-//         data?.profile ||
-//         data?.data?.user ||
-//         data?.data ||
-//         data;
-
-//       setUsername(user?.username || user?.name || "User");
-//       setTokensRemaining(user?.tokens ?? 0);
-
-//       const avatarSrc =
-//         user?.equippedAvatarItemId?.imageUrl ||
-//         user?.avatar ||
-//         "/placeholder.png";
-
-//       setProfileImage(normalizeImageUrl(avatarSrc));
-//     } catch (error) {
-//       console.error("Failed to load profile:", error);
-//       setUsername("User");
-//       setTokensRemaining(0);
-//       setProfileImage("/placeholder.png");
-//     }
-//   };
-
-//   const loadInventory = async () => {
-//     try {
-//       const res = await fetch("http://localhost:5051/api/shop/inventory", {
-//         method: "GET",
-//         headers: {
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//       });
-
-//       const data = await res.json();
-//       const inventory = Array.isArray(data) ? data : data.items || [];
-
-//       setInventoryItems(inventory);
-
-//       const ids = new Set(
-//         inventory.map((inv) => String(inv.itemId?._id || inv.itemId || inv._id))
-//       );
-
-//       setOwnedItemIds(ids);
-//     } catch (error) {
-//       console.error("Failed to load inventory:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const fetchItems = async () => {
-//       try {
-//         setLoading(true);
-
-//         const res = await fetch("http://localhost:5051/api/shop/items");
-//         const data = await res.json();
-
-//         setItems(Array.isArray(data) ? data : data.items || []);
-//       } catch (error) {
-//         console.error("Failed to fetch store items:", error);
-//         showToast("Failed to load store items", "error");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchItems();
-//     loadInventory();
-//     loadProfile();
-//   }, []);
-
-//   useEffect(() => {
-//     if (category === "inventory") {
-//       const fetchInventoryTab = async () => {
-//         try {
-//           setInventoryLoading(true);
-//           await loadInventory();
-//         } catch (error) {
-//           console.error("Failed to fetch inventory:", error);
-//           setInventoryItems([]);
-//           showToast("Failed to load inventory", "error");
-//         } finally {
-//           setInventoryLoading(false);
-//         }
-//       };
-
-//       fetchInventoryTab();
-//     }
-//   }, [category]);
-
-//   const handleBuyTokens = async (itemId) => {
-//     try {
-//       setBuyingItemId(itemId);
-
-//       const res = await fetch("http://localhost:5051/api/shop/purchase", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//         body: JSON.stringify({ itemId }),
-//       });
-
-//       const data = await res.json();
-
-//       if (data.success) {
-//         showToast("Successful! Item purchased", "success");
-//         await loadInventory();
-//         await loadProfile();
-//       } else {
-//         showToast(data.message || "Purchase failed", "error");
-//       }
-//     } catch (error) {
-//       console.error("Token purchase failed:", error);
-//       showToast("Purchase failed", "error");
-//     } finally {
-//       setBuyingItemId(null);
-//     }
-//   };
-
-//   const handleBuyPaid = async (itemId) => {
-//     try {
-//       setBuyingItemId(itemId);
-
-//       const res = await fetch("http://localhost:5051/api/shop/checkout", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//         body: JSON.stringify({ itemId }),
-//       });
-
-//       const data = await res.json();
-
-//       if (data?.url) {
-//         showToast("Redirecting to payment...", "success");
-//         window.location.href = data.url;
-//       } else {
-//         showToast(data.message || "Stripe checkout failed", "error");
-//       }
-//     } catch (error) {
-//       console.error("Stripe checkout failed:", error);
-//       showToast("Stripe checkout failed", "error");
-//     } finally {
-//       setBuyingItemId(null);
-//     }
-//   };
-
-//   const handleEquip = async (item) => {
-//     try {
-//       setEquippingItemId(item._id);
-
-//       const res = await fetch("http://localhost:5051/api/profile/equip-item", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${getToken()}`,
-//         },
-//         body: JSON.stringify({
-//           itemId: item._id,
-//           category: item.category,
-//         }),
-//       });
-
-//       const data = await res.json();
-
-//       if (data.success) {
-//         setEquippedItemId(item._id);
-//         showToast("Item equipped successfully!", "success");
-//         await loadProfile();
-//       } else {
-//         showToast(data.message || "Failed to equip item", "error");
-//       }
-//     } catch (error) {
-//       console.error("Equip failed:", error);
-//       showToast("Failed to equip item", "error");
-//     } finally {
-//       setEquippingItemId(null);
-//     }
-//   };
-
-//   const displayedItems = useMemo(() => {
-//     if (category === "inventory") {
-//       return inventoryItems.map((inv) => inv.itemId || inv);
-//     }
-
-//     if (category === "all") {
-//       return items;
-//     }
-
-//     return items.filter(
-//       (item) => item.category?.toLowerCase() === category.toLowerCase()
-//     );
-//   }, [category, items, inventoryItems]);
-
-//   const sectionTitle =
-//     category === "inventory"
-//       ? "My Inventory"
-//       : category === "all"
-//       ? "All Items"
-//       : `${category.charAt(0).toUpperCase() + category.slice(1)} Items`;
-
-//   return (
-    
-//       <div className="min-h-screen bg-gray-50 text-gray-900">
-//       <Toast
-//         show={toast.show}
-//         message={toast.message}
-//         type={toast.type}
-//         onClose={() => setToast((prev) => ({ ...prev, show: false }))}
-//       />
-
-//       <div className="flex items-center justify-between px-10 py-6">
-//         <div className="flex items-center gap-4">
-//           <HQBtn />
-//           <BackBtn />
-//         </div>
-
-//         <div className="flex items-center gap-3 rounded-full border border-gray-200 bg-white px-4 py-2 shadow-sm">
-//           <img
-//             src={profileImage}
-//             alt={username}
-//             className="h-10 w-10 rounded-full object-cover border border-gray-300"
-//             onError={(e) => {
-//               e.currentTarget.src = "/placeholder.png";
-//             }}
-//           />
-
-//           <div className="leading-tight">
-//             <p className="text-sm font-semibold text-gray-900">{username}</p>
-//             <p className="text-xs font-medium text-green-600">
-//               {tokensRemaining} Tokens
-//             </p>
-//           </div>
-//         </div>
-//       </div>
-
-//       <div className="flex">
-//         <StoreSidebar category={category} setCategory={setCategory} />
-
-//         <div className="flex-1 p-10">
-//           <h1 className="mb-2 text-3xl font-bold text-gray-900">
-//             Detective Store
-//           </h1>
-//           <p className="mb-10 text-gray-500">
-//             Unlock exclusive avatars, themes, and titles to customize your
-//             detective profile
-//           </p>
-
-//           <h2 className="mb-6 text-2xl font-semibold text-gray-900">
-//             {sectionTitle}
-//           </h2>
-
-//           {loading && category !== "inventory" && (
-//             <p className="text-gray-500">Loading store items...</p>
-//           )}
-
-//           {inventoryLoading && category === "inventory" && (
-//             <p className="text-gray-500">Loading your inventory...</p>
-//           )}
-
-//           {!loading && !inventoryLoading && displayedItems.length === 0 && (
-//             <p className="text-gray-500">
-//               {category === "inventory"
-//                 ? "You do not own any items yet."
-//                 : "No items found in this category."}
-//             </p>
-//           )}
-
-//           {!loading && !inventoryLoading && displayedItems.length > 0 && (
-//             <StoreGrid
-//               items={displayedItems}
-//               onBuyXP={category === "inventory" ? undefined : handleBuyTokens}
-//               onBuyPaid={category === "inventory" ? undefined : handleBuyPaid}
-//               buyingItemId={buyingItemId}
-//               isInventoryView={category === "inventory"}
-//               onEquip={handleEquip}
-//               equippingItemId={equippingItemId}
-//               equippedItemId={equippedItemId}
-//               ownedItemIds={ownedItemIds}
-//             />
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-//--------------------------------------------------------------------------------------------------
 import { useEffect, useMemo, useRef, useState, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import StoreGrid from "../../components/store/StoreGrid";
@@ -700,61 +8,62 @@ import { useTheme } from "../../context/theme/ThemeContext";
 import { AppContent } from "../../context/userauth/authenticationContext";
 
 export default function DetectiveStore() {
-  const [items, setItems] = useState([]);
-  const [inventoryItems, setInventoryItems] = useState([]);
-  const [ownedItemIds, setOwnedItemIds] = useState(new Set());
-  const [category, setCategory] = useState("all");
-  const [buyingItemId, setBuyingItemId] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [inventoryLoading, setInventoryLoading] = useState(false);
-  const [equippingItemId, setEquippingItemId] = useState(null);
-  const [equippedItemId, setEquippedItemId] = useState(null);
+  // --- State ---
+  const [items, setItems] = useState([]);              // All store items from the API
+  const [inventoryItems, setInventoryItems] = useState([]); // Items the user already owns
+  const [ownedItemIds, setOwnedItemIds] = useState(new Set()); // Set of owned item IDs for quick lookup
+  const [category, setCategory] = useState("all");    // Active sidebar filter (all, avatars, themes, inventory)
+  const [buyingItemId, setBuyingItemId] = useState(null);    // ID of item currently being purchased (shows loading state)
+  const [loading, setLoading] = useState(true);              // True while store items are being fetched
+  const [inventoryLoading, setInventoryLoading] = useState(false); // True while inventory tab is loading
+  const [equippingItemId, setEquippingItemId] = useState(null);    // ID of item currently being equipped
+  const [equippedItemId, setEquippedItemId] = useState(null);      // ID of the currently equipped item
 
+  // User profile state shown in the top-right corner
   const [username, setUsername] = useState("User");
   const [tokensRemaining, setTokensRemaining] = useState(0);
   const [profileImage, setProfileImage] = useState("/placeholder.png");
 
+  // --- Hooks ---
   const { theme, setTheme } = useTheme();
-  const { getUserData } = useContext(AppContent);
+  const { getUserData } = useContext(AppContent); // Used to refresh global user data after equipping
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Prevents the Stripe payment handler from running twice (React StrictMode fires effects twice in dev)
   const processingPaymentRef = useRef(false);
 
+  // Backend API base URL, falls back to localhost if env vars are not set
   const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || "http://localhost:5051";
 
+  // --- Theme helpers ---
+  // Determines if the current theme is a light variant to adjust text/border colors
   const isLightFamily = ["light", "cream", "country"].includes(theme);
-
-  const pageClass =
-    theme === "light"
-      ? "bg-gray-50 text-gray-900"
-      : theme === "cream"
-      ? "bg-[#f6f1e7] text-gray-900"
-      : theme === "country"
-      ? "bg-[#efe7dc] text-gray-900"
-      : theme === "midnight"
-      ? "bg-[#08142b] text-white"
-      : "bg-black text-white";
-
-  // const titleClass = isLightFamily ? "text-gray-900" : "text-white";
   const subTextClass = isLightFamily ? "text-gray-500" : "text-gray-400";
   const tokenClass = isLightFamily ? "text-green-600" : "text-green-400";
 
+  // Retrieves the JWT access token from localStorage for authenticated API calls
   const getToken = () => localStorage.getItem("accessToken");
 
+  // Helper to show toast notifications (success, error, or info)
   const showToast = (message, type = "success") => {
     if (type === "error") toast.error(message);
     else if (type === "info") toast.info(message);
     else toast.success(message);
   };
 
+  // Converts relative image paths from the server into full URLs
   const normalizeImageUrl = (src) => {
     if (!src) return "/placeholder.png";
-    if (src.startsWith("http")) return src;
-    if (src.startsWith("/uploads")) return `${API_BASE_URL}${src}`;
-    if (src.startsWith("/src")) return src;
+    if (src.startsWith("http")) return src;                        // Already absolute
+    if (src.startsWith("/uploads")) return `${API_BASE_URL}${src}`; // Server-hosted upload
+    if (src.startsWith("/src")) return src;                        // Local asset
     return src;
   };
 
+  // --- Data fetching ---
+
+  // Fetches the logged-in user's profile (username, token balance, equipped avatar)
   const loadProfile = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/profile`, {
@@ -775,6 +84,7 @@ export default function DetectiveStore() {
 
       const data = await res.json();
 
+      // Handle different API response shapes
       const user =
         data?.user ||
         data?.profile ||
@@ -785,6 +95,7 @@ export default function DetectiveStore() {
       setUsername(user?.username || user?.name || "User");
       setTokensRemaining(user?.tokens ?? 0);
 
+      // Resolve the avatar image from whichever field is populated
       const avatarSrc =
         user?.equippedAvatarItemId?.imageUrl ||
         user?.equippedAvatar?.imageUrl ||
@@ -792,8 +103,8 @@ export default function DetectiveStore() {
         "/placeholder.png";
 
       setProfileImage(normalizeImageUrl(avatarSrc));
-      
-      // Track equipped item IDs from the user's equipped slots
+
+      // Track which item is currently equipped (supports both populated object and raw ID)
       if (user?.equippedAvatarItemId?._id) {
         setEquippedItemId(user.equippedAvatarItemId._id);
       } else if (user?.equippedAvatarItemId && typeof user.equippedAvatarItemId === 'string') {
@@ -807,6 +118,7 @@ export default function DetectiveStore() {
     }
   };
 
+  // Fetches the user's inventory and builds the set of owned item IDs
   const loadInventory = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/api/shop/inventory`, {
@@ -826,12 +138,14 @@ export default function DetectiveStore() {
 
       const data = await res.json();
 
+      // Handle different API response shapes for the inventory array
       const inventory = Array.isArray(data)
         ? data
         : data?.inventory || data?.items || [];
 
       setInventoryItems(inventory);
 
+      // Build a Set of owned item IDs so StoreItemCard can quickly check ownership
       const ids = new Set(
         inventory
           .map((inv) =>
@@ -848,6 +162,7 @@ export default function DetectiveStore() {
 
       setOwnedItemIds(ids);
 
+      // Find which inventory item is currently equipped and update state
       const equipped = inventory.find(
         (inv) => inv?.isEquipped === true || inv?.equipped === true
       );
@@ -866,6 +181,7 @@ export default function DetectiveStore() {
     }
   };
 
+  // Fetches all available items from the store (no auth required)
   const loadItems = async () => {
     try {
       setLoading(true);
@@ -889,6 +205,9 @@ export default function DetectiveStore() {
     }
   };
 
+  // --- Effects ---
+
+  // On mount: load store items, user inventory, and profile in parallel
   useEffect(() => {
     const initialLoad = async () => {
       await Promise.all([loadItems(), loadInventory(), loadProfile()]);
@@ -896,6 +215,9 @@ export default function DetectiveStore() {
 
     initialLoad();
   }, []);
+
+  // Handles the redirect back from Stripe after a payment attempt.
+  // Stripe appends ?payment=success&session_id=... or ?payment=cancelled to the URL.
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const payment = params.get("payment");
@@ -903,7 +225,7 @@ export default function DetectiveStore() {
 
     if (!payment) return;
 
-    // Prevent double-processing (React StrictMode fires effects twice in dev)
+    // Guard against double execution in React StrictMode (dev only)
     if (processingPaymentRef.current) return;
     processingPaymentRef.current = true;
 
@@ -911,7 +233,7 @@ export default function DetectiveStore() {
       try {
         if (payment === "cancelled") {
           showToast("Payment was cancelled.", "info");
-          navigate("/store", { replace: true });
+          navigate("/store", { replace: true }); // Clean up URL
           return;
         }
 
@@ -920,6 +242,7 @@ export default function DetectiveStore() {
           return;
         }
 
+        // Verify the Stripe session server-side to confirm payment and grant the item
         if (sessionId) {
           const res = await fetch(
             `${API_BASE_URL}/api/payment/verify-session?session_id=${sessionId}`,
@@ -940,9 +263,10 @@ export default function DetectiveStore() {
           }
         }
 
+        // Refresh all data so the newly purchased item appears in inventory
         await Promise.all([loadInventory(), loadProfile(), loadItems()]);
         showToast("Payment successful! Item added to your inventory.", "success");
-        navigate("/store", { replace: true });
+        navigate("/store", { replace: true }); // Remove query params from URL
       } catch (error) {
         console.error("Post-payment handling failed:", error);
         showToast("Something went wrong after payment.", "error");
@@ -954,7 +278,8 @@ export default function DetectiveStore() {
 
     handlePaymentReturn();
   }, [location.search]);
-  
+
+  // Refreshes inventory whenever the user switches to the "My Inventory" tab
   useEffect(() => {
     if (category === "inventory") {
       const fetchInventoryTab = async () => {
@@ -974,9 +299,12 @@ export default function DetectiveStore() {
     }
   }, [category]);
 
+  // --- Purchase handlers ---
+
+  // Handles token-based purchases (items paid with in-app tokens)
   const handleBuyTokens = async (itemId) => {
     try {
-      setBuyingItemId(itemId);
+      setBuyingItemId(itemId); // Show loading spinner on this item's button
 
       const res = await fetch(`${API_BASE_URL}/api/shop/purchase`, {
         method: "POST",
@@ -997,6 +325,7 @@ export default function DetectiveStore() {
 
       if (data?.success) {
         showToast(data.message || "Successful! Item purchased", "success");
+        // Refresh store, inventory, and token balance
         await Promise.all([loadInventory(), loadProfile(), loadItems()]);
       } else {
         showToast(data?.message || "Purchase failed", "error");
@@ -1009,6 +338,9 @@ export default function DetectiveStore() {
     }
   };
 
+  // Handles real-money purchases via Stripe.
+  // Creates a Stripe checkout session and redirects the user to Stripe's hosted payment page.
+  // After payment, Stripe redirects back to /store?payment=success&session_id=... (handled above).
   const handleBuyPaid = async (itemId) => {
     try {
       setBuyingItemId(itemId);
@@ -1032,7 +364,7 @@ export default function DetectiveStore() {
 
       if (data?.url) {
         showToast("Redirecting to payment...", "success");
-        window.location.href = data.url;
+        window.location.href = data.url; // Redirect to Stripe hosted checkout page
       } else {
         showToast(data?.message || "Stripe checkout failed", "error");
       }
@@ -1044,6 +376,7 @@ export default function DetectiveStore() {
     }
   };
 
+  // Equips an owned item (avatar or theme) on the user's profile
   const handleEquip = async (item) => {
     try {
       setEquippingItemId(item._id);
@@ -1071,11 +404,12 @@ export default function DetectiveStore() {
       if (data?.success) {
         setEquippedItemId(item._id);
         showToast(data.message || "Item equipped successfully!", "success");
+        // If a theme item is equipped, apply the theme immediately
         if (item.category === "theme" && item.metadata?.themeKey) {
           setTheme(item.metadata.themeKey);
         }
         await loadProfile();
-        // Refresh context userData so Avatar components update globally
+        // Refresh global user context so the avatar updates everywhere (e.g. Header)
         await getUserData();
       } else {
         showToast(data?.message || "Failed to equip item", "error");
@@ -1088,8 +422,12 @@ export default function DetectiveStore() {
     }
   };
 
+  // --- Derived state ---
+
+  // Computes which items to display based on the active category filter
   const displayedItems = useMemo(() => {
     if (category === "inventory") {
+      // Inventory entries wrap the actual item — unwrap to get the item object
       return inventoryItems
         .map((inv) => inv?.itemId || inv?.item || inv)
         .filter(Boolean);
@@ -1099,11 +437,13 @@ export default function DetectiveStore() {
       return items;
     }
 
+    // Filter by category name (case-insensitive)
     return items.filter(
       (item) => item.category?.toLowerCase() === category.toLowerCase()
     );
   }, [category, items, inventoryItems]);
 
+  // Section heading shown above the grid
   const sectionTitle =
     category === "inventory"
       ? "My Inventory"
@@ -1111,18 +451,18 @@ export default function DetectiveStore() {
       ? "All Items"
       : `${category.charAt(0).toUpperCase() + category.slice(1)} Items`;
 
+  // --- Render ---
   return (
-    <div className={`min-h-screen flex flex-col ${pageClass}`}>
-      <div className="flex items-center justify-between px-4 py-4">
-        <Header variant="empty" showBackBtn={false} />
-      </div>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bg)', color: 'var(--text)' }}>
+      <Header variant="empty" showBackBtn={false} />
 
       <main className="flex flex-1 px-6 sm:px-10 py-10 mt-20">
+        {/* Sidebar: category filter (All, Avatars, Themes, My Inventory) */}
         <StoreSidebar category={category} setCategory={setCategory} />
 
         <div className="flex-1 p-10">
 
-          {/* Heading row with avatar on the right */}
+          {/* Heading row: store title on the left, user avatar + token balance on the right */}
           <div className="flex items-center justify-between">
             <h1 className='text-4xl md:text-5xl font-bold' style={{ color: 'var(--text)' }}>
               Detective Store
@@ -1151,6 +491,7 @@ export default function DetectiveStore() {
             {sectionTitle}
           </h2>
 
+          {/* Loading states */}
           {loading && category !== "inventory" && (
             <p className={subTextClass}>Loading store items...</p>
           )}
@@ -1159,6 +500,7 @@ export default function DetectiveStore() {
             <p className={subTextClass}>Loading your inventory...</p>
           )}
 
+          {/* Empty state */}
           {!loading && !inventoryLoading && displayedItems.length === 0 && (
             <p className={subTextClass}>
               {category === "inventory"
@@ -1167,6 +509,7 @@ export default function DetectiveStore() {
             </p>
           )}
 
+          {/* Item grid — buy handlers are hidden in inventory view since items are already owned */}
           {!loading && !inventoryLoading && displayedItems.length > 0 && (
             <StoreGrid
               items={displayedItems}

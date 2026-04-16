@@ -1,210 +1,35 @@
-// import Stripe from "stripe";
-// import Inventory from "../modules/shop/Inventory.model.js";
-// import Purchase from "../modules/shop/Purchase.model.js";
-// import ShopItem from "../modules/shop/ShopItem.model.js";
-
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-// export const stripeWebhook = async (req, res) => {
-//   const sig = req.headers["stripe-signature"];
-
-//   let event;
-
-//   try {
-//     event = stripe.webhooks.constructEvent(
-//       req.body,
-//       sig,
-//       process.env.STRIPE_WEBHOOK_SECRET
-//     );
-//   } catch (err) {
-//     console.error("Webhook signature verification failed:", err.message);
-//     return res.status(400).send(`Webhook Error: ${err.message}`);
-//   }
-
-//   if (event.type === "checkout.session.completed") {
-//     const session = event.data.object;
-
-//     const userId = session.metadata?.userId;
-//     const itemId = session.metadata?.itemId;
-
-//     try {
-//       const item = await ShopItem.findById(itemId);
-
-//       if (!item) {
-//         throw new Error("Item not found");
-//       }
-
-//       await Inventory.findOneAndUpdate(
-//         { userId, itemId },
-//         {
-//           $setOnInsert: {
-//             userId,
-//             itemId,
-//             category: item.category,
-//           },
-//           $inc: { quantity: 1 },
-//         },
-//         { upsert: true, new: true }
-//       );
-
-//       await Purchase.create({
-//         userId,
-//         itemId,
-//         itemName: item.name,
-//         price: item.pricing.amount,
-//         tokensAfterPurchase: null,
-//       });
-
-//       console.log("Paid item granted successfully");
-//     } catch (error) {
-//       console.error("Webhook processing error:", error.message);
-//       return res.status(500).json({ message: "Webhook processing failed" });
-//     }
-//   }
-
-//   return res.json({ received: true });
-// };
-
-
-// const getStripe = () => {
-//     const secretKey = process.env.STRIPE_SECRET_KEY;
-  
-//     if (!secretKey) {
-//       throw new Error("STRIPE_SECRET_KEY is missing");
-//     }
-  
-//     return new Stripe(secretKey);
-//   };
-  
-//   export const stripeWebhook = async (req, res) => {
-//     let stripe;
-  
-//     try {
-//       stripe = getStripe();
-//     } catch (err) {
-//       return res.status(500).json({ message: err.message });
-//     }
-  
-//     const sig = req.headers["stripe-signature"];
-  
-//     let event;
-  
-//     try {
-//       event = stripe.webhooks.constructEvent(
-//         req.body,
-//         sig,
-//         process.env.STRIPE_WEBHOOK_SECRET
-//       );
-//     } catch (err) {
-//       console.error("Webhook signature verification failed:", err.message);
-//       return res.status(400).send(`Webhook Error: ${err.message}`);
-//     }
-  
-//     if (event.type === "checkout.session.completed") {
-//       const session = event.data.object;
-  
-//       const userId = session.metadata?.userId;
-//       const itemId = session.metadata?.itemId;
-  
-//       try {
-//         const item = await ShopItem.findById(itemId);
-  
-//         if (!item) {
-//           throw new Error("Item not found");
-//         }
-  
-//         await Inventory.findOneAndUpdate(
-//           { userId, itemId },
-//           {
-//             $setOnInsert: {
-//               userId,
-//               itemId,
-//               category: item.category,
-//             },
-//             $inc: { quantity: 1 },
-//           },
-//           { upsert: true, new: true }
-//         );
-  
-//         await Purchase.create({
-//           userId,
-//           itemId,
-//           itemName: item.name,
-//           price: item.pricing.amount,
-//           tokensAfterPurchase: null,
-//         });
-  
-//         console.log("Paid item granted successfully");
-//       } catch (error) {
-//         console.error("Webhook processing error:", error.message);
-//         return res.status(500).json({ message: "Webhook processing failed" });
-//       }
-//     }
-  
-//     return res.json({ received: true });
-//   };
-
-//----------------------------------------------
-
-// import Stripe from "stripe";
-
-// // other imports...
-
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-
-// // existing controllers...
-// export const verifyStripeSession = async (req, res) => {
-//   try {
-//     const { session_id } = req.query;
-
-//     if (!session_id) {
-//       return res.status(400).json({
-//         success: false,
-//         message: "session_id is required",
-//       });
-//     }
-
-//     const session = await stripe.checkout.sessions.retrieve(session_id);
-
-//     if (session.payment_status !== "paid") {
-//       return res.status(400).json({
-//         success: false,
-//         message: "Payment not completed",
-//       });
-//     }
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "Payment verified successfully",
-//     });
-//   } catch (error) {
-//     console.error("Verify Stripe session error:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Failed to verify payment session",
-//     });
-//   }
-// };
-
-// export const stripeWebhook = async (req, res) => {
-//   try {
-//     return res.status(200).json({ received: true });
-//   } catch (error) {
-//     console.error("Stripe webhook error:", error);
-//     return res.status(500).json({
-//       success: false,
-//       message: "Webhook failed",
-//     });
-//   }
-// };
+/**
+ * Payment.controller.js — handles post-payment verification and Stripe webhooks.
+ *
+ * Flow for a paid item purchase:
+ *  1. Client calls POST /shop/checkout  → Shop.service creates a Stripe checkout session
+ *                                          with userId + itemId stored in session.metadata
+ *  2. User completes payment on Stripe's hosted page
+ *  3. Stripe redirects back to /store?payment=success&session_id=...
+ *  4. Client calls GET /api/payment/verify-session?session_id=...  ← handled here
+ *  5. This controller retrieves the session from Stripe, confirms payment_status === "paid",
+ *     then grants the item to the user by writing to Inventory + Purchase collections.
+ */
 
 import Stripe from "stripe";
 import Inventory from "../modules/shop/Inventory.model.js";
 import Purchase from "../modules/shop/Purchase.model.js";
 import ShopItem from "../modules/shop/ShopItem.model.js";
 
+// Initialise the Stripe SDK with the secret key from environment variables.
+// Never expose this key on the client side.
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+/**
+ * GET /api/payment/verify-session?session_id=...
+ *
+ * Called by the client after Stripe redirects the user back to the app.
+ * Retrieves the Stripe checkout session, confirms it was paid, then
+ * grants the purchased item to the user (adds to Inventory + logs a Purchase).
+ *
+ * Idempotent: if the item is already in the user's inventory or the purchase
+ * record already exists, it skips creation — so re-calling this endpoint is safe.
+ */
 export const verifyStripeSession = async (req, res) => {
   try {
     const { session_id } = req.query;
@@ -212,6 +37,7 @@ export const verifyStripeSession = async (req, res) => {
     console.log("verify route hit");
     console.log("session_id:", session_id);
 
+    // Reject requests that are missing the session ID
     if (!session_id) {
       return res.status(400).json({
         success: false,
@@ -219,11 +45,15 @@ export const verifyStripeSession = async (req, res) => {
       });
     }
 
+    // Retrieve the full checkout session object from Stripe using the session ID.
+    // This is the authoritative source — never trust client-side payment status alone.
     const session = await stripe.checkout.sessions.retrieve(session_id);
 
     console.log("stripe session metadata:", session.metadata);
     console.log("stripe payment status:", session.payment_status);
 
+    // Only proceed if Stripe confirms the payment was actually completed.
+    // payment_status can be "paid", "unpaid", or "no_payment_required".
     if (session.payment_status !== "paid") {
       return res.status(400).json({
         success: false,
@@ -231,12 +61,15 @@ export const verifyStripeSession = async (req, res) => {
       });
     }
 
+    // userId and itemId were embedded in the session when the checkout was created
+    // (see Shop.service.js → createCheckoutSession → metadata field).
     const userId = session.metadata?.userId;
     const itemId = session.metadata?.itemId;
 
     console.log("userId:", userId);
     console.log("itemId:", itemId);
 
+    // Both values must be present — if missing, the session was created incorrectly
     if (!userId || !itemId) {
       return res.status(400).json({
         success: false,
@@ -244,20 +77,29 @@ export const verifyStripeSession = async (req, res) => {
       });
     }
 
+    // --- Grant the item to the user (idempotent) ---
+
+    // Check if the user already has this item in their inventory.
+    // This guards against duplicate grants if the endpoint is called more than once
+    // (e.g. user refreshes the success page).
     const existingInventoryItem = await Inventory.findOne({ userId, itemId });
 
     if (!existingInventoryItem) {
+      // Look up the shop item to get its category and price details
       const item = await ShopItem.findById(itemId);
       if (!item) {
         return res.status(404).json({ success: false, message: "Shop item not found" });
       }
 
+      // Add the item to the user's inventory
       await Inventory.create({
         userId,
         itemId,
         category: item.category,
       });
 
+      // Log the purchase record — but only if one doesn't already exist for this session.
+      // stripeSessionId is used as a unique key to prevent duplicate purchase records.
       const existingPurchase = await Purchase.findOne({ stripeSessionId: session_id });
       if (!existingPurchase) {
         await Purchase.create({
@@ -265,12 +107,14 @@ export const verifyStripeSession = async (req, res) => {
           itemId,
           itemName: item.name,
           price: Number(item.pricing?.amount || 0),
-          stripeSessionId: session_id,
+          stripeSessionId: session_id, // Stored so we can match refunds/disputes later
           paymentMethod: "stripe",
           currency: "usd",
         });
       }
     }
+    // If the item was already in inventory, silently skip — still return success
+    // so the client can continue as normal (handles browser back/refresh safely).
 
     return res.status(200).json({
       success: true,
@@ -285,8 +129,21 @@ export const verifyStripeSession = async (req, res) => {
   }
 };
 
+/**
+ * POST /api/payment/webhook
+ *
+ * Stripe webhook endpoint — intended to receive real-time payment events
+ * directly from Stripe (e.g. payment_intent.succeeded, checkout.session.completed).
+ *
+ * Currently a stub (returns 200 immediately). A full implementation would:
+ *  1. Verify the Stripe-Signature header to confirm the request is from Stripe
+ *  2. Parse the event type and handle relevant events (e.g. grant item on session completed)
+ *
+ * Webhooks are useful as a fallback in case the client-side verify-session call fails.
+ */
 export const stripeWebhook = async (req, res) => {
   try {
+    // TODO: implement webhook signature verification and event handling
     return res.status(200).json({ received: true });
   } catch (error) {
     console.error("Stripe webhook error:", error);

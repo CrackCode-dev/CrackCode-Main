@@ -1,142 +1,6 @@
-// import Card from "../ui/Card";
-// import Button from "../ui/Button";
-// import {CirclePoundSterling, CircleDollarSign} from "lucide-react";
-
-// export default function StoreItemCard({
-//   item,
-//   onBuyXP,
-//   onBuyPaid,
-//   loading = false,
-//   isInventoryView = false,
-//   onEquip,
-//   equippingItemId,
-//   equippedItemId,
-// }) {
-//   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5051";
-
-//   const rawImagePath = item.imageUrl || item.image || "";
-
-//   const normalizedImagePath = rawImagePath.startsWith("/upload/")
-//     ? rawImagePath.replace("/upload/", "/uploads/")
-//     : rawImagePath;
-
-//   const imageSrc = normalizedImagePath
-//     ? normalizedImagePath.startsWith("http")
-//       ? normalizedImagePath
-//       : `${API_BASE_URL}${normalizedImagePath}`
-//     : "/placeholder.png";
-
-//   const pricingType = item.pricing?.type;
-//   const amount = item.pricing?.amount ?? 0;
-//   const currency = item.pricing?.currency ?? "USD";
-
-//   const category = (item.category || item.type || "item").toLowerCase();
-
-//   const isEquipping = equippingItemId === item._id;
-//   const isEquipped = equippedItemId === item._id || item.isEquipped;
-
-//   let displayPrice = "N/A";
-//   let buttonLabel = "Buy";
-//   let buttonAction = () => {};
-//   let isDisabled = loading;
-
-//   if (!isInventoryView) {
-//     if (pricingType === "tokens") {
-
-//       displayPrice = (
-//         <div className="flex flex-row items-center gap-1.5 text-green-400 font-semibold"> 
-//         {amount} <CirclePoundSterling/>
-//         </div> 
-//       );
-
-//       buttonLabel = loading ? "Buying..." : "Buy";
-//       buttonAction = () => onBuyXP?.(item._id);
-//     } else if (pricingType === "paid") {
-
-//       displayPrice = (
-//         <div className="flex flex-row items-center gap-1.5 text-green-400 font-semibold"> 
-//         <CircleDollarSign/> {amount}
-//         </div>
-//       );
-
-//       buttonLabel = loading ? "Redirecting..." : "Buy with Card";
-//       buttonAction = () => onBuyPaid?.(item._id);
-//     } else if (pricingType === "free") {
-//       displayPrice = "Free";
-//       buttonLabel = loading ? "Claiming..." : "Claim";
-//       buttonAction = () => onBuyXP?.(item._id);
-//     }
-//   } else {
-//     displayPrice = "";
-
-//     if (isEquipped) {
-//       if (category === "theme") {
-//         buttonLabel = "Theme Applied";
-//       } else if (category === "title") {
-//         buttonLabel = "Title Equipped";
-//       } else {
-//         buttonLabel = "Avatar Equipped";
-//       }
-//       isDisabled = true;
-//       buttonAction = () => {};
-//     } else {
-//       if (category === "theme") {
-//         buttonLabel = isEquipping ? "Applying..." : "Apply Theme";
-//       } else if (category === "title") {
-//         buttonLabel = isEquipping ? "Equipping..." : "Equip Title";
-//       } else {
-//         buttonLabel = isEquipping ? "Equipping..." : "Equip Avatar";
-//       }
-//       isDisabled = isEquipping;
-//       buttonAction = () => onEquip?.(item);
-//     }
-//   }
-
-//   return (
-//     <Card variant="flat" padding="none" shadow="md" className="overflow-hidden">
-//       <div className="bg-[#2a2a2a] h-40 flex items-center justify-center rounded-t-lg">
-//         <img
-//           src={imageSrc}
-//           alt={item.name}
-//           className="h-24 object-contain"
-//           onError={(e) => {
-//             e.currentTarget.onerror = null;
-//             e.currentTarget.src = "/placeholder.png";
-//           }}
-//         />
-//       </div>
-
-//       <div className="p-4">
-//         <p className="text-xs text-gray-400 uppercase">
-//           {item.category || item.type || "item"}
-//         </p>
-
-//         <h3 className="text-lg font-semibold text-white">
-//           {item.name}
-//         </h3>
-
-//         <div className="text-green-500 text-sm mt-2">★★★★☆</div>
-
-//         <div className="flex justify-between items-center mt-4">
-//           {!isInventoryView ? (
-//             <span className="text-green-400 font-semibold">{displayPrice}</span>
-//           ) : (
-//             <span className="text-sm text-gray-400">Owned</span>
-//           )}
-
-//           <Button onClick={buttonAction} disabled={isDisabled} size="sm">
-//             {buttonLabel}
-//           </Button>
-//         </div>
-//       </div>
-//     </Card>
-//   );
-// }
-
 import Card from "../ui/Card";
 import Button from "../ui/Button";
 import { CirclePoundSterling, CircleDollarSign } from "lucide-react";
-import { useTheme } from "../../context/theme/ThemeContext";
 
 export default function StoreItemCard({
   item,
@@ -147,11 +11,13 @@ export default function StoreItemCard({
   onEquip,
   equippingItemId,
   equippedItemId,
+  ownedItemIds,
 }) {
-  const { theme } = useTheme();
-
   const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_API_URL || "http://localhost:5051";
 
+  // --- Image URL resolution ---
+  // Items can come from different sources (seeds, uploads, CDN) with inconsistent path formats.
+  // This block normalises all of them into a usable <img> src.
   const rawImagePath = item.imageUrl || item.image || "";
 
   let imageSrc = "/placeholder.png";
@@ -159,174 +25,169 @@ export default function StoreItemCard({
     const p = rawImagePath.trim();
 
     if (/^https?:\/\//i.test(p)) {
+      // Already a full URL (CDN or external)
       imageSrc = p;
     } else if (p.startsWith("/upload/")) {
-      // legacy path: /upload/... -> normalize to /uploads/ and serve from API
+      // Legacy typo in seed data: /upload/ → /uploads/ served from the API server
       imageSrc = `${API_BASE_URL}${p.replace("/upload/", "/uploads/")}`;
     } else if (p.startsWith("/uploads") || p.includes("/uploads/")) {
-      // server-hosted uploads
+      // Standard server-hosted upload path
       imageSrc = `${API_BASE_URL}${p.startsWith("/") ? p : `/${p}`}`;
     } else if (p.startsWith("/")) {
-      // client public path (Vite will serve this)
+      // Absolute path — Vite serves this from the client /public folder
       imageSrc = p;
     } else {
-      // relative path from seeds or asset references -> use filename from path
+      // Relative path (e.g. "avatars/detective.png") — extract filename and look in /public/shop/
       const parts = p.split(/[\\/]/);
       const filename = parts[parts.length - 1] || p;
       imageSrc = `/shop/${filename}`;
     }
   }
 
-  const pricingType = item.pricing?.type;
-  const amount = item.pricing?.amount ?? 0;
-  const category = (item.category || item.type || "item").toLowerCase();
+  // --- Pricing & category ---
+  const pricingType = item.pricing?.type;          // "tokens" | "paid" | "free"
+  const amount = item.pricing?.amount ?? 0;        // Numeric price value
+  const category = (item.category || item.type || "item").toLowerCase(); // "avatar" | "theme" | "title"
 
-  const isEquipping = equippingItemId === item._id;
-  const isEquipped = equippedItemId === item._id || item.isEquipped;
+  // --- Ownership / equip state ---
+  const isEquipping = equippingItemId === item._id; // This card's equip request is in flight
+  const isEquipped = equippedItemId === item._id || item.isEquipped; // Currently active item
+  const isOwned = isInventoryView || (ownedItemIds instanceof Set
+    ? ownedItemIds.has(String(item._id))
+    : false); // True if in inventory view or ID found in owned set
 
-  const isLightFamily = ["light", "cream", "country"].includes(theme);
-
-  const cardClass =
-    theme === "light"
-      ? "border-gray-200 bg-gray-100 shadow-md hover:shadow-lg"
-      : theme === "cream"
-        ? "border-[#ddd2c1] bg-[#f3ede3] shadow-md hover:shadow-lg"
-        : theme === "country"
-          ? "border-[#cfbea6] bg-[#efe4d3] shadow-md hover:shadow-lg"
-          : theme === "midnight"
-            ? "border-[#22314f] bg-[#12203c] shadow-md hover:shadow-xl"
-            : "border-gray-800 bg-[#161616] shadow-md hover:shadow-xl";
-
-  const imageAreaClass =
-    theme === "light"
-      ? "bg-gray-50"
-      : theme === "cream"
-        ? "bg-[#faf6ef]"
-        : theme === "country"
-          ? "bg-[#f7efe2]"
-          : theme === "midnight"
-            ? "bg-[#0d1a33]"
-            : "bg-[#222222]";
-
-  const contentAreaClass =
-    theme === "light"
-      ? "bg-gray-100"
-      : theme === "cream"
-        ? "bg-[#f3ede3]"
-        : theme === "country"
-          ? "bg-[#efe4d3]"
-          : theme === "midnight"
-            ? "bg-[#0f1b35]"
-            : "bg-[#0f0f0f]";
-
-  const titleClass = isLightFamily ? "text-gray-900" : "text-white";
-  const metaClass =
-    theme === "midnight"
-      ? "text-gray-300"
-      : isLightFamily
-        ? "text-gray-500"
-        : "text-gray-400";
-  const ownedClass =
-    theme === "midnight"
-      ? "text-gray-300"
-      : isLightFamily
-        ? "text-gray-500"
-        : "text-gray-400";
+  // Shared colour classes (no dark/light switching needed — handled by CSS vars elsewhere)
   const ratingClass = "text-green-500";
-  const priceClass = isLightFamily ? "text-green-600" : "text-green-400";
+  const priceClass = "text-green-500";
 
+  // --- Button & price logic ---
+  // Defaults — overridden by the branches below
   let displayPrice = "N/A";
   let buttonLabel = "Buy";
   let buttonAction = () => { };
   let isDisabled = loading;
 
-  if (!isInventoryView) {
+  if (isOwned && !isInventoryView) {
+    // CASE 1: Item is owned but the user is browsing the store (not the inventory tab).
+    // Show "Owned" in place of the price and switch to equip controls.
+    displayPrice = <span className="text-xs font-medium" style={{ color: 'var(--muted)' }}>Owned</span>;
+
+    if (isEquipped) {
+      // Already active — show a disabled "Equipped / Applied" label
+      if (category === "theme") buttonLabel = "Theme Applied";
+      else if (category === "title") buttonLabel = "Title Equipped";
+      else buttonLabel = "Avatar Equipped";
+      isDisabled = true;
+    } else {
+      // Not yet active — allow the user to equip it
+      if (category === "theme") buttonLabel = isEquipping ? "Applying..." : "Apply Theme";
+      else if (category === "title") buttonLabel = isEquipping ? "Equipping..." : "Equip Title";
+      else buttonLabel = isEquipping ? "Equipping..." : "Equip Avatar";
+      isDisabled = isEquipping;
+      buttonAction = () => onEquip?.(item);
+    }
+
+  } else if (!isInventoryView) {
+    // CASE 2: Store view, item not yet owned — show buy controls based on pricing type.
+
     if (pricingType === "tokens") {
+      // Token purchase: show amount + pound-sterling icon
       displayPrice = (
         <div className={`flex items-center gap-1.5 font-semibold ${priceClass}`}>
           <span>{amount}</span>
           <CirclePoundSterling className="h-4 w-4" />
         </div>
       );
-
       buttonLabel = loading ? "Buying..." : "Buy";
       buttonAction = () => onBuyXP?.(item._id);
+
     } else if (pricingType === "paid") {
+      // Stripe purchase: show dollar icon + amount, redirect to Stripe on click
       displayPrice = (
         <div className={`flex items-center gap-1.5 font-semibold ${priceClass}`}>
           <CircleDollarSign className="h-4 w-4" />
           <span>{amount}</span>
         </div>
       );
-
       buttonLabel = loading ? "Redirecting..." : "Buy with Card";
       buttonAction = () => onBuyPaid?.(item._id);
+
     } else if (pricingType === "free") {
+      // Free item: no cost, just claim it (goes through the same token-purchase endpoint)
       displayPrice = <span className={`font-semibold ${priceClass}`}>Free</span>;
       buttonLabel = loading ? "Claiming..." : "Claim";
       buttonAction = () => onBuyXP?.(item._id);
     }
+
   } else {
+    // CASE 3: Inventory view — item is owned, show equip controls only (no price).
     displayPrice = "";
 
     if (isEquipped) {
-      if (category === "theme") {
-        buttonLabel = "Theme Applied";
-      } else if (category === "title") {
-        buttonLabel = "Title Equipped";
-      } else {
-        buttonLabel = "Avatar Equipped";
-      }
+      // Already active — disable button with context-aware label
+      if (category === "theme") buttonLabel = "Theme Applied";
+      else if (category === "title") buttonLabel = "Title Equipped";
+      else buttonLabel = "Avatar Equipped";
       isDisabled = true;
       buttonAction = () => { };
     } else {
-      if (category === "theme") {
-        buttonLabel = isEquipping ? "Applying..." : "Apply Theme";
-      } else if (category === "title") {
-        buttonLabel = isEquipping ? "Equipping..." : "Equip Title";
-      } else {
-        buttonLabel = isEquipping ? "Equipping..." : "Equip Avatar";
-      }
+      // Not yet active — allow equipping
+      if (category === "theme") buttonLabel = isEquipping ? "Applying..." : "Apply Theme";
+      else if (category === "title") buttonLabel = isEquipping ? "Equipping..." : "Equip Title";
+      else buttonLabel = isEquipping ? "Equipping..." : "Equip Avatar";
       isDisabled = isEquipping;
       buttonAction = () => onEquip?.(item);
     }
   }
 
+  // --- Render ---
   return (
     <Card
       variant="flat"
       padding="none"
       shadow="md"
-      className={`overflow-hidden rounded-2xl border transition hover:-translate-y-0.5 ${cardClass}`}
+      className="overflow-hidden rounded-2xl border transition hover:-translate-y-0.5"
+      style={{ background: 'var(--surface)', borderColor: 'var(--border)' }}
     >
-      <div className={`flex h-44 items-center justify-center rounded-t-2xl ${imageAreaClass}`}>
+      {/* Item image area */}
+      <div
+        className="flex h-44 items-center justify-center rounded-t-2xl"
+        style={{ background: 'var(--surface2)' }}
+      >
         <img
           src={imageSrc}
           alt={item.name}
           className="h-24 object-contain"
           onError={(e) => {
+            // If the image fails to load, fall back to the placeholder silently
             e.currentTarget.onerror = null;
             e.currentTarget.src = "/placeholder.png";
           }}
         />
       </div>
 
-      <div className={`p-4 ${contentAreaClass}`}>
-        <p className={`text-xs uppercase tracking-wide ${metaClass}`}>
+      {/* Item details: category label, name, star rating, price + action button */}
+      <div className="p-4" style={{ background: 'var(--surface)' }}>
+        {/* Category badge (e.g. "AVATAR", "THEME") */}
+        <p className="text-xs uppercase tracking-wide" style={{ color: 'var(--muted)' }}>
           {item.category || item.type || "item"}
         </p>
 
-        <h3 className={`mt-1 text-lg font-semibold ${titleClass}`}>
+        {/* Item name */}
+        <h3 className="mt-1 text-lg font-semibold" style={{ color: 'var(--text)' }}>
           {item.name}
         </h3>
 
+        {/* Static star rating display (hardcoded for now) */}
         <div className={`mt-2 text-sm ${ratingClass}`}>★★★★☆</div>
 
+        {/* Bottom row: price on the left, action button on the right */}
         <div className="mt-4 flex items-center justify-between gap-3">
           {!isInventoryView ? (
             <div>{displayPrice}</div>
           ) : (
-            <span className={`text-sm font-medium ${ownedClass}`}>Owned</span>
+            // In inventory view, always show "Owned" label instead of a price
+            <span className="text-sm font-medium" style={{ color: 'var(--muted)' }}>Owned</span>
           )}
 
           <Button onClick={buttonAction} disabled={isDisabled} size="sm">
