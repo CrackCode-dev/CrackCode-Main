@@ -116,20 +116,18 @@ export default function CareerQuizPage() {
         }
 
         if (currentQ + 1 >= total) {
-            // Require more than 12 correct answers (i.e., at least 13) to pass and unlock next chapter
+            // Require more than 12 correct answers (at least 13) to pass and unlock next chapter
             const passed = (newEasy + newMedium + newHard) > 12;
 
             console.log("Quiz finished:", { careerId, chapterId, newEasy, newMedium, newHard, passed });
 
+            const finalPassed = passed ;
+
             if (!progressSentRef.current) {
                 progressSentRef.current = true;
-                updateProgress(careerId, chapterId, newEasy, newMedium, newHard, passed)
+                updateProgress(careerId, chapterId, newEasy, newMedium, newHard, finalPassed)
                     .then((res) => console.log("✅ Progress saved:", res))
                     .catch((err) => console.error("❌ Progress update failed:", err));
-            }
-
-            if (passed) {
-                localStorage.setItem(`${careerId}_${chapterId}_passed`, "true");
             }
             setFinished(true);
         } else {
