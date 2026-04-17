@@ -151,7 +151,7 @@ function CareermapMain() {
         </div>
       </div>
 
-      <Footer />
+
     </div>
   );
 

@@ -4,11 +4,10 @@ import { Mail, Link, Link2, Copy, CheckCircle2 } from 'lucide-react';
 import Button from '../ui/Button';
 
 function InviteCard() {
+  // eslint-disable-next-line no-unused-vars
   const { theme } = useTheme()
   const [copied, setCopied] = useState(false);
   const inviteLink = 'https://app.crackcodehq.com';
-  const friendsInvited = 3;
-  const bonusPoints = 450;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(inviteLink);
