@@ -4,7 +4,7 @@ import { AppContent } from '../../context/userauth/authenticationContext';
 import { useTheme } from '../../context/theme/ThemeContext';
 import Avatar from '../common/Avatar';
 import CircularProgress from './CircularProgress';
-import { ChevronRight, Lock } from 'lucide-react';
+import { ChevronRight, Lock, Target, Sparkles } from 'lucide-react';
 import { fetchBadgeProgress } from '../../services/api/badgeService';
 
 function ProfileCard() {
@@ -42,13 +42,13 @@ function ProfileCard() {
     if (!isLoggedIn) return;
 
     const handleSolutionSubmitted = async (event) => {
-      console.log('🏆 Solution submitted - refreshing profile badges...', event.detail);
+      console.log('Solution submitted - refreshing profile badges...', event.detail);
       try {
         const badgesData = await fetchBadgeProgress();
         setBadges(badgesData || []);
-        console.log('✅ Profile badges refreshed');
+        console.log('Profile badges refreshed');
       } catch (error) {
-        console.error('❌ Failed to refresh badges:', error);
+        console.error('Failed to refresh badges:', error);
       }
     };
 
@@ -76,7 +76,7 @@ function ProfileCard() {
   const totalXP = currentUser?.totalXP || 0;
   const xpForCurrentLevel = totalXP % 100; // XP within current level
   const maxXpPerLevel = 100;
-  
+
   const stats = {
     xp: xpForCurrentLevel,
     xpMax: maxXpPerLevel,
@@ -118,7 +118,7 @@ function ProfileCard() {
         {/* User Info */}
         <div className='flex items-start justify-between mb-6'>
           <div className='flex items-center gap-3 flex-1 min-w-0'>
-            <div className='w-16 h-16 rounded-full overflow-hidden border-3 shrink-0 transition-all duration-300' 
+            <div className='w-16 h-16 rounded-full overflow-hidden border-3 shrink-0 transition-all duration-300'
               style={{ borderColor: 'var(--brand)' }}
             >
               <Avatar showClick={false} className='w-full h-full' />
@@ -203,133 +203,143 @@ function ProfileCard() {
             </div>
           ) : (
             badges.map((badge, index) => {
-            // Determine tooltip position based on badge position in grid
-            const isLeftColumn = index % 4 === 0;
-            const isRightColumn = index % 4 === 3;
-            const isCenterColumns = !isLeftColumn && !isRightColumn;
-            const isTopRow = index < 4;
-            const isBottomRow = index >= 4;
-            
-            let tooltipPositioning = {
-              position: 'absolute',
-              zIndex: 50,
-              minWidth: 'max-content',
-              maxWidth: '140px',
-              whiteSpace: 'normal',
-              pointerEvents: 'none'
-            };
+              // Determine tooltip position based on badge position in grid
+              const isLeftColumn = index % 4 === 0;
+              const isRightColumn = index % 4 === 3;
+              const isCenterColumns = !isLeftColumn && !isRightColumn;
+              const isTopRow = index < 4;
+              const isBottomRow = index >= 4;
 
-            // Vertical positioning: Show below normally, above if bottom row
-            if (isBottomRow) {
-              tooltipPositioning.bottom = 'calc(100% + 8px)';
-            } else {
-              tooltipPositioning.top = 'calc(100% + 8px)';
-            }
+              let tooltipPositioning = {
+                position: 'absolute',
+                zIndex: 50,
+                minWidth: 'max-content',
+                maxWidth: '140px',
+                whiteSpace: 'normal',
+                pointerEvents: 'none'
+              };
 
-            // Horizontal positioning: Center normally, adjust for edges
-            if (isLeftColumn) {
-              tooltipPositioning.left = 'calc(-70px + 50%)';
-            } else if (isRightColumn) {
-              tooltipPositioning.right = 'calc(-70px + 50%)';
-            } else {
-              tooltipPositioning.left = '50%';
-              tooltipPositioning.transform = 'translateX(-50%)';
-            }
+              // Vertical positioning: Show below normally, above if bottom row
+              if (isBottomRow) {
+                tooltipPositioning.bottom = 'calc(100% + 8px)';
+              } else {
+                tooltipPositioning.top = 'calc(100% + 8px)';
+              }
 
-            return (
-            <div
-              key={badge.id}
-              onMouseEnter={() => setHoveredBadge(badge.id)}
-              onMouseLeave={() => setHoveredBadge(null)}
-              className='relative group cursor-pointer transition-all duration-300'
-              style={{
-                opacity: badge.isUnlocked ? 1 : 0.3,
-                zIndex: hoveredBadge === badge.id ? 50 : 0
-              }}
-            >
-              {/* Badge Container */}
-              <div
-                className='relative aspect-square rounded-lg flex items-center justify-center transition-all duration-300'
-                style={{
-                  background: badge.isUnlocked 
-                    ? `${badge.color}25` 
-                    : 'rgba(128, 128, 128, 0.15)',
-                  border: hoveredBadge === badge.id 
-                    ? `2px solid ${badge.color}`
-                    : badge.isUnlocked
-                    ? `1px solid ${badge.color}60`
-                    : '1px solid rgba(128, 128, 128, 0.4)',
-                  boxShadow: hoveredBadge === badge.id 
-                    ? `0 4px 12px ${badge.color}30`
-                    : 'none',
-                  transform: hoveredBadge === badge.id 
-                    ? 'scale(1.1) translateY(-2px)'
-                    : 'scale(1)'
-                }}
-              >
-                {/* Badge Icon */}
+              // Horizontal positioning: Center normally, adjust for edges
+              if (isLeftColumn) {
+                tooltipPositioning.left = 'calc(-70px + 50%)';
+              } else if (isRightColumn) {
+                tooltipPositioning.right = 'calc(-70px + 50%)';
+              } else {
+                tooltipPositioning.left = '50%';
+                tooltipPositioning.transform = 'translateX(-50%)';
+              }
+
+              return (
                 <div
-                  className='text-2xl transition-transform duration-300'
+                  key={badge.id}
+                  onMouseEnter={() => setHoveredBadge(badge.id)}
+                  onMouseLeave={() => setHoveredBadge(null)}
+                  className='relative group cursor-pointer transition-all duration-300'
                   style={{
-                    filter: badge.isUnlocked ? 'grayscale(0)' : 'grayscale(1) brightness(0.7)'
+                    opacity: badge.isUnlocked ? 1 : 0.3,
+                    zIndex: hoveredBadge === badge.id ? 50 : 0
                   }}
                 >
-                  {badge.icon}
-                </div>
+                  {/* Badge Container */}
+                  <div
+                    className='relative aspect-square rounded-lg flex items-center justify-center transition-all duration-300'
+                    style={{
+                      background: badge.isUnlocked
+                        ? `${badge.color}25`
+                        : 'rgba(128, 128, 128, 0.15)',
+                      border: hoveredBadge === badge.id
+                        ? `2px solid ${badge.color}`
+                        : badge.isUnlocked
+                          ? `1px solid ${badge.color}60`
+                          : '1px solid rgba(128, 128, 128, 0.4)',
+                      boxShadow: hoveredBadge === badge.id
+                        ? `0 4px 12px ${badge.color}30`
+                        : 'none',
+                      transform: hoveredBadge === badge.id
+                        ? 'scale(1.1) translateY(-2px)'
+                        : 'scale(1)'
+                    }}
+                  >
+                    {/* Badge Icon */}
+                    <div
+                      className='text-2xl transition-transform duration-300'
+                      style={{
+                        filter: badge.isUnlocked ? 'grayscale(0)' : 'grayscale(1) brightness(0.7)'
+                      }}
+                    >
+                      {badge.icon}
+                    </div>
 
-                {/* Lock Icon for Locked Badges - More Prominent */}
-                {!badge.isUnlocked && (
-                  <div className='absolute inset-0 flex items-center justify-center rounded-lg transition-all duration-300' style={{ background: badge.isUnlocked ? 'transparent' : 'rgba(0, 0, 0, 0.4)' }}>
-                    <Lock className='w-4 h-4 transition-transform duration-300' style={{ color: '#fff', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))' }} />
+                    {/* Lock Icon for Locked Badges - More Prominent */}
+                    {!badge.isUnlocked && (
+                      <div className='absolute inset-0 flex items-center justify-center rounded-lg transition-all duration-300' style={{ background: badge.isUnlocked ? 'transparent' : 'rgba(0, 0, 0, 0.4)' }}>
+                        <Lock className='w-4 h-4 transition-transform duration-300' style={{ color: '#fff', filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.5))' }} />
+                      </div>
+                    )}
+
+                    {/* Progress Ring for Nearly Unlocked */}
+                    {!badge.isUnlocked && badge.progress > 0 && badge.progress < 100 && (
+                      <div className='absolute inset-0 rounded-lg' style={{
+                        background: `conic-gradient(var(--brand) 0deg ${(badge.progress / 100) * 360}deg, transparent ${(badge.progress / 100) * 360}deg)`
+                      }} />
+                    )}
                   </div>
-                )}
 
-                {/* Progress Ring for Nearly Unlocked */}
-                {!badge.isUnlocked && badge.progress > 0 && badge.progress < 100 && (
-                  <div className='absolute inset-0 rounded-lg' style={{
-                    background: `conic-gradient(var(--brand) 0deg ${(badge.progress / 100) * 360}deg, transparent ${(badge.progress / 100) * 360}deg)`
-                  }} />
-                )}
-              </div>
-
-              {/* Hover Tooltip - Positioned to avoid clipping */}
-              {hoveredBadge === badge.id && (
-                <div
-                  className='absolute p-3 rounded-lg text-xs z-50 pointer-events-none transition-all duration-200'
-                  style={{
-                    background: 'rgba(0, 0, 0, 0.95)',
-                    color: '#fff',
-                    animation: 'fadeIn 0.2s',
-                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
-                    border: '1px solid rgba(255, 165, 0, 0.3)',
-                    ...tooltipPositioning,
-                    minWidth: 'max-content',
-                    maxWidth: '160px',
-                    whiteSpace: 'normal',
-                    lineHeight: '1.3'
-                  }}
-                >
-                  <div className='font-bold'>{badge.name}</div>
-                  <div className='text-xs opacity-80 mt-1'>{badge.description}</div>
-                  {!badge.isUnlocked && (
-                    <div className='text-xs opacity-60 mt-1'>
-                      {Math.round(badge.progress)}% complete
+                  {/* Hover Tooltip - Positioned to avoid clipping */}
+                  {hoveredBadge === badge.id && (
+                    <div
+                      className='absolute p-3 rounded-lg text-xs z-50 pointer-events-none transition-all duration-200'
+                      style={{
+                        background: 'rgba(0, 0, 0, 0.95)',
+                        color: '#fff',
+                        animation: 'fadeIn 0.2s',
+                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+                        border: '1px solid rgba(255, 165, 0, 0.3)',
+                        ...tooltipPositioning,
+                        minWidth: 'max-content',
+                        maxWidth: '160px',
+                        whiteSpace: 'normal',
+                        lineHeight: '1.3'
+                      }}
+                    >
+                      <div className='font-bold'>{badge.name}</div>
+                      <div className='text-xs opacity-80 mt-1'>{badge.description}</div>
+                      {!badge.isUnlocked && (
+                        <div className='text-xs opacity-60 mt-1'>
+                          {Math.round(badge.progress)}% complete
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
-              )}
-            </div>
-            );
-          })
+              );
+            })
           )}
         </div>
 
         {/* Badge Info */}
         <div className='mt-4 p-3 rounded-lg text-xs' style={{ background: 'rgba(255, 165, 0, 0.08)', color: 'var(--textSec)' }}>
           <p>
-            {questionsCompleted === 0 
-              ? '🎯 Solve your first challenge to unlock badges!' 
-              : `✨ ${Math.max(0, badges.length - badges.filter(b => b.isUnlocked).length)} badges remaining. Keep solving!`}
+            {questionsCompleted === 0
+              ? (
+                <span className='inline-flex items-start'>
+                  <Target className='w-3.5 h-3.5 shrink-0 mt-0.5' />
+                  Solve your first challenge to unlock badges!
+                </span>
+              )
+              : (
+                <span className='inline-flex items-start gap-1'>
+                  <Sparkles className='w-3.5 h-3.5 shrink-0 mt-0.5' />
+                  {`${Math.max(0, badges.length - badges.filter(b => b.isUnlocked).length)} badges remaining. Keep solving!`}
+                </span>
+              )}
           </p>
         </div>
       </div>
