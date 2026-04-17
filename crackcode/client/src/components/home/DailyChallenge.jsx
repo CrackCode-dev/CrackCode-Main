@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Clock, Target, Flame, AlertCircle } from 'lucide-react';
+import { Clock, CircleCheck, Flame, AlertCircle } from 'lucide-react';
 import { AppContent } from '../../context/userauth/authenticationContext';
 import Button from '../ui/Button';
 
@@ -15,12 +15,13 @@ const formatTime = (seconds) => {
 };
 
 export default function DailyChallenge() {
-  const { theme } = useTheme();
+  useTheme();
   const navigate = useNavigate();
-  const { backendUrl } = useContext(AppContent);
+  const { backendUrl, userData } = useContext(AppContent);
   const [timeLeft, setTimeLeft] = useState(23 * 3600 + 45 * 60);
   const [isHovered, setIsHovered] = useState(false);
   const [challenge, setChallenge] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [loading, setLoading] = useState(true);
 
   // Fetch daily challenge on mount
@@ -82,6 +83,11 @@ export default function DailyChallenge() {
     topic: 'Algorithms'
   };
 
+  const completedQuestionIds = Array.isArray(userData?.completedQuestionIds) ? userData.completedQuestionIds : [];
+  const isCompleted = Boolean(
+    challenge?.problemId && completedQuestionIds.some((id) => String(id).trim() === String(challenge.problemId).trim())
+  );
+
   return (
     <div
       className='rounded-lg p-6 transition-all duration-300 relative overflow-hidden'
@@ -98,9 +104,16 @@ export default function DailyChallenge() {
     >
       {/* Daily Badge */}
       <div className='absolute top-4 right-4'>
-        <div className='flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold' style={{ background: 'rgba(255, 107, 107, 0.2)', color: '#FF6B6B' }}>
-          <Flame className='w-3 h-3' />
-          Daily Quest
+        <div
+          className='flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold'
+          style={
+            isCompleted
+              ? { background: 'rgba(82, 200, 130, 0.2)', color: '#52C882' }
+              : { background: 'rgba(255, 107, 107, 0.2)', color: '#FF6B6B' }
+          }
+        >
+          {isCompleted ? <CircleCheck className='w-3 h-3' /> : <Flame className='w-3 h-3' />}
+          {isCompleted ? 'Quest Completed' : 'Daily Quest'}
         </div>
       </div>
 
@@ -132,7 +145,7 @@ export default function DailyChallenge() {
           border: '1px solid rgba(255, 107, 107, 0.4)'
         }}
       >
-        <Clock className='w-5 h-5 animate-spin flex-shrink-0' style={{ color: '#FF6B6B', animationDuration: '2s' }} />
+        <Clock className='w-5 h-5 animate-spin shrink-0' style={{ color: '#FF6B6B', animationDuration: '2s' }} />
         <div className='flex-1'>
           <p className='text-xs font-semibold uppercase' style={{ color: 'var(--textSec)' }}>
             Quest Reset In
@@ -145,9 +158,15 @@ export default function DailyChallenge() {
 
       {/* Note/Info Tip */}
       <div className='flex gap-2 p-3 rounded-lg mb-4' style={{ background: 'rgba(82, 200, 130, 0.1)', borderLeft: '3px solid #52c882' }}>
-        <AlertCircle className='w-4 h-4 flex-shrink-0 mt-0.5' style={{ color: '#52c882' }} />
+        {isCompleted ? (
+          <CircleCheck className='w-4 h-4 shrink-0 mt-0.5' style={{ color: '#52c882' }} />
+        ) : (
+          <AlertCircle className='w-4 h-4 shrink-0 mt-0.5' style={{ color: '#52c882' }} />
+        )}
         <p className='text-xs' style={{ color: '#52c882' }}>
-          Solve this daily quest to build your streak and unlock achievements!
+          {isCompleted
+            ? 'Great work. You completed today\'s quest. Revisit it anytime to refine your solution.'
+            : 'Solve this daily quest to build your streak and unlock achievements!'}
         </p>
       </div>
 
@@ -156,11 +175,11 @@ export default function DailyChallenge() {
         <Button 
           variant='primary' 
           size='md' 
-          icon={Target} 
+          icon={isCompleted ? CircleCheck : AlertCircle} 
           fullWidth
           onClick={handleStartChallenge}
         >
-          Start Challenge
+          {isCompleted ? 'Revisit Completed Challenge' : 'Start Challenge'}
         </Button>
       </div>
     </div>
