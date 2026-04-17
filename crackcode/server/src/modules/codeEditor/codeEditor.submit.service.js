@@ -60,16 +60,74 @@ const findQuestionInLearnCollections = async (problemId) => {
   return null;
 };
 
+// Helper: Search for question in caseLog collection
+const findQuestionInCaseLog = async (problemId) => {
+  try {
+    console.log(`   ↳ Searching in caseLog collection for problemId: "${problemId}"`);
+    
+    // Search by problemId first (in case caseLog documents have this field)
+    let question = await mongoose.connection.db
+      .collection('caseLog')
+      .findOne({ problemId });
+    
+    if (question) {
+      console.log(`   ✅ Found in caseLog collection by problemId`);
+      return question;
+    }
+
+    // Try searching by _id if it's a valid MongoDB ObjectId
+    if (problemId.match(/^[0-9a-f]{24}$/i)) {
+      try {
+        console.log(`   ↳ CaseLog: Trying to find by _id (ObjectId): "${problemId}"`);
+        const objId = new mongoose.Types.ObjectId(problemId);
+        question = await mongoose.connection.db
+          .collection('caseLog')
+          .findOne({ _id: objId });
+        
+        if (question) {
+          console.log(`   ✅ Found in caseLog collection by _id (ObjectId)`);
+          return question;
+        }
+      } catch (objIdErr) {
+        console.log(`   ⚠️ CaseLog ObjectId conversion failed: ${objIdErr.message}`);
+      }
+
+      // Fallback: try searching with string _id
+      try {
+        console.log(`   ↳ CaseLog: Trying to find by _id (string): "${problemId}"`);
+        question = await mongoose.connection.db
+          .collection('caseLog')
+          .findOne({ _id: problemId });
+        
+        if (question) {
+          console.log(`   ✅ Found in caseLog collection by _id (string)`);
+          return question;
+        }
+      } catch (strIdErr) {
+        console.log(`   ⚠️ CaseLog string _id search failed: ${strIdErr.message}`);
+      }
+    }
+
+    console.log(`   ❌ CaseLog: Document not found with problemId: "${problemId}"`);
+  } catch (err) {
+    console.log(`   ⚠️ CaseLog collection search failed:`, err.message);
+  }
+  return null;
+};
+
 // Submit solution and award rewards only on first-time completion
 export const submitSolutionService = async ({
   userId,
   questionId,
   code,
-  languageId
+  languageId,
+  sourceArea = 'learn_page',
+  collectionName = null,
+  preloadedTestCases = []
 }) => {
   try {
     // Debug: Log received identifiers
-    console.log("📝 Submit received - userId:", userId, "questionId:", questionId);
+    console.log("📝 Submit received - userId:", userId, "questionId:", questionId, "sourceArea:", sourceArea, "collectionName:", collectionName, "preloadedTestCases:", preloadedTestCases.length);
 
     // Step 1: Validate user exists
     const user = await User.findById(userId);
@@ -77,42 +135,98 @@ export const submitSolutionService = async ({
       throw new Error("User not found");
     }
 
-    // Step 2: Validate question exists  search learn collections first, then main Question collection
-    console.log(`🔍 Searching for question with problemId: "${questionId}"`);
-    
-    // Try learn collections first (where most questions live)
-    let question = await findQuestionInLearnCollections(questionId);
-    
-    // If not found in learn collections, try main Question collection
+    let testCases = [];
+    let question = null;
+
+    console.log(`📊 TEST CASES ANALYSIS:`);
+    console.log(`   - preloadedTestCases.length: ${preloadedTestCases?.length || 0}`);
+    console.log(`   - preloadedTestCases: ${JSON.stringify(preloadedTestCases?.slice(0, 1))}`);
+    console.log(`   - collectionName provided: ${collectionName ? 'YES - ' + collectionName : 'NO'}`);
+    console.log(`   - sourceArea: ${sourceArea}`);
+
+    console.log(`🔍 Searching for question with questionId: "${questionId}"`);
+
+    if (collectionName) {
+      console.log(`   → Direct lookup in collection: "${collectionName}"`);
+      console.log(`   → Searching for problemId: ${questionId}`);
+      question = await mongoose.connection.db
+        .collection(collectionName)
+        .findOne({ problemId: questionId });
+
+      console.log(`   → Result from problemId search: ${question ? 'FOUND' : 'NOT FOUND'}`);
+
+      if (!question && questionId.match(/^[0-9a-f]{24}$/i)) {
+        try {
+          const objId = new mongoose.Types.ObjectId(questionId);
+          console.log(`   → Trying ObjectId search for: ${objId}`);
+          question = await mongoose.connection.db
+            .collection(collectionName)
+            .findOne({ _id: objId });
+          console.log(`   → Result from ObjectId search: ${question ? 'FOUND' : 'NOT FOUND'}`);
+        } catch (err) {
+          console.log(`   → ObjectId conversion failed: ${err.message}`);
+          console.log(`   → Trying string _id search for: ${questionId}`);
+          question = await mongoose.connection.db
+            .collection(collectionName)
+            .findOne({ _id: questionId });
+          console.log(`   → Result from string _id search: ${question ? 'FOUND' : 'NOT FOUND'}`);
+        }
+      }
+
+      if (question) {
+        console.log(`   ✅ Found in collection: ${collectionName}, has test_cases: ${question.test_cases ? question.test_cases.length : 0}`);
+      } else {
+        console.log(`   ❌ Not found in collection: ${collectionName}, attempting fallback...`);
+      }
+    } else {
+      console.log(`⚠️ WARNING: collectionName is NULL! This means frontend didn't pass it.`);
+    }
+
+    if (!question && sourceArea === 'case_log') {
+      console.log(`   → Fallback: Searching caseLog collection`);
+      question = await findQuestionInCaseLog(questionId);
+    }
+
     if (!question) {
-      console.log(`   ↳ Not found in learn collections, trying main Question collection`);
+      console.log(`   → Fallback: Searching learn collections`);
+      question = await findQuestionInLearnCollections(questionId);
+    }
+
+    if (!question) {
+      console.log(`   ↳ Fallback: Trying main Question collection`);
       question = await Question.findOne({ problemId: questionId });
       if (question) {
         console.log(`   ✅ Found in main Question collection`);
       }
     }
-    
-    // Last resort: try finding by _id (MongoDB ID)
+
     if (!question && questionId.match(/^[0-9a-f]{24}$/i)) {
-      console.log(`   ↳ Not found by problemId, trying _id: "${questionId}"`);
+      console.log(`   ↳ Fallback: Trying by MongoDB _id`);
       question = await Question.findById(questionId);
       if (question) {
         console.log(`   ✅ Found by MongoDB _id`);
       }
     }
-    
-    console.log(`✅ Question found:`, question ? `${question.problemId} (${question.original?.title})` : "NOT FOUND");
-    if (!question) {
-      throw new Error("Question not found");
+
+    if (preloadedTestCases && preloadedTestCases.length > 0) {
+      console.log(`✅ Using preloaded test cases from frontend (${preloadedTestCases.length} cases)`);
+      testCases = preloadedTestCases;
+    } else {
+      console.log(`⚠️ WARNING: preloadedTestCases is EMPTY or NULL. Will use question document test cases.`);
     }
 
-    // Step 3: Get test cases from question
-    let testCases = question.test_cases || [];
+    if (testCases.length === 0) {
+      testCases = question?.test_cases || question?.testCases || [];
+    }
+
+    const questionDifficulty = question?.difficulty || null;
+    
+    console.log(`📦 Test cases found: ${testCases.length}`);
+    console.log(`📦 Raw test cases from DB:`, JSON.stringify(testCases.slice(0, 1), null, 2));
+
     if (testCases.length === 0) {
       throw new Error("No test cases found for this question");
     }
-
-    console.log(`📦 Raw test cases from DB:`, JSON.stringify(testCases.slice(0, 1), null, 2));
 
     // Normalize test cases: ensure they have the right field names
     testCases = testCases.map(tc => ({
@@ -137,7 +251,7 @@ export const submitSolutionService = async ({
     console.log(`   Test cases:`, JSON.stringify(visibleTestCases, null, 2));
     // Record this attempt (creates progress entry if first time)
     try {
-      await incrementAttempt(userId, questionId, 'coding', question.difficulty || null, languageName);
+      await incrementAttempt(userId, questionId, 'coding', questionDifficulty, languageName);
     } catch (err) {
       console.warn('Could not increment attempt in progress service:', err.message);
     }
@@ -180,7 +294,7 @@ export const submitSolutionService = async ({
       console.log(`ℹ️ Question already completed by user ${userId}`);
       // Ensure progress record marks solved=true and has metadata
       try {
-        await markQuestionSolved(userId, questionId, 'coding', 'code_editor', passedCount, visibleTestCases.length, question.difficulty || null, languageName);
+        await markQuestionSolved(userId, questionId, 'coding', 'code_editor', passedCount, visibleTestCases.length, questionDifficulty, languageName);
       } catch (err) {
         console.warn('Could not mark question solved on alreadyCompleted path:', err.message);
       }
@@ -192,7 +306,7 @@ export const submitSolutionService = async ({
     }
 
     // Step 7: First-time completion - award rewards
-    const rewardConfig = getRewardConfig("coding", question.difficulty);
+    const rewardConfig = getRewardConfig("coding", questionDifficulty);
     const earnedXP = rewardConfig.xp || 25;
     const earnedTokens = rewardConfig.tokens || 10;
 

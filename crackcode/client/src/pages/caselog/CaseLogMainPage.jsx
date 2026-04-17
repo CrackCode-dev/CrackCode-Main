@@ -156,11 +156,11 @@ const CaseLogMainPage = () => {
                     if (caseItem.raw && (caseItem.transformed?.problemId || caseItem.id)) {
                       const targetId = caseItem.transformed?.problemId || caseItem.id;
                       navigate(`/code-editor/${targetId}`, { 
-                        state: { question: caseItem.raw, language: 'python', sourceArea: 'case_log' } 
+                        state: { question: caseItem.raw, language: 'python', sourceArea: 'case_log', collectionName: 'caseLog' } 
                       });
                     } else if (caseItem.transformed && caseItem.transformed.problemId) {
                       navigate(`/code-editor/${caseItem.transformed.problemId}`, { 
-                        state: { question: caseItem.transformed, language: 'python', sourceArea: 'case_log' } 
+                        state: { question: caseItem.transformed, language: 'python', sourceArea: 'case_log', collectionName: 'caseLog' } 
                       });
                     } else {
                       navigate('/code-editor');

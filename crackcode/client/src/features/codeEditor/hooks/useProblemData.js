@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useEditor } from '../../../context/codeEditor/EditorContext';
 import { fetchProblemByLanguage, transformProblemData } from '../../../services/api/questionService';
 
-export const useProblemData = (problemId, preloadedQuestion = null, sourceArea = 'learn_page') => {
+export const useProblemData = (problemId, preloadedQuestion = null, sourceArea = 'learn_page', collectionName = null) => {
   const { setCurrentProblem, setCode, setLoading, language, setLanguage, languageLocked, setLanguageLocked } = useEditor();
   const [error, setError] = useState(null);
 
@@ -20,8 +20,9 @@ export const useProblemData = (problemId, preloadedQuestion = null, sourceArea =
           setLoading(true);
           setError(null);
           const transformed = transformProblemData(preloadedQuestion, language);
-          // Add sourceArea to transformed problem for reward system
+          // Add sourceArea and collectionName to transformed problem for reward system
           transformed.sourceArea = sourceArea;
+          transformed.collectionName = collectionName;
           setCurrentProblem(transformed);
           const variant = preloadedQuestion.variants?.find((v) => v.language === language)
             || preloadedQuestion.variants?.[0];

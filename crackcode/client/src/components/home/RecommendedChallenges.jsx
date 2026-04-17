@@ -173,7 +173,7 @@ export default function RecommendedChallenges() {
                     <Lock className='w-3 h-3' />
                     {challenge.timeEstimate}
                   </div>
-                  <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right' onClick={(e) => { e.stopPropagation(); if (challenge.raw) navigate(`/code-editor/${challenge.id}`, { state: { question: challenge.raw, language: 'cpp' } }) }}>
+                  <Button variant='secondary' size='sm' icon={ArrowRight} iconPosition='right' onClick={(e) => { e.stopPropagation(); if (challenge.raw) navigate(`/code-editor/${challenge.id}`, { state: { question: challenge.raw, language: 'cpp', sourceArea: 'recommended_challenge', collectionName: 'challengeCppQ' } }) }}>
                     Start Challenge
                   </Button>
                 </div>

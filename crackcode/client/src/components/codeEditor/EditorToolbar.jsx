@@ -63,9 +63,12 @@ const EditorToolbar = () => {
       };
 
       const response = await axios.post('/codeEditor/submit', {
-        questionId: currentProblem?.problemId || currentProblem?._id,
+        questionId: currentProblem?.problemId || currentProblem?.id,
         code: code,
-        languageId: languageMap[language] || 71
+        languageId: languageMap[language] || 71,
+        sourceArea: currentProblem?.sourceArea || 'learn_page',
+        collectionName: currentProblem?.collectionName || null,
+        testCases: currentProblem?.testCases || []
       });
 
       const { data } = response.data;

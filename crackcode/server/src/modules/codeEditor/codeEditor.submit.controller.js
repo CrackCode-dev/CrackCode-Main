@@ -5,7 +5,7 @@ import { submitSolutionService } from "./codeEditor.submit.service.js";
 export const submitSolution = async (req, res) => {
   try {
     const userId = req.user?._id || req.userId;
-    const { questionId, code, languageId } = req.body;
+    const { questionId, code, languageId, sourceArea, testCases, collectionName } = req.body;
 
     // Validate inputs
     if (!questionId) {
@@ -36,14 +36,17 @@ export const submitSolution = async (req, res) => {
       });
     }
 
-    console.log(`📤 Submit called - userId: ${userId}, questionId: ${questionId}`);
+    console.log(`📤 Submit called - userId: ${userId}, questionId: ${questionId}, sourceArea: ${sourceArea}, collectionName: ${collectionName}, testCasesProvided: ${testCases?.length || 0}`);
 
     // Call submit service
     const result = await submitSolutionService({
       userId,
       questionId,
       code,
-      languageId
+      languageId,
+      sourceArea: sourceArea || 'learn_page',
+      collectionName: collectionName || null,
+      preloadedTestCases: testCases || []
     });
 
     // Return response to frontend

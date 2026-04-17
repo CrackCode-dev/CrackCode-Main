@@ -212,9 +212,9 @@ import progressRoutes from "./src/modules/Career Map/progress/progress.routes.js
 
 const app = express();
 
-// If the app is running behind a proxy/load-balancer (nginx, cloud LB),
-// enable trust proxy so req.secure and x-forwarded-* headers are populated.
-app.set('trust proxy', true);
+// If the app is running behind a single proxy/load-balancer (nginx, cloud LB),
+// trust one hop so req.secure and x-forwarded-* headers are populated.
+app.set('trust proxy', 1);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -261,6 +261,7 @@ const allowedOrigins = [
   process.env.CLIENT_URL,
   ...(process.env.CLIENT_URLS ? process.env.CLIENT_URLS.split(",") : []),
 ]
+  .filter(Boolean)
   .map((origin) => origin.trim())
   .filter(Boolean);
 
