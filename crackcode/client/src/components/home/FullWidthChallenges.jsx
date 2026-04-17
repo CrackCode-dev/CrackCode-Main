@@ -112,9 +112,9 @@ function FullWidthChallenges() {
                 if (caseItem.raw && (caseItem.transformed?.problemId || caseItem.id)) {
                   const targetId = caseItem.transformed?.problemId || caseItem.id
                   // pass raw DB object so the editor hook can call transformProblemData
-                  navigate(`/code-editor/${targetId}`, { state: { question: caseItem.raw, language: 'python', sourceArea: 'home_challenge' } })
+                  navigate(`/code-editor/${targetId}`, { state: { question: caseItem.raw, language: 'python', sourceArea: 'home_challenge', collectionName: 'challengePythonQ' } })
                 } else if (caseItem.transformed && caseItem.transformed.problemId) {
-                  navigate(`/code-editor/${caseItem.transformed.problemId}`, { state: { question: caseItem.transformed, language: 'python', sourceArea: 'home_challenge' } })
+                  navigate(`/code-editor/${caseItem.transformed.problemId}`, { state: { question: caseItem.transformed, language: 'python', sourceArea: 'home_challenge', collectionName: 'challengePythonQ' } })
                 } else {
                   // fallback: open editor without preloaded question
                   navigate('/code-editor')

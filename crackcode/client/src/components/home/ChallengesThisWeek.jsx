@@ -131,7 +131,7 @@ export default function ChallengesThisWeek() {
                 onClick={() => {
                   if (challenge.raw) {
                     const targetId = challenge.transformed?.problemId || challenge.id
-                    navigate(`/code-editor/${targetId}`, { state: { question: challenge.raw, language: 'javascript' } })
+                    navigate(`/code-editor/${targetId}`, { state: { question: challenge.raw, language: 'javascript', sourceArea: 'weekly_challenge', collectionName: 'challengeJavascriptQ' } })
                   }
                 }}
               >
