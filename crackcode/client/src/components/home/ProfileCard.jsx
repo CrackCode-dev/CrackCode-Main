@@ -9,7 +9,7 @@ import { fetchBadgeProgress } from '../../services/api/badgeService';
 
 function ProfileCard() {
   const navigate = useNavigate();
-  const { theme } = useTheme();
+  useTheme();
   const { userData, isLoggedIn } = useContext(AppContent);
   const [hoveredBadge, setHoveredBadge] = useState(null);
   const [badges, setBadges] = useState([]);
@@ -206,8 +206,6 @@ function ProfileCard() {
               // Determine tooltip position based on badge position in grid
               const isLeftColumn = index % 4 === 0;
               const isRightColumn = index % 4 === 3;
-              const isCenterColumns = !isLeftColumn && !isRightColumn;
-              const isTopRow = index < 4;
               const isBottomRow = index >= 4;
 
               let tooltipPositioning = {

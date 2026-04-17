@@ -8,7 +8,7 @@ import { getGlobalLeaderboard, getMyRank } from '../../services/api/leaderboardS
 
 export default function LeaderboardCard() {
   const navigate = useNavigate();
-  const { theme } = useTheme();
+  useTheme();
   const { isLoggedIn, backendUrl } = useContext(AppContent);
   const [hoveredRank, setHoveredRank] = useState(null);
   const [topPlayers, setTopPlayers] = useState([]);

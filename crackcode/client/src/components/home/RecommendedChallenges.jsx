@@ -13,12 +13,12 @@ const PLACEHOLDER = [
 ];
 
 export default function RecommendedChallenges() {
-  const { theme } = useTheme();
+  useTheme();
   const [hoveredId, setHoveredId] = useState(null);
-  const [savedIds, setSavedIds] = useState(new Set());
+  const [savedIds] = useState(new Set());
   const [cards, setCards] = useState(PLACEHOLDER);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,16 +65,6 @@ export default function RecommendedChallenges() {
     return () => { mounted = false }
   }, [])
 
-  const toggleSaved = (id, e) => {
-    e.stopPropagation();
-    const newSet = new Set(savedIds);
-    if (newSet.has(id)) {
-      newSet.delete(id);
-    } else {
-      newSet.add(id);
-    }
-    setSavedIds(newSet);
-  };
 
   return (
     <div className='w-full' style={{ color: 'var(--text)' }}>
@@ -97,7 +87,7 @@ export default function RecommendedChallenges() {
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
           {loading && <div className='text-sm text-gray-300'>Loading recommendations…</div>}
-          {!loading && cards.map((challenge, index) => (
+          {!loading && cards.map((challenge) => (
             <div
               key={challenge.id}
               onMouseEnter={() => setHoveredId(challenge.id)}

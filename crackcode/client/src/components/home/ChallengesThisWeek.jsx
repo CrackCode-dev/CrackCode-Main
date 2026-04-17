@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+import { useContext, useState, useEffect } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
-import { Calendar, CheckCircle2, Clock, Flame, ArrowRight, ListTodo } from 'lucide-react';
+import { Calendar, CheckCircle2, ArrowRight, Lightbulb, Target, BrainCircuit } from 'lucide-react';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import { useNavigate } from 'react-router-dom'
 import { fetchWeeklyChallenges, transformProblemData } from '../../services/api/questionService'
+import { AppContent } from '../../context/userauth/authenticationContext';
 
 const PLACEHOLDER = [
   { id: 'wc-1', title: 'The Sorting Showdown', description: 'Solve 5 different sorting challenges this week', difficulty: 'Hard', points: 500, completed: 2, total: 5, icon: '📊', color: '#FF6B6B' },
@@ -26,13 +28,29 @@ const getProgressPercentage = (completed, total) => {
 };
 
 export default function ChallengesThisWeek() {
-  const { theme } = useTheme();
+  useTheme();
+  const { userData } = useContext(AppContent);
   const [hoveredId, setHoveredId] = useState(null);
   const [expandedId, setExpandedId] = useState(null);
   const [cards, setCards] = useState(PLACEHOLDER);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const completedQuestionIds = Array.isArray(userData?.completedQuestionIds) ? userData.completedQuestionIds : [];
+
+  const isCompletedQuestion = (challenge) => {
+    const possibleIds = [
+      challenge?.id,
+      challenge?.raw?.problemId,
+      challenge?.raw?._id,
+      challenge?.transformed?.problemId,
+      challenge?.transformed?._id
+    ]
+      .filter(Boolean)
+      .map((value) => String(value).trim());
+
+    return possibleIds.some((id) => completedQuestionIds.includes(id));
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -62,7 +80,7 @@ export default function ChallengesThisWeek() {
             points: t.variant?.points || t.points || 300,
             completed: it.completed || 0,
             total: it.total || 1,
-            icon: <ListTodo />,
+            icon: '📊',
             color: '#FF6B6B',
             raw: it,
             transformed: t,
@@ -96,21 +114,23 @@ export default function ChallengesThisWeek() {
               Complete challenges throughout the week to earn bonus points and unlock achievements
             </p>
           </div>
-          <div className='text-right'>
+          {/* <div className='text-right'>
             <p className='text-sm' style={{ color: 'var(--textSec)' }}>
               5 days remaining
             </p>
             <p className='text-2xl font-bold' style={{ color: 'var(--brand)' }}>
               {cards.reduce((acc, c) => acc + (c.completed || 0), 0)}/{cards.reduce((acc, c) => acc + (c.total || 0), 0)}
             </p>
-          </div>
+          </div> */}
         </div>
 
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
           {loading && <div className='text-sm text-gray-300'>Loading challenges…</div>}
           {!loading && cards.map((challenge) => {
-            const progress = getProgressPercentage(challenge.completed || 0, challenge.total || 1);
-            const isExpanded = expandedId === challenge.id;
+            const isCompleted = isCompletedQuestion(challenge);
+            const progress = isCompleted ? 100 : getProgressPercentage(challenge.completed || 0, challenge.total || 1);
+            const displayCompleted = isCompleted ? (challenge.total || 1) : (challenge.completed || 0);
+            const hoverAccent = isCompleted ? '#52C882' : (challenge.color || '#FF6B6B');
 
             return (
               <div
@@ -123,9 +143,9 @@ export default function ChallengesThisWeek() {
                   border: '2px solid var(--border)',
                   boxShadow:
                     hoveredId === challenge.id
-                      ? `0 12px 32px ${challenge.color || '#FF6B6B'}30`
+                      ? `0 12px 32px ${hoverAccent}30`
                       : 'none',
-                  borderColor: hoveredId === challenge.id ? (challenge.color || '#FF6B6B') : 'var(--border)',
+                  borderColor: hoveredId === challenge.id ? hoverAccent : 'var(--border)',
                   transform: hoveredId === challenge.id ? 'translateY(-4px)' : 'translateY(0)'
                 }}
                 onClick={() => {
@@ -139,20 +159,20 @@ export default function ChallengesThisWeek() {
                   {/* Header */}
                   <div className='flex items-start justify-between mb-4'>
                     <div className='flex items-start gap-3 flex-1'>
-                      <span className='text-3xl mt-1'>{challenge.icon}</span>
+                      <span className='text-3xl'>{challenge.icon || '📊'}</span>
                       <div className='flex-1 min-w-0'>
                         <h3 className='text-lg font-bold mb-1'>{challenge.title}</h3>
                         {/* Only show minimal meta on card. Full problem visible in editor. */}
                         <p style={{ color: 'var(--textSec)' }} className='text-xs'>
-                          {challenge.completed}/{challenge.total} progress
+                          {isCompleted ? 'Completed' : `${displayCompleted}/${challenge.total} progress`}
                         </p>
                       </div>
                     </div>
-                    {progress === 100 && (
-                      <CheckCircle2
-                        className='w-6 h-6 shrink-0 animate-pulse'
-                        style={{ color: '#52C882' }}
-                      />
+                    {isCompleted && (
+                      <div className='flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold' style={{ background: 'rgba(82, 200, 130, 0.14)', color: '#52C882' }}>
+                        <CheckCircle2 className='w-4 h-4 shrink-0' />
+                        Completed
+                      </div>
                     )}
                   </div>
 
@@ -183,7 +203,7 @@ export default function ChallengesThisWeek() {
                         Progress
                       </span>
                       <span className='text-xs font-bold' style={{ color: getProgressColor(progress) }}>
-                        {challenge.completed}/{challenge.total}
+                        {displayCompleted}/{challenge.total}
                       </span>
                     </div>
                     <div
@@ -194,16 +214,17 @@ export default function ChallengesThisWeek() {
                         className='h-full rounded-full transition-all duration-500'
                         style={{
                           width: `${progress}%`,
-                          background: getProgressColor(progress)
+                          background: isCompleted ? '#52C882' : getProgressColor(progress)
                         }}
                       />
                     </div>
                   </div>
 
                   <Button variant='primary' size='sm' icon={ArrowRight} iconPosition='right' fullWidth style={{
-                                                                                                           background: getProgressColor(progress),
-                                                                                                           borderColor: getProgressColor(progress)}}>
-                    {progress === 100 ? 'Completed!' : 'View Challenge'}
+                    background: isCompleted ? '#52C882' : getProgressColor(progress),
+                    borderColor: isCompleted ? '#52C882' : getProgressColor(progress)
+                  }}>
+                    {isCompleted ? 'Completed!' : 'View Challenge'}
                   </Button>
                 </div>
               </div>
@@ -220,14 +241,14 @@ export default function ChallengesThisWeek() {
               border: '1px solid var(--border)'
             }}
           >
-            <p style={{ color: 'var(--textSec)' }} className='text-sm mb-2'>
-              Total Points Available
+            <p style={{ color: 'var(--textSec)' }} className='text-sm mb-2 flex items-start justify-center gap-2'>
+              <span style={{ color: 'var(--brand)' }}><Lightbulb /></span> New Concept Focus
             </p>
             <p
-              className='text-3xl font-bold'
+              className='text-lg font-medium'
               style={{ color: 'var(--brand)' }}
             >
-              +{cards.reduce((acc, c) => acc + (c.points || 0), 0)}
+              Master recursion basics through story-driven challenges
             </p>
           </div>
 
@@ -238,14 +259,14 @@ export default function ChallengesThisWeek() {
               border: '1px solid var(--border)'
             }}
           >
-            <p style={{ color: 'var(--textSec)' }} className='text-sm mb-2'>
-              Completed Challenges
+            <p style={{ color: 'var(--textSec)' }} className='text-sm mb-2 flex items-start justify-center gap-2'>
+              <span style={{ color: '#52C882' }}><Target /></span>Challenge Difficulty
             </p>
             <p
-              className='text-3xl font-bold'
+              className='text-lg font-medium'
               style={{ color: '#52C882' }}
             >
-              {cards.filter((c) => (c.completed || 0) === (c.total || 0)).length}/{cards.length}
+              Balanced mix of easy → medium problems
             </p>
           </div>
 
@@ -256,14 +277,15 @@ export default function ChallengesThisWeek() {
               border: '1px solid var(--border)'
             }}
           >
-            <p style={{ color: 'var(--textSec)' }} className='text-sm mb-2'>
-              Time Remaining
+            <p style={{ color: 'var(--textSec)' }} className='text-sm mb-2 flex items-start justify-center gap-2'>
+              <span style={{ color: '#FF6B6B' }}><BrainCircuit /></span>
+              Skill Focus
             </p>
             <p
-              className='text-3xl font-bold flex items-center justify-center gap-2'
+              className='text-lg font-medium flex items-center justify-center gap-2'
               style={{ color: '#FF6B6B' }}
             >
-              <Flame className='w-6 h-6' />5 days
+              Problem solving + pattern recognition
             </p>
           </div>
         </div>
