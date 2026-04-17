@@ -290,6 +290,17 @@ export const getChallengesCollection = async (req, res) => {
 
     const items = await mongoose.connection.db.collection(collectionName).find({}).toArray();
 
+    // Debug logging for caseLog collection
+    if (collectionName === 'caseLog' && items.length > 0) {
+      console.log(`📚 CASELOG COLLECTION DEBUG:`);
+      console.log(`   Total items: ${items.length}`);
+      console.log(`   First item structure: ${JSON.stringify(Object.keys(items[0]))}`);
+      console.log(`   First item has test_cases: ${items[0].test_cases ? 'YES - ' + items[0].test_cases.length + ' tests' : 'NO'}`);
+      console.log(`   First item has testCases: ${items[0].testCases ? 'YES - ' + items[0].testCases.length + ' tests' : 'NO'}`);
+      console.log(`   First item has problemId: ${items[0].problemId || 'NO'}`);
+      console.log(`   First item _id: ${items[0]._id}`);
+    }
+
     return res.status(200).json({ success: true, count: items.length, collectionName, data: items });
   } catch (error) {
     console.error('❌ getChallengesCollection error:', error);
