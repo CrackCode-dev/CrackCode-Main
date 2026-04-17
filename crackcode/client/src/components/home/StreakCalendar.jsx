@@ -3,6 +3,7 @@ import { useTheme } from '../../context/theme/ThemeContext';
 import { Calendar, Flame } from 'lucide-react';
 import axios from 'axios';
 import { AppContent } from '../../context/userauth/authenticationContext';
+import { color } from 'framer-motion';
 
 export default function StreakCalendar() {
   const { theme } = useTheme();
@@ -445,7 +446,7 @@ export default function StreakCalendar() {
           }}
         >
           <p className='text-base font-bold mb-1'>
-            <Flame className="inline-block mr-2" color='var(--brand)' /> Keep up the amazing work!
+            <Flame className="inline-block mr-2" style={{ color: 'var(--brand)' }} /> Keep up the amazing work!
           </p>
           <p style={{ color: 'var(--textSec)' }} className='text-sm'>
             You're on a {stats.currentStreak}-day streak! Maintain consistency to unlock elite badges.

@@ -1,29 +1,29 @@
 import { useState } from 'react';
-import { Zap, X, ExternalLink } from 'lucide-react';
+import { Zap, X, ExternalLink, Gamepad2 ,FileDigit, SquarePen, BrickWallShield } from 'lucide-react';
 
 const GAMES = [
   {
     id: 'binary-bitz',
     name: 'Binary-Bitz',
     description: 'Master number systems! Learn decimal, hexadecimal, binary and more. Challenge yourself with fun interactive puzzles.',
-    icon: '🔢',
-    color: '#FF6B6B',
+    icon: <FileDigit />,
+    color: '#FF3E9B',
     url: 'https://crackcodegames.vercel.app'
   },
   {
     id: 'wordhunt',
     name: 'WordHunt',
     description: 'A word puzzle game like Wordle! Fill in related terms and words. Test your vocabulary and deduction skills.',
-    icon: '📝',
-    color: '#4ECDC4',
+    icon: <SquarePen />,
+    color: '#9D4EDD',
     url: 'https://wordhunt-beta.vercel.app'
   },
   {
     id: 'codedefense',
     name: 'CodeDefense',
     description: 'Protect your server from bugs! Answer programming questions correctly to defend against cyber threats.',
-    icon: '🛡️',
-    color: '#95E1D3',
+    icon: <BrickWallShield />,
+    color: '#48A111',
     url: 'https://codedefense.vercel.app'
   }
 ];
@@ -42,10 +42,10 @@ export default function BrainBreaker() {
           color: 'var(--text)'
         }}
       >
-        <div className='flex items-center gap-3 mb-6'>
-          <Zap className='w-6 h-6' style={{ color: 'var(--brand)' }} />
+        <div className='flex items-start gap-3 mb-6'>
+          <Gamepad2 className='w-6 h-6 mt-1' style={{ color: 'var(--brand)' }} />
           <div>
-            <h3 className='text-2xl font-bold'>🎮 Brain Breaker</h3>
+            <h3 className='text-2xl font-bold'> Brain Breaker</h3>
             <p style={{ color: 'var(--textSec)' }} className='text-sm'>
               Take a quick break with mini-games to refresh your mind!
             </p>
@@ -76,7 +76,9 @@ export default function BrainBreaker() {
               }}
             >
               <div className='flex justify-between items-start w-full'>
-                <span className='text-4xl'>{game.icon}</span>
+                <span className='text-4xl' style={{ color: game.color }}>
+                  {game.icon}
+                </span>
                 <ExternalLink size={16} style={{ color: game.color }} />
               </div>
               <div>

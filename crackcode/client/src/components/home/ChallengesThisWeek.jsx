@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../../context/theme/ThemeContext';
-import { Calendar, CheckCircle2, Clock, Flame, ArrowRight, ChartColumnBig, Scissors, Pyramid, Cog } from 'lucide-react';
+import { Calendar, CheckCircle2, Clock, Flame, ArrowRight, ListTodo } from 'lucide-react';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import { useNavigate } from 'react-router-dom'
@@ -62,7 +62,7 @@ export default function ChallengesThisWeek() {
             points: t.variant?.points || t.points || 300,
             completed: it.completed || 0,
             total: it.total || 1,
-            icon: '📊',
+            icon: <ListTodo />,
             color: '#FF6B6B',
             raw: it,
             transformed: t,
@@ -139,7 +139,7 @@ export default function ChallengesThisWeek() {
                   {/* Header */}
                   <div className='flex items-start justify-between mb-4'>
                     <div className='flex items-start gap-3 flex-1'>
-                      <span className='text-3xl'>{challenge.icon || '📊'}</span>
+                      <span className='text-3xl mt-1'>{challenge.icon}</span>
                       <div className='flex-1 min-w-0'>
                         <h3 className='text-lg font-bold mb-1'>{challenge.title}</h3>
                         {/* Only show minimal meta on card. Full problem visible in editor. */}

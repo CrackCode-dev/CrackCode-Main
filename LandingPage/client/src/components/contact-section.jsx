@@ -360,7 +360,7 @@ export default function ContactSection() {
 
               <nav aria-label="CrackCode Social Media Links" className="space-y-3">
                 <a
-                  href="https://www.linkedin.com/in/crack-code-619461396"
+                  href="https://www.linkedin.com/company/crackcode"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="CrackCode on LinkedIn (opens in new tab)"

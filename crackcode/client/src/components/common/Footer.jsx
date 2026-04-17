@@ -19,14 +19,14 @@ const Footer = ({ variant = "default" }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const footerAtBottom = ['/', '/login', '/email-verify', '/reset-password', '/gamer-profile', '/privacy', '/terms', '/contact']
+    const footerAtBottom = ['/', '/login', '/email-verify', '/reset-password', '/gamer-profile']
     const footerAtEase = !footerAtBottom.includes(location.pathname);
 
     const handleLogoClick = () => {
         if (!footerAtEase) {
             navigate('/');
         } else {
-            navigate('/home');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
