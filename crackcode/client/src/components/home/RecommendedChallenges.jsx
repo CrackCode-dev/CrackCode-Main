@@ -211,9 +211,9 @@ export default function RecommendedChallenges() {
             View All Recommendations
             <ArrowRight className='w-4 h-4' />
           </button> */}
-          <Button variant='primary' size='md' icon={ArrowRight} iconPosition='right'>
+          {/* <Button variant='primary' size='md' icon={ArrowRight} iconPosition='right'>
             View All Recommendations
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>
