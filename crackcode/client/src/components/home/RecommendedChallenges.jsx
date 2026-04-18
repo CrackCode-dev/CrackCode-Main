@@ -13,12 +13,12 @@ const PLACEHOLDER = [
 ];
 
 export default function RecommendedChallenges() {
-  useTheme();
+  const { theme } = useTheme();
   const [hoveredId, setHoveredId] = useState(null);
-  const [savedIds] = useState(new Set());
+  const [savedIds, setSavedIds] = useState(new Set());
   const [cards, setCards] = useState(PLACEHOLDER);
   const [loading, setLoading] = useState(false);
-  const [setError] = useState(null);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -65,6 +65,16 @@ export default function RecommendedChallenges() {
     return () => { mounted = false }
   }, [])
 
+  const toggleSaved = (id, e) => {
+    e.stopPropagation();
+    const newSet = new Set(savedIds);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSavedIds(newSet);
+  };
 
   return (
     <div className='w-full' style={{ color: 'var(--text)' }}>
@@ -87,7 +97,7 @@ export default function RecommendedChallenges() {
 
         <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
           {loading && <div className='text-sm text-gray-300'>Loading recommendations…</div>}
-          {!loading && cards.map((challenge) => (
+          {!loading && cards.map((challenge, index) => (
             <div
               key={challenge.id}
               onMouseEnter={() => setHoveredId(challenge.id)}
@@ -201,7 +211,7 @@ export default function RecommendedChallenges() {
             View All Recommendations
             <ArrowRight className='w-4 h-4' />
           </button> */}
-          <Button variant='primary' size='md' icon={ArrowRight} iconPosition='right' onClick={() => navigate("/caselog")}>
+          <Button variant='primary' size='md' icon={ArrowRight} iconPosition='right'>
             View All Recommendations
           </Button>
         </div>
